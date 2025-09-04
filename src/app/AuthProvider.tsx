@@ -20,6 +20,12 @@ export default function AuthProvider({ children,
     if (data.session !== null) {
       setIsLoaded(true);
     } else if (data.session == null) {
+      //ログインページでローダーは出さない
+      if (pathname === '/login') {
+        setIsLoaded(true);
+        return;
+      }
+
       //ログイン前の各画面ではリダイレクトしない
       if (validPaths.includes(pathname)) {
         setIsLoaded(true);
