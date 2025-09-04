@@ -33,7 +33,7 @@ export default function AuthProvider({ children,
   useEffect(() => {
     getCurrentSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
   return (
     <>
