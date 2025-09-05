@@ -11,8 +11,8 @@ export const getCurrentUser = async () => {
         .from('users')
         .select('*')
         .eq('id', user.id);
-      console.log(user);
-      console.log(currentUser);
+      // console.log(user);
+      // console.log(currentUser);
 
       if (currentUser) {
         const userData = {
