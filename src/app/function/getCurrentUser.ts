@@ -7,7 +7,7 @@ export const getCurrentUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user !== null) {
-      const { data: currentUser, error } = await supabase
+      const { data: currentUser } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id);
