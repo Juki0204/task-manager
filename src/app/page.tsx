@@ -30,7 +30,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="p-4 min-w-[432px] max-w-[1280px] m-auto relative">
       <LogoutBtn></LogoutBtn>
       <AddTask></AddTask>
       <div className="p-4 my-4 rounded-md bg-neutral-700">
