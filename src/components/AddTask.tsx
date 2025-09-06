@@ -6,6 +6,7 @@ import { GrAddCircle, GrClose } from "react-icons/gr";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
 import { getCurrentUser } from "@/app/function/getCurrentUser";
+import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
 
 export default function AddTask() {
@@ -24,7 +25,8 @@ export default function AddTask() {
   const [manager, setManager] = useState<string>(''); //作業担当者
   const [status, setStatus] = useState<string>('未着手'); //作業状況
   const [priority, setPriority] = useState<string>(''); //優先度
-  const [remarks, setRemarks] = useState<string>(''); //優先度
+  const [remarks, setRemarks] = useState<string>(''); //備考欄
+  const [method, setMethod] = useState<string>(''); //依頼手段
 
 
   const getData = async () => {
@@ -94,7 +96,8 @@ export default function AddTask() {
         manager: manager,
         status: status,
         priority: priority,
-        remarks: remarks
+        remarks: remarks,
+        method: method
       });
 
     if (addTaskError) {
@@ -177,12 +180,19 @@ export default function AddTask() {
                     <option value="詳細待ち">詳細待ち</option>
                   </AddTaskSelect>
 
-                  <AddTaskSelect col={2} name="PRIORITY" label="優先度" onChange={(e) => setPriority(e.target.value)}>
+                  <AddTaskSelect name="PRIORITY" label="優先度" onChange={(e) => setPriority(e.target.value)}>
                     <option value=""></option>
                     <option value="至急">至急</option>
                     <option value="高">高</option>
                     <option value="低">低</option>
                   </AddTaskSelect>
+
+                  <div className="col-span-1 flex flex-wrap gap-x-1">
+                    <h3 className="w-full whitespace-nowrap pl-0.5 py-1">依頼手段</h3>
+                    <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)}></MailRadio>
+                    <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)}></TelRadio>
+                    <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)}></OtherRadio>
+                  </div>
 
                   <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" onChange={(e) => setRemarks(e.target.value)}></AddTaskTextarea>
 
