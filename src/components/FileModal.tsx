@@ -1,6 +1,5 @@
 import { supabase } from "@/utils/supabase/supabase";
-import { DialogPanel, DialogTitle } from "@headlessui/react";
-import Image from "next/image";
+// import Image from "next/image";
 import { useEffect, useState } from "react";
 
 
@@ -38,7 +37,7 @@ export default function FileModal({ file }: fileModalProps) {
           <></>
           :
           <img
-            src={targetFile}
+            src={targetFile ? targetFile : '/file.svg'}
             className="w-full h-auto"
             alt={file.fileName}
           />

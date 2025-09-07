@@ -146,7 +146,7 @@ export default function Card({ task, ...props }: task) {
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+        <div className="fixed inset-0 flex w-full items-center justify-center p-4">
           <DialogPanel className="relative w-11/12 max-w-md space-y-4 rounded-2xl bg-neutral-100 p-8">
             <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
               <span className="w-4">
@@ -215,7 +215,7 @@ export default function Card({ task, ...props }: task) {
 
               <li className="flex flex-col col-span-2 border-b border-neutral-300 pb-1">
                 <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><IoDocumentAttachOutline /> 関連ファイル</h3>
-                <div className="flex gap-1">
+                <div className="flex flex-col gap-1">
                   {currentTaskFile.map(file => (
                     <div
                       key={file.storedName}
@@ -223,7 +223,7 @@ export default function Card({ task, ...props }: task) {
                         setSelectedFile(file);
                         setIsFileOpen(true);
                       }}
-                      className="flex gap-1 items-center text-sm p-1 w-full rounded-md bg-neutral-300 truncate"
+                      className="flex gap-1 items-center text-sm p-1 w-full rounded-md bg-neutral-300 truncate cursor-pointer"
                     >
                       {
                         file.fileType === 'eml' ?
@@ -264,7 +264,7 @@ export default function Card({ task, ...props }: task) {
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+        <div className="fixed inset-0 flex w-full items-center justify-center p-4">
           <DialogPanel className="relative w-10/12 max-w-[400px] space-y-4 rounded-2xl bg-neutral-100 p-8">
             <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
               {selectedFile?.fileName}
