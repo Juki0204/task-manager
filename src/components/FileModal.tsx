@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/supabase/supabase";
 // import Image from "next/image";
 import { useEffect, useState } from "react";
-
+import MailParser from "./MailParser";
 
 interface fileModalProps {
   file: {
@@ -33,14 +33,19 @@ export default function FileModal({ file }: fileModalProps) {
   return (
     <div className="relative w-full">
       {
-        file.fileType === 'eml' ?
-          <></>
-          :
+        file.fileType === 'eml' ? (
+          // targetFile ? (
+          //   <MailParser file={file} publicUrl={targetFile} />
+          // ) : (
+          <div className="text-center">開発中です...</div>
+          // )
+        ) : (
           <img
             src={targetFile ? targetFile : '/file.svg'}
             className="w-full h-auto"
             alt={file.fileName}
           />
+        )
       }
     </div>
   )
