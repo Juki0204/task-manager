@@ -22,6 +22,8 @@ import { v4 as uuidv4 } from 'uuid';
 export default function AddTask() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isSend, setIsSend] = useState<boolean>(false);
+  const [currentUserName, setCurrentUserName] = useState<string>('');
+
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
   const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
   const [userNameList, setUserNameList] = useState<string[]>([]); //作業担当者名一覧
@@ -68,6 +70,7 @@ export default function AddTask() {
     const currentUser = await getCurrentUser();
     if (currentUser) {
       setManager(currentUser.name);
+      setCurrentUserName(currentUser.name);
     }
 
     //クライアント一覧取得
@@ -132,7 +135,9 @@ export default function AddTask() {
         status: status,
         priority: priority,
         remarks: remarks,
-        method: method
+        method: method,
+        created_manager: currentUserName,
+        updated_manager: currentUserName,
       })
       .select()
       .single();
@@ -232,6 +237,7 @@ export default function AddTask() {
                   </AddTaskSelect>
 
                   <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
+                    <option value="不明">不明</option>
                     {requesterList.map(requester => (
                       <option key={requester} value={requester}>{requester}</option>
                     ))}

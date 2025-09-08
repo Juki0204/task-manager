@@ -27,6 +27,10 @@ interface task {
     priority?: string;
     remarks?: string;
     method: string;
+    createdAt: string;
+    createdManager: string;
+    updatedAt: string;
+    updatedManager: string;
   }
 }
 
@@ -77,13 +81,24 @@ export default function Card({ task, ...props }: task) {
     }
   }
 
+  function formatDateJST(dateString: string): string {
+    const date = new Date(dateString);
+
+    // UTCをベースにしているので、getUTC系で取り出して+9時間する
+    const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+
+    const pad = (n: number) => String(n).padStart(2, "0");
+
+    return `${jst.getFullYear()}年${pad(jst.getMonth() + 1)}月${pad(jst.getDate())}日 ` + `${pad(jst.getHours())}:${pad(jst.getMinutes())}:${pad(jst.getSeconds())}`;
+  }
+
   const getTaskFiles = async () => {
     const { data: fileMetadata } = await supabase
       .from('task_files')
       .select('*')
       .eq("task_id", task.id);
 
-    if (fileMetadata) {
+    if (fileMetadata && fileMetadata[0]) {
       const taskFileArray = [];
       console.log(fileMetadata);
       for (const file of fileMetadata[0].files) {
@@ -241,7 +256,11 @@ export default function Card({ task, ...props }: task) {
               </li>
             </ul>
 
-            <div className="flex gap-4 justify-end col-span-2">
+            <div className="flex gap-4 justify-between col-span-2">
+              <div className="text-sm">
+                <p>作成日時: {task.createdManager} {formatDateJST(task.createdAt)}</p>
+                <p>最終更新: {task.updatedManager} {formatDateJST(task.updatedAt)}</p>
+              </div>
               <Button
                 onClick={() => setIsOpen(false)}
                 className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm"
@@ -265,7 +284,7 @@ export default function Card({ task, ...props }: task) {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-full items-center justify-center p-4">
-          <DialogPanel className="relative w-10/12 max-w-[400px] space-y-4 rounded-2xl bg-neutral-100 p-8">
+          <DialogPanel className="relative w-11/12 max-w-2xl space-y-4 rounded-2xl bg-neutral-100 p-8">
             <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
               {selectedFile?.fileName}
             </DialogTitle>

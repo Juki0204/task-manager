@@ -15,6 +15,10 @@ interface task {
   priority: string | "";
   remarks: string | "";
   method: string;
+  createdAt: string;
+  createdManager: string;
+  updatedAt: string;
+  updatedManager: string;
 }
 
 export default function TaskList() {
@@ -40,7 +44,11 @@ export default function TaskList() {
           status: task.status,
           priority: task.priority,
           remarks: task.remarks,
-          method: task.method
+          method: task.method,
+          createdAt: task.created_at,
+          createdManager: task.created_manager,
+          updatedAt: task.updated_at,
+          updatedManager: task.updated_manager,
         }
         taskData.push(currentTaskData);
       });
