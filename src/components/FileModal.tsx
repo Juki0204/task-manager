@@ -39,6 +39,8 @@ export default function FileModal({ file }: fileModalProps) {
           ) : (
             <div className="text-center">読み込み中...</div>
           )
+        ) : file.fileType === 'zip' ? (
+          <a className="text-blue-600 underline" href={targetFile} target="_blank">{file.fileName}</a>
         ) : (
           <img
             src={targetFile ? targetFile : '/file.svg'}

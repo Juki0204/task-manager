@@ -41,7 +41,7 @@ export default function AddTask() {
   const [method, setMethod] = useState<string>(''); //依頼手段
 
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]); //添付ファイル
-  const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif']; //添付ファイル識別用拡張子
+  const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
 
   //ファイル添付監視
@@ -237,10 +237,10 @@ export default function AddTask() {
                   </AddTaskSelect>
 
                   <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
-                    <option value="不明">不明</option>
                     {requesterList.map(requester => (
                       <option key={requester} value={requester}>{requester}</option>
                     ))}
+                    <option value="不明">不明</option>
                   </AddTaskSelect>
 
                   <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} onChange={(e) => setTaskTitle(e.target.value)}></AddTaskInput>
@@ -252,10 +252,10 @@ export default function AddTask() {
                   <AddTaskInput name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} onChange={(e) => setFinishDate(e.target.value)}></AddTaskInput>
 
                   <AddTaskSelect name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
-                    <option value=''>未決定</option>
                     {userNameList.map(name => (
                       <option key={name} value={name}>{name}</option>
                     ))}
+                    <option value=''>未決定</option>
                   </AddTaskSelect>
 
                   <AddTaskSelect name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} onChange={(e) => setStatus(e.target.value)}>
