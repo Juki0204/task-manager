@@ -29,7 +29,7 @@ export default function TaskList() {
       .select('*')
 
     if (tasks) {
-      console.log(tasks);
+      // console.log(tasks);
       const taskData: task[] = [];
       tasks.forEach(task => {
         const currentTaskData = {
@@ -53,7 +53,7 @@ export default function TaskList() {
         taskData.push(currentTaskData);
       });
       setTaskList(taskData);
-      console.log(taskData);
+      // console.log(taskData);
     }
   }
 

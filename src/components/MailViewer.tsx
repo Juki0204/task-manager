@@ -41,7 +41,7 @@ export default function MailViewer({ file }: MailParserProps) {
   if (!mail) return <div className="text-center mt-4">読み込み中...</div>;
 
   return (
-    <div className="space-y-4 max-h-150 overflow-y-auto">
+    <div className="space-y-4 max-h-150 pr-2 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
       <h3 className="font-bold text-lg">件名: {mail.subject}</h3>
       <p><b>送信者:</b> {mail.from}</p>
       <p><b>宛先:</b> {mail.to}</p>

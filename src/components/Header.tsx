@@ -3,6 +3,7 @@
 import { getCurrentUser } from "@/app/function/getCurrentUser";
 import { useEffect, useState } from "react";
 import LogoutBtn from "./LogoutBtn";
+import { usePathname } from "next/navigation";
 
 
 export default function Header() {
@@ -24,14 +25,25 @@ export default function Header() {
     setCurrentUser();
   }, []);
 
+  const falsePathname = ['/login', '/reset', '/signup']
+  const pathname = usePathname();
+
+  const isExculedPath = falsePathname.some((path) => pathname.includes(path));
+
   return (
-    <header className="w-full flex justify-end gap-8 p-4 items-center bg-neutral-700">
-      <div className="sm:flex gap-8 rounded-md">
-        <p className="text-white">ユーザー：{currentUserName} さん</p>
-        <p className="text-white">所属：{currentUserEmployee}</p>
-        <p className="text-white">Email：{currentUserEmail}</p>
-      </div>
-      <LogoutBtn></LogoutBtn>
-    </header>
+    <>
+      {!isExculedPath ?
+        <header className="w-full flex justify-end gap-8 p-4 items-center bg-neutral-700">
+          <div className="sm:flex gap-8 rounded-md">
+            <p className="text-white">ユーザー：{currentUserName} さん</p>
+            <p className="text-white">所属：{currentUserEmployee}</p>
+            <p className="text-white">Email：{currentUserEmail}</p>
+          </div>
+          <LogoutBtn></LogoutBtn>
+        </header>
+        :
+        <></>
+      }
+    </>
   )
 }

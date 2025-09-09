@@ -112,6 +112,7 @@ export default function Card({ task, ...props }: task) {
       }
 
       setCurrentTaskFile(taskFileArray);
+      console.log(taskFileArray);
     }
   }
 
@@ -190,7 +191,7 @@ export default function Card({ task, ...props }: task) {
             </div>
             <GrClose onClick={() => setIsOpen(false)} className="absolute top-8 right-8 cursor-pointer" />
 
-            <ul className="relative grid grid-cols-2 gap-x-4 gap-y-2">
+            <ul className="relative grid grid-cols-2 gap-x-4 gap-y-5">
               <li className="flex flex-col border-b border-neutral-300">
                 <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><FaRegBuilding /> クライアント</h3>
                 <p>{task.client}</p>
@@ -218,7 +219,7 @@ export default function Card({ task, ...props }: task) {
 
               <li className="flex flex-col border-b border-neutral-300">
                 <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><BsPersonCheck /> 作業担当者</h3>
-                <p>{task.manager}</p>
+                <p>{task.manager ? task.manager : "-"}</p>
               </li>
 
               <li className="flex flex-col border-b border-neutral-300">
@@ -241,16 +242,16 @@ export default function Card({ task, ...props }: task) {
                         setSelectedFile(file);
                         setIsFileOpen(true);
                       }}
-                      className="flex gap-1 items-center text-sm p-1 w-full rounded-md bg-neutral-300 truncate cursor-pointer"
+                      className="flex gap-1 items-center text-sm p-1 w-full rounded-md bg-neutral-300 cursor-pointer"
                     >
                       {
                         file.fileType === 'eml' ?
                           <>
-                            <MdMailOutline className="w-5 h-5" /> {file.fileName}
+                            <MdMailOutline className="w-5 h-5" /> <span className="flex-1 truncate">{file.fileName}</span>
                           </>
                           : // 'jpg' || 'jpeg' || 'png' || 'gif'
                           <>
-                            <FaRegImage /> {file.fileName}
+                            <FaRegImage className="w-5 h-5" /> {file.fileName}
                           </>
                       }
                     </div>
