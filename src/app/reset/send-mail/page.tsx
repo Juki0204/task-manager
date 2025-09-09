@@ -37,7 +37,7 @@ const ResetPassMail = () => {
     const { email } = data;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'http://localhost:3000/reset/reset-pass/'
+      redirectTo: 'https://cdrive-task-manager.vercel.app/reset/reset-pass/'
     });
     if (error) {
       alert('エラーが発生しました');

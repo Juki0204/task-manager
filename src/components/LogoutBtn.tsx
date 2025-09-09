@@ -21,6 +21,6 @@ export default function LogoutBtn() {
   };
 
   return (
-    <OutlineBtn className="absolute top-4 left-4 outline-white text-white" onClick={handleLogout}>ログアウト</OutlineBtn>
+    <OutlineBtn className="outline-white text-white !w-30 h-fit text-sm" onClick={handleLogout}>ログアウト</OutlineBtn>
   );
 };

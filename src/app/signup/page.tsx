@@ -44,7 +44,7 @@ const SignUp = () => {
       email: email,
       password: password,
       options: {
-        emailRedirectTo: 'http://localhost:3000/signup/confirm-mail/',
+        emailRedirectTo: 'https://cdrive-task-manager.vercel.app/signup/confirm-mail/',
       },
     });
 

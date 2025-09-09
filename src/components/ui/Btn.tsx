@@ -24,7 +24,7 @@ export function CorrectBtn({ className, type = "button", disabled = false, child
 export function OutlineBtn({ className, type = "button", disabled = false, children, ...props }: btnProps) {
   return (
     <Button
-      className={`outline-1 -outline-offset-1 p-2 rounded w-full max-w-60 ${className}`}
+      className={`outline-1 -outline-offset-1 p-2 rounded w-full max-w-60 data-hover:opacity-80 ${className}`}
       type={type}
       disabled={disabled}
       {...props}

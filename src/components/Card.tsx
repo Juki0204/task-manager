@@ -1,6 +1,6 @@
 import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle, FaRegImage } from "react-icons/fa";
 import { RiCalendarScheduleLine } from "react-icons/ri";
-import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2 } from "react-icons/md";
+import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { IoDocumentAttachOutline, IoPersonAddOutline } from "react-icons/io5";
 import { BsPersonCheck } from "react-icons/bs";
@@ -89,7 +89,7 @@ export default function Card({ task, ...props }: task) {
 
     const pad = (n: number) => String(n).padStart(2, "0");
 
-    return `${jst.getFullYear()}年${pad(jst.getMonth() + 1)}月${pad(jst.getDate())}日 ` + `${pad(jst.getHours())}:${pad(jst.getMinutes())}:${pad(jst.getSeconds())}`;
+    return `${jst.getFullYear()}/${pad(jst.getMonth() + 1)}/${pad(jst.getDate())} ` + `${pad(jst.getHours())}:${pad(jst.getMinutes())}:${pad(jst.getSeconds())}`;
   }
 
   const getTaskFiles = async () => {
@@ -123,9 +123,9 @@ export default function Card({ task, ...props }: task) {
   return (
     <>
       {/* カード（概要） */}
-      <div onClick={() => { setIsOpen(true); getTaskFiles(); }} id={task.id} className="min-w-[400px] rounded-xl border-2 border-neutral-600 bg-neutral-800 p-4 text-white tracking-wide" {...props}>
+      <div onClick={() => { setIsOpen(true); getTaskFiles(); }} id={task.id} className="min-w-90 rounded-xl border-2 border-neutral-600 bg-neutral-800 p-4 text-white tracking-wide cursor-pointer" {...props}>
         <div className="flex mb-1 justify-between">
-          <h3 className="font-bold text-lg truncate flex items-center gap-1">
+          <h3 className="font-bold truncate flex items-center gap-1">
             {
               task.method === 'mail' ?
                 <MdMailOutline />
@@ -146,10 +146,10 @@ export default function Card({ task, ...props }: task) {
             <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
           </div>
         </div>
-        <div className="line-clamp-2 w-full h-12 mb-3">
+        <div className="line-clamp-2 w-full text-sm h-10 mb-3">
           {task.description}
         </div>
-        <div className="grid gap-2 grid-cols-6">
+        <div className="grid gap-2 text-sm grid-cols-6">
           <div className="col-span-4 flex gap-1 items-center border-b border-neutral-600"><FaRegBuilding />{task.client} 《{task.requester}》</div>
           <div className="col-span-2 flex gap-1 items-center border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
           <div className="col-span-3 flex gap-1 items-center border-b border-neutral-600"><RiCalendarScheduleLine />{task.requireDate}</div>
@@ -176,14 +176,17 @@ export default function Card({ task, ...props }: task) {
               </span>
               {task.title}
             </DialogTitle>
-            <div className="w-fit flex gap-1 items-center pl-1">
-              {
-                task.priority ?
-                  <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
-                  :
-                  <></>
-              }
-              <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
+            <div className="w-full flex justify-between items-center">
+              <div className="w-fit flex gap-1 items-center">
+                {
+                  task.priority ?
+                    <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
+                    :
+                    <></>
+                }
+                <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
+              </div>
+              <div className="flex gap-2 items-center text-xs w-fit rounded-md bg-neutral-900 text-white py-1 px-2 cursor-pointer hover:opacity-80"><MdDriveFileRenameOutline /> 編集</div>
             </div>
             <GrClose onClick={() => setIsOpen(false)} className="absolute top-8 right-8 cursor-pointer" />
 
@@ -225,7 +228,7 @@ export default function Card({ task, ...props }: task) {
 
               <li className="flex flex-col col-span-2 border-b border-neutral-300">
                 <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><LuNotebookPen /> 備考欄</h3>
-                <p>{task.remarks ? task.remarks : "-"}</p>
+                <p className="whitespace-pre-wrap">{task.remarks ? task.remarks : "-"}</p>
               </li>
 
               <li className="flex flex-col col-span-2 border-b border-neutral-300 pb-1">
@@ -257,13 +260,13 @@ export default function Card({ task, ...props }: task) {
             </ul>
 
             <div className="flex gap-4 justify-between col-span-2">
-              <div className="text-sm">
+              <div className="text-xs">
                 <p>作成日時: {task.createdManager} {formatDateJST(task.createdAt)}</p>
                 <p>最終更新: {task.updatedManager} {formatDateJST(task.updatedAt)}</p>
               </div>
               <Button
                 onClick={() => setIsOpen(false)}
-                className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm"
+                className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
               >
                 閉じる
               </Button>
