@@ -40,6 +40,9 @@ export default function AddTask() {
   const [remarks, setRemarks] = useState<string>(''); //備考欄
   const [method, setMethod] = useState<string>(''); //依頼手段
 
+  const [currentTaskInit, setCurrentTaskInit] = useState<string>('');
+  const [currentTaskNum, setCurrentTaskNum] = useState<string>('');
+
   const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
@@ -84,7 +87,7 @@ export default function AddTask() {
     if (clients) {
       const clientNameList: string[] = [];
       // console.log(clients);
-      clients.forEach(client => {
+      clients.sort((a, b) => a.id - b.id).forEach(client => {
         clientNameList.push(client.name);
       });
       setClientList(clientNameList);
@@ -124,6 +127,23 @@ export default function AddTask() {
     }
   }
 
+  //タスクのシリアルナンバー生成用管理番号取得
+  const getClientTaskNum = async (client: string) => {
+    const { data: cl } = await supabase
+      .from('clients')
+      .select('*')
+      .eq('name', client);
+
+    if (cl && cl.length > 0) {
+      setCurrentTaskNum(cl[0].task_num);
+      setCurrentTaskInit(cl[0].initial);
+    }
+  }
+
+  const generateSerial = (num: string): string => {
+    const serial = Number(num).toString(16).padStart(4, '0').toUpperCase();
+    return `${currentTaskInit}-${serial}`;
+  };
 
   const addTask = async () => {
     const { data: taskData, error: addTaskError } = await supabase
@@ -142,6 +162,7 @@ export default function AddTask() {
         method: method,
         created_manager: currentUserName,
         updated_manager: currentUserName,
+        serial: generateSerial(currentTaskNum),
       })
       .select()
       .single();
@@ -149,6 +170,16 @@ export default function AddTask() {
     if (addTaskError || !taskData) {
       alert('タスクの追加に失敗しました');
     } else {
+      const { error: addTaskNumError } = await supabase
+        .from('clients')
+        .update({
+          task_num: currentTaskNum + 1,
+        })
+        .eq('name', client);
+      if (addTaskNumError) {
+        alert('タスクナンバーの更新に失敗しました')
+      }
+
       setIsSend(true);
     }
 
@@ -219,6 +250,7 @@ export default function AddTask() {
 
   useEffect(() => {
     getRequesters(client);
+    getClientTaskNum(client);
   }, [client]);
 
   // useEffect(() => {

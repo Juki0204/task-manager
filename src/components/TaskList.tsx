@@ -19,6 +19,7 @@ interface task {
   createdManager: string;
   updatedAt: string;
   updatedManager: string;
+  serial: string;
 }
 
 export default function TaskList() {
@@ -49,6 +50,7 @@ export default function TaskList() {
           createdManager: task.created_manager,
           updatedAt: task.updated_at,
           updatedManager: task.updated_manager,
+          serial: task.serial,
         }
         taskData.push(currentTaskData);
       });
@@ -62,7 +64,9 @@ export default function TaskList() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 py-4 gap-1 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+    <div className="py-4
+      group-[.cardListStyle]:grid group-[.cardListStyle]:grid-cols-1 group-[.cardListStyle]:gap-1 group-[.cardListStyle]:sm:gap-2 group-[.cardListStyle]:md:grid-cols-2 group-[.cardListStyle]:lg:grid-cols-3 group-[.cardListStyle]:2xl:grid-cols-4
+      group-[.rowListStyle]:flex group-[.rowListStyle]:gap-0.5 group-[.rowListStyle]:flex-col group-[.rowListStyle]:overflow-x-auto">
       {taskList.map(task => (
         <Card key={task.id} task={task}></Card>
       ))}

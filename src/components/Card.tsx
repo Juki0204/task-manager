@@ -31,6 +31,7 @@ interface task {
     createdManager: string;
     updatedAt: string;
     updatedManager: string;
+    serial: string;
   }
 }
 
@@ -124,37 +125,56 @@ export default function Card({ task, ...props }: task) {
   return (
     <>
       {/* カード（概要） */}
-      <div onClick={() => { setIsOpen(true); getTaskFiles(); }} id={task.id} className="min-w-90 rounded-xl border-2 border-neutral-600 bg-neutral-800 p-4 text-white tracking-wide cursor-pointer" {...props}>
-        <div className="flex mb-1 justify-between">
-          <h3 className="font-bold truncate flex items-center gap-1">
-            {
-              task.method === 'mail' ?
-                <MdMailOutline />
-                : task.method === 'tel' ?
-                  <FiPhone />
-                  :
-                  <FaRegQuestionCircle />
-            }
-            {task.title}
-          </h3>
-          <div className="w-fit flex gap-1 items-center pl-1">
-            {
-              task.priority ?
-                <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
+      <div
+        onClick={() => { setIsOpen(true); getTaskFiles(); }}
+        id={task.id}
+        className="min-w-90 rounded-xl border-2 border-neutral-600 bg-neutral-800 p-4 text-white tracking-wide cursor-pointer relative
+          group-[.rowListStyle]:w-[1568px] group-[.rowListStyle]:py-2 group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]"
+        {...props}
+      >
+        <div className="text-xs">{task.serial}</div>
+        <h3 className="font-bold truncate flex items-center gap-1
+          group-[.rowListStyle]:[grid-area:ttl]
+          group-[.rowListStyle]:text-sm">
+          {
+            task.method === 'mail' ?
+              <MdMailOutline />
+              : task.method === 'tel' ?
+                <FiPhone />
                 :
-                <></>
-            }
-            <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
-          </div>
+                <FaRegQuestionCircle />
+          }
+          {task.title}
+        </h3>
+
+        <div className="w-fit flex gap-1 items-center pl-1
+          group-[.cardListStyle]:absolute group-[.cardListStyle]:top-4 group-[.cardListStyle]:right-4
+          group-[.rowListStyle]:[grid-area:status]">
+          {
+            task.priority ?
+              <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
+              :
+              <span className="w-7 h-6 opacity-0"></span>
+          }
+          <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
-        <div className="line-clamp-2 w-full text-sm h-10 mb-3">
+
+        <div className="line-clamp-2 w-full text-sm
+        group-[.cardListStyle]:h-10 group-[.cardListStyle]:mb-3
+        group-[.rowListStyle]:[grid-area:dis]">
           {task.description}
         </div>
-        <div className="grid gap-2 text-sm grid-cols-6">
-          <div className="col-span-4 flex gap-1 items-center border-b border-neutral-600"><FaRegBuilding />{task.client} 《{task.requester}》</div>
-          <div className="col-span-2 flex gap-1 items-center border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
-          <div className="col-span-3 flex gap-1 items-center border-b border-neutral-600"><RiCalendarScheduleLine />{task.requireDate}</div>
-          <div className="col-span-3 flex gap-1 items-center border-b border-neutral-600"><FaRegCheckCircle />{task.finishDate ? task.finishDate : "-"}</div>
+
+        <div className="grid gap-2 text-sm grid-cols-6
+        group-[.cardListStyle]:mb-2
+        group-[.rowListStyle]:[grid-area:cli-mana]">
+          <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《{task.requester}》</div>
+          <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
+        </div>
+        <div className="grid gap-2 text-sm grid-cols-6
+        group-[.rowListStyle]:[grid-area:date]">
+          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.requireDate}</div>
+          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finishDate ? task.finishDate : "-"}</div>
         </div>
       </div>
 
