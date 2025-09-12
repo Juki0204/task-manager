@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 
 interface MailParserProps {
   file: {
-    filePath: string;
-    fileName: string;
-    fileType: string;
-    storedName: string;
-  };
+    original_name: string,
+    stored_name: string,
+    file_type: string,
+    file_path: string,
+    size: string,
+    ext: string,
+  }
 }
 
 type ParsedMail = {
@@ -25,7 +27,7 @@ export default function MailViewer({ file }: MailParserProps) {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch(`/api/parse-eml?path=${file.filePath}`);
+      const res = await fetch(`/api/parse-eml?path=${file.file_path}`);
       const json = await res.json();
       setMail(json);
     })();

@@ -212,6 +212,7 @@ export default function AddTask() {
           file_type: file.type,
           file_path: filePath,
           size: file.size,
+          ext: ext,
         });
       }
     }
@@ -355,7 +356,7 @@ export default function AddTask() {
                   <div className="flex gap-4 justify-end col-span-2 pr-3">
                     <Button
                       onClick={() => { setIsOpen(false); setTimeout(() => { setIsSend(false); }, 500); }}
-                      className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm"
+                      className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
                     >
                       キャンセル
                     </Button>
@@ -364,7 +365,7 @@ export default function AddTask() {
                         addTask();
                       }
                       }
-                      className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold"
+                      className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer"
                     >
                       新規追加
                     </Button>
