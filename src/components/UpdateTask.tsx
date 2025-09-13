@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { Dialog, DialogPanel, DialogTitle, DialogBackdrop, Button } from "@headlessui/react";
-import { GrAddCircle, GrClose } from "react-icons/gr";
+import { DialogPanel, DialogTitle, Button } from "@headlessui/react";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
 import { getCurrentUser } from "@/app/function/getCurrentUser";
@@ -54,7 +53,6 @@ interface taskFileMeta {
 
 
 export default function UpdateTask({ task, onClick }: task) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isSend, setIsSend] = useState<boolean>(false);
   const [currentUserName, setCurrentUserName] = useState<string>('');
 
@@ -189,6 +187,7 @@ export default function UpdateTask({ task, onClick }: task) {
         remarks: remarks,
         method: method,
         updated_manager: currentUserName,
+        updated_at: new Date().toISOString(),
       })
       .eq('serial', serial)
       .select()
