@@ -12,7 +12,7 @@ export default function Home() {
 
 
   return (
-    <div className="p-1 py-4 sm:p-4 max-w-[1600px] relative">
+    <div className="cardListStyle group p-1 py-4 sm:p-4 max-w-[1600px] relative">
       <div className="flex justify-between items-center">
         <AddTask></AddTask>
       </div>

@@ -1,6 +1,7 @@
 import { supabase } from "@/utils/supabase/supabase"
 import Card from "./Card"
 import { useEffect, useState } from "react"
+import { getCurrentUser } from "@/app/function/getCurrentUser";
 
 interface task {
   id: string;
@@ -22,8 +23,24 @@ interface task {
   serial: string;
 }
 
+type user = {
+  id: string;
+  name: string;
+  email: string;
+  employee: string;
+} | undefined
+
 export default function PersonalTaskList() {
+  const [currentUser, setCurrentUser] = useState<user>();
   const [taskList, setTaskList] = useState<task[]>([]);
+
+  const getUser = async () => {
+    const user = await getCurrentUser();
+    if (user) {
+      setCurrentUser(user);
+    }
+  }
+
   const getTasks = async () => {
     const { data: tasks } = await supabase
       .from('tasks')
@@ -60,14 +77,62 @@ export default function PersonalTaskList() {
   }
 
   useEffect(() => {
+    getUser();
     getTasks();
   }, []);
 
   return (
-    <div className="py-4">
-      {taskList.map(task => (
-        <Card key={task.id} task={task}></Card>
-      ))}
+    <div className="py-4 grid grid-cols-4 gap-4">
+      <div className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1">
+        <h2 className="font-bold text-white pl-1">未担当タスク</h2>
+
+        {taskList.filter((task) => !task.manager).map(task => (
+          <Card key={task.id} task={task}></Card>
+        ))}
+      </div>
+
+      <div className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1">
+        <h2 className="font-bold text-white pl-1">自分のタスク（未着手・作業中）</h2>
+
+        {currentUser ?
+          <>
+            {taskList.filter((task) => task.manager === currentUser.name && task.status !== '確認中' && task.status !== '完了').map(task => (
+              <Card key={task.id} task={task}></Card>
+            ))}
+          </>
+          :
+          <p>タスクがありません</p>
+        }
+      </div>
+
+      <div className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1">
+        <h2 className="font-bold text-white pl-1">自分のタスク（確認中）</h2>
+
+        {currentUser ?
+          <>
+            {taskList.filter((task) => task.manager === currentUser.name && task.status === '確認中').map(task => (
+              <Card key={task.id} task={task}></Card>
+            ))}
+          </>
+          :
+          <p>タスクがありません</p>
+        }
+      </div>
+
+      <div className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1">
+        <h2 className="font-bold text-white pl-1">本日の完了タスク</h2>
+
+        {currentUser ?
+          <>
+            {taskList.filter((task) => task.manager === currentUser.name && task.status === '完了' && new Date(task.finishDate).getDate() <= new Date().getDate()).map(task => (
+              <Card key={task.id} task={task}></Card>
+            ))}
+          </>
+          :
+          <p>タスクがありません</p>
+        }
+      </div>
+
     </div>
   )
 }
