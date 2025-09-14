@@ -45,6 +45,7 @@ export default function PersonalTaskList() {
     const { data: tasks } = await supabase
       .from('tasks')
       .select('*')
+      .or(`manager.eq.${currentUser?.name},manager.eq.`) //自分or空
 
     if (tasks) {
       // console.log(tasks);
@@ -78,11 +79,50 @@ export default function PersonalTaskList() {
 
   useEffect(() => {
     getUser();
+  }, []);
+
+  useEffect(() => {
     getTasks();
+  }, [currentUser]);
+
+  useEffect(() => {
+    getTasks();
+    const channel = supabase
+      .channel('task-changes')
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tasks" },
+        (payload) => {
+          console.log('realtime:', payload);
+
+          setTaskList((prev) => {
+            if (payload.eventType === "INSERT") {
+              return [...prev, payload.new as task];
+            }
+
+            if (payload.eventType === "UPDATE") {
+              return prev.map((t) =>
+                t.id === (payload.new as task).id ? (payload.new as task) : t
+              );
+            }
+
+            if (payload.eventType === "DELETE") {
+              return prev.filter((t) => t.id !== (payload.old as task).id);
+            }
+
+            return prev;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    }
   }, []);
 
   return (
-    <div className="py-4 grid grid-cols-4 gap-4">
+    <div className="py-4 grid grid-cols-4 gap-4 w-[1568px] overflow-x-auto">
       <div className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1">
         <h2 className="font-bold text-white pl-1">未担当タスク</h2>
 
@@ -101,7 +141,7 @@ export default function PersonalTaskList() {
             ))}
           </>
           :
-          <p>タスクがありません</p>
+          <p>読み込み中...</p>
         }
       </div>
 
@@ -115,7 +155,7 @@ export default function PersonalTaskList() {
             ))}
           </>
           :
-          <p>タスクがありません</p>
+          <p>読み込み中...</p>
         }
       </div>
 
@@ -124,12 +164,12 @@ export default function PersonalTaskList() {
 
         {currentUser ?
           <>
-            {taskList.filter((task) => task.manager === currentUser.name && task.status === '完了' && new Date(task.finishDate).getDate() <= new Date().getDate()).map(task => (
+            {taskList.filter((task) => task.manager === currentUser.name && task.status === '完了' && new Date(task.finishDate).getDate() <= new Date().getDate() + 7).map(task => (
               <Card key={task.id} task={task}></Card>
             ))}
           </>
           :
-          <p>タスクがありません</p>
+          <p>読み込み中...</p>
         }
       </div>
 

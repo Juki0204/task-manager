@@ -244,6 +244,10 @@ export default function UpdateTask({ task, onClick }: task) {
       }
     }
 
+    //ファイルも既存もない場合は何もしない
+    if (metadataArray.length === 0) return;
+
+
     const { data: currentData, error: selectError } = await supabase
       .from('task_files')
       .select('*')
@@ -252,32 +256,27 @@ export default function UpdateTask({ task, onClick }: task) {
 
     if (currentData) {
       const { error: updateError } = await supabase
-        .from('task_files').update([
-          {
-            files: metadataArray,
-          }
-        ])
+        .from('task_files')
+        .update({ files: metadataArray })
         .eq('task_id', taskId);
 
       if (updateError) {
         alert('メタデータの更新に失敗しました');
       }
     } else {
-      const { error: insertError } = await supabase
-        .from('task_files').insert([
-          {
-            task_id: taskId,
-            files: metadataArray,
-          }
-        ]);
-      if (insertError) {
-        alert('メタデータの登録に失敗しました');
+      if (files) {
+        const { error: insertError } = await supabase
+          .from('task_files')
+          .insert({ task_id: taskId, files: metadataArray });
+        if (insertError) {
+          alert('メタデータの登録に失敗しました');
+        }
       }
     }
 
-    if (selectError) {
-      alert('メタデータの取得に失敗しました');
-    }
+    // if (selectError) {
+    //   alert('メタデータの取得に失敗しました');
+    // }
   }
 
   const handleCancelClick = () => {
