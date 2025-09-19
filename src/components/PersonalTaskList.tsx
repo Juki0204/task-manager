@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/supabase/supabase"
 import Card from "./Card"
 import { useEffect, useState } from "react"
-import { getCurrentUser } from "@/app/function/getCurrentUser";
+import { useAuth } from "@/app/AuthProvider";
 
 interface task {
   id: string;
@@ -31,21 +31,15 @@ type user = {
 } | undefined
 
 export default function PersonalTaskList() {
-  const [currentUser, setCurrentUser] = useState<user>();
-  const [taskList, setTaskList] = useState<task[]>([]);
+  const { user, loading } = useAuth();
 
-  const getUser = async () => {
-    const user = await getCurrentUser();
-    if (user) {
-      setCurrentUser(user);
-    }
-  }
+  const [taskList, setTaskList] = useState<task[]>([]);
 
   const getTasks = async () => {
     const { data: tasks } = await supabase
       .from('tasks')
       .select('*')
-      .or(`manager.eq.${currentUser?.name},manager.eq.`) //自分or空
+      .or(`manager.eq.${user?.name},manager.eq.`) //自分or空
 
     if (tasks) {
       // console.log(tasks);
@@ -77,13 +71,9 @@ export default function PersonalTaskList() {
     }
   }
 
-  useEffect(() => {
-    getUser();
-  }, []);
-
-  useEffect(() => {
-    getTasks();
-  }, [currentUser]);
+  // useEffect(() => {
+  //   getTasks();
+  // }, [user]);
 
   useEffect(() => {
     getTasks();
@@ -119,7 +109,7 @@ export default function PersonalTaskList() {
     return () => {
       supabase.removeChannel(channel);
     }
-  }, []);
+  }, [user]);
 
   return (
     <div className="py-4 grid grid-cols-4 gap-4 w-[1568px] overflow-x-auto">
@@ -134,9 +124,9 @@ export default function PersonalTaskList() {
       <div className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1">
         <h2 className="font-bold text-white pl-1">自分のタスク（未着手・作業中）</h2>
 
-        {currentUser ?
+        {user ?
           <>
-            {taskList.filter((task) => task.manager === currentUser.name && task.status !== '確認中' && task.status !== '完了').map(task => (
+            {taskList.filter((task) => task.manager === user.name && task.status !== '確認中' && task.status !== '完了').map(task => (
               <Card key={task.id} task={task}></Card>
             ))}
           </>
@@ -148,9 +138,9 @@ export default function PersonalTaskList() {
       <div className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1">
         <h2 className="font-bold text-white pl-1">自分のタスク（確認中）</h2>
 
-        {currentUser ?
+        {user ?
           <>
-            {taskList.filter((task) => task.manager === currentUser.name && task.status === '確認中').map(task => (
+            {taskList.filter((task) => task.manager === user.name && task.status === '確認中').map(task => (
               <Card key={task.id} task={task}></Card>
             ))}
           </>
@@ -162,9 +152,9 @@ export default function PersonalTaskList() {
       <div className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1">
         <h2 className="font-bold text-white pl-1">本日の完了タスク</h2>
 
-        {currentUser ?
+        {user ?
           <>
-            {taskList.filter((task) => task.manager === currentUser.name && task.status === '完了' && new Date(task.finishDate).getDate() <= new Date().getDate() + 7).map(task => (
+            {taskList.filter((task) => task.manager === user.name && task.status === '完了' && new Date(task.finishDate).getDate() <= new Date().getDate() + 7).map(task => (
               <Card key={task.id} task={task}></Card>
             ))}
           </>

@@ -1,20 +1,21 @@
 "use client";
 
-import { getCurrentUser } from "@/app/function/getCurrentUser";
 import { useEffect, useState } from "react";
 import LogoutBtn from "./LogoutBtn";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/app/AuthProvider";
 
 
 export default function Header() {
+  const { user, loading } = useAuth();
+  console.log(user);
+
   const [currentUserName, setCurrentUserName] = useState<string>('');
   const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
   const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
 
   const setCurrentUser = async () => {
-    const user = await getCurrentUser();
     if (user) {
-      // setCurrentUserId(user.id);
       setCurrentUserName(user.name);
       setCurrentUserEmail(user.email);
       setCurrentUserEmployee(user.employee);
@@ -23,7 +24,7 @@ export default function Header() {
 
   useEffect(() => {
     setCurrentUser();
-  }, []);
+  }, [user]);
 
   const falsePathname = ['/login', '/reset', '/signup']
   const pathname = usePathname();

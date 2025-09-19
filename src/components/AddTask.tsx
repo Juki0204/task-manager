@@ -5,7 +5,6 @@ import { Dialog, DialogPanel, DialogTitle, DialogBackdrop, Button } from "@headl
 import { GrAddCircle, GrClose } from "react-icons/gr";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
-import { getCurrentUser } from "@/app/function/getCurrentUser";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
 import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
@@ -17,9 +16,12 @@ import { TbClockExclamation } from "react-icons/tb";
 import { LuNotebookPen } from "react-icons/lu";
 
 import { v4 as uuidv4 } from 'uuid';
+import { useAuth } from "@/app/AuthProvider";
 
 
 export default function AddTask() {
+  const { user, loading } = useAuth();
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isSend, setIsSend] = useState<boolean>(false);
   const [currentUserName, setCurrentUserName] = useState<string>('');
@@ -73,10 +75,9 @@ export default function AddTask() {
 
 
   const getData = async () => {
-    const currentUser = await getCurrentUser();
-    if (currentUser) {
-      setManager(currentUser.name);
-      setCurrentUserName(currentUser.name);
+    if (user) {
+      setManager(user.name);
+      setCurrentUserName(user.name);
     }
 
     //クライアント一覧取得
@@ -247,7 +248,7 @@ export default function AddTask() {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     getRequesters(client);

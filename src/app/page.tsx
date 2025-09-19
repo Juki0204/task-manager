@@ -4,34 +4,15 @@
 import { useEffect, useState } from "react";
 import AddTask from "@/components/AddTask";
 
-import { getCurrentUser } from "./function/getCurrentUser";
-import LogoutBtn from "@/components/LogoutBtn";
-
 import TaskList from "@/components/TaskList";
 
 type taskListStyle = "rowListStyle" | "cardListStyle";
 
 export default function Home() {
-  // const [currentUserId, setCurrentUserId] = useState<string>('');
-  // const [currentUserName, setCurrentUserName] = useState<string>('');
-  // const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
-  // const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
 
   const [taskListStyle, setTaskListStyle] = useState<taskListStyle>('cardListStyle');
 
-  // const setCurrentUser = async () => {
-  //   const user = await getCurrentUser();
-  //   if (user) {
-  //     // setCurrentUserId(user.id);
-  //     setCurrentUserName(user.name);
-  //     setCurrentUserEmail(user.email);
-  //     setCurrentUserEmployee(user.employee);
-  //   }
-  // }
-
   useEffect(() => {
-    // setCurrentUser();
-
     const saved = localStorage.getItem('taskListStyle');
     if (saved === 'rowListStyle' || saved === 'cardListStyle') {
       setTaskListStyle(saved);
