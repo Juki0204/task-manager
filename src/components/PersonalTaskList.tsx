@@ -2,6 +2,7 @@ import { supabase } from "@/utils/supabase/supabase"
 import Card from "./Card"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/app/AuthProvider";
+import { toast } from "sonner";
 
 interface task {
   id: string;
@@ -85,6 +86,16 @@ export default function PersonalTaskList() {
         (payload) => {
           console.log('realtime:', payload);
 
+          if (payload.eventType === "INSERT") {
+            toast.success('新しいタスクが追加されました。');
+          }
+          if (payload.eventType === "UPDATE") {
+            toast.info('タスクが更新されました。');
+          }
+          if (payload.eventType === "DELETE") {
+            toast.error('タスクが削除されました。');
+          }
+
           setTaskList((prev) => {
             if (payload.eventType === "INSERT") {
               return [...prev, payload.new as task];
@@ -112,8 +123,8 @@ export default function PersonalTaskList() {
   }, [user]);
 
   return (
-    <div className="py-4 grid grid-cols-4 gap-4 w-[1568px] overflow-x-auto">
-      <div className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1">
+    <div className="py-4 grid grid-cols-4 gap-4 w-[1568px]">
+      <div className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]">
         <h2 className="font-bold text-white pl-1">未担当タスク</h2>
 
         {taskList.filter((task) => !task.manager).map(task => (
@@ -121,7 +132,7 @@ export default function PersonalTaskList() {
         ))}
       </div>
 
-      <div className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1">
+      <div className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]">
         <h2 className="font-bold text-white pl-1">自分のタスク（未着手・作業中）</h2>
 
         {user ?
@@ -135,7 +146,7 @@ export default function PersonalTaskList() {
         }
       </div>
 
-      <div className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1">
+      <div className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]">
         <h2 className="font-bold text-white pl-1">自分のタスク（確認中）</h2>
 
         {user ?
@@ -149,7 +160,7 @@ export default function PersonalTaskList() {
         }
       </div>
 
-      <div className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1">
+      <div className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]">
         <h2 className="font-bold text-white pl-1">本日の完了タスク</h2>
 
         {user ?
