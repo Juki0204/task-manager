@@ -16,28 +16,11 @@ import { LuNotebookPen } from "react-icons/lu";
 
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/app/AuthProvider";
+import { Task } from "@/utils/types/task";
 
 
 interface task {
-  task: {
-    id: string;
-    client: string;
-    requester: string;
-    title: string;
-    description: string;
-    requireDate: string;
-    finishDate?: string;
-    manager?: string;
-    status: string;
-    priority?: string;
-    remarks?: string;
-    method: string;
-    createdAt: string;
-    createdManager: string;
-    updatedAt: string;
-    updatedManager: string;
-    serial: string;
-  }
+  task: Task;
   onClick?: () => void;
 }
 

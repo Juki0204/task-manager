@@ -2,28 +2,10 @@ import { supabase } from "@/utils/supabase/supabase"
 import Card from "./Card"
 import { useEffect, useState } from "react"
 
-interface task {
-  id: string;
-  client: string;
-  requester: string;
-  title: string;
-  description: string;
-  requireDate: string;
-  finishDate: string | "";
-  manager: string | "";
-  status: string;
-  priority: string | "";
-  remarks: string | "";
-  method: string;
-  createdAt: string;
-  createdManager: string;
-  updatedAt: string;
-  updatedManager: string;
-  serial: string;
-}
+import { Task } from "@/utils/types/task"
 
 export default function TaskList() {
-  const [taskList, setTaskList] = useState<task[]>([]);
+  const [taskList, setTaskList] = useState<Task[]>([]);
   const getTasks = async () => {
     const { data: tasks } = await supabase
       .from('tasks')
@@ -31,7 +13,7 @@ export default function TaskList() {
 
     if (tasks) {
       // console.log(tasks);
-      const taskData: task[] = [];
+      const taskData: Task[] = [];
       tasks.forEach(task => {
         const currentTaskData = {
           id: task.id,

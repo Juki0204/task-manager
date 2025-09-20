@@ -4,37 +4,12 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
 
-interface task {
-  id: string;
-  client: string;
-  requester: string;
-  title: string;
-  description: string;
-  requireDate: string;
-  finishDate: string | "";
-  manager: string | "";
-  status: string;
-  priority: string | "";
-  remarks: string | "";
-  method: string;
-  createdAt: string;
-  createdManager: string;
-  updatedAt: string;
-  updatedManager: string;
-  serial: string;
-}
-
-type user = {
-  id: string;
-  name: string;
-  email: string;
-  employee: string;
-} | undefined
+import { Task } from "@/utils/types/task";
 
 export default function PersonalTaskList() {
   const { user, loading } = useAuth();
 
-  const [taskList, setTaskList] = useState<task[]>([]);
+  const [taskList, setTaskList] = useState<Task[]>([]);
 
   const getTasks = async () => {
     const { data: tasks } = await supabase
@@ -44,7 +19,7 @@ export default function PersonalTaskList() {
 
     if (tasks) {
       // console.log(tasks);
-      const taskData: task[] = [];
+      const taskData: Task[] = [];
       tasks.forEach(task => {
         const currentTaskData = {
           id: task.id,
@@ -98,17 +73,17 @@ export default function PersonalTaskList() {
 
           setTaskList((prev) => {
             if (payload.eventType === "INSERT") {
-              return [...prev, payload.new as task];
+              return [...prev, payload.new as Task];
             }
 
             if (payload.eventType === "UPDATE") {
               return prev.map((t) =>
-                t.id === (payload.new as task).id ? (payload.new as task) : t
+                t.id === (payload.new as Task).id ? (payload.new as Task) : t
               );
             }
 
             if (payload.eventType === "DELETE") {
-              return prev.filter((t) => t.id !== (payload.old as task).id);
+              return prev.filter((t) => t.id !== (payload.old as Task).id);
             }
 
             return prev;
@@ -165,7 +140,7 @@ export default function PersonalTaskList() {
 
         {user ?
           <>
-            {taskList.filter((task) => task.manager === user.name && task.status === '完了' && new Date(task.finishDate).getDate() <= new Date().getDate() + 7).map(task => (
+            {taskList.filter((task) => task.manager === user.name && task.status === '完了' && new Date(task.finishDate ? task.finishDate : "").getDate() <= new Date().getDate() + 7).map(task => (
               <Card key={task.id} task={task}></Card>
             ))}
           </>
