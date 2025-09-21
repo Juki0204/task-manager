@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 import { Task } from "@/utils/types/task"
 
-export default function TaskList() {
+export default function TaskList({ onClick }: { onClick: (t: Task) => void }) {
   const [taskList, setTaskList] = useState<Task[]>([]);
   const getTasks = async () => {
     const { data: tasks } = await supabase
@@ -50,7 +50,7 @@ export default function TaskList() {
       group-[.cardListStyle]:grid group-[.cardListStyle]:grid-cols-1 group-[.cardListStyle]:gap-1 group-[.cardListStyle]:sm:gap-2 group-[.cardListStyle]:md:grid-cols-2 group-[.cardListStyle]:lg:grid-cols-3 group-[.cardListStyle]:2xl:grid-cols-4
       group-[.rowListStyle]:flex group-[.rowListStyle]:gap-0.5 group-[.rowListStyle]:flex-col group-[.rowListStyle]:overflow-x-auto">
       {taskList.map(task => (
-        <Card key={task.id} task={task}></Card>
+        <Card key={task.id} task={task} onClick={onClick}></Card>
       ))}
     </div>
   )

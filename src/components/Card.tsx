@@ -16,6 +16,7 @@ import TaskDetail from "./TaskDetail";
 
 interface CardPropd {
   task: Task;
+  onClick: (task: Task) => void;
 }
 
 interface taskFileMeta {
@@ -27,10 +28,8 @@ interface taskFileMeta {
   ext: string,
 }
 
-export default function Card({ task, ...props }: CardPropd) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+export default function Card({ task, onClick, ...props }: CardPropd) {
   const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<taskFileMeta | null>(null);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
@@ -68,25 +67,6 @@ export default function Card({ task, ...props }: CardPropd) {
     }
   }
 
-  const getTaskFiles = async () => {
-    const { data: fileMetadata } = await supabase
-      .from('task_files')
-      .select('*')
-      .eq("task_id", task.id);
-
-    if (fileMetadata && fileMetadata[0]) {
-      const taskFileArray = [];
-      console.log(fileMetadata);
-      for (const file of fileMetadata[0].files) {
-        const ext = file.original_name.split('.').pop();
-        taskFileArray.push(file);
-      }
-
-      setCurrentTaskFile(taskFileArray);
-      console.log(taskFileArray);
-    }
-  }
-
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status)
@@ -96,7 +76,7 @@ export default function Card({ task, ...props }: CardPropd) {
     <>
       {/* カード（概要） */}
       <div
-        onClick={() => { setIsOpen(true); getTaskFiles(); }}
+        onClick={() => onClick(task)}
         id={task.id}
         className="min-w-90 rounded-xl border-2 border-neutral-600 bg-neutral-800 p-4 text-white tracking-wide cursor-pointer relative
           group-[.rowListStyle]:w-[1568px] group-[.rowListStyle]:py-2 group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]"
@@ -147,22 +127,6 @@ export default function Card({ task, ...props }: CardPropd) {
           <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finishDate ? task.finishDate : "-"}</div>
         </div>
       </div>
-
-      {/* モーダル（詳細） */}
-      <Dialog open={isOpen} onClose={() => setIsOpen(false)} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
-
-        <div className="fixed inset-0 flex w-full items-center justify-center p-4">
-          {
-            !isEdit ?
-              <DialogPanel className="relative w-11/12 max-w-md space-y-4 rounded-2xl bg-neutral-100 p-8">
-                <TaskDetail task={task} currentTaskFile={currentTaskFile} onClose={() => setIsOpen(false)}></TaskDetail>
-              </DialogPanel>
-              :
-              <UpdateTask task={task} onClick={() => setIsEdit(false)}></UpdateTask>
-          }
-        </div >
-      </Dialog >
 
       <Dialog
         open={isFileOpen}

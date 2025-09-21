@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { Task } from "@/utils/types/task";
 
-export default function PersonalTaskList() {
+export default function PersonalTaskList({ onClick }: { onClick: (t: Task) => void }) {
   const { user, loading } = useAuth();
 
   const [taskList, setTaskList] = useState<Task[]>([]);
@@ -103,7 +103,7 @@ export default function PersonalTaskList() {
         <h2 className="font-bold text-white pl-1">未担当タスク</h2>
 
         {taskList.filter((task) => !task.manager).map(task => (
-          <Card key={task.id} task={task}></Card>
+          <Card key={task.id} task={task} onClick={onClick}></Card>
         ))}
       </div>
 
@@ -113,7 +113,7 @@ export default function PersonalTaskList() {
         {user ?
           <>
             {taskList.filter((task) => task.manager === user.name && task.status !== '確認中' && task.status !== '完了').map(task => (
-              <Card key={task.id} task={task}></Card>
+              <Card key={task.id} task={task} onClick={onClick}></Card>
             ))}
           </>
           :
@@ -127,7 +127,7 @@ export default function PersonalTaskList() {
         {user ?
           <>
             {taskList.filter((task) => task.manager === user.name && task.status === '確認中').map(task => (
-              <Card key={task.id} task={task}></Card>
+              <Card key={task.id} task={task} onClick={onClick}></Card>
             ))}
           </>
           :
@@ -141,7 +141,7 @@ export default function PersonalTaskList() {
         {user ?
           <>
             {taskList.filter((task) => task.manager === user.name && task.status === '完了' && new Date(task.finishDate ? task.finishDate : "").getDate() <= new Date().getDate() + 7).map(task => (
-              <Card key={task.id} task={task}></Card>
+              <Card key={task.id} task={task} onClick={onClick}></Card>
             ))}
           </>
           :

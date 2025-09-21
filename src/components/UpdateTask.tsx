@@ -22,6 +22,7 @@ import { Task } from "@/utils/types/task";
 interface task {
   task: Task;
   onClick?: () => void;
+  onCancel?: () => void;
 }
 
 interface taskFileMeta {
@@ -35,7 +36,7 @@ interface taskFileMeta {
 
 
 
-export default function UpdateTask({ task, onClick }: task) {
+export default function UpdateTask({ task, onClick, onCancel }: task) {
   const { user, loading } = useAuth();
 
   const [isSend, setIsSend] = useState<boolean>(false);
@@ -263,13 +264,13 @@ export default function UpdateTask({ task, onClick }: task) {
     // }
   }
 
-  const handleCancelClick = () => {
-    setTimeout(() => {
-      setIsSend(false);
-    }, 500);
+  // const handleCancelClick = () => {
+  //   setTimeout(() => {
+  //     setIsSend(false);
+  //   }, 500);
 
-    onClick?.();
-  };
+  //   onClick?.();
+  // };
 
 
   useEffect(() => {
@@ -283,7 +284,7 @@ export default function UpdateTask({ task, onClick }: task) {
 
 
   return (
-    <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
+    <>
       <DialogTitle className="font-bold text-left col-span-2 sticky">タスク更新</DialogTitle>
 
       <div className=" max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
@@ -363,7 +364,7 @@ export default function UpdateTask({ task, onClick }: task) {
 
       <div className="flex gap-4 justify-end col-span-2 pr-3">
         <Button
-          onClick={handleCancelClick}
+          onClick={onCancel}
           className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
         >
           キャンセル
@@ -378,6 +379,6 @@ export default function UpdateTask({ task, onClick }: task) {
           更新
         </Button>
       </div>
-    </DialogPanel>
+    </>
   );
 }

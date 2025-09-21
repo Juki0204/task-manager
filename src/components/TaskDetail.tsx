@@ -11,6 +11,7 @@ import { IoDocumentAttachOutline, IoPersonAddOutline } from "react-icons/io5";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { BsPersonCheck } from "react-icons/bs";
 import { LuNotebookPen } from "react-icons/lu";
+import { supabase } from "@/utils/supabase/supabase";
 
 
 
@@ -25,12 +26,12 @@ interface taskFileMeta {
 
 interface TaskDetailProps {
   task: Task;
-  currentTaskFile?: taskFileMeta[];
   onClose: () => void;
+  onEdit: () => void;
 }
 
 
-export default function TaskDetail({ task, currentTaskFile, onClose }: TaskDetailProps) {
+export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
@@ -38,6 +39,7 @@ export default function TaskDetail({ task, currentTaskFile, onClose }: TaskDetai
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
+  const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
   const [selectedFile, setSelectedFile] = useState<taskFileMeta | null>(null);
 
   function definePriorityStyle(priority: string | undefined) {
@@ -81,9 +83,29 @@ export default function TaskDetail({ task, currentTaskFile, onClose }: TaskDetai
     return `${jst.getFullYear()}/${pad(jst.getMonth() + 1)}/${pad(jst.getDate())} ` + `${pad(jst.getHours())}:${pad(jst.getMinutes())}:${pad(jst.getSeconds())}`;
   }
 
+  const getTaskFiles = async () => {
+    const { data: fileMetadata } = await supabase
+      .from('task_files')
+      .select('*')
+      .eq("task_id", task.id);
+
+    if (fileMetadata && fileMetadata[0]) {
+      const taskFileArray = [];
+      console.log(fileMetadata);
+      for (const file of fileMetadata[0].files) {
+        const ext = file.original_name.split('.').pop();
+        taskFileArray.push(file);
+      }
+
+      setCurrentTaskFile(taskFileArray);
+      console.log(taskFileArray);
+    }
+  }
+
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status)
+    getTaskFiles();
   }, [task]);
 
   return (
@@ -104,7 +126,7 @@ export default function TaskDetail({ task, currentTaskFile, onClose }: TaskDetai
           }
           <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
-        <div onClick={() => setIsEdit(true)} className="flex gap-2 items-center text-xs w-fit rounded-md bg-neutral-900 text-white py-1 px-2 cursor-pointer hover:opacity-80"><MdDriveFileRenameOutline /> 編集</div>
+        <div onClick={onEdit} className="flex gap-2 items-center text-xs w-fit rounded-md bg-neutral-900 text-white py-1 px-2 cursor-pointer hover:opacity-80"><MdDriveFileRenameOutline /> 編集</div>
       </div>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 

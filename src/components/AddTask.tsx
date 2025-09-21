@@ -19,7 +19,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/app/AuthProvider";
 
 
-export default function AddTask() {
+interface AddTaskProps {
+  onClose: () => void;
+}
+
+export default function AddTask({ onClose }: AddTaskProps) {
   const { user, loading } = useAuth();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -261,101 +265,92 @@ export default function AddTask() {
 
   return (
     <>
-      <Button onClick={() => { setIsOpen(true) }} className="flex items-center gap-2 ml-auto mr-0 rounded bg-sky-600 px-4 py-2 text-sm text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><GrAddCircle />新規追加</Button>
-      <Dialog open={isOpen} onClose={() => { setIsOpen(false); setTimeout(() => { setIsSend(false); }, 500); resetForm(); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+      <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
+      <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
-            <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
-            <GrClose onClick={() => { setIsOpen(false); setTimeout(() => { setIsSend(false); }, 500); }} className="absolute top-8 right-8 cursor-pointer" />
+      <div className=" max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
 
-            <div className=" max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+        <AddTaskSelect name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
+          {clientList.map(client => (
+            <option key={client} value={client}>{client}</option>
+          ))}
+        </AddTaskSelect>
 
-              <AddTaskSelect name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
-                {clientList.map(client => (
-                  <option key={client} value={client}>{client}</option>
-                ))}
-              </AddTaskSelect>
+        <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
+          {requesterList.map(requester => (
+            <option key={requester} value={requester}>{requester}</option>
+          ))}
+          <option value="不明">不明</option>
+        </AddTaskSelect>
 
-              <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
-                {requesterList.map(requester => (
-                  <option key={requester} value={requester}>{requester}</option>
-                ))}
-                <option value="不明">不明</option>
-              </AddTaskSelect>
+        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)}></AddTaskInput>
 
-              <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)}></AddTaskInput>
+        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)}></AddTaskInput>
 
-              <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)}></AddTaskInput>
+        <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)}></AddTaskInput>
 
-              <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)}></AddTaskInput>
+        <AddTaskInput name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)}></AddTaskInput>
 
-              <AddTaskInput name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)}></AddTaskInput>
+        <AddTaskSelect name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
+          {userNameList.map(name => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+          <option value=''>未決定</option>
+        </AddTaskSelect>
 
-              <AddTaskSelect name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
-                {userNameList.map(name => (
-                  <option key={name} value={name}>{name}</option>
-                ))}
-                <option value=''>未決定</option>
-              </AddTaskSelect>
+        <AddTaskSelect name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="未着手">未着手</option>
+          <option value="作業中">作業中</option>
+          <option value="作業途中">作業途中</option>
+          <option value="確認中">確認中</option>
+          <option value="完了">完了</option>
+          <option value="保留">保留</option>
+          <option value="中止">中止</option>
+          <option value="詳細待ち">詳細待ち</option>
+        </AddTaskSelect>
 
-              <AddTaskSelect name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="未着手">未着手</option>
-                <option value="作業中">作業中</option>
-                <option value="作業途中">作業途中</option>
-                <option value="確認中">確認中</option>
-                <option value="完了">完了</option>
-                <option value="保留">保留</option>
-                <option value="中止">中止</option>
-                <option value="詳細待ち">詳細待ち</option>
-              </AddTaskSelect>
+        <AddTaskSelect name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
+          <option value=""></option>
+          <option value="急">至急</option>
+          <option value="高">高</option>
+          <option value="低">低</option>
+        </AddTaskSelect>
 
-              <AddTaskSelect name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
-                <option value=""></option>
-                <option value="急">至急</option>
-                <option value="高">高</option>
-                <option value="低">低</option>
-              </AddTaskSelect>
-
-              <div className="col-span-1 flex flex-wrap gap-x-1">
-                <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><MdMailOutline /> 依頼手段</h3>
-                <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)}></MailRadio>
-                <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)}></TelRadio>
-                <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)}></OtherRadio>
-              </div>
-
-              <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)}></AddTaskTextarea>
-
-              <div className="col-span-2 grid grid-cols-3 gap-x-1">
-                <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
-                <input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-                <input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-                <input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-              </div>
-
-            </div>
-
-            <div className="flex gap-4 justify-end col-span-2 pr-3">
-              <Button
-                onClick={() => { setIsOpen(false); setTimeout(() => { setIsSend(false); }, 500); }}
-                className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
-              >
-                キャンセル
-              </Button>
-              <Button
-                onClick={() => {
-                  addTask();
-                }
-                }
-                className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer"
-              >
-                新規追加
-              </Button>
-            </div>
-          </DialogPanel>
+        <div className="col-span-1 flex flex-wrap gap-x-1">
+          <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><MdMailOutline /> 依頼手段</h3>
+          <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)}></MailRadio>
+          <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)}></TelRadio>
+          <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)}></OtherRadio>
         </div>
-      </Dialog>
+
+        <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)}></AddTaskTextarea>
+
+        <div className="col-span-2 grid grid-cols-3 gap-x-1">
+          <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
+          <input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+          <input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+          <input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+        </div>
+
+      </div>
+
+      <div className="flex gap-4 justify-end col-span-2 pr-3">
+        <Button
+          onClick={onClose}
+          className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
+        >
+          キャンセル
+        </Button>
+        <Button
+          onClick={() => {
+            addTask();
+          }
+          }
+          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer"
+        >
+          新規追加
+        </Button>
+      </div>
     </>
   );
 }
