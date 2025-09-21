@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
-import { Button, DialogTitle } from "@headlessui/react";
+import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { MdDriveFileRenameOutline, MdLaptopChromebook, MdMailOutline, MdOutlineStickyNote2 } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { FaRegBuilding, FaRegCheckCircle, FaRegImage, FaRegQuestionCircle } from "react-icons/fa";
@@ -12,6 +12,7 @@ import { RiCalendarScheduleLine } from "react-icons/ri";
 import { BsPersonCheck } from "react-icons/bs";
 import { LuNotebookPen } from "react-icons/lu";
 import { supabase } from "@/utils/supabase/supabase";
+import FileModal from "./FileModal";
 
 
 
@@ -211,6 +212,36 @@ export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
           閉じる
         </Button>
       </div>
+
+      {/* ファイル閲覧用モーダル */}
+      <Dialog
+        open={isFileOpen}
+        onClose={() => {
+          setIsFileOpen(false);
+          setSelectedFile(null);
+        }}
+        transition
+        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+      >
+        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+
+        <div className="fixed inset-0 flex w-full items-center justify-center p-4">
+          <DialogPanel className="relative w-11/12 max-w-2xl space-y-4 rounded-2xl bg-neutral-100 p-8">
+            <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
+              {selectedFile?.original_name}
+            </DialogTitle>
+
+            <GrClose
+              onClick={() => {
+                setIsFileOpen(false);
+                setSelectedFile(null);
+              }}
+              className="absolute top-8 right-8 cursor-pointer"
+            />
+            <FileModal file={selectedFile ? selectedFile : currentTaskFile[0]}></FileModal>
+          </DialogPanel>
+        </div>
+      </Dialog>
     </>
   )
 }

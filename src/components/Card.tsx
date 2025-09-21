@@ -127,35 +127,6 @@ export default function Card({ task, onClick, ...props }: CardPropd) {
           <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finishDate ? task.finishDate : "-"}</div>
         </div>
       </div>
-
-      <Dialog
-        open={isFileOpen}
-        onClose={() => {
-          setIsFileOpen(false);
-          setSelectedFile(null);
-        }}
-        transition
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
-      >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
-
-        <div className="fixed inset-0 flex w-full items-center justify-center p-4">
-          <DialogPanel className="relative w-11/12 max-w-2xl space-y-4 rounded-2xl bg-neutral-100 p-8">
-            <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
-              {selectedFile?.original_name}
-            </DialogTitle>
-
-            <GrClose
-              onClick={() => {
-                setIsFileOpen(false);
-                setSelectedFile(null);
-              }}
-              className="absolute top-8 right-8 cursor-pointer"
-            />
-            <FileModal file={selectedFile ? selectedFile : currentTaskFile[0]}></FileModal>
-          </DialogPanel>
-        </div>
-      </Dialog>
     </>
   )
 }

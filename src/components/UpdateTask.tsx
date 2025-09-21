@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { DialogPanel, DialogTitle, Button } from "@headlessui/react";
+import { DialogTitle, Button } from "@headlessui/react";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
@@ -21,7 +21,6 @@ import { Task } from "@/utils/types/task";
 
 interface task {
   task: Task;
-  onClick?: () => void;
   onCancel?: () => void;
 }
 
@@ -36,10 +35,9 @@ interface taskFileMeta {
 
 
 
-export default function UpdateTask({ task, onClick, onCancel }: task) {
+export default function UpdateTask({ task, onCancel }: task) {
   const { user, loading } = useAuth();
 
-  const [isSend, setIsSend] = useState<boolean>(false);
   const [currentUserName, setCurrentUserName] = useState<string>('');
 
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
@@ -180,8 +178,6 @@ export default function UpdateTask({ task, onClick, onCancel }: task) {
 
     if (updateTaskError || !taskData) {
       alert('タスクの追加に失敗しました');
-    } else {
-      setIsSend(true);
     }
 
     await uploadTaskFiles(taskId, uploadedFiles);
