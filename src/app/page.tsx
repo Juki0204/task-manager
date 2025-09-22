@@ -40,7 +40,6 @@ export default function Home() {
           <option value='rowListStyle'>列型リスト</option>
         </select>
         <Button onClick={() => { setIsOpen(true); setModalType("add"); }} className="flex items-center gap-2 ml-auto mr-0 rounded bg-sky-600 px-4 py-2 text-sm text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><GrAddCircle />新規追加</Button>
-        {/* <TaskModal isOpen={isOpen} onModalReset={() => { setIsOpen(false); setModalType(null) }}></TaskModal> */}
       </div>
       <TaskList onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }}></TaskList>
 
