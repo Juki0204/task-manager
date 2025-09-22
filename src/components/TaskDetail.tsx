@@ -33,8 +33,6 @@ interface TaskDetailProps {
 
 
 export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
@@ -94,7 +92,6 @@ export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
       const taskFileArray = [];
       console.log(fileMetadata);
       for (const file of fileMetadata[0].files) {
-        const ext = file.original_name.split('.').pop();
         taskFileArray.push(file);
       }
 
@@ -111,13 +108,14 @@ export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
 
   return (
     <>
+      <p className="w-full text-sm text-center">{task.serial}</p>
       <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
         <span className="w-4">
           {task.method === 'mail' ? <MdMailOutline /> : task.method === 'tel' ? <FiPhone /> : <FaRegQuestionCircle />}
         </span>
         {task.title}
       </DialogTitle>
-      <div className="w-full flex justify-between items-center">
+      <div className="w-full flex justify-between items-center gap-4">
         <div className="w-fit flex gap-1 items-center">
           {
             task.priority ?
@@ -200,7 +198,7 @@ export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
         </li>
       </ul>
 
-      <div className="flex gap-4 justify-between col-span-2">
+      <div className="flex gap-x-4 flex-wrap justify-between col-span-2">
         <div className="text-xs">
           <p>作成日時: {task.createdManager} {formatDateJST(task.createdAt)}</p>
           <p>最終更新: {task.updatedManager} {formatDateJST(task.updatedAt)}</p>
@@ -212,6 +210,7 @@ export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
           閉じる
         </Button>
       </div>
+
 
       {/* ファイル閲覧用モーダル */}
       <Dialog

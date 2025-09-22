@@ -9,7 +9,7 @@ import { Button } from "@headlessui/react";
 
 export default function Header() {
   const { user, loading } = useAuth();
-  console.log(user);
+  // console.log(user);
 
   const router = useRouter();
 

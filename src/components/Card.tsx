@@ -4,38 +4,37 @@ import { MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { BsPersonCheck } from "react-icons/bs";
 
-import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/react";
-import { GrClose } from "react-icons/gr";
-
 import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase/supabase";
-import FileModal from "./FileModal";
-import UpdateTask from "./UpdateTask";
 import { Task } from "@/utils/types/task";
-import TaskDetail from "./TaskDetail";
 
 interface CardPropd {
   task: Task;
   onClick: (task: Task) => void;
 }
 
-interface taskFileMeta {
-  original_name: string,
-  stored_name: string,
-  file_type: string,
-  file_path: string,
-  size: string,
-  ext: string,
-}
-
 export default function Card({ task, onClick, ...props }: CardPropd) {
-  const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<taskFileMeta | null>(null);
-
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
-  const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
+  const [personalColor, setPersonalColor] = useState<string>('');
+
+  function definePersonalColor(manager: string) {
+    if (manager === '谷') {
+      setPersonalColor('border-pink-600 bg-pink-800/25');
+    } else if (manager === '飯塚') {
+      setPersonalColor('border-green-600 bg-green-800/25');
+    } else if (manager === '浜口') {
+      setPersonalColor('border-orange-600 bg-orange-800/25');
+    } else if (manager === '田口') {
+      setPersonalColor('border-red-600 bg-red-800/25');
+    } else if (manager === '鎌倉') {
+      setPersonalColor('border-sky-600 bg-sky-800/25');
+    } else if (manager === '西谷') {
+      setPersonalColor('border-violet-600 bg-violet-800/25');
+    } else {
+      setPersonalColor('border-neutral-600 bg-neutral-800/75');
+    }
+  }
 
   function definePriorityStyle(priority: string | undefined) {
     if (priority === '急') {
@@ -69,7 +68,8 @@ export default function Card({ task, onClick, ...props }: CardPropd) {
 
   useEffect(() => {
     definePriorityStyle(task.priority);
-    defineStatusStyle(task.status)
+    defineStatusStyle(task.status);
+    definePersonalColor(task.manager ? task.manager : "");
   }, [task]);
 
   return (
@@ -78,8 +78,8 @@ export default function Card({ task, onClick, ...props }: CardPropd) {
       <div
         onClick={() => onClick(task)}
         id={task.id}
-        className="min-w-90 rounded-xl border-2 border-neutral-600 bg-neutral-800 p-4 text-white tracking-wide cursor-pointer relative
-          group-[.rowListStyle]:w-[1568px] group-[.rowListStyle]:py-2 group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]"
+        className={`min-w-90 rounded-xl border-2 ${personalColor} bg-opacity-25 p-4 text-white tracking-wide cursor-pointer relative
+          group-[.rowListStyle]:w-[1568px] group-[.rowListStyle]:py-2 group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]`}
         {...props}
       >
         <div className="text-xs">{task.serial}</div>

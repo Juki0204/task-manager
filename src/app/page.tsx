@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import AddTask from "@/components/AddTask";
 
 import TaskList from "@/components/TaskList";
-import TaskModal from "@/components/TaskModal";
 import { Task } from "@/utils/types/task";
 import { Button, Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import TaskDetail from "@/components/TaskDetail";
@@ -61,7 +60,7 @@ export default function Home() {
             )}
 
             {modalType === "edit" && activeTask && (
-              <UpdateTask task={activeTask} onCancel={() => setModalType("detail")}></UpdateTask>
+              <UpdateTask task={activeTask} onComplete={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} onCancel={() => setModalType("detail")}></UpdateTask>
             )}
           </DialogPanel>
         </div>

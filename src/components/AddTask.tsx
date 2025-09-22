@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { Dialog, DialogPanel, DialogTitle, DialogBackdrop, Button } from "@headlessui/react";
-import { GrAddCircle, GrClose } from "react-icons/gr";
+import { DialogTitle, Button } from "@headlessui/react";
+import { GrClose } from "react-icons/gr";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
@@ -26,8 +26,6 @@ interface AddTaskProps {
 export default function AddTask({ onClose }: AddTaskProps) {
   const { user, loading } = useAuth();
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isSend, setIsSend] = useState<boolean>(false);
   const [currentUserName, setCurrentUserName] = useState<string>('');
 
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
@@ -184,8 +182,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
       if (addTaskNumError) {
         alert('タスクナンバーの更新に失敗しました')
       }
-
-      setIsSend(true);
     }
 
     const taskId = taskData.id;

@@ -21,7 +21,8 @@ import { Task } from "@/utils/types/task";
 
 interface task {
   task: Task;
-  onCancel?: () => void;
+  onCancel: () => void;
+  onComplete: () => void;
 }
 
 interface taskFileMeta {
@@ -35,7 +36,7 @@ interface taskFileMeta {
 
 
 
-export default function UpdateTask({ task, onCancel }: task) {
+export default function UpdateTask({ task, onCancel, onComplete }: task) {
   const { user, loading } = useAuth();
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
@@ -145,7 +146,6 @@ export default function UpdateTask({ task, onCancel }: task) {
       const taskFileArray = [];
       console.log(fileMetadata);
       for (const file of fileMetadata[0].files) {
-        const ext = file.original_name.split('.').pop();
         taskFileArray.push(file);
       }
 
@@ -368,6 +368,7 @@ export default function UpdateTask({ task, onCancel }: task) {
         <Button
           onClick={() => {
             updateTask();
+            setTimeout(() => onComplete(), 500);
           }
           }
           className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer"
