@@ -5,6 +5,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
 
 import { Task } from "@/utils/types/task";
+import { mapDbTaskToTask, dbTaskProps } from "@/utils/function/mapDbTaskToTask";
 
 export default function PersonalTaskList({ onClick }: { onClick: (t: Task) => void }) {
   const { user, loading } = useAuth();
@@ -21,25 +22,7 @@ export default function PersonalTaskList({ onClick }: { onClick: (t: Task) => vo
       // console.log(tasks);
       const taskData: Task[] = [];
       tasks.forEach(task => {
-        const currentTaskData = {
-          id: task.id,
-          client: task.client,
-          requester: task.requester,
-          title: task.title,
-          description: task.description,
-          requireDate: task.request_date,
-          finishDate: task.finish_date,
-          manager: task.manager,
-          status: task.status,
-          priority: task.priority,
-          remarks: task.remarks,
-          method: task.method,
-          createdAt: task.created_at,
-          createdManager: task.created_manager,
-          updatedAt: task.updated_at,
-          updatedManager: task.updated_manager,
-          serial: task.serial,
-        }
+        const currentTaskData = mapDbTaskToTask(task);
         taskData.push(currentTaskData);
       });
       setTaskList(taskData);
@@ -63,31 +46,20 @@ export default function PersonalTaskList({ onClick }: { onClick: (t: Task) => vo
 
           if (payload.eventType === "INSERT") {
             toast.success('新しいタスクが追加されました。');
+            setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
           }
           if (payload.eventType === "UPDATE") {
             toast.info('タスクが更新されました。');
+            setTaskList((prev) =>
+              prev.map((t) =>
+                t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
+              )
+            );
           }
           if (payload.eventType === "DELETE") {
             toast.error('タスクが削除されました。');
+            setTaskList((prev) => prev.filter((t) => t.id !== payload.old.id));
           }
-
-          setTaskList((prev) => {
-            if (payload.eventType === "INSERT") {
-              return [...prev, payload.new as Task];
-            }
-
-            if (payload.eventType === "UPDATE") {
-              return prev.map((t) =>
-                t.id === (payload.new as Task).id ? (payload.new as Task) : t
-              );
-            }
-
-            if (payload.eventType === "DELETE") {
-              return prev.filter((t) => t.id !== (payload.old as Task).id);
-            }
-
-            return prev;
-          });
         }
       )
       .subscribe();

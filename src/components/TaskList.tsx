@@ -3,6 +3,7 @@ import Card from "./Card"
 import { useEffect, useState } from "react"
 
 import { Task } from "@/utils/types/task"
+import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 
 export default function TaskList({ onClick }: { onClick: (t: Task) => void }) {
   const [taskList, setTaskList] = useState<Task[]>([]);
@@ -15,25 +16,7 @@ export default function TaskList({ onClick }: { onClick: (t: Task) => void }) {
       // console.log(tasks);
       const taskData: Task[] = [];
       tasks.forEach(task => {
-        const currentTaskData = {
-          id: task.id,
-          client: task.client,
-          requester: task.requester,
-          title: task.title,
-          description: task.description,
-          requireDate: task.request_date,
-          finishDate: task.finish_date,
-          manager: task.manager,
-          status: task.status,
-          priority: task.priority,
-          remarks: task.remarks,
-          method: task.method,
-          createdAt: task.created_at,
-          createdManager: task.created_manager,
-          updatedAt: task.updated_at,
-          updatedManager: task.updated_manager,
-          serial: task.serial,
-        }
+        const currentTaskData = mapDbTaskToTask(task);
         taskData.push(currentTaskData);
       });
       setTaskList(taskData);

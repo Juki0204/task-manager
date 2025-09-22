@@ -149,7 +149,7 @@ export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
 
         <li className="flex flex-col border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><RiCalendarScheduleLine /> 依頼日</h3>
-          <p>{task.requireDate}</p>
+          <p>{task.requestDate}</p>
         </li>
 
         <li className="flex flex-col border-b border-neutral-300">

@@ -5,7 +5,7 @@ export interface Task {
   requester: string;
   title: string;
   description: string;
-  requireDate: string;
+  requestDate: string;
   finishDate?: string;
   manager?: string;
   status: string;

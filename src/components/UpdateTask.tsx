@@ -49,7 +49,7 @@ export default function UpdateTask({ task, onCancel }: task) {
   const [requester, setRequester] = useState<string>(task.requester); //依頼担当者
   const [taskTitle, setTaskTitle] = useState<string>(task.title); //作業タイトル
   const [taskDescription, setTaskDescription] = useState<string>(task.description); //作業内容
-  const [requestDate, setRequestDate] = useState<string>(task.requireDate); //依頼日
+  const [requestDate, setRequestDate] = useState<string>(task.requestDate); //依頼日
   const [finishDate, setFinishDate] = useState<string>(task.finishDate ? task.finishDate : ''); //完了日
   const [manager, setManager] = useState<string>(task.manager ? task.manager : ''); //作業担当者
   const [status, setStatus] = useState<string>(task.status); //作業状況

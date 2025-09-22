@@ -123,7 +123,7 @@ export default function Card({ task, onClick, ...props }: CardPropd) {
         </div>
         <div className="grid gap-2 text-sm grid-cols-6
         group-[.rowListStyle]:[grid-area:date]">
-          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.requireDate}</div>
+          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.requestDate}</div>
           <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finishDate ? task.finishDate : "-"}</div>
         </div>
       </div>
