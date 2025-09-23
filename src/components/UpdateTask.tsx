@@ -17,10 +17,17 @@ import { LuNotebookPen } from "react-icons/lu";
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
+import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 
 
 interface task {
   task: Task;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    employee: string;
+  },
   onCancel: () => void;
   onComplete: () => void;
 }
@@ -36,8 +43,7 @@ interface taskFileMeta {
 
 
 
-export default function UpdateTask({ task, onCancel, onComplete }: task) {
-  const { user, loading } = useAuth();
+export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
 
@@ -62,6 +68,8 @@ export default function UpdateTask({ task, onCancel, onComplete }: task) {
 
   const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
+
+  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
 
   //ファイル添付監視
   const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {

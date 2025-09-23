@@ -7,67 +7,14 @@ import { toast } from "sonner";
 import { Task } from "@/utils/types/task";
 import { mapDbTaskToTask, dbTaskProps } from "@/utils/function/mapDbTaskToTask";
 
-export default function PersonalTaskList({ onClick }: { onClick: (t: Task) => void }) {
+
+interface PersonalTaskListProps {
+  taskList: Task[];
+  onClick: (t: Task) => void;
+}
+
+export default function PersonalTaskList({ taskList, onClick }: PersonalTaskListProps) {
   const { user, loading } = useAuth();
-
-  const [taskList, setTaskList] = useState<Task[]>([]);
-
-  const getTasks = async () => {
-    const { data: tasks } = await supabase
-      .from('tasks')
-      .select('*')
-      .or(`manager.eq.${user?.name},manager.eq.`) //自分or空
-
-    if (tasks) {
-      // console.log(tasks);
-      const taskData: Task[] = [];
-      tasks.forEach(task => {
-        const currentTaskData = mapDbTaskToTask(task);
-        taskData.push(currentTaskData);
-      });
-      setTaskList(taskData);
-      // console.log(taskData);
-    }
-  }
-
-  // useEffect(() => {
-  //   getTasks();
-  // }, [user]);
-
-  useEffect(() => {
-    getTasks();
-    const channel = supabase
-      .channel('task-changes')
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "tasks" },
-        (payload) => {
-          console.log('realtime:', payload);
-
-          if (payload.eventType === "INSERT") {
-            toast.success('新しいタスクが追加されました。');
-            setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
-          }
-          if (payload.eventType === "UPDATE") {
-            toast.info('タスクが更新されました。');
-            setTaskList((prev) =>
-              prev.map((t) =>
-                t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
-              )
-            );
-          }
-          if (payload.eventType === "DELETE") {
-            toast.error('タスクが削除されました。');
-            setTaskList((prev) => prev.filter((t) => t.id !== payload.old.id));
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    }
-  }, [user]);
 
   return (
     <div className="py-4 grid grid-cols-4 gap-4 w-[1568px]">

@@ -5,28 +5,12 @@ import { useEffect, useState } from "react"
 import { Task } from "@/utils/types/task"
 import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 
-export default function TaskList({ onClick }: { onClick: (t: Task) => void }) {
-  const [taskList, setTaskList] = useState<Task[]>([]);
-  const getTasks = async () => {
-    const { data: tasks } = await supabase
-      .from('tasks')
-      .select('*')
+interface TaskListProps {
+  taskList: Task[];
+  onClick: (t: Task) => void;
+}
 
-    if (tasks) {
-      // console.log(tasks);
-      const taskData: Task[] = [];
-      tasks.forEach(task => {
-        const currentTaskData = mapDbTaskToTask(task);
-        taskData.push(currentTaskData);
-      });
-      setTaskList(taskData);
-      // console.log(taskData);
-    }
-  }
-
-  useEffect(() => {
-    getTasks();
-  }, []);
+export default function TaskList({ taskList, onClick }: TaskListProps) {
 
   return (
     <div className="py-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500

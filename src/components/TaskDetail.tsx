@@ -13,6 +13,8 @@ import { BsPersonCheck } from "react-icons/bs";
 import { LuNotebookPen } from "react-icons/lu";
 import { supabase } from "@/utils/supabase/supabase";
 import FileModal from "./FileModal";
+import { useAuth } from "@/app/AuthProvider";
+import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 
 
 
@@ -27,12 +29,20 @@ interface taskFileMeta {
 
 interface TaskDetailProps {
   task: Task;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    employee: string;
+  },
   onClose: () => void;
   onEdit: () => void;
 }
 
 
-export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
+export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailProps) {
+  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
+
   const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
@@ -125,7 +135,14 @@ export default function TaskDetail({ task, onClose, onEdit }: TaskDetailProps) {
           }
           <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
-        <div onClick={onEdit} className="flex gap-2 items-center text-xs w-fit rounded-md bg-neutral-900 text-white py-1 px-2 cursor-pointer hover:opacity-80"><MdDriveFileRenameOutline /> 編集</div>
+        <Button
+          disabled={!!editingUser}
+          onClick={onEdit}
+          className="flex gap-2 items-center text-xs w-fit rounded-md bg-neutral-900 text-white py-1 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
+        >
+          <MdDriveFileRenameOutline />
+          {editingUser ? `${editingUser.userName} さんが編集中...` : "編集"}
+        </Button>
       </div>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
