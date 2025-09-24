@@ -89,7 +89,7 @@ export default function Card({ task, user, onClick, ...props }: CardPropd) {
         id={task.id}
         className={`min-w-90 rounded-xl border-2 ${personalColor} bg-opacity-25 p-4 text-white tracking-wide cursor-pointer relative
           group-[.rowListStyle]:w-[1568px] group-[.rowListStyle]:py-2 group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]
-`}
+        `}
         {...props}
       >
         <div className="text-xs">{task.serial}</div>

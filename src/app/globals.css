@@ -24,28 +24,3 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
-
-
-@property --angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@keyframes spin {
-  to {
-    --angle: 360deg;
-  }
-}
-
-.rotate-border {
-  --angle: 0deg;
-  border: 8px solid transparent !important; /* border-image を適用するので transparent */
-  border-image: conic-gradient(from var(--angle), #525252, #cccccc) 1 !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-
-  /* 2秒で1回転 */
-  animation: spin 2s linear infinite;
-}
