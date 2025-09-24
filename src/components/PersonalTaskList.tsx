@@ -10,11 +10,16 @@ import { mapDbTaskToTask, dbTaskProps } from "@/utils/function/mapDbTaskToTask";
 
 interface PersonalTaskListProps {
   taskList: Task[];
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    employee: string;
+  };
   onClick: (t: Task) => void;
 }
 
-export default function PersonalTaskList({ taskList, onClick }: PersonalTaskListProps) {
-  const { user, loading } = useAuth();
+export default function PersonalTaskList({ taskList, user, onClick }: PersonalTaskListProps) {
 
   return (
     <div className="py-4 grid grid-cols-4 gap-4 w-[1568px]">
@@ -22,7 +27,7 @@ export default function PersonalTaskList({ taskList, onClick }: PersonalTaskList
         <h2 className="font-bold text-white pl-1">未担当タスク</h2>
 
         {taskList.filter((task) => !task.manager).map(task => (
-          <Card key={task.id} task={task} onClick={onClick}></Card>
+          <Card user={user} key={task.id} task={task} onClick={onClick}></Card>
         ))}
       </div>
 
@@ -32,7 +37,7 @@ export default function PersonalTaskList({ taskList, onClick }: PersonalTaskList
         {user ?
           <>
             {taskList.filter((task) => task.manager === user.name && task.status !== '確認中' && task.status !== '完了').map(task => (
-              <Card key={task.id} task={task} onClick={onClick}></Card>
+              <Card user={user} key={task.id} task={task} onClick={onClick}></Card>
             ))}
           </>
           :
@@ -46,7 +51,7 @@ export default function PersonalTaskList({ taskList, onClick }: PersonalTaskList
         {user ?
           <>
             {taskList.filter((task) => task.manager === user.name && task.status === '確認中').map(task => (
-              <Card key={task.id} task={task} onClick={onClick}></Card>
+              <Card user={user} key={task.id} task={task} onClick={onClick}></Card>
             ))}
           </>
           :
@@ -60,7 +65,7 @@ export default function PersonalTaskList({ taskList, onClick }: PersonalTaskList
         {user ?
           <>
             {taskList.filter((task) => task.manager === user.name && task.status === '完了' && new Date(task.finishDate ? task.finishDate : "").getDate() <= new Date().getDate() + 7).map(task => (
-              <Card key={task.id} task={task} onClick={onClick}></Card>
+              <Card user={user} key={task.id} task={task} onClick={onClick}></Card>
             ))}
           </>
           :

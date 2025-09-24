@@ -33,11 +33,13 @@ export function useTaskPresence(
           userId: currentUser.id,
           userName: currentUser.name,
         });
+        console.log("track called", { taskId, userId: currentUser.id, userName: currentUser.name });
       }
     });
 
     channel.on("presence", { event: "sync" }, () => {
       const state = channel.presenceState() as PresenceState;
+      console.log("presence state", state);
 
       for (const [userId, session] of Object.entries(state)) {
         for (const s of session) {

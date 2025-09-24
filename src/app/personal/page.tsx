@@ -89,7 +89,7 @@ export default function Home() {
       <div className="flex justify-between items-center">
         <Button onClick={() => { setIsOpen(true); setModalType("add"); }} className="flex items-center gap-2 ml-auto mr-0 rounded bg-sky-600 px-4 py-2 text-sm text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><GrAddCircle />新規追加</Button>
       </div>
-      <PersonalTaskList taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }}></PersonalTaskList>
+      {user && <PersonalTaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }}></PersonalTaskList>}
 
       {/* 共通モーダル */}
       <Dialog open={isOpen} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">

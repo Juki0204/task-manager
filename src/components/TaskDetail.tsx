@@ -41,7 +41,7 @@ interface TaskDetailProps {
 
 
 export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailProps) {
-  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
+  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
 
   const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
 
