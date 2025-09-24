@@ -25,18 +25,6 @@ export function useTaskPresence(
       config: { presence: { key: currentUser.id } },
     });
 
-    channel.subscribe(async (status) => {
-      if (status === 'SUBSCRIBED' && active) {
-        channel.track({
-          taskId,
-          mode: "edit",
-          userId: currentUser.id,
-          userName: currentUser.name,
-        });
-        console.log("track called", { taskId, userId: currentUser.id, userName: currentUser.name });
-      }
-    });
-
     channel.on("presence", { event: "sync" }, () => {
       const state = channel.presenceState() as PresenceState;
       console.log("presence state", state);
@@ -50,6 +38,19 @@ export function useTaskPresence(
         }
       }
       setEditingUser(null);
+    });
+
+    channel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED' && active) {
+        channel.track({
+          taskId,
+          mode: "edit",
+          userId: currentUser.id,
+          userName: currentUser.name,
+        });
+        console.log("track called", { taskId, userId: currentUser.id, userName: currentUser.name });
+        console.log("channel status:", status);
+      }
     });
 
     return () => {
