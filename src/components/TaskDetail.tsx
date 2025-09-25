@@ -254,7 +254,7 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
           className="w-full flex gap-2 items-center justify-center mb-3 pr-4 rounded-md bg-neutral-900 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
         >
           <MdDriveFileRenameOutline />
-          {editingUser ? `${editingUser}さんが編集中...` : "編集"}
+          {editingUser ? `${editingUser.userName}さんが編集中...` : "編集"}
         </Button>
 
         <div className="text-xs">
