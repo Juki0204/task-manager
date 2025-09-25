@@ -360,9 +360,9 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
 
         <div className="col-span-1 flex flex-wrap gap-x-1">
           <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><MdMailOutline /> 依頼手段</h3>
-          <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)}></MailRadio>
-          <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)}></TelRadio>
-          <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)}></OtherRadio>
+          <MailRadio defaultChecked={task.method === 'mail' ? true : false} name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)}></MailRadio>
+          <TelRadio defaultChecked={task.method === 'tel' ? true : false} name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)}></TelRadio>
+          <OtherRadio defaultChecked={task.method === 'other' ? true : false} name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)}></OtherRadio>
         </div>
 
         <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)}></AddTaskTextarea>
@@ -398,7 +398,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
             unlockTaskHandler();
             setTimeout(() => {
               onComplete();
-              toast.info('タスクが更新されました。');
+              toast.info(`${user.name}さんがタスク:${task.serial}を更新しました。`);
             }, 500);
           }
           }
