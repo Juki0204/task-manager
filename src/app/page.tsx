@@ -34,11 +34,13 @@ export default function Home() {
 
     if (tasks) {
       // console.log(tasks);
-      const taskData: Task[] = [];
-      tasks.forEach(task => {
-        const currentTaskData = mapDbTaskToTask(task);
-        taskData.push(currentTaskData);
+      const taskData: Task[] = tasks.map(task => mapDbTaskToTask(task));
+      taskData.sort((a, b) => {
+        const dataA = new Date(a.requestDate).getTime();
+        const dataB = new Date(b.requestDate).getTime();
+        return dataA - dataB;
       });
+
       setTaskList(taskData);
       // console.log(taskData);
     }
