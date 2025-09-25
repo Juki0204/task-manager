@@ -111,19 +111,24 @@ body {
 
 .editing-overlay-text{
   display: flex;
+  width: fit-content;
   align-items: center;
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
   margin: auto;
   animation: marquee 15s linear infinite;
   white-space: nowrap;
+  translate: 0 0;
 }
 
 @keyframes marquee {
   from {
     left: 100%;
+    translate: 0 0;
   }
   to {
-    left: -50%;
+    left: 0;
+    translate: -100% 0;
   }
 }
