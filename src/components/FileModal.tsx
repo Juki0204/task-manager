@@ -23,7 +23,7 @@ export default function FileModal({ file }: fileModalProps) {
       .getPublicUrl(file.file_path);
 
     if (data) {
-      console.log(data);
+      // console.log(data);
       setTargetFile(data.publicUrl);
     }
   }

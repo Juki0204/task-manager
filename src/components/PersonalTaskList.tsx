@@ -1,11 +1,6 @@
-import { supabase } from "@/utils/supabase/supabase"
 import Card from "./Card"
-import { useEffect, useState } from "react"
-import { useAuth } from "@/app/AuthProvider";
-import { toast } from "sonner";
 
 import { Task } from "@/utils/types/task";
-import { mapDbTaskToTask, dbTaskProps } from "@/utils/function/mapDbTaskToTask";
 
 
 interface PersonalTaskListProps {

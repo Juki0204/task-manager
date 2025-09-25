@@ -50,14 +50,14 @@ export default function Home() {
         "postgres_changes",
         { event: "*", schema: "public", table: "tasks" },
         (payload) => {
-          console.log('realtime:', payload);
+          // console.log('realtime:', payload);
 
           if (payload.eventType === "INSERT") {
             toast.success('新しいタスクが追加されました。');
             setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
           }
           if (payload.eventType === "UPDATE") {
-            toast.info('タスクが更新されました。');
+            // toast.info('タスクが更新されました。');
             setTaskList((prev) =>
               prev.map((t) =>
                 t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t

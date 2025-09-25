@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
+import { toast } from "sonner";
 
 
 interface task {
@@ -152,13 +153,13 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
 
     if (fileMetadata && fileMetadata[0]) {
       const taskFileArray = [];
-      console.log(fileMetadata);
+      // console.log(fileMetadata);
       for (const file of fileMetadata[0].files) {
         taskFileArray.push(file);
       }
 
       setCurrentTaskFile(taskFileArray);
-      console.log(taskFileArray);
+      // console.log(taskFileArray);
     }
   }
 
@@ -276,6 +277,24 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
   //   onClick?.();
   // };
 
+  const unlockTaskHandler = async () => {
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({
+        locked_by_id: null,
+        locked_by_name: null,
+        locked_by_at: null,
+      })
+      .eq("id", task.id)
+      .eq("locked_by_id", user.id);
+
+    if (error) {
+      console.log("unlock failed");
+    } else {
+      console.log("unlocked task: taskId =", task.id);
+    }
+  }
+
 
   useEffect(() => {
     getData();
@@ -368,7 +387,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
 
       <div className="flex gap-4 justify-end col-span-2 pr-3">
         <Button
-          onClick={onCancel}
+          onClick={() => { unlockTaskHandler(); onCancel(); }}
           className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
         >
           キャンセル
@@ -376,7 +395,11 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
         <Button
           onClick={() => {
             updateTask();
-            setTimeout(() => onComplete(), 500);
+            unlockTaskHandler();
+            setTimeout(() => {
+              onComplete();
+              toast.info('タスクが更新されました。');
+            }, 500);
           }
           }
           className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer"

@@ -27,7 +27,7 @@ export function useTaskPresence(
 
     channel.on("presence", { event: "sync" }, () => {
       const state = channel.presenceState() as PresenceState;
-      console.log("presence state", state);
+      // console.log("presence state", state);
 
       for (const [userId, session] of Object.entries(state)) {
         for (const s of session) {
@@ -48,8 +48,8 @@ export function useTaskPresence(
           userId: currentUser.id,
           userName: currentUser.name,
         });
-        console.log("track called", { taskId, userId: currentUser.id, userName: currentUser.name });
-        console.log("channel status:", status);
+        // console.log("track called", { taskId, userId: currentUser.id, userName: currentUser.name });
+        // console.log("channel status:", status);
       }
     });
 
@@ -60,4 +60,45 @@ export function useTaskPresence(
   }, [taskId, currentUser.id, currentUser.name, active]);
 
   return editingUser;
+}
+
+
+
+
+export function useTaskLock(taskId: string, currentUser: { id: string; name: string }) {
+  useEffect(() => {
+    const channel = supabase.channel(`task-${taskId}`, {
+      config: { presence: { key: currentUser.id } },
+    });
+
+    // サブスク開始
+    channel.subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        console.log("Presence subscribed:", taskId);
+      }
+    });
+
+    // 離脱を検知
+    channel.on("presence", { event: "leave" }, async ({ key }) => {
+      console.log("User left:", key);
+
+      // DB側のロック解除
+      const { error } = await supabase
+        .from("tasks")
+        .update({
+          locked_by_id: null,
+          locked_by_name: null,
+          locked_by_at: null,
+        })
+        .eq("id", taskId)
+        .eq("locked_by_id", key); // ロック保持者本人だけ解除
+      if (error) console.error("Failed to clear lock:", error);
+    });
+
+    return () => {
+      // 自分が離脱した時のuntrack
+      channel.untrack();
+      supabase.removeChannel(channel);
+    };
+  }, [taskId, currentUser.id, currentUser.name]);
 }

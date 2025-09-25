@@ -25,23 +25,31 @@ export default function Card({ task, user, onClick, ...props }: CardPropd) {
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
-  const [personalColor, setPersonalColor] = useState<string>('');
+  const [personalBorder, setPersonalBorder] = useState<string>('');
+  const [personalBg, setPersonalBg] = useState<string>('');
 
   function definePersonalColor(manager: string) {
     if (manager === '谷') {
-      setPersonalColor('border-pink-600 bg-pink-800/25');
+      setPersonalBorder('bg-pink-800');
+      setPersonalBg('bg-pink-800/25');
     } else if (manager === '飯塚') {
-      setPersonalColor('border-green-600 bg-green-800/25');
+      setPersonalBorder('bg-green-800');
+      setPersonalBg('bg-green-800/25');
     } else if (manager === '浜口') {
-      setPersonalColor('border-orange-600 bg-orange-800/25');
+      setPersonalBorder('bg-orange-800');
+      setPersonalBg('bg-orange-800/25');
     } else if (manager === '田口') {
-      setPersonalColor('border-red-600 bg-red-800/25');
+      setPersonalBorder('bg-red-800');
+      setPersonalBg('bg-red-800/25');
     } else if (manager === '鎌倉') {
-      setPersonalColor('border-sky-600 bg-sky-800/25');
+      setPersonalBorder('bg-sky-800');
+      setPersonalBg('bg-sky-800/25');
     } else if (manager === '西谷') {
-      setPersonalColor('border-violet-600 bg-violet-800/25');
+      setPersonalBorder('bg-indigo-800');
+      setPersonalBg('bg-indigo-800/25');
     } else {
-      setPersonalColor('border-neutral-600 bg-neutral-800/75');
+      setPersonalBorder('bg-neutral-600');
+      setPersonalBg('bg-neutral-800/25');
     }
   }
 
@@ -82,14 +90,15 @@ export default function Card({ task, user, onClick, ...props }: CardPropd) {
   }, [task]);
 
   return (
-    <>
+    <div className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} rounded-xl min-w-90
+      group-[.rowListStyle]:w-[1568px]`}>
+      {task.lockedById && <div className="editing-overlay"><span className="editing-overlay-text">{task.lockedByName}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={() => onClick(task)}
         id={task.id}
-        className={`min-w-90 rounded-xl border-2 ${personalColor} bg-opacity-25 p-4 text-white tracking-wide cursor-pointer relative
-          group-[.rowListStyle]:w-[1568px] group-[.rowListStyle]:py-2 group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]
-        `}
+        className={`${personalBg} w-full rounded-xl p-4 text-white tracking-wide cursor-pointer relative
+        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
         <div className="text-xs">{task.serial}</div>
@@ -131,12 +140,13 @@ export default function Card({ task, user, onClick, ...props }: CardPropd) {
           <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《{task.requester}》</div>
           <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div>
+
         <div className="grid gap-2 text-sm grid-cols-6
         group-[.rowListStyle]:[grid-area:date]">
           <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.requestDate}</div>
           <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finishDate ? task.finishDate : "-"}</div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

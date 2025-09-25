@@ -18,6 +18,9 @@ export interface dbTaskProps {
   updated_at: string;
   updated_manager: string;
   serial: string;
+  locked_by_id: string | null;
+  locked_by_name: string | null;
+  locked_by_at: string | null;
 }
 
 export function mapDbTaskToTask(dbTask: dbTaskProps): Task {
@@ -39,5 +42,8 @@ export function mapDbTaskToTask(dbTask: dbTaskProps): Task {
     updatedAt: dbTask.updated_at,
     updatedManager: dbTask.updated_manager,
     serial: dbTask.serial,
+    lockedById: dbTask.locked_by_id,
+    lockedByName: dbTask.locked_by_name,
+    lockedByAt: dbTask.locked_by_at,
   };
 }

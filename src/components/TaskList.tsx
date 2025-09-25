@@ -1,9 +1,6 @@
-import { supabase } from "@/utils/supabase/supabase"
 import Card from "./Card"
-import { useEffect, useState } from "react"
 
 import { Task } from "@/utils/types/task"
-import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 
 interface TaskListProps {
   taskList: Task[];

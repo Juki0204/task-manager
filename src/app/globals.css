@@ -24,3 +24,105 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
+
+
+.rolling-border{
+  display: flex;
+  align-items: center;
+  --angle: 0deg;
+  padding: 2px;
+  position: relative;
+  z-index: 1;
+
+  &::before{
+    content: "";
+    position: absolute;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    inset: 0;
+    margin: auto;
+    z-index: -1;
+    border-radius: 12px;
+    background: #262626;
+  }
+
+  &::after{
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    z-index: -2;
+    border-radius: 12px;
+    background: conic-gradient(from var(--angle), #525252, #cccccc, #525252);
+    animation: 2s background-spin linear infinite;
+  }
+}
+
+@property --angle{
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes background-spin {
+  to {
+    --angle: 360deg;
+  }
+}
+
+.static-border {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  position: relative;
+  z-index: 1;
+
+  &::before{
+    content: "";
+    position: absolute;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    inset: 0;
+    margin: auto;
+    z-index: -1;
+    border-radius: 12px;
+    background: #262626;
+  }
+}
+
+.editing-overlay{
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 12px;
+  background: rgba(41, 41, 41, 0.8);
+  color: #fff;
+  font-weight: bold;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.editing-overlay-text{
+  display: flex;
+  align-items: center;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  animation: marquee 15s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  from {
+    left: 100%;
+  }
+  to {
+    left: -50%;
+  }
+}

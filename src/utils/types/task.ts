@@ -17,4 +17,7 @@ export interface Task {
   updatedAt: string;
   updatedManager: string;
   serial: string;
+  lockedById: string | null;
+  lockedByName: string | null;
+  lockedByAt: string | null;
 }

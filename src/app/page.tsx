@@ -19,7 +19,7 @@ type taskListStyle = "rowListStyle" | "cardListStyle";
 
 export default function Home() {
 
-  const [taskListStyle, setTaskListStyle] = useState<taskListStyle>('cardListStyle');
+  const [taskListStyle, setTaskListStyle] = useState<taskListStyle | null>(null);
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -52,14 +52,14 @@ export default function Home() {
         "postgres_changes",
         { event: "*", schema: "public", table: "tasks" },
         (payload) => {
-          console.log('realtime:', payload);
+          // console.log('realtime:', payload);
 
           if (payload.eventType === "INSERT") {
             toast.success('新しいタスクが追加されました。');
             setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
           }
           if (payload.eventType === "UPDATE") {
-            toast.info('タスクが更新されました。');
+            // toast.info('タスクが更新されました。');
             setTaskList((prev) =>
               prev.map((t) =>
                 t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
@@ -83,11 +83,15 @@ export default function Home() {
     const saved = localStorage.getItem('taskListStyle');
     if (saved === 'rowListStyle' || saved === 'cardListStyle') {
       setTaskListStyle(saved);
+    } else {
+      setTaskListStyle('cardListStyle');
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('taskListStyle', taskListStyle);
+    if (taskListStyle) {
+      localStorage.setItem('taskListStyle', taskListStyle);
+    }
   }, [taskListStyle]);
 
 
@@ -95,7 +99,7 @@ export default function Home() {
   return (
     <div className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-21 max-w-[1600px] relative`}>
       <div className="flex justify-between items-center relative">
-        <select value={taskListStyle} onChange={(e) => setTaskListStyle(e.target.value as taskListStyle)} className="w-fit py-1.5 px-3 bg-neutral-300 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
+        <select value={taskListStyle ? taskListStyle : "cardListStyle"} onChange={(e) => setTaskListStyle(e.target.value as taskListStyle)} className="w-fit py-1.5 px-3 bg-neutral-300 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
           <option value='cardListStyle'>カード型リスト</option>
           <option value='rowListStyle'>列型リスト</option>
         </select>

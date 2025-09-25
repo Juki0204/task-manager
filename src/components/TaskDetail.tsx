@@ -15,6 +15,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import FileModal from "./FileModal";
 import { useAuth } from "@/app/AuthProvider";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
+import { toast } from "sonner";
 
 
 
@@ -41,7 +42,7 @@ interface TaskDetailProps {
 
 
 export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailProps) {
-  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
+  // const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
 
   const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
 
@@ -100,14 +101,53 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
 
     if (fileMetadata && fileMetadata[0]) {
       const taskFileArray = [];
-      console.log(fileMetadata);
+      // console.log(fileMetadata);
       for (const file of fileMetadata[0].files) {
         taskFileArray.push(file);
       }
 
       setCurrentTaskFile(taskFileArray);
-      console.log(taskFileArray);
+      // console.log(taskFileArray);
     }
+  }
+
+  const lockedTaskHandler = async () => {
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({
+        locked_by_id: user.id,
+        locked_by_name: user.name,
+        locked_by_at: new Date(),
+      })
+      .eq("id", task.id)
+      .is("locked_by_id", null)
+      .select();
+
+    if (!data?.length) {
+      toast.error('他のユーザーが編集中です');
+      return;
+    }
+
+    console.log("locked task: taskId =", task.id);
+    onEdit();
+  }
+
+
+  function isLocked(task: Task, currentUser: { id: string }) {
+    if (!task.lockedById) return false;
+
+    if (task.lockedByAt) {
+      const lockedAt = new Date(task.lockedByAt).getTime();
+      const now = Date.now();
+
+      //10分以上経過したかチェック
+      const expired = now - lockedAt > 10 * 60 * 1000;
+
+      if (expired) return false;
+
+      return task.lockedById !== currentUser.id;
+    }
+
   }
 
   useEffect(() => {
@@ -119,13 +159,13 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
   return (
     <>
       <p className="w-full text-sm text-center">{task.serial}</p>
-      <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
-        <span className="w-4">
-          {task.method === 'mail' ? <MdMailOutline /> : task.method === 'tel' ? <FiPhone /> : <FaRegQuestionCircle />}
-        </span>
-        {task.title}
-      </DialogTitle>
       <div className="w-full flex justify-between items-center gap-4">
+        <DialogTitle className="flex-1 font-bold col-span-2 text-justify flex gap-1 items-center">
+          <span className="w-4">
+            {task.method === 'mail' ? <MdMailOutline /> : task.method === 'tel' ? <FiPhone /> : <FaRegQuestionCircle />}
+          </span>
+          {task.title}
+        </DialogTitle>
         <div className="w-fit flex gap-1 items-center">
           {
             task.priority ?
@@ -135,14 +175,6 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
           }
           <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
-        <Button
-          disabled={!!editingUser}
-          onClick={onEdit}
-          className="flex gap-2 items-center text-xs w-fit rounded-md bg-neutral-900 text-white py-1 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
-        >
-          <MdDriveFileRenameOutline />
-          {editingUser ? `${editingUser.userName} さんが編集中...` : "編集"}
-        </Button>
       </div>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
@@ -216,6 +248,15 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
       </ul>
 
       <div className="flex gap-x-4 flex-wrap justify-between col-span-2">
+        <Button
+          disabled={isLocked(task, user)}
+          onClick={lockedTaskHandler}
+          className="w-full flex gap-2 items-center justify-center mb-3 pr-4 rounded-md bg-neutral-900 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
+        >
+          <MdDriveFileRenameOutline />
+          {isLocked(task, user) ? `${task.lockedByName}さんが編集中...` : "編集"}
+        </Button>
+
         <div className="text-xs">
           <p>作成日時: {task.createdManager} {formatDateJST(task.createdAt)}</p>
           <p>最終更新: {task.updatedManager} {formatDateJST(task.updatedAt)}</p>
