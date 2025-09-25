@@ -42,7 +42,7 @@ interface TaskDetailProps {
 
 
 export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailProps) {
-  // const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
+  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
 
   const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
 
@@ -133,22 +133,22 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
   }
 
 
-  function isLocked(task: Task, currentUser: { id: string }) {
-    if (!task.lockedById) return false;
+  // function isLocked(task: Task, currentUser: { id: string }) {
+  //   if (!task.lockedById) return false;
 
-    if (task.lockedByAt) {
-      const lockedAt = new Date(task.lockedByAt).getTime();
-      const now = Date.now();
+  //   if (task.lockedByAt) {
+  //     const lockedAt = new Date(task.lockedByAt).getTime();
+  //     const now = Date.now();
 
-      //10分以上経過したかチェック
-      const expired = now - lockedAt > 10 * 60 * 1000;
+  //     //10分以上経過したかチェック
+  //     const expired = now - lockedAt > 10 * 60 * 1000;
 
-      if (expired) return false;
+  //     if (expired) return false;
 
-      return task.lockedById !== currentUser.id;
-    }
+  //     return task.lockedById !== currentUser.id;
+  //   }
 
-  }
+  // }
 
   useEffect(() => {
     definePriorityStyle(task.priority);
@@ -249,12 +249,12 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
 
       <div className="flex gap-x-4 flex-wrap justify-between col-span-2">
         <Button
-          disabled={isLocked(task, user)}
+          disabled={!!editingUser}
           onClick={lockedTaskHandler}
           className="w-full flex gap-2 items-center justify-center mb-3 pr-4 rounded-md bg-neutral-900 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
         >
           <MdDriveFileRenameOutline />
-          {isLocked(task, user) ? `${task.lockedByName}さんが編集中...` : "編集"}
+          {task.lockedById ? `${task.lockedByName}さんが編集中...` : "編集"}
         </Button>
 
         <div className="text-xs">
