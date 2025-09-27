@@ -398,7 +398,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
             unlockTaskHandler();
             setTimeout(() => {
               onComplete();
-              toast.info(`${user.name}さんがタスク:${task.serial}を更新しました。`);
+              toast.info(`${user.name}さんが、タスク:${task.serial}を更新しました。`);
             }, 500);
           }
           }

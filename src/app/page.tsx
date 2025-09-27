@@ -14,6 +14,7 @@ import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
 import { useAuth } from "./AuthProvider";
+import ContextMenu from "@/components/ui/ContextMenu";
 
 type taskListStyle = "rowListStyle" | "cardListStyle";
 
@@ -26,6 +27,26 @@ export default function Home() {
 
   const [taskList, setTaskList] = useState<Task[]>([]);
   const { user, loading } = useAuth();
+
+  const [menu, setMenu] = useState<{
+    visible: boolean,
+    x: number,
+    y: number,
+    taskId?: string,
+    taskSerial?: string,
+  }>({ visible: false, x: 0, y: 0 });
+
+  const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
+    e.preventDefault();
+    console.log(e.clientX, e.clientY);
+    setMenu({ visible: true, x: e.clientX, y: e.clientY, taskId, taskSerial });
+  }
+
+  const handleCloseContextMenu = () => {
+    if (menu.visible) {
+      setMenu({ ...menu, visible: false });
+    }
+  }
 
   const getTasks = async () => {
     const { data: tasks } = await supabase
@@ -99,7 +120,7 @@ export default function Home() {
 
 
   return (
-    <div className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-21 max-w-[1600px] relative`}>
+    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-21 max-w-[1600px] relative`}>
       <div className="flex justify-between items-center relative">
         <select value={taskListStyle ? taskListStyle : "cardListStyle"} onChange={(e) => setTaskListStyle(e.target.value as taskListStyle)} className="w-fit py-1.5 px-3 bg-neutral-300 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
           <option value='cardListStyle'>カード型リスト</option>
@@ -107,7 +128,7 @@ export default function Home() {
         </select>
         <Button onClick={() => { setIsOpen(true); setModalType("add"); }} className="flex items-center gap-2 ml-auto mr-0 rounded bg-sky-600 px-4 py-2 text-sm text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><GrAddCircle />新規追加</Button>
       </div>
-      {user && <TaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }}></TaskList>}
+      {user && <TaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></TaskList>}
 
       {/* 共通モーダル */}
       <Dialog open={isOpen} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
@@ -131,6 +152,16 @@ export default function Home() {
           </DialogPanel>
         </div>
       </Dialog>
+
+      {menu.visible && menu.taskId && (
+        <ContextMenu
+          x={menu.x}
+          y={menu.y}
+          taskId={menu.taskId ? menu.taskId : ""}
+          taskSerial={menu.taskSerial ? menu.taskSerial : ""}
+          onClose={handleCloseContextMenu}
+        ></ContextMenu>
+      )}
     </div>
   );
 }

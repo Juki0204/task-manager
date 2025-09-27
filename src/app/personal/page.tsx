@@ -14,6 +14,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "../AuthProvider";
 import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { toast } from "sonner";
+import ContextMenu from "@/components/ui/ContextMenu";
 
 
 export default function Home() {
@@ -23,6 +24,26 @@ export default function Home() {
 
   const [taskList, setTaskList] = useState<Task[]>([]);
   const { user, loading } = useAuth();
+
+  const [menu, setMenu] = useState<{
+    visible: boolean,
+    x: number,
+    y: number,
+    taskId?: string,
+    taskSerial?: string,
+  }>({ visible: false, x: 0, y: 0 });
+
+  const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
+    e.preventDefault();
+    console.log(e.clientX, e.clientY);
+    setMenu({ visible: true, x: e.clientX, y: e.clientY, taskId, taskSerial });
+  }
+
+  const handleCloseContextMenu = () => {
+    if (menu.visible) {
+      setMenu({ ...menu, visible: false });
+    }
+  }
 
   const getTasks = async () => {
     const { data: tasks } = await supabase
@@ -87,11 +108,11 @@ export default function Home() {
   }, [taskList]);
 
   return (
-    <div className="cardListStyle group p-1 py-4 sm:p-4 !pt-21 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+    <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 !pt-21 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
       <div className="flex justify-between items-center">
         <Button onClick={() => { setIsOpen(true); setModalType("add"); }} className="flex items-center gap-2 ml-auto mr-0 rounded bg-sky-600 px-4 py-2 text-sm text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><GrAddCircle />新規追加</Button>
       </div>
-      {user && <PersonalTaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }}></PersonalTaskList>}
+      {user && <PersonalTaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></PersonalTaskList>}
 
       {/* 共通モーダル */}
       <Dialog open={isOpen} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
@@ -115,6 +136,16 @@ export default function Home() {
           </DialogPanel>
         </div>
       </Dialog>
+
+      {menu.visible && menu.taskId && (
+        <ContextMenu
+          x={menu.x}
+          y={menu.y}
+          taskId={menu.taskId ? menu.taskId : ""}
+          taskSerial={menu.taskSerial ? menu.taskSerial : ""}
+          onClose={handleCloseContextMenu}
+        ></ContextMenu>
+      )}
     </div>
   );
 }
