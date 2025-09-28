@@ -85,11 +85,17 @@ export default function Home() {
           }
           if (payload.eventType === "UPDATE") {
             // toast.info('タスクが更新されました。');
-            setTaskList((prev) =>
-              prev.map((t) =>
-                t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
-              )
-            );
+            if (payload.new.status !== "完了") {
+              // 削除済みならリストから取り除く
+              setTaskList((prev) => prev.filter((t) => t.id !== payload.new.id));
+            } else {
+              // それ以外は更新として置き換え
+              setTaskList((prev) =>
+                prev.map((t) =>
+                  t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
+                )
+              );
+            }
           }
           if (payload.eventType === "DELETE") {
             toast.error('タスクが削除されました。');

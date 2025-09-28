@@ -12,12 +12,11 @@ import TaskList from "@/components/TaskList";
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
 import ContextMenu from "@/components/ui/ContextMenu";
-import { AddTaskBtn } from "@/components/ui/Btn";
 
 import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "@/app/AuthProvider";
 
 type taskListStyle = "rowListStyle" | "cardListStyle";
 
@@ -54,14 +53,14 @@ export default function Home() {
     const { data: tasks } = await supabase
       .from('tasks')
       .select('*')
-      .not("status", "in", "(完了,削除済)") //完了項目以外
+      .eq("status", "削除済");
 
     if (tasks) {
       // console.log(tasks);
       const taskData: Task[] = tasks.map(task => mapDbTaskToTask(task));
       taskData.sort((a, b) => {
-        const dataA = new Date(a.requestDate).getTime();
-        const dataB = new Date(b.requestDate).getTime();
+        const dataA = new Date(a.finishDate ? a.finishDate : "").getTime();
+        const dataB = new Date(b.finishDate ? b.finishDate : "").getTime();
         return dataA - dataB;
       });
 
@@ -86,9 +85,11 @@ export default function Home() {
           }
           if (payload.eventType === "UPDATE") {
             // toast.info('タスクが更新されました。');
-            if (payload.new.status === "削除済" || payload.new.status === "完了") {
+            if (payload.new.status !== "削除済") {
+              // 削除済みならリストから取り除く
               setTaskList((prev) => prev.filter((t) => t.id !== payload.new.id));
             } else {
+              // それ以外は更新として置き換え
               setTaskList((prev) =>
                 prev.map((t) =>
                   t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
@@ -133,7 +134,7 @@ export default function Home() {
           <option value='cardListStyle'>カード型リスト</option>
           <option value='rowListStyle'>列型リスト</option>
         </select>
-        <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn>
+        <Button onClick={() => { setIsOpen(true); setModalType("add"); }} className="fixed top-19 right-2 z-50 grid place-content-center w-12 aspect-square rounded-full bg-sky-600 px-4 py-2 text-xl text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><FaPlus /></Button>
       </div>
       {user && <TaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></TaskList>}
 

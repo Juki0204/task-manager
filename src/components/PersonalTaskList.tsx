@@ -60,7 +60,14 @@ export default function PersonalTaskList({ taskList, user, onClick, onContextMen
 
         {user ?
           <>
-            {taskList.filter((task) => task.manager === user.name && task.status === '完了' && new Date(task.finishDate ? task.finishDate : "").getDate() <= new Date().getDate() + 7).map(task => (
+            {taskList.filter((task) => {
+              if (task.manager !== user.name || task.status !== '完了') return false;
+              if (!task.finishDate) return false;
+              const finish = new Date(task.finishDate).getTime();
+              const now = Date.now();
+              const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+              return finish >= weekAgo && finish <= now; //直近7日以内の完了タスク
+            }).map(task => (
               <Card user={user} key={task.id} task={task} onClick={onClick} onContextMenu={onContextMenu}></Card>
             ))}
           </>

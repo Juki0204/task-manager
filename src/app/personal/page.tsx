@@ -74,6 +74,7 @@ export default function Home() {
       .from('tasks')
       .select('*')
       .or(`manager.eq.${user?.name},manager.eq.`) //自分or空
+      .not("status", "eq", ["削除済"]);
 
     if (tasks) {
       // console.log(tasks);
