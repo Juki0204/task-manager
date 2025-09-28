@@ -44,8 +44,8 @@ export default function Header() {
           </div>
           <div className="sm:flex gap-8 rounded-md">
             <p className="text-white">ユーザー：{currentUserName} さん</p>
-            <p className="text-white">所属：{currentUserEmployee}</p>
-            <p className="text-white">Email：{currentUserEmail}</p>
+            {/* <p className="text-white">所属：{currentUserEmployee}</p>
+            <p className="text-white">Email：{currentUserEmail}</p> */}
           </div>
           <LogoutBtn></LogoutBtn>
         </header>

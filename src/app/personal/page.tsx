@@ -25,6 +25,11 @@ export default function Home() {
   const [taskList, setTaskList] = useState<Task[]>([]);
   const { user, loading } = useAuth();
 
+  const statusPriority: Record<string, number> = {
+    "作業中": 3,
+    "作業途中": 2,
+  };
+
   const [menu, setMenu] = useState<{
     visible: boolean,
     x: number,
@@ -34,7 +39,6 @@ export default function Home() {
   }>({ visible: false, x: 0, y: 0 });
 
   const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
-    e.preventDefault();
     console.log(e.clientX, e.clientY);
     setMenu({ visible: true, x: e.clientX, y: e.clientY, taskId, taskSerial });
   }
@@ -45,6 +49,26 @@ export default function Home() {
     }
   }
 
+  const sortTask = (taskList: Task[]) => {
+    const sortTaskData = taskList;
+    sortTaskData.sort((a, b) => {
+      //作業中タスクを上位に
+      const priA = statusPriority[a.status] ?? 1;
+      const priB = statusPriority[b.status] ?? 1;
+
+      if (priA !== priB) {
+        return priB - priA;
+      }
+
+      //日付順でソート
+      const dataA = new Date(a.requestDate).getTime();
+      const dataB = new Date(b.requestDate).getTime();
+      return dataA - dataB;
+    });
+
+    return sortTaskData;
+  }
+
   const getTasks = async () => {
     const { data: tasks } = await supabase
       .from('tasks')
@@ -53,15 +77,13 @@ export default function Home() {
 
     if (tasks) {
       // console.log(tasks);
+      const statusPriority: Record<string, number> = {
+        "作業中": 3,
+        "作業途中": 2,
+      };
       const taskData: Task[] = tasks.map(task => mapDbTaskToTask(task));
-      taskData.sort((a, b) => {
-        const dataA = new Date(a.requestDate).getTime();
-        const dataB = new Date(b.requestDate).getTime();
-        return dataA - dataB;
-      });
-
+      sortTask(taskData);
       setTaskList(taskData);
-      // console.log(taskData);
     }
   }
 
@@ -77,14 +99,14 @@ export default function Home() {
 
           if (payload.eventType === "INSERT") {
             toast.success('新しいタスクが追加されました。');
-            setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
+            setTaskList((prev) => sortTask([...prev, mapDbTaskToTask(payload.new as dbTaskProps)]));
           }
           if (payload.eventType === "UPDATE") {
             // toast.info('タスクが更新されました。');
             setTaskList((prev) =>
-              prev.map((t) =>
+              sortTask(prev.map((t) =>
                 t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
-              )
+              ))
             );
           }
           if (payload.eventType === "DELETE") {

@@ -91,8 +91,9 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
   }, [task]);
 
   return (
-    <div onContextMenu={(e) => onContextMenu(e, task.id, task.serial)} className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} rounded-xl min-w-90
-      group-[.rowListStyle]:w-[1568px]`}>
+    <div
+      onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
+      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-xl min-w-90 group-[.rowListStyle]:w-[1568px]`}>
       {task.lockedById && <div className="editing-overlay"><span className="editing-overlay-text">{task.lockedByName}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div

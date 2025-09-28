@@ -1,5 +1,5 @@
 import { MouseEvent } from "react";
-import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete } from "./ContextMenuBtn";
+import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete, ChangeRemove } from "./ContextMenuBtn";
 
 type ContextMenuProps = {
   x: number;
@@ -21,9 +21,10 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose }: Conte
 
       <h3 className="text-sm font-bold text-white py-1">■ 状態変更</h3>
       <ul className="flex flex-col gap-0.5 border-b border-slate-400 pb-1 mb-1">
-        <ChangeNotYetStarted taskId={taskId} onClick={onClose}></ChangeNotYetStarted>
         <ChangeInProgress taskId={taskId} onClick={onClose}></ChangeInProgress>
         <ChangeInterrupt taskId={taskId} onClick={onClose}></ChangeInterrupt>
+        <ChangeNotYetStarted taskId={taskId} onClick={onClose}></ChangeNotYetStarted>
+        <ChangeRemove taskId={taskId} onClick={onClose}></ChangeRemove>
       </ul>
 
       <ul className="flex flex-col gap-0.5">

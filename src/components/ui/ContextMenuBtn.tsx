@@ -1,4 +1,6 @@
 import { FaRegStickyNote, FaRegTrashAlt, FaRegPauseCircle, FaRegPlayCircle } from "react-icons/fa";
+import { MdPersonRemove } from "react-icons/md";
+
 import { supabase } from "@/utils/supabase/supabase";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useState } from "react";
@@ -18,10 +20,11 @@ type ProgressProps = {
 }
 
 export function ChangeInProgress({ taskId, onClick }: ProgressProps) {
+  const { user } = useAuth();
   const handleInProgress = async () => {
     const { data } = await supabase
       .from("tasks")
-      .update({ status: "作業中" })
+      .update({ manager: user?.name, status: "作業中" })
       .eq("id", taskId)
       .single();
   }
@@ -98,6 +101,37 @@ export function ChangeNotYetStarted({ taskId, onClick }: NotYetStartedProps) {
     </li>
   );
 }
+
+
+//---------NotYetStarted Btn---------
+
+type RemoveProps = {
+  taskId: string;
+  onClick: () => void;
+}
+
+export function ChangeRemove({ taskId, onClick }: RemoveProps) {
+  const handleNotYetStarted = async () => {
+    const { data } = await supabase
+      .from("tasks")
+      .update({ manager: null, status: "未着手" })
+      .eq("id", taskId)
+      .single();
+  }
+
+  return (
+    <li
+      onClick={() => {
+        handleNotYetStarted();
+        onClick();
+      }}
+      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+    >
+      <MdPersonRemove />担当から外す
+    </li>
+  );
+}
+
 
 
 //---------Delete Btn---------

@@ -85,6 +85,17 @@ export default function AuthProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  //アプリ全体で右クリック禁止
+  useEffect(() => {
+    const prohibitedContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    }
+
+    document.addEventListener('contextmenu', prohibitedContextMenu);
+
+    return () => document.addEventListener('contextmenu', prohibitedContextMenu);
+  }, []);
+
   return (
     <AuthContect.Provider value={{ user, loading }}>
       <div className={isLoaded ? "opacity-0 pointer-events-none w-full h-lvh grid place-content-center fixed top-0 left-0 transition-opacity bg-white z-[99999]"
