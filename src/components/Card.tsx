@@ -100,7 +100,7 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
         onClick={() => onClick(task)}
         id={task.id}
         className={`${personalBg} w-full rounded-xl p-4 text-white tracking-wide cursor-pointer relative
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_330px_120px_auto]  group-[.rowListStyle]:py-2`}
+        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
         <div className="text-xs">{task.serial}</div>
@@ -120,7 +120,7 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
 
         <div className="w-fit flex gap-1 items-center pl-1
           group-[.cardListStyle]:absolute group-[.cardListStyle]:top-4 group-[.cardListStyle]:right-4
-          group-[.rowListStyle]:[grid-area:status]">
+          group-[.rowListStyle]:[grid-area:status] group-[.rowListStyle]:pl-3">
           {
             task.priority ?
               <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
@@ -138,7 +138,7 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
 
         <div className="grid gap-2 text-sm grid-cols-6
         group-[.cardListStyle]:mb-2
-        group-[.rowListStyle]:[grid-area:cli-mana]">
+        group-[.rowListStyle]:[grid-area:cli-mana] group-[.rowListStyle]:gap-1">
           <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《{task.requester}》</div>
           <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div>
