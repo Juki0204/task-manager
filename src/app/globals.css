@@ -144,3 +144,24 @@ body {
     translate: -100% 0;
   }
 }
+
+
+/* personal colors */
+
+.taniBorder {background:rgb(175, 77, 118)}
+.taniBg {background:rgba(175, 77, 144, .15)}
+
+.iiBorder {background:rgb(50, 127, 67)}
+.iiBg {background:rgba(50, 127, 67, .15)}
+
+.hamaBorder {background:rgb(161, 122, 29)}
+.hamaBg {background:rgba(161, 122, 29, .15)}
+
+.taguBorder {background:rgb(165, 39, 39)}
+.taguBg {background:rgba(165, 39, 39, .15)}
+
+.kamaBorder {background:rgb(39, 125, 165)}
+.kamaBg {background:rgba(39, 125, 165, .15)}
+
+.nishiBorder {background:rgb(109, 66, 207)}
+.nishiBg {background:rgba(109, 66, 207, .15)}

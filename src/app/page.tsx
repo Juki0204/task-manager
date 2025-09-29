@@ -50,6 +50,25 @@ export default function Home() {
     }
   }
 
+  const unlockTaskHandler = async () => {
+    if (!activeTask || !user) return;
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({
+        locked_by_id: null,
+        locked_by_name: null,
+        locked_by_at: null,
+      })
+      .eq("id", activeTask.id)
+      .eq("locked_by_id", user.id);
+
+    if (error) {
+      console.log("unlock failed");
+    } else {
+      console.log("unlocked task: taskId =", activeTask.id);
+    }
+  }
+
   const getTasks = async () => {
     const { data: tasks } = await supabase
       .from('tasks')
@@ -138,7 +157,7 @@ export default function Home() {
       {user && <TaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></TaskList>}
 
       {/* 共通モーダル */}
-      <Dialog open={isOpen} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
+      <Dialog open={isOpen} onClose={() => { if (modalType === "edit") { unlockTaskHandler(); } setIsOpen(false); setTimeout(() => setModalType(null), 500); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
@@ -154,7 +173,7 @@ export default function Home() {
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")}></UpdateTask>
+              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler}></UpdateTask>
             )}
           </DialogPanel>
         </div>

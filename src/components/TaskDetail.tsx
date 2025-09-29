@@ -118,7 +118,7 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
       .update({
         locked_by_id: user.id,
         locked_by_name: user.name,
-        locked_by_at: new Date(),
+        locked_by_at: new Date().toISOString(),
       })
       .eq("id", task.id)
       .is("locked_by_id", null)

@@ -31,23 +31,23 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
 
   function definePersonalColor(manager: string) {
     if (manager === '谷') {
-      setPersonalBorder('bg-pink-800');
-      setPersonalBg('bg-pink-800/25');
+      setPersonalBorder('taniBorder');
+      setPersonalBg('taniBg');
     } else if (manager === '飯塚') {
-      setPersonalBorder('bg-green-800');
-      setPersonalBg('bg-green-800/25');
+      setPersonalBorder('iiBorder');
+      setPersonalBg('iiBg');
     } else if (manager === '浜口') {
-      setPersonalBorder('bg-orange-800');
-      setPersonalBg('bg-orange-800/25');
+      setPersonalBorder('hamaBorder');
+      setPersonalBg('hamaBg');
     } else if (manager === '田口') {
-      setPersonalBorder('bg-red-800');
-      setPersonalBg('bg-red-800/25');
+      setPersonalBorder('taguBorder');
+      setPersonalBg('taguBg');
     } else if (manager === '鎌倉') {
-      setPersonalBorder('bg-sky-800');
-      setPersonalBg('bg-sky-800/25');
+      setPersonalBorder('kamaBorder');
+      setPersonalBg('kamaBg');
     } else if (manager === '西谷') {
-      setPersonalBorder('bg-indigo-800');
-      setPersonalBg('bg-indigo-800/25');
+      setPersonalBorder('nishiBorder');
+      setPersonalBg('nishiBg');
     } else {
       setPersonalBorder('bg-neutral-600');
       setPersonalBg('bg-neutral-800/25');

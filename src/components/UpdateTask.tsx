@@ -31,6 +31,7 @@ interface task {
   },
   onCancel: () => void;
   onComplete: () => void;
+  onUnlock: () => void;
 }
 
 interface taskFileMeta {
@@ -44,7 +45,7 @@ interface taskFileMeta {
 
 
 
-export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
+export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock }: task) {
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
 
@@ -95,7 +96,6 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
 
   const getData = async () => {
     if (user) {
-      setManager(user.name);
       setCurrentUserName(user.name);
     }
 
@@ -277,24 +277,6 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
   //   onClick?.();
   // };
 
-  const unlockTaskHandler = async () => {
-    const { data, error } = await supabase
-      .from('tasks')
-      .update({
-        locked_by_id: null,
-        locked_by_name: null,
-        locked_by_at: null,
-      })
-      .eq("id", task.id)
-      .eq("locked_by_id", user.id);
-
-    if (error) {
-      console.log("unlock failed");
-    } else {
-      console.log("unlocked task: taskId =", task.id);
-    }
-  }
-
 
   useEffect(() => {
     getData();
@@ -387,7 +369,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
 
       <div className="flex gap-4 justify-end col-span-2 pr-3">
         <Button
-          onClick={() => { unlockTaskHandler(); onCancel(); }}
+          onClick={() => { onCancel(); onUnlock(); }}
           className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
         >
           キャンセル
@@ -395,7 +377,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete }: task) {
         <Button
           onClick={() => {
             updateTask();
-            unlockTaskHandler();
+            onUnlock();
             setTimeout(() => {
               onComplete();
               toast.info(`${user.name}さんが、タスク:${task.serial}を更新しました。`);

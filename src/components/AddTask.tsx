@@ -50,6 +50,8 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
 
   //ファイル添付監視
   const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,7 +80,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
   const getData = async () => {
     if (user) {
-      setManager(user.name);
       setCurrentUserName(user.name);
     }
 
@@ -149,6 +150,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
   };
 
   const addTask = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     const { data: taskData, error: addTaskError } = await supabase
       .from('tasks')
       .insert({
@@ -172,20 +176,27 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
     if (addTaskError || !taskData) {
       alert('タスクの追加に失敗しました');
-    } else {
-      const { error: addTaskNumError } = await supabase
-        .from('clients')
-        .update({
-          task_num: currentTaskNum + 1,
-        })
-        .eq('name', client);
-      if (addTaskNumError) {
-        alert('タスクナンバーの更新に失敗しました')
-      }
+      setIsSubmitting(false);
+      return;
     }
+
+    const { error: addTaskNumError } = await supabase
+      .from('clients')
+      .update({
+        task_num: currentTaskNum + 1,
+      })
+      .eq('name', client);
+
+    if (addTaskNumError) {
+      alert('タスクナンバーの更新に失敗しました')
+    }
+
 
     const taskId = taskData.id;
     await uploadTaskFiles(taskId, uploadedFiles);
+
+    setTimeout(() => onClose(), 500);
+    setTimeout(() => setIsSubmitting(false), 1000);
   }
 
   async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
@@ -338,14 +349,11 @@ export default function AddTask({ onClose }: AddTaskProps) {
           キャンセル
         </Button>
         <Button
-          onClick={() => {
-            addTask();
-            setTimeout(() => onClose(), 500);
-          }
-          }
-          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer"
+          onClick={() => addTask()}
+          disabled={isSubmitting}
+          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400"
         >
-          新規追加
+          {isSubmitting ? "追加中..." : "新規追加"}
         </Button>
       </div>
     </>
