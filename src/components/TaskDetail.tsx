@@ -86,11 +86,12 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
     const date = new Date(dateString);
 
     // UTCをベースにしているので、getUTC系で取り出して+9時間する
-    const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    // const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
 
     const pad = (n: number) => String(n).padStart(2, "0");
 
-    return `${jst.getFullYear()}/${pad(jst.getMonth() + 1)}/${pad(jst.getDate())} ` + `${pad(jst.getHours())}:${pad(jst.getMinutes())}:${pad(jst.getSeconds())}`;
+    // return `${jst.getFullYear()}/${pad(jst.getMonth() + 1)}/${pad(jst.getDate())} ` + `${pad(jst.getHours())}:${pad(jst.getMinutes())}:${pad(jst.getSeconds())}`;
+    return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ` + `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 
   const getTaskFiles = async () => {
