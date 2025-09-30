@@ -40,7 +40,6 @@ export default function Home() {
   }>({ visible: false, x: 0, y: 0 });
 
   const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
-    console.log(e.clientX, e.clientY);
     setMenu({ visible: true, x: e.clientX, y: e.clientY, taskId, taskSerial });
   }
 
@@ -127,6 +126,13 @@ export default function Home() {
       supabase.removeChannel(channel);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (activeTask) {
+      const updated = taskList.find((t) => t.id === activeTask.id);
+      if (updated) setActiveTask(updated);
+    }
+  }, [taskList]);
 
   useEffect(() => {
     const saved = localStorage.getItem('taskListStyle');
