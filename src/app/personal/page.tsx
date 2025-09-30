@@ -15,6 +15,7 @@ import { useAuth } from "../AuthProvider";
 import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { toast } from "sonner";
 import ContextMenu from "@/components/ui/ContextMenu";
+import { AddTaskBtn } from "@/components/ui/Btn";
 
 
 export default function Home() {
@@ -152,7 +153,7 @@ export default function Home() {
   return (
     <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 !pt-21 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
       <div className="flex justify-between items-center">
-        <Button onClick={() => { setIsOpen(true); setModalType("add"); }} className="flex items-center gap-2 ml-auto mr-0 rounded bg-sky-600 px-4 py-2 text-sm text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><GrAddCircle />新規追加</Button>
+        <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn>
       </div>
       {user && <PersonalTaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></PersonalTaskList>}
 

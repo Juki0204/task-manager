@@ -153,7 +153,6 @@ export default function Home() {
           <option value='cardListStyle'>カード型リスト</option>
           <option value='rowListStyle'>列型リスト</option>
         </select>
-        <Button onClick={() => { setIsOpen(true); setModalType("add"); }} className="fixed top-19 right-2 z-50 grid place-content-center w-12 aspect-square rounded-full bg-sky-600 px-4 py-2 text-xl text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer"><FaPlus /></Button>
       </div>
       {user && <TaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></TaskList>}
 
