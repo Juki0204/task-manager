@@ -40,8 +40,7 @@ export default function Home() {
   }>({ visible: false, x: 0, y: 0 });
 
   const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
-    console.log(e.clientX, e.clientY);
-    setMenu({ visible: true, x: e.clientX, y: e.clientY, taskId, taskSerial });
+    setMenu({ visible: true, x: e.pageX, y: e.pageY, taskId, taskSerial });
   }
 
   const handleCloseContextMenu = () => {

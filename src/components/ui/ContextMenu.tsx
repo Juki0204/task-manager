@@ -11,7 +11,7 @@ type ContextMenuProps = {
 
 export default function ContextMenu({ x, y, taskId, taskSerial, onClose }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<{ top?: number; left?: number; right?: number; bottom?: number }>({});
+  const [pos, setPos] = useState<{ top: number; left: number }>({ top: y, left: x });
 
   useEffect(() => {
     if (!menuRef.current) return;
@@ -20,32 +20,29 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose }: Conte
     const winW = window.innerWidth;
     const winH = window.innerHeight;
 
-    let top: number | undefined = y + 10 + scrollY;
-    let left: number | undefined = x + 10 + scrollX;
-    let right: number | undefined;
-    let bottom: number | undefined;
-
-    //下端判定
-    if (y + menuRect.height > winH) {
-      top = undefined;
-      bottom = 0;
-    }
+    let newLeft = x + 10;
+    let newTop = y + 10;
 
     //右端判定
-    if (x + menuRect.width > winW) {
-      left = undefined;
-      right = 0;
+    if (x + menuRect.width > window.scrollX + winW) {
+      newLeft = x - menuRect.width - 10;
     }
 
-    setPos({ top, left, right, bottom });
+    //下端判定
+    if (y + menuRect.height > window.scrollY + winH) {
+      newTop = y - menuRect.height - 10;
+    }
+
+    console.log(newTop, newLeft);
+
+    setPos({ top: newTop, left: newLeft });
   }, [x, y]);
 
   return (
     <div
       ref={menuRef}
       className="absolute z-50 w-48 rounded bg-slate-700 shadow-neutral-900 shadow-xl p-2"
-      // style={{ top: y, left: x }}
-      style={pos}
+      style={{ top: pos.top, left: pos.left }}
       onClick={(e: MouseEvent) => e.stopPropagation()}
     >
       <h2 className="rounded-md text-center bg-neutral-200 p-1 mb-2 text-sm">{taskSerial}</h2>
