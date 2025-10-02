@@ -20,14 +20,17 @@ const Login = () => {
     formState: {
       errors,
       isValid,
-      isSubmitting
+      isSubmitting,
+      touchedFields
     }
   } = useForm<LoginFormInput>({
     defaultValues: {
       email: '',
       password: '',
     },
-    mode: 'onBlur',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    criteriaMode: 'all',
   });
 
   const onLogin: SubmitHandler<LoginFormInput> = async (data) => {
@@ -43,6 +46,7 @@ const Login = () => {
       router.push('/');
     }
   }
+
 
   return (
     <div className="w-full max-w-xl m-auto min-h-screen text-center text-white p-4 pt-20">
@@ -67,9 +71,9 @@ const Login = () => {
               {...register('email', { required: true, pattern: /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$/ })}
             />
           </label>
-          {errors.email &&
+          {errors.email && touchedFields.email && (
             <span className="text-xs text-red-600">メールアドレスを正しく入力して下さい</span>
-          }
+          )}
         </div>
 
         <div className="w-full text-left relative">
@@ -91,12 +95,12 @@ const Login = () => {
               {...register('password', { required: true, pattern: /\w{6,}/ })}
             />
           </label>
-          {errors.password &&
+          {errors.password && touchedFields.password && (
             <span className="text-xs text-red-600">半角英数字6文字以上で入力して下さい</span>
-          }
+          )}
         </div>
 
-        <CorrectBtn type="submit" disabled={!isValid || isSubmitting}>ログイン</CorrectBtn>
+        <CorrectBtn className="cursor-pointer" type="submit" disabled={!isValid || isSubmitting}>{isSubmitting ? "ログイン中..." : "ログイン"}</CorrectBtn>
       </form>
       <OutlineBtn className="outline-white text-white" onClick={() => { router.push('/signup') }}>新規登録へ</OutlineBtn>
       <div className="p-4">

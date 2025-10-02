@@ -25,7 +25,8 @@ const SignUp = () => {
     formState: {
       errors,
       isValid,
-      isSubmitting
+      isSubmitting,
+      touchedFields
     }
   } = useForm<SignUpFormInput>({
     defaultValues: {
@@ -34,7 +35,9 @@ const SignUp = () => {
       password: '',
       employee: '',
     },
-    mode: 'onBlur',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    criteriaMode: 'all',
   });
 
   const onSignUp: SubmitHandler<SignUpFormInput> = async (data) => {
@@ -94,9 +97,9 @@ const SignUp = () => {
               {...register('name', { required: true })}
             />
           </label>
-          {errors.name &&
+          {errors.name && touchedFields.name && (
             <span className="text-xs text-red-600">入力必須です</span>
-          }
+          )}
         </div>
 
         <div className="w-full text-left relative">
@@ -118,9 +121,9 @@ const SignUp = () => {
               {...register('email', { required: true, pattern: /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$/ })}
             />
           </label>
-          {errors.email &&
+          {errors.email && touchedFields.email && (
             <span className="text-xs text-red-600">メールアドレスを正しく入力して下さい</span>
-          }
+          )}
         </div>
 
         <div className="w-full text-left relative">
@@ -142,9 +145,9 @@ const SignUp = () => {
               {...register('password', { required: true, pattern: /\w{6,}/ })}
             />
           </label>
-          {errors.password &&
+          {errors.password && touchedFields.password && (
             <span className="text-xs text-red-600">半角英数字6文字以上で入力して下さい</span>
-          }
+          )}
         </div>
 
         <div className="w-full text-left relative">
@@ -166,9 +169,9 @@ const SignUp = () => {
               {...register('passwordComfirmation', { required: true, validate: (value) => value === getValues('password') })}
             />
           </label>
-          {errors.passwordComfirmation &&
+          {errors.passwordComfirmation && touchedFields.passwordComfirmation && (
             <span className="text-xs text-red-600">パスワードが一致しません</span>
-          }
+          )}
         </div>
 
         <div className="w-full text-left relative">
@@ -192,9 +195,9 @@ const SignUp = () => {
               {...register('employee', { required: true })}
             />
           </label>
-          {errors.employee &&
+          {errors.employee && touchedFields.employee && (
             <span className="text-xs text-red-600">所属先を入力して下さい</span>
-          }
+          )}
         </div>
 
         <CorrectBtn type="submit" disabled={!isValid || isSubmitting}>新規登録</CorrectBtn>
