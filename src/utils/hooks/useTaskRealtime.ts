@@ -33,6 +33,28 @@ export function useTaskRealtime(user: UserData) {
     }
   }
 
+
+  const statusPriority: Record<string, number> = {
+    "作業中": 3,
+    "作業途中": 2,
+  };
+
+  const sortTask = (taskList: Task[]) => {
+    const sortTaskData = [...taskList]; // コピーを作る
+    sortTaskData.sort((a, b) => {
+      const priA = statusPriority[a.status] ?? 1;
+      const priB = statusPriority[b.status] ?? 1;
+
+      if (priA !== priB) return priB - priA;
+
+      const dateA = new Date(a.requestDate).getTime();
+      const dateB = new Date(b.requestDate).getTime();
+      return dateA - dateB;
+    });
+    return sortTaskData;
+  };
+
+
   useEffect(() => {
     if (!user) return;
 
@@ -86,5 +108,33 @@ export function useTaskRealtime(user: UserData) {
     };
   }, [user]);
 
-  return taskList;
+
+
+  const updateTaskStatus = async (taskId: string, newStatus: string, prevStatus: string) => {
+    //即時UI更新
+    setTaskList((prev) => {
+      const updated = prev.map((t) =>
+        t.id === taskId ? { ...t, status: newStatus } : t
+      );
+
+      return sortTask(updated);
+    });
+
+    //DB更新
+    const { error } = await supabase.from("tasks").update({ status: newStatus }).eq("id", taskId);
+
+    if (error) {
+      console.error(error);
+      // 失敗時は巻き戻す
+      setTaskList((prev) =>
+        sortTask(
+          prev.map((t) =>
+            t.id === taskId ? { ...t, status: prevStatus } : t
+          )
+        )
+      );
+    }
+  };
+
+  return { taskList, updateTaskStatus, sortTask };
 }

@@ -18,6 +18,9 @@ import ContextMenu from "@/components/ui/ContextMenu";
 import { AddTaskBtn } from "@/components/ui/Btn";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
+import { DndContext, DragEndEvent, DragStartEvent, useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
+
+
 
 export default function Home() {
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
@@ -25,12 +28,8 @@ export default function Home() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user, loading } = useAuth();
-  const taskList = useTaskRealtime(user ?? null);
-
-  const statusPriority: Record<string, number> = {
-    "作業中": 3,
-    "作業途中": 2,
-  };
+  const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
+  const [initStatus, setInitStatus] = useState<string | null>(null);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -69,25 +68,93 @@ export default function Home() {
     }
   }
 
-  const sortTask = (taskList: Task[]) => {
-    const sortTaskData = taskList;
-    sortTaskData.sort((a, b) => {
-      //作業中タスクを上位に
-      const priA = statusPriority[a.status] ?? 1;
-      const priB = statusPriority[b.status] ?? 1;
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 5,
+    },
+  });
 
-      if (priA !== priB) {
-        return priB - priA;
+  const sensors = useSensors(mouseSensor);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const taskId = active.id;
+
+    const task = taskList.find((t) => t.id === taskId);
+    if (task) {
+      setInitStatus(task.status);
+    }
+  }
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { over, active } = event;
+    if (!user) return;
+    if (!over) return;
+
+    if (active.id !== over.id) {
+      const taskId = active.id as string;
+      const newStatus = over.id as string;
+      const prevStatus = active.data.current?.initStatus;
+      console.log(prevStatus);
+
+      const formatNewStatus = newStatus === "NotYetStarted" ? "未着手"
+        : newStatus === "InProgress" && prevStatus === "確認中" ? "作業中"
+          : newStatus === "InProgress" && prevStatus === "作業中" ? "作業中"
+            : newStatus === "InProgress" && prevStatus !== "確認中" ? "未着手"
+              : newStatus === "Confirm" ? "確認中"
+                : newStatus === "Completed" ? "完了"
+                  : "";
+
+      updateTaskStatus(taskId, formatNewStatus, prevStatus);
+
+      console.log(over, active);
+
+      if (newStatus === "NotYetStarted") {
+        await supabase
+          .from('tasks')
+          .update({
+            manager: "未決定",
+            status: "未着手"
+          })
+          .eq("id", taskId);
       }
 
-      //日付順でソート
-      const dataA = new Date(a.requestDate).getTime();
-      const dataB = new Date(b.requestDate).getTime();
-      return dataA - dataB;
-    });
+      if (newStatus === "InProgress") {
+        if (initStatus === "確認中" || initStatus === "作業中") {
+          await supabase
+            .from('tasks')
+            .update({ manager: user.name, status: "作業中" })
+            .eq("id", taskId);
+        } else {
+          await supabase
+            .from('tasks')
+            .update({ manager: user.name, status: "未着手" })
+            .eq("id", taskId);
+        }
+      }
 
-    return sortTaskData;
-  }
+      if (newStatus === "Confirm") {
+        await supabase
+          .from('tasks')
+          .update({
+            manager: user.name,
+            status: "確認中"
+          })
+          .eq("id", taskId);
+      }
+
+      if (newStatus === "Completed") {
+        await supabase
+          .from('tasks')
+          .update({
+            manager: user.name,
+            status: "完了",
+            finish_at: new Date().toISOString()
+          })
+          .eq("id", taskId);
+      }
+    }
+  };
 
   useEffect(() => {
     if (activeTask) {
@@ -101,10 +168,36 @@ export default function Home() {
       <div className="flex justify-between items-center">
         <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn>
       </div>
-      {user && <PersonalTaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></PersonalTaskList>}
+      {user &&
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
+          <PersonalTaskList
+            user={user}
+            taskList={taskList}
+            onClick={(t: Task) => {
+              if (isOpen) return;
+
+              setActiveTask(t);
+              setModalType("detail");
+              setIsOpen(true);
+            }}
+            onContextMenu={handleContextMenu}
+          ></PersonalTaskList>
+        </DndContext>}
 
       {/* 共通モーダル */}
-      <Dialog open={isOpen} onClose={() => { unlockTaskHandler(); setIsOpen(false); setTimeout(() => setModalType(null), 500); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
+      <Dialog
+        open={isOpen}
+        onClose={() => {
+          if (modalType === "edit") unlockTaskHandler();
+          setIsOpen(false);
+          setTimeout(() => {
+            setActiveTask(null);
+            setModalType(null);
+          }, 500);
+        }}
+        transition
+        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+      >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">

@@ -29,7 +29,7 @@ export default function Home() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user, loading } = useAuth();
-  const taskList = useTaskRealtime(user ?? null);
+  const { taskList } = useTaskRealtime(user ?? null);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -101,10 +101,34 @@ export default function Home() {
         </select>
         <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn>
       </div>
-      {user && <TaskList user={user} taskList={taskList} onClick={(t: Task) => { setIsOpen(true); setActiveTask(t); setModalType("detail"); }} onContextMenu={handleContextMenu}></TaskList>}
+      {user &&
+        <TaskList
+          user={user}
+          taskList={taskList}
+          onClick={(t: Task) => {
+            if (isOpen) return;
+
+            setActiveTask(t);
+            setModalType("detail");
+            setIsOpen(true);
+          }}
+          onContextMenu={handleContextMenu}
+        ></TaskList>}
 
       {/* 共通モーダル */}
-      <Dialog open={isOpen} onClose={() => { if (modalType === "edit") { unlockTaskHandler(); } setIsOpen(false); setTimeout(() => setModalType(null), 500); }} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
+      <Dialog
+        open={isOpen}
+        onClose={() => {
+          if (modalType === "edit") unlockTaskHandler();
+          setIsOpen(false);
+          setTimeout(() => {
+            setActiveTask(null);
+            setModalType(null);
+          }, 400);
+        }}
+        transition
+        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+      >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
