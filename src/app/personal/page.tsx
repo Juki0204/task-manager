@@ -16,6 +16,7 @@ import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { toast } from "sonner";
 import ContextMenu from "@/components/ui/ContextMenu";
 import { AddTaskBtn } from "@/components/ui/Btn";
+import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 
 export default function Home() {
@@ -23,8 +24,8 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const [taskList, setTaskList] = useState<Task[]>([]);
   const { user, loading } = useAuth();
+  const taskList = useTaskRealtime(user ?? null);
 
   const statusPriority: Record<string, number> = {
     "作業中": 3,
@@ -87,60 +88,6 @@ export default function Home() {
 
     return sortTaskData;
   }
-
-  const getTasks = async () => {
-    const { data: tasks } = await supabase
-      .from('tasks')
-      .select('*')
-      .or(`manager.eq.${user?.name},manager.eq.`) //自分or空
-      .not("status", "eq", ["削除済"]);
-
-    if (tasks) {
-      // console.log(tasks);
-      const statusPriority: Record<string, number> = {
-        "作業中": 3,
-        "作業途中": 2,
-      };
-      const taskData: Task[] = tasks.map(task => mapDbTaskToTask(task));
-      sortTask(taskData);
-      setTaskList(taskData);
-    }
-  }
-
-  useEffect(() => {
-    getTasks();
-    const channel = supabase
-      .channel('task-changes')
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "tasks" },
-        (payload) => {
-          // console.log('realtime:', payload);
-
-          if (payload.eventType === "INSERT") {
-            toast.success('新しいタスクが追加されました。');
-            setTaskList((prev) => sortTask([...prev, mapDbTaskToTask(payload.new as dbTaskProps)]));
-          }
-          if (payload.eventType === "UPDATE") {
-            // toast.info('タスクが更新されました。');
-            setTaskList((prev) =>
-              sortTask(prev.map((t) =>
-                t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
-              ))
-            );
-          }
-          if (payload.eventType === "DELETE") {
-            toast.error('タスクが削除されました。');
-            setTaskList((prev) => prev.filter((t) => t.id !== payload.old.id));
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    }
-  }, [user]);
 
   useEffect(() => {
     if (activeTask) {

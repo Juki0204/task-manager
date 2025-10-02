@@ -18,18 +18,18 @@ import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
 import { useAuth } from "./AuthProvider";
+import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 type taskListStyle = "rowListStyle" | "cardListStyle";
 
 export default function Home() {
-
   const [taskListStyle, setTaskListStyle] = useState<taskListStyle | null>(null);
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const [taskList, setTaskList] = useState<Task[]>([]);
   const { user, loading } = useAuth();
+  const taskList = useTaskRealtime(user ?? null);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -67,65 +67,6 @@ export default function Home() {
       console.log("unlocked task: taskId =", activeTask.id);
     }
   }
-
-  const getTasks = async () => {
-    const { data: tasks } = await supabase
-      .from('tasks')
-      .select('*')
-      .not("status", "in", "(完了,削除済)") //完了項目以外
-
-    if (tasks) {
-      // console.log(tasks);
-      const taskData: Task[] = tasks.map(task => mapDbTaskToTask(task));
-      taskData.sort((a, b) => {
-        const dataA = new Date(a.requestDate).getTime();
-        const dataB = new Date(b.requestDate).getTime();
-        return dataA - dataB;
-      });
-
-      setTaskList(taskData);
-      // console.log(taskData);
-    }
-  }
-
-  useEffect(() => {
-    getTasks();
-    const channel = supabase
-      .channel('task-changes')
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "tasks" },
-        (payload) => {
-          // console.log('realtime:', payload);
-
-          if (payload.eventType === "INSERT") {
-            toast.success('新しいタスクが追加されました。');
-            setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
-          }
-          if (payload.eventType === "UPDATE") {
-            // toast.info('タスクが更新されました。');
-            if (payload.new.status === "削除済" || payload.new.status === "完了") {
-              setTaskList((prev) => prev.filter((t) => t.id !== payload.new.id));
-            } else {
-              setTaskList((prev) =>
-                prev.map((t) =>
-                  t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
-                )
-              );
-            }
-          }
-          if (payload.eventType === "DELETE") {
-            toast.error('タスクが削除されました。');
-            setTaskList((prev) => prev.filter((t) => t.id !== payload.old.id));
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    }
-  }, [user]);
 
   useEffect(() => {
     if (activeTask) {
