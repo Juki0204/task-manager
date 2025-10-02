@@ -103,7 +103,7 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
         group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
-        <div className="text-xs">{task.serial}</div>
+        <div className="text-xs pb-2">{task.serial}</div>
         <h3 className="font-bold truncate flex items-center gap-1
           group-[.rowListStyle]:[grid-area:ttl]
           group-[.rowListStyle]:text-sm">

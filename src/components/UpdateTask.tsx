@@ -15,7 +15,6 @@ import { TbClockExclamation } from "react-icons/tb";
 import { LuNotebookPen } from "react-icons/lu";
 
 import { v4 as uuidv4 } from 'uuid';
-import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { toast } from "sonner";
@@ -238,7 +237,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
     if (metadataArray.length === 0) return;
 
 
-    const { data: currentData, error: selectError } = await supabase
+    const { data: currentData } = await supabase
       .from('task_files')
       .select('*')
       .eq('task_id', taskId)

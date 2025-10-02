@@ -2,7 +2,7 @@
 
 import RequesterSetting from "@/components/settings/RequesterSetting";
 // import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const [activeMenu, setActiveMenu] = useState<"requester">("requester");

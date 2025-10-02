@@ -11,20 +11,20 @@ import { IoSettingsOutline } from "react-icons/io5";
 
 
 export default function Header() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   // console.log(user);
 
   const router = useRouter();
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
-  const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
-  const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
+  // const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
+  // const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
 
   const setCurrentUser = async () => {
     if (user) {
       setCurrentUserName(user.name);
-      setCurrentUserEmail(user.email);
-      setCurrentUserEmployee(user.employee);
+      // setCurrentUserEmail(user.email);
+      // setCurrentUserEmployee(user.employee);
     }
   }
 

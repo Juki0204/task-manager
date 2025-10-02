@@ -5,15 +5,12 @@ import { useEffect, useState } from "react";
 import AddTask from "@/components/AddTask";
 
 import PersonalTaskList from "@/components/PersonalTaskList";
-import { Button, Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Task } from "@/utils/types/task";
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
-import { GrAddCircle } from "react-icons/gr";
 import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "../AuthProvider";
-import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
-import { toast } from "sonner";
 import ContextMenu from "@/components/ui/ContextMenu";
 import { AddTaskBtn } from "@/components/ui/Btn";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
@@ -27,7 +24,7 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
   const [initStatus, setInitStatus] = useState<string | null>(null);
 
@@ -51,7 +48,7 @@ export default function Home() {
 
   const unlockTaskHandler = async () => {
     if (!activeTask || !user) return;
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('tasks')
       .update({
         locked_by_id: null,
@@ -95,7 +92,6 @@ export default function Home() {
       const taskId = active.id as string;
       const newStatus = over.id as string;
       const prevStatus = active.data.current?.initStatus;
-      console.log(prevStatus);
 
       const formatNewStatus = newStatus === "NotYetStarted" ? "未着手"
         : newStatus === "InProgress" && prevStatus === "確認中" ? "作業中"
@@ -105,54 +101,12 @@ export default function Home() {
                 : newStatus === "Completed" ? "完了"
                   : "";
 
-      updateTaskStatus(taskId, formatNewStatus, prevStatus);
+      const alt = newStatus === "NotYetStarted" ? { manager: null }
+        : { manager: user.name }
 
-      console.log(over, active);
+      console.log(newStatus, prevStatus);
+      updateTaskStatus(taskId, formatNewStatus, prevStatus, alt);
 
-      if (newStatus === "NotYetStarted") {
-        await supabase
-          .from('tasks')
-          .update({
-            manager: "未決定",
-            status: "未着手"
-          })
-          .eq("id", taskId);
-      }
-
-      if (newStatus === "InProgress") {
-        if (initStatus === "確認中" || initStatus === "作業中") {
-          await supabase
-            .from('tasks')
-            .update({ manager: user.name, status: "作業中" })
-            .eq("id", taskId);
-        } else {
-          await supabase
-            .from('tasks')
-            .update({ manager: user.name, status: "未着手" })
-            .eq("id", taskId);
-        }
-      }
-
-      if (newStatus === "Confirm") {
-        await supabase
-          .from('tasks')
-          .update({
-            manager: user.name,
-            status: "確認中"
-          })
-          .eq("id", taskId);
-      }
-
-      if (newStatus === "Completed") {
-        await supabase
-          .from('tasks')
-          .update({
-            manager: user.name,
-            status: "完了",
-            finish_at: new Date().toISOString()
-          })
-          .eq("id", taskId);
-      }
     }
   };
 
@@ -226,6 +180,7 @@ export default function Home() {
           taskId={menu.taskId ? menu.taskId : ""}
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
+          updateTaskStatus={updateTaskStatus}
         ></ContextMenu>
       )}
     </div>

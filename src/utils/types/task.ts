@@ -7,7 +7,7 @@ export interface Task {
   description: string;
   requestDate: string;
   finishDate?: string;
-  manager?: string;
+  manager?: string | null;
   status: string;
   priority?: string;
   remarks?: string;

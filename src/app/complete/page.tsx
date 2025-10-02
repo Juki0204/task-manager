@@ -4,8 +4,7 @@
 import { useEffect, useState } from "react";
 
 import { Task } from "@/utils/types/task";
-import { Button, Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { FaPlus } from "react-icons/fa6";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
 import AddTask from "@/components/AddTask";
 import TaskList from "@/components/TaskList";
@@ -13,9 +12,7 @@ import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
 import ContextMenu from "@/components/ui/ContextMenu";
 
-import { dbTaskProps, mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { supabase } from "@/utils/supabase/supabase";
-import { toast } from "sonner";
 import { useAuth } from "@/app/AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
@@ -28,8 +25,8 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const { user, loading } = useAuth();
-  const { taskList } = useTaskRealtime(user ?? null);
+  const { user } = useAuth();
+  const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -51,7 +48,7 @@ export default function Home() {
 
   const unlockTaskHandler = async () => {
     if (!activeTask || !user) return;
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('tasks')
       .update({
         locked_by_id: null,
@@ -149,6 +146,7 @@ export default function Home() {
           taskId={menu.taskId ? menu.taskId : ""}
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
+          updateTaskStatus={updateTaskStatus}
         ></ContextMenu>
       )}
     </div>

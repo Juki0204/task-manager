@@ -1,5 +1,6 @@
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete, ChangeRemove } from "./ContextMenuBtn";
+import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete, ChangeRemove, ChangeConfirm } from "./ContextMenuBtn";
+import { Task } from "@/utils/types/task";
 
 type ContextMenuProps = {
   x: number;
@@ -7,9 +8,10 @@ type ContextMenuProps = {
   taskId: string;
   taskSerial: string;
   onClose: () => void;
+  updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 };
 
-export default function ContextMenu({ x, y, taskId, taskSerial, onClose }: ContextMenuProps) {
+export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateTaskStatus }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ top: number; left: number }>({ top: y, left: x });
 
@@ -49,14 +51,15 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose }: Conte
 
       <h3 className="text-sm font-bold text-white py-1">■ 状態変更</h3>
       <ul className="flex flex-col gap-0.5 border-b border-slate-400 pb-1 mb-1">
-        <ChangeInProgress taskId={taskId} onClick={onClose}></ChangeInProgress>
-        <ChangeInterrupt taskId={taskId} onClick={onClose}></ChangeInterrupt>
-        <ChangeNotYetStarted taskId={taskId} onClick={onClose}></ChangeNotYetStarted>
-        <ChangeRemove taskId={taskId} onClick={onClose}></ChangeRemove>
+        <ChangeInProgress taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeInProgress>
+        <ChangeInterrupt taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeInterrupt>
+        <ChangeConfirm taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeConfirm>
+        <ChangeNotYetStarted taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeNotYetStarted>
+        <ChangeRemove taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeRemove>
       </ul>
 
       <ul className="flex flex-col gap-0.5">
-        <ChangeDelete taskId={taskId} taskSerial={taskSerial} onClick={onClose}></ChangeDelete>
+        <ChangeDelete taskId={taskId} taskSerial={taskSerial} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeDelete>
       </ul>
 
     </div>

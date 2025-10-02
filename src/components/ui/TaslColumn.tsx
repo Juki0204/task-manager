@@ -1,9 +1,7 @@
 "use client";
 
-import { DndContext, useDraggable, useDroppable, DragEndEvent } from "@dnd-kit/core";
-import { useState } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import { Task } from "@/utils/types/task";
-import Card from "../Card";
 import PersonalCard from "../PersonalCard";
 
 interface TaskColumnProps {

@@ -13,7 +13,6 @@ import { BsPersonCheck } from "react-icons/bs";
 import { LuNotebookPen } from "react-icons/lu";
 import { supabase } from "@/utils/supabase/supabase";
 import FileModal from "./FileModal";
-import { useAuth } from "@/app/AuthProvider";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { toast } from "sonner";
 
@@ -113,7 +112,7 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
   }
 
   const lockedTaskHandler = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('tasks')
       .update({
         locked_by_id: user.id,

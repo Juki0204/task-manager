@@ -110,18 +110,18 @@ export function useTaskRealtime(user: UserData) {
 
 
 
-  const updateTaskStatus = async (taskId: string, newStatus: string, prevStatus: string) => {
+  const updateTaskStatus = async (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => {
     //即時UI更新
     setTaskList((prev) => {
       const updated = prev.map((t) =>
-        t.id === taskId ? { ...t, status: newStatus } : t
+        t.id === taskId ? { ...t, status: newStatus, ...extraFields } : t
       );
-
+      console.log("UIが更新されました");
       return sortTask(updated);
     });
 
     //DB更新
-    const { error } = await supabase.from("tasks").update({ status: newStatus }).eq("id", taskId);
+    const { error } = await supabase.from("tasks").update({ status: newStatus, ...extraFields }).eq("id", taskId);
 
     if (error) {
       console.error(error);
@@ -133,6 +133,8 @@ export function useTaskRealtime(user: UserData) {
           )
         )
       );
+    } else {
+      console.log("タスクの更新が完了しました。");
     }
   };
 

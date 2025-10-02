@@ -1,5 +1,3 @@
-import Card from "./Card"
-
 import { Task } from "@/utils/types/task";
 import { TaskColumn } from "./ui/TaslColumn";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
