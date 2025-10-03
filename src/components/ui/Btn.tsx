@@ -45,9 +45,9 @@ export function AddTaskBtn({ onClick, className }: addTaskBtnProps) {
   return (
     <Button
       onClick={onClick}
-      className={`fixed flex gap-2 items-center top-19 right-2 z-50 w-fit h-12 rounded-full bg-sky-600 px-4 py-2 text-xl text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer ${className}`}
+      className={`fixed flex gap-2 items-center top-15 right-4 z-50 w-fit rounded-md bg-sky-600 px-4 py-2 text-md text-white font-bold data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer ${className}`}
     >
-      <FaPlus /><span className="text-sm duration-300">タスク追加</span>
+      <FaPlus /><span className="text-sm duration-300">新規タスク追加</span>
     </Button>
   )
 }

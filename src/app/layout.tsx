@@ -5,6 +5,7 @@ import "./globals.css";
 import AuthProvider from "@/app/AuthProvider"
 import Header from "@/components/Header";
 import { Toaster } from "sonner";
+import { TaskListPreferencesProvider } from "@/utils/hooks/TaskListPreferencesContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,8 +33,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900 m-0 w-full`}
       >
         <AuthProvider>
-          <Header></Header>
-          {children}
+          <TaskListPreferencesProvider>
+            <Header></Header>
+            {children}
+          </TaskListPreferencesProvider>
         </AuthProvider>
         <Toaster position="bottom-right" richColors closeButton />
       </body>

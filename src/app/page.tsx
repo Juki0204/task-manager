@@ -16,17 +16,17 @@ import { AddTaskBtn } from "@/components/ui/Btn";
 import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "./AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
-
-type taskListStyle = "rowListStyle" | "cardListStyle";
+import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
 export default function Home() {
-  const [taskListStyle, setTaskListStyle] = useState<taskListStyle | null>(null);
+  const { taskListStyle } = useTaskListPreferences();
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
+  const { filters } = useTaskListPreferences();
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -65,6 +65,19 @@ export default function Home() {
     }
   }
 
+  const filteredTaskList = taskList.filter((task) => {
+    if (task.status === "完了" || task.status === "削除済") return false;
+
+    const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
+    const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
+      if (assignee === "未担当") return task.manager === "";
+      return task.manager === assignee;
+    });
+    const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+
+    return clientMatch && assigneeMatch && statusMatch;
+  });
+
   useEffect(() => {
     if (activeTask) {
       const updated = taskList.find((t) => t.id === activeTask.id);
@@ -73,36 +86,16 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('taskListStyle');
-    if (saved === 'rowListStyle' || saved === 'cardListStyle') {
-      setTaskListStyle(saved);
-    } else {
-      setTaskListStyle('cardListStyle');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (taskListStyle) {
-      localStorage.setItem('taskListStyle', taskListStyle);
-    }
-  }, [taskListStyle]);
-
-
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-21 max-w-[1600px] relative`}>
+    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-34 max-w-[1600px] relative`}>
       <div className="flex justify-between items-center relative">
-        <select value={taskListStyle ? taskListStyle : "cardListStyle"} onChange={(e) => setTaskListStyle(e.target.value as taskListStyle)} className="w-fit py-1.5 px-3 bg-neutral-300 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
-          <option value='cardListStyle'>カード型リスト</option>
-          <option value='rowListStyle'>列型リスト</option>
-        </select>
         <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn>
       </div>
       {user &&
         <TaskList
           user={user}
-          taskList={taskList.filter((task) => task.status !== "完了" && task.status !== "削除済")}
+          taskList={filteredTaskList}
           onClick={(t: Task) => {
             if (isOpen) return;
 
