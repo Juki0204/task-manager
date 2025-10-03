@@ -154,6 +154,7 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status)
     getTaskFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
 
   return (

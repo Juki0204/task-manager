@@ -15,7 +15,14 @@ import ContextMenu from "@/components/ui/ContextMenu";
 import { AddTaskBtn } from "@/components/ui/Btn";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
-import { DndContext, DragEndEvent, DragStartEvent, useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  //DragStartEvent,
+  useSensor,
+  useSensors,
+  MouseSensor
+} from "@dnd-kit/core";
 
 
 
@@ -26,7 +33,7 @@ export default function Home() {
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
-  const [initStatus, setInitStatus] = useState<string | null>(null);
+  // const [initStatus, setInitStatus] = useState<string | null>(null);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -73,15 +80,15 @@ export default function Home() {
 
   const sensors = useSensors(mouseSensor);
 
-  const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    const taskId = active.id;
+  // const handleDragStart = (event: DragStartEvent) => {
+  //   const { active } = event;
+  //   const taskId = active.id;
 
-    const task = taskList.find((t) => t.id === taskId);
-    if (task) {
-      setInitStatus(task.status);
-    }
-  }
+  //   const task = taskList.find((t) => t.id === taskId);
+  //   if (task) {
+  //     setInitStatus(task.status);
+  //   }
+  // }
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over, active } = event;
@@ -115,6 +122,7 @@ export default function Home() {
       const updated = taskList.find((t) => t.id === activeTask.id);
       if (updated) setActiveTask(updated);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
 
   return (
@@ -123,7 +131,11 @@ export default function Home() {
         <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn>
       </div>
       {user &&
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} sensors={sensors}>
+        <DndContext
+          // onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          sensors={sensors}
+        >
           <PersonalTaskList
             user={user}
             taskList={taskList}

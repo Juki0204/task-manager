@@ -16,7 +16,6 @@ import { LuNotebookPen } from "react-icons/lu";
 
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from "@/utils/types/task";
-import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { toast } from "sonner";
 
 
@@ -52,7 +51,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
   const [userNameList, setUserNameList] = useState<string[]>([]); //作業担当者名一覧
 
-  const [taskId, setTaskId] = useState<string>(task.id); //id
+  const taskId = task.id; //id
   const [client, setClient] = useState<string>(task.client); //クライアント
   const [requester, setRequester] = useState<string>(task.requester); //依頼担当者
   const [taskTitle, setTaskTitle] = useState<string>(task.title); //作業タイトル
@@ -64,13 +63,13 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const [priority, setPriority] = useState<string>(task.priority ? task.priority : ''); //優先度
   const [remarks, setRemarks] = useState<string>(task.remarks ? task.remarks : ''); //備考欄
   const [method, setMethod] = useState<string>(task.method); //依頼手段
-  const [serial, setSerial] = useState<string>(task.serial); //識別番号
+  const serial = task.serial; //識別番号
   const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
 
   const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
-  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
+  // const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
 
   //ファイル添付監視
   const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -280,6 +279,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   useEffect(() => {
     getData();
     getTaskFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {

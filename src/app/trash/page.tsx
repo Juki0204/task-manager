@@ -93,7 +93,7 @@ export default function Home() {
       {user &&
         <TaskList
           user={user}
-          taskList={taskList}
+          taskList={taskList.filter((task) => task.status === "削除済")}
           onClick={(t: Task) => {
             if (isOpen) return;
 

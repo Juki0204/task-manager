@@ -18,7 +18,6 @@ export function useTaskRealtime(user: UserData) {
     const { data: tasks } = await supabase
       .from('tasks')
       .select('*')
-      .not("status", "in", "(完了,削除済)") //完了項目以外
 
     if (tasks) {
       // console.log(tasks);

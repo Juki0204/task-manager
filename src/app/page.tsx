@@ -70,6 +70,7 @@ export default function Home() {
       const updated = taskList.find((t) => t.id === activeTask.id);
       if (updated) setActiveTask(updated);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
 
   useEffect(() => {
@@ -101,7 +102,7 @@ export default function Home() {
       {user &&
         <TaskList
           user={user}
-          taskList={taskList}
+          taskList={taskList.filter((task) => task.status !== "完了" && task.status !== "削除済")}
           onClick={(t: Task) => {
             if (isOpen) return;
 

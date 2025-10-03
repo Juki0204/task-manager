@@ -23,7 +23,7 @@ export default function PersonalTaskList({ taskList, user, onClick, onContextMen
         id="NotYetStarted"
         title="未担当タスク"
         tasks={taskList.filter((task) => !task.manager)}
-        user={user}
+        // user={user}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
@@ -33,7 +33,7 @@ export default function PersonalTaskList({ taskList, user, onClick, onContextMen
         id="InProgress"
         title="自分のタスク（未着手・作業中）"
         tasks={sortTask(taskList).filter((task) => task.manager === user.name && task.status !== '確認中' && task.status !== '完了')}
-        user={user}
+        // user={user}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
@@ -43,7 +43,7 @@ export default function PersonalTaskList({ taskList, user, onClick, onContextMen
         id="Confirm"
         title="自分のタスク（確認中）"
         tasks={taskList.filter((task) => task.manager === user.name && task.status === '確認中')}
-        user={user}
+        // user={user}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
@@ -60,7 +60,7 @@ export default function PersonalTaskList({ taskList, user, onClick, onContextMen
           const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
           return finish >= weekAgo && finish <= now; //直近7日以内の完了タスク
         })}
-        user={user}
+        // user={user}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
