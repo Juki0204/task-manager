@@ -179,7 +179,7 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
       </div>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
-      <ul className="relative grid grid-cols-2 gap-x-4 gap-y-5">
+      <ul className="relative grid grid-cols-2 gap-x-4 gap-y-5 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
         <li className="flex flex-col border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><FaRegBuilding /> クライアント</h3>
           <p>{task.client}</p>

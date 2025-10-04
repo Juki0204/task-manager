@@ -54,7 +54,7 @@ export default function Header() {
           <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
             <div className="flex gap-4 flex-1">
               <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/')}>全体タスク</Button>
-              <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/personal')}>個別タスク</Button>
+              <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/personal')}>個人タスク</Button>
               <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/complete')}>完了済タスク</Button>
               <Button className="rounded bg-[#994b4b] w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-red-800 cursor-pointer" onClick={() => router.push('/trash')}><FaRegTrashAlt /></Button>
               <Button className="rounded bg-slate-600 w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/setting')}><IoSettingsOutline /></Button>
