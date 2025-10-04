@@ -68,7 +68,7 @@ export function useTaskRealtime(user: UserData) {
           // console.log('realtime:', payload);
 
           if (payload.eventType === "INSERT") {
-            toast.success(`新しいタスクが追加されました。`);
+            // toast.success(`新しいタスクが追加されました。`);
             setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
           }
 

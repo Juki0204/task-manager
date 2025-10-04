@@ -17,6 +17,7 @@ import { LuNotebookPen } from "react-icons/lu";
 
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/app/AuthProvider";
+import { toast } from "sonner";
 
 
 interface AddTaskProps {
@@ -195,7 +196,10 @@ export default function AddTask({ onClose }: AddTaskProps) {
     const taskId = taskData.id;
     await uploadTaskFiles(taskId, uploadedFiles);
 
-    setTimeout(() => onClose(), 500);
+    setTimeout(() => {
+      onClose();
+      toast.success(`${user?.name}さんが新しいタスクを追加しました。`);
+    }, 500);
     setTimeout(() => setIsSubmitting(false), 1000);
   }
 

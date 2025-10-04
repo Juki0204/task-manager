@@ -165,7 +165,7 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
   const { user } = useAuth();
 
   const handleDelete = async () => {
-    await updateTaskStatus(taskId, "未着手", "");
+    await updateTaskStatus(taskId, "削除済", "");
 
     setIsOpen(false);
     toast.success(`${user?.name}さんが、タスク:${taskSerial}を削除しました。`);

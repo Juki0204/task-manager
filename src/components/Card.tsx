@@ -104,7 +104,7 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
         {...props}
       >
         <div className="text-xs pb-2">{task.serial}</div>
-        <h3 className="font-bold truncate flex items-center gap-1
+        <h3 className="font-bold flex items-center gap-1
           group-[.rowListStyle]:[grid-area:ttl]
           group-[.rowListStyle]:text-sm">
           {
@@ -115,7 +115,7 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
                 :
                 <FaRegQuestionCircle />
           }
-          {task.title}
+          <span className="truncate flex-1">{task.title}</span>
         </h3>
 
         <div className="w-fit flex gap-1 items-center pl-1
