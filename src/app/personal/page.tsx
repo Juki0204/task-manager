@@ -117,6 +117,7 @@ export default function Home() {
     }
   };
 
+
   useEffect(() => {
     if (activeTask) {
       const updated = taskList.find((t) => t.id === activeTask.id);
@@ -138,7 +139,7 @@ export default function Home() {
         >
           <PersonalTaskList
             user={user}
-            taskList={sortTask(taskList)}
+            taskList={sortTask(taskList.filter((task) => task.status !== "削除済"))}
             onClick={(t: Task) => {
               if (isOpen) return;
 

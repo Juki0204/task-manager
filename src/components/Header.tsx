@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import LogoutBtn from "./LogoutBtn";
+import LogoutBtn from "@/components/ui/LogoutBtn";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/app/AuthProvider";
-import { Button, CheckboxProps } from "@headlessui/react";
-import { FaRegTrashAlt, FaFilter } from "react-icons/fa";
+import { Button } from "@headlessui/react";
+import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
+
 
 import { IoSettingsOutline } from "react-icons/io5";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import MultiSelectPopover from "./ui/MultiSelectPopover";
-import { CorrectBtn } from "./ui/Btn";
 
 type taskListStyle = "rowListStyle" | "cardListStyle";
 
@@ -23,7 +23,7 @@ export default function Header() {
   // const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
   // const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
 
-  const { taskListStyle, setTaskListStyle, filters, setFilters, resetFilters } = useTaskListPreferences();
+  const { taskListStyle, setTaskListStyle, filters, setFilters } = useTaskListPreferences();
 
   const setCurrentUser = async () => {
     if (user) {
@@ -33,9 +33,6 @@ export default function Header() {
     }
   }
 
-  const handleApply = () => {
-    console.log("適用されたフィルタ:", filters);
-  }
 
   useEffect(() => {
     setCurrentUser();
@@ -50,7 +47,7 @@ export default function Header() {
   return (
     <>
       {!isExculedPath ?
-        <header className="fixed top-0 w-full py-2 px-4 z-10 bg-neutral-700 shadow-lg">
+        <header className="fixed top-0 w-full py-2 px-4 z-10 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
           <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
             <div className="flex gap-4 flex-1">
               <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/')}>全体タスク</Button>
@@ -60,7 +57,7 @@ export default function Header() {
               <Button className="rounded bg-slate-600 w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/setting')}><IoSettingsOutline /></Button>
             </div>
             <div className="sm:flex gap-8 rounded-md">
-              <p className="text-white">ユーザー：{currentUserName} さん</p>
+              <p className="text-white flex items-center gap-2"><FaUserCircle />{currentUserName} さん</p>
               {/* <p className="text-white">所属：{currentUserEmployee}</p>
             <p className="text-white">Email：{currentUserEmail}</p> */}
             </div>

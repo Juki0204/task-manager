@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { supabase } from '@/utils/supabase/supabase';
 import { OutlineBtn } from "@/components/ui/Btn";
+import { MdLogout } from "react-icons/md";
 
 export default function LogoutBtn() {
   const router = useRouter();
@@ -21,6 +22,6 @@ export default function LogoutBtn() {
   };
 
   return (
-    <OutlineBtn className="outline-white text-white !w-30 h-fit text-sm cursor-pointer" onClick={handleLogout}>ログアウト</OutlineBtn>
+    <OutlineBtn className="flex items-center gap-1 outline-white text-white px-4 !w-30 h-fit text-sm cursor-pointer" onClick={handleLogout}><MdLogout /><span className="flex-1">ログアウト</span></OutlineBtn>
   );
 };

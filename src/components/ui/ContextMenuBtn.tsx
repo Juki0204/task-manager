@@ -168,7 +168,7 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
     await updateTaskStatus(taskId, "削除済", "");
 
     setIsOpen(false);
-    toast.success(`${user?.name}さんが、タスク:${taskSerial}を削除しました。`);
+    toast.error(`${user?.name}さんが、タスク:${taskSerial}を削除しました。`);
     onClick();
   }
 

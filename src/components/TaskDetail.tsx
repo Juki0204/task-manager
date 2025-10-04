@@ -179,7 +179,7 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
       </div>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
-      <ul className="relative grid grid-cols-2 gap-x-4 gap-y-5 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+      <ul className="relative grid grid-cols-2 gap-x-4 gap-y-5 max-h-[60vh] pr-2 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
         <li className="flex flex-col border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><FaRegBuilding /> クライアント</h3>
           <p>{task.client}</p>
@@ -223,27 +223,31 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
         <li className="flex flex-col col-span-2 border-b border-neutral-300 pb-1">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><IoDocumentAttachOutline /> 関連ファイル</h3>
           <div className="flex flex-col gap-1">
-            {currentTaskFile?.map(file => (
-              <div
-                key={file.stored_name}
-                onClick={() => {
-                  setSelectedFile(file);
-                  setIsFileOpen(true);
-                }}
-                className="flex gap-1 items-center text-sm p-1 w-full rounded-md bg-neutral-300 cursor-pointer"
-              >
-                {
-                  file.ext === 'eml' ?
-                    <>
-                      <MdMailOutline className="w-5 h-5" /> <span className="flex-1 truncate">{file.original_name}</span>
-                    </>
-                    : // 'jpg' || 'jpeg' || 'png' || 'gif'
-                    <>
-                      <FaRegImage className="w-5 h-5" /> {file.original_name}
-                    </>
-                }
-              </div>
-            ))}
+            {currentTaskFile.length ?
+              currentTaskFile.map(file => (
+                <div
+                  key={file.stored_name}
+                  onClick={() => {
+                    setSelectedFile(file);
+                    setIsFileOpen(true);
+                  }}
+                  className="flex gap-1 items-center text-sm p-1 w-full rounded-md bg-neutral-300 cursor-pointer"
+                >
+                  {
+                    file.ext === 'eml' ?
+                      <>
+                        <MdMailOutline className="w-5 h-5" /> <span className="flex-1 truncate">{file.original_name}</span>
+                      </>
+                      : // 'jpg' || 'jpeg' || 'png' || 'gif'
+                      <>
+                        <FaRegImage className="w-5 h-5" /> {file.original_name}
+                      </>
+                  }
+                </div>
+              ))
+              :
+              (<p className="text-sm">添付されたファイルはありません</p>)
+            }
           </div>
         </li>
       </ul>
