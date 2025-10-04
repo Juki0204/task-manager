@@ -115,8 +115,9 @@ export function useTaskRealtime(user: UserData) {
       const updated = prev.map((t) =>
         t.id === taskId ? { ...t, status: newStatus, ...extraFields } : t
       );
-      console.log("UIが更新されました");
-      return sortTask(updated);
+      // console.log("UIが更新されました");
+      // return sortTask(updated);
+      return updated;
     });
 
     //DB更新
@@ -126,10 +127,10 @@ export function useTaskRealtime(user: UserData) {
       console.error(error);
       // 失敗時は巻き戻す
       setTaskList((prev) =>
-        sortTask(
-          prev.map((t) =>
-            t.id === taskId ? { ...t, status: prevStatus } : t
-          )
+        // sortTask(
+        prev.map((t) =>
+          t.id === taskId ? { ...t, status: prevStatus } : t
+          // )
         )
       );
     } else {

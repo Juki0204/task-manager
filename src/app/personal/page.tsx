@@ -32,7 +32,7 @@ export default function Home() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
-  const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
+  const { taskList, updateTaskStatus, sortTask } = useTaskRealtime(user ?? null);
   // const [initStatus, setInitStatus] = useState<string | null>(null);
 
   const [menu, setMenu] = useState<{
@@ -138,7 +138,7 @@ export default function Home() {
         >
           <PersonalTaskList
             user={user}
-            taskList={taskList}
+            taskList={sortTask(taskList)}
             onClick={(t: Task) => {
               if (isOpen) return;
 
