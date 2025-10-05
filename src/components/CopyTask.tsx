@@ -16,42 +16,48 @@ import { TbClockExclamation } from "react-icons/tb";
 import { LuNotebookPen } from "react-icons/lu";
 
 import { v4 as uuidv4 } from 'uuid';
-import { useAuth } from "@/app/AuthProvider";
+import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
+import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 
 
-interface AddTaskProps {
+interface task {
+  task: Task;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    employee: string;
+  },
   onClose: () => void;
 }
 
-export default function AddTask({ onClose }: AddTaskProps) {
-  const { user } = useAuth();
 
+export default function UpdateTask({ task, user, onClose }: task) {
   const [currentUserName, setCurrentUserName] = useState<string>('');
 
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
   const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
   const [userNameList, setUserNameList] = useState<string[]>([]); //作業担当者名一覧
 
-  const [client, setClient] = useState<string>(''); //クライアント
-  const [requester, setRequester] = useState<string>(''); //依頼担当者
-  const [taskTitle, setTaskTitle] = useState<string>(''); //作業タイトル
-  const [taskDescription, setTaskDescription] = useState<string>(''); //作業内容
-  const [requestDate, setRequestDate] = useState<string>(''); //依頼日
-  const [finishDate, setFinishDate] = useState<string>(''); //完了日
-  const [manager, setManager] = useState<string>(''); //作業担当者
-  const [status, setStatus] = useState<string>('未着手'); //作業状況
-  const [priority, setPriority] = useState<string>(''); //優先度
-  const [remarks, setRemarks] = useState<string>(''); //備考欄
-  const [method, setMethod] = useState<string>(''); //依頼手段
+  const [client, setClient] = useState<string>(task.client); //クライアント
+  const [requester, setRequester] = useState<string>(task.requester); //依頼担当者
+  const [taskTitle, setTaskTitle] = useState<string>(task.title); //作業タイトル
+  const [taskDescription, setTaskDescription] = useState<string>(task.description); //作業内容
+  const [requestDate, setRequestDate] = useState<string>(task.requestDate); //依頼日
+  const [finishDate, setFinishDate] = useState<string>(task.finishDate ? task.finishDate : ''); //完了日
+  const [manager, setManager] = useState<string>(task.manager ? task.manager : ''); //作業担当者
+  const [status, setStatus] = useState<string>(task.status); //作業状況
+  const [priority, setPriority] = useState<string>(task.priority ? task.priority : ''); //優先度
+  const [remarks, setRemarks] = useState<string>(task.remarks ? task.remarks : ''); //備考欄
+  const [method, setMethod] = useState<string>(task.method); //依頼手段
 
   const [currentTaskInit, setCurrentTaskInit] = useState<string>('');
   const [currentTaskNum, setCurrentTaskNum] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
-
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
 
   //ファイル添付監視
@@ -71,13 +77,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
     setUploadedFiles(prev => {
       const copy = [...prev];
       copy[index] = newFile;
-      // const filterd = prev.filter(file => file.name !== newFile.name);
-      // return [...filterd, newFile].slice(0, 3);
       return copy;
     });
-    // console.log(uploadedFiles);
   }
-
 
   const getData = async () => {
     if (user) {
@@ -96,7 +98,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
         clientNameList.push(client.name);
       });
       setClientList(clientNameList);
-      setClient(clientNameList[0]);
     }
 
     //作業担当者一覧取得
@@ -128,11 +129,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
         requesterNameList.push(requester.name);
       });
       setRequesterList(requesterNameList);
-      setRequester(requesterNameList[0]);
     }
   }
 
-  //タスクのシリアルナンバー生成用管理番号取得
   const getClientTaskNum = async (client: string) => {
     const { data: cl } = await supabase
       .from('clients')
@@ -154,6 +153,23 @@ export default function AddTask({ onClose }: AddTaskProps) {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
+    console.log({
+      client: client,
+      requester: requester,
+      title: taskTitle,
+      description: taskDescription,
+      request_date: requestDate,
+      finish_date: finishDate,
+      manager: manager,
+      status: status,
+      priority: priority,
+      remarks: remarks,
+      method: method,
+      created_manager: currentUserName,
+      updated_manager: currentUserName,
+      serial: generateSerial(currentTaskNum),
+    })
+
     const { data: taskData, error: addTaskError } = await supabase
       .from('tasks')
       .insert({
@@ -167,7 +183,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
         status: status,
         priority: priority,
         remarks: remarks,
-        method: method ? method : "other",
+        method: method,
         created_manager: currentUserName,
         updated_manager: currentUserName,
         serial: generateSerial(currentTaskNum),
@@ -176,7 +192,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
       .single();
 
     if (addTaskError || !taskData) {
-      alert('タスクの追加に失敗しました');
+      alert(`タスクの追加に失敗しました`);
       setIsSubmitting(false);
       return;
     }
@@ -246,20 +262,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
     }
   }
 
-  // const resetForm = () => {
-  //   setClient(clientList[0]); //クライアント
-  //   setRequester(''); //依頼担当者
-  //   setTaskTitle(''); //作業タイトル
-  //   setTaskDescription(''); //作業内容
-  //   setRequestDate(''); //依頼日
-  //   setFinishDate(''); //完了日
-  //   setManager(''); //作業担当者
-  //   setStatus('未着手'); //作業状況
-  //   setPriority(''); //優先度
-  //   setRemarks(''); //備考欄
-  //   setMethod(''); //依頼手段
-  //   setUploadedFiles([]); //添付ファイル
-  // }
 
   useEffect(() => {
     getData();
@@ -271,13 +273,10 @@ export default function AddTask({ onClose }: AddTaskProps) {
     getClientTaskNum(client);
   }, [client]);
 
-  // useEffect(() => {
-  //   console.log(client, requester);
-  // }, [requester]);
 
   return (
     <>
-      <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
+      <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
       <div className=" max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
@@ -330,9 +329,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
         <div className="col-span-1 flex flex-wrap gap-x-1">
           <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><MdMailOutline /> 依頼手段</h3>
-          <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)}></MailRadio>
-          <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)}></TelRadio>
-          <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)}></OtherRadio>
+          <MailRadio defaultChecked={task.method === 'mail' ? true : false} name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)}></MailRadio>
+          <TelRadio defaultChecked={task.method === 'tel' ? true : false} name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)}></TelRadio>
+          <OtherRadio defaultChecked={task.method === 'other' ? true : false} name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)}></OtherRadio>
         </div>
 
         <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)}></AddTaskTextarea>

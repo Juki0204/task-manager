@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete, ChangeRemove, ChangeConfirm } from "./ContextMenuBtn";
+import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete, ChangeRemove, ChangeConfirm, InsertCopyTask } from "./ContextMenuBtn";
 import { Task } from "@/utils/types/task";
 
 type ContextMenuProps = {
@@ -9,9 +9,10 @@ type ContextMenuProps = {
   taskSerial: string;
   onClose: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
+  onCopyTask?: (t: Task) => void;
 };
 
-export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateTaskStatus }: ContextMenuProps) {
+export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateTaskStatus, onCopyTask }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ top: number; left: number }>({ top: y, left: x });
 
@@ -59,6 +60,10 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateT
       </ul>
 
       <ul className="flex flex-col gap-0.5">
+        {onCopyTask && (
+          <InsertCopyTask taskId={taskId} onClick={onClose} onCopyTask={(t) => onCopyTask(t)}></InsertCopyTask>
+        )}
+
         <ChangeDelete taskId={taskId} taskSerial={taskSerial} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeDelete>
       </ul>
 

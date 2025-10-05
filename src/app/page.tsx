@@ -10,6 +10,7 @@ import AddTask from "@/components/AddTask";
 import TaskList from "@/components/TaskList";
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
+import CopyTask from "@/components/CopyTask";
 import ContextMenu from "@/components/ui/ContextMenu";
 import { AddTaskBtn } from "@/components/ui/Btn";
 
@@ -20,7 +21,7 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 
 export default function Home() {
   const { taskListStyle } = useTaskListPreferences();
-  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
+  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
@@ -137,6 +138,10 @@ export default function Home() {
             {modalType === "edit" && activeTask && user && (
               <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler}></UpdateTask>
             )}
+
+            {modalType === "copy" && activeTask && user && (
+              <CopyTask user={user} task={activeTask} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}></CopyTask>
+            )}
           </DialogPanel>
         </div>
       </Dialog>
@@ -149,6 +154,13 @@ export default function Home() {
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
           updateTaskStatus={updateTaskStatus}
+          onCopyTask={(t) => {
+            if (isOpen) return;
+
+            setActiveTask(t);
+            setModalType('copy');
+            setIsOpen(true);
+          }}
         ></ContextMenu>
       )}
     </div>

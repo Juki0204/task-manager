@@ -1,12 +1,15 @@
 import { FaRegStickyNote, FaRegTrashAlt, FaRegPauseCircle, FaRegPlayCircle } from "react-icons/fa";
 import { MdPersonRemove, MdOutlineFactCheck } from "react-icons/md";
+import { LuCopyPlus } from "react-icons/lu";
 
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CorrectBtn, OutlineBtn } from "./Btn";
 import { toast } from "sonner";
 import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
+import { supabase } from "@/utils/supabase/supabase";
+import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 
 
 
@@ -149,6 +152,49 @@ export function ChangeRemove({ taskId, onClick, updateTaskStatus }: RemoveProps)
   );
 }
 
+
+
+//---------InsertCopyTask Btn---------
+
+type InsertCopyTaskProps = {
+  taskId: string;
+  onClick: () => void;
+  onCopyTask: (t: Task) => void;
+}
+
+export function InsertCopyTask({ taskId, onClick, onCopyTask }: InsertCopyTaskProps) {
+
+  const [copiedTask, setCopiedTask] = useState<Task | null>(null);
+
+  const getCurrentTask = async (taskId: string) => {
+    const { data } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq("id", taskId)
+      .single();
+
+    if (!data) return false;
+    setCopiedTask(mapDbTaskToTask(data));
+  };
+
+  useEffect(() => {
+    getCurrentTask(taskId);
+  }, [taskId]);
+
+  return (
+    <li
+      onClick={async () => {
+        console.log(copiedTask);
+        if (!copiedTask) return;
+        onCopyTask(copiedTask);
+        onClick();
+      }}
+      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+    >
+      <LuCopyPlus />コピーして新規追加
+    </li>
+  );
+}
 
 
 //---------Delete Btn---------
