@@ -19,7 +19,7 @@ import { useAuth } from "./AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
-export default function Home() {
+export default function AllTaskPage() {
   const { taskListStyle } = useTaskListPreferences();
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);

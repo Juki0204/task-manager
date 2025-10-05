@@ -13,7 +13,7 @@ interface ResetPassMailInput {
   email: string;
 }
 
-const ResetPassMail = () => {
+export default function ResetPassMailPage() {
   const router = useRouter();
 
   const {
@@ -93,5 +93,3 @@ const ResetPassMail = () => {
     </main>
   )
 }
-
-export default ResetPassMail;

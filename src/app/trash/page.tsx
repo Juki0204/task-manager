@@ -19,7 +19,7 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 
 type taskListStyle = "rowListStyle" | "cardListStyle";
 
-export default function Home() {
+export default function TrashTaskPage() {
 
   const [taskListStyle, setTaskListStyle] = useState<taskListStyle | null>(null);
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);

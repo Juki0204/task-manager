@@ -13,7 +13,7 @@ interface ResetPassInput {
   passwordComfirmation: string;
 }
 
-const ResetPass = () => {
+export default function ResetPassPage() {
   const router = useRouter();
 
   const {
@@ -116,5 +116,3 @@ const ResetPass = () => {
     </main>
   )
 }
-
-export default ResetPass;

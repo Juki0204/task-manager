@@ -26,7 +26,7 @@ import {
 
 
 
-export default function Home() {
+export default function PersonalTaskPage() {
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);

@@ -15,7 +15,7 @@ interface SignUpFormInput {
   employee: string;
 }
 
-const SignUp = () => {
+export default function SignUpPage() {
   const router = useRouter();
 
   const {
@@ -206,5 +206,3 @@ const SignUp = () => {
     </main>
   )
 }
-
-export default SignUp;

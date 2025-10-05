@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { simpleParser } from "mailparser";
 import type { AddressObject } from "mailparser";
 import { supabase } from "@/utils/supabase/supabase";

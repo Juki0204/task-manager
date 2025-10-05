@@ -5,7 +5,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useEffect } from "react";
 import { CorrectBtn } from "@/components/ui/Btn";
 
-const SignUpConfirm = () => {
+export default function SignUpConfirmPage() {
   const router = useRouter();
 
   const registerUser = async () => {
@@ -54,5 +54,3 @@ const SignUpConfirm = () => {
     </main>
   );
 }
-
-export default SignUpConfirm;
