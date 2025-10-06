@@ -13,6 +13,7 @@ type UserData = {
 
 export function useTaskRealtime(user: UserData) {
   const [taskList, setTaskList] = useState<Task[]>([]);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   const getTasks = async () => {
     const { data: tasks } = await supabase
@@ -57,10 +58,11 @@ export function useTaskRealtime(user: UserData) {
   useEffect(() => {
     if (!user) return;
 
+    setIsReady(true);
     getTasks();
 
     const channel = supabase
-      .channel(`task-changes-${user.id}`)
+      .channel("task-changes")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "tasks" },
@@ -74,15 +76,11 @@ export function useTaskRealtime(user: UserData) {
 
           if (payload.eventType === "UPDATE") {
             // toast.info('タスクが更新されました。');
-            if (payload.new.status === "削除済" || payload.new.status === "完了") {
-              setTaskList((prev) => prev.filter((t) => t.id !== payload.new.id));
-            } else {
-              setTaskList((prev) =>
-                prev.map((t) =>
-                  t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
-                )
-              );
-            }
+            setTaskList((prev) =>
+              prev.map((t) =>
+                t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
+              )
+            );
           }
 
           if (payload.eventType === "DELETE") {
@@ -102,6 +100,7 @@ export function useTaskRealtime(user: UserData) {
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
+      channel.unsubscribe();
       supabase.removeChannel(channel);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
@@ -111,32 +110,39 @@ export function useTaskRealtime(user: UserData) {
 
   const updateTaskStatus = async (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => {
     //即時UI更新
-    setTaskList((prev) => {
-      const updated = prev.map((t) =>
+    setTaskList((prev) =>
+      prev.map((t) =>
         t.id === taskId ? { ...t, status: newStatus, ...extraFields } : t
-      );
-      // console.log("UIが更新されました");
-      // return sortTask(updated);
-      return updated;
-    });
+      )
+    );
 
     //DB更新
-    const { error } = await supabase.from("tasks").update({ status: newStatus, ...extraFields }).eq("id", taskId);
+    if (newStatus !== "完了") {
+      const { error: updateError } = await supabase.from("tasks").update({ status: newStatus, ...extraFields }).eq("id", taskId);
 
-    if (error) {
-      console.error(error);
-      // 失敗時は巻き戻す
-      setTaskList((prev) =>
-        // sortTask(
-        prev.map((t) =>
-          t.id === taskId ? { ...t, status: prevStatus } : t
-          // )
-        )
-      );
+      if (updateError) {
+        console.error(updateError);
+        // 失敗時は巻き戻す
+        setTaskList((prev) =>
+          prev.map((t) =>
+            t.id === taskId ? { ...t, status: prevStatus } : t
+          )
+        );
+      }
     } else {
-      console.log("タスクの更新が完了しました。");
+      const { error: finishError } = await supabase.from("tasks").update({ status: newStatus, finish_date: new Date().toLocaleDateString("sv-SE"), ...extraFields }).eq("id", taskId);
+
+      if (finishError) {
+        console.error(finishError);
+        // 失敗時は巻き戻す
+        setTaskList((prev) =>
+          prev.map((t) =>
+            t.id === taskId ? { ...t, status: prevStatus } : t
+          )
+        );
+      }
     }
   };
 
-  return { taskList, updateTaskStatus, sortTask };
+  return { taskList, updateTaskStatus, sortTask, isReady };
 }

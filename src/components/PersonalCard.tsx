@@ -7,27 +7,29 @@ import { BsPersonCheck } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useDraggable } from "@dnd-kit/core";
+import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
+import { useAuth } from "@/app/AuthProvider";
 
 interface CardPropd {
   task: Task;
-  // user: {
-  //   id: string;
-  //   name: string;
-  //   email: string;
-  //   employee: string;
-  // },
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    employee: string;
+  },
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
 }
 
 export default function PersonalCard({
   task,
-  //user,
+  user,
   onClick,
   onContextMenu,
   ...props
 }: CardPropd) {
-  // const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
+  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id, data: { task, initStatus: task.status } });
 
   const draggableStyle = transform

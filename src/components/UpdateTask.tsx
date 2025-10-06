@@ -17,6 +17,7 @@ import { LuNotebookPen } from "react-icons/lu";
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
+import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 
 
 interface task {
@@ -69,7 +70,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
-  // const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
+  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
 
   //ファイル添付監視
   const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +171,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
         title: taskTitle,
         description: taskDescription,
         request_date: requestDate,
-        finish_date: finishDate,
+        finish_date: finishDate ? finishDate : new Date().toISOString(),
         manager: manager,
         status: status,
         priority: priority,
@@ -284,6 +285,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
   useEffect(() => {
     getRequesters(client);
+    console.log(task);
   }, [client]);
 
 

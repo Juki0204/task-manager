@@ -32,7 +32,7 @@ export default function PersonalTaskPage() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
-  const { taskList, updateTaskStatus, sortTask } = useTaskRealtime(user ?? null);
+  const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
   // const [initStatus, setInitStatus] = useState<string | null>(null);
 
   const [menu, setMenu] = useState<{
@@ -126,6 +126,8 @@ export default function PersonalTaskPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
 
+  if (!isReady) return <p>loading...</p>
+
   return (
     <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 !pt-30 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
       <div className="flex justify-between items-center">
@@ -148,6 +150,7 @@ export default function PersonalTaskPage() {
               setIsOpen(true);
             }}
             onContextMenu={handleContextMenu}
+            sortTask={sortTask}
           ></PersonalTaskList>
         </DndContext>}
 
@@ -160,10 +163,10 @@ export default function PersonalTaskPage() {
           setTimeout(() => {
             setActiveTask(null);
             setModalType(null);
-          }, 500);
+          }, 10);
         }}
-        transition
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+        // transition
+        className="relative z-50 transition duration-100 ease-out data-closed:opacity-0"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 

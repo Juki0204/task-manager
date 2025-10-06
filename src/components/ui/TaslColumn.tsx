@@ -8,12 +8,12 @@ interface TaskColumnProps {
   id: string;
   title: string;
   tasks: Task[];
-  // user: {
-  //   id: string;
-  //   name: string;
-  //   email: string;
-  //   employee: string;
-  // };
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    employee: string;
+  };
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   className: string;
@@ -23,7 +23,7 @@ export function TaskColumn({
   id,
   title,
   tasks,
-  //user,
+  user,
   onClick,
   onContextMenu,
   className
@@ -36,7 +36,7 @@ export function TaskColumn({
 
       {tasks.map(task => (
         <PersonalCard
-          //user={user}
+          user={user}
           key={task.id}
           task={task}
           onClick={onClick}

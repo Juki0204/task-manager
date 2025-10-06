@@ -123,9 +123,9 @@ export default function CompletedTaskPage() {
           setTimeout(() => {
             setActiveTask(null);
             setModalType(null);
-          }, 500);
+          }, 10);
         }}
-        transition
+        // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
