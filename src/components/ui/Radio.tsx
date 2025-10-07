@@ -30,7 +30,7 @@ export function MailRadio({ name, id, onClick, ...props }: mailRadioProps) {
         <input type="radio" name={name} id={id} value="mail" {...props} onClick={onClick} className="w-full h-full hidden peer"></input>
         <label htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 transition duration-300"><MdMailOutline className="w-full h-full" /></label>
       </div>
-      <Tooltip id="mailRadio" place="bottom" variant="info"></Tooltip>
+      <Tooltip id="mailRadio" place="bottom" variant="info" />
     </>
   )
 }
@@ -42,7 +42,7 @@ export function TelRadio({ name, id, onClick, ...props }: telRadioProps) {
         <input type="radio" name={name} id={id} value="tel" {...props} onClick={onClick} className="w-full h-full hidden peer"></input>
         <label htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 transition duration-300"><FiPhone className="w-full h-full" /></label>
       </div>
-      <Tooltip id="telRadio" place="bottom" variant="info"></Tooltip>
+      <Tooltip id="telRadio" place="bottom" variant="info" />
     </>
   )
 }
@@ -54,7 +54,7 @@ export function OtherRadio({ name, id, onClick, ...props }: otherRadioProps) {
         <input type="radio" name={name} id={id} value="other" {...props} onClick={onClick} className="w-full h-full hidden peer"></input>
         <label htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 transition duration-300"><FaRegQuestionCircle className="w-full h-full" /></label>
       </div>
-      <Tooltip id="otherRadio" place="bottom" variant="info"></Tooltip>
+      <Tooltip id="otherRadio" place="bottom" variant="info" />
     </>
   )
 }

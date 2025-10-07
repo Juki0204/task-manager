@@ -131,7 +131,7 @@ export default function PersonalTaskPage() {
   return (
     <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 !pt-30 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
       <div className="flex justify-between items-center">
-        <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn>
+        <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
       </div>
       {user &&
         <DndContext
@@ -151,7 +151,7 @@ export default function PersonalTaskPage() {
             }}
             onContextMenu={handleContextMenu}
             sortTask={sortTask}
-          ></PersonalTaskList>
+          />
         </DndContext>}
 
       {/* 共通モーダル */}
@@ -183,7 +183,7 @@ export default function PersonalTaskPage() {
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler}></UpdateTask>
+              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
             )}
           </DialogPanel>
         </div>
@@ -197,7 +197,7 @@ export default function PersonalTaskPage() {
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
           updateTaskStatus={updateTaskStatus}
-        ></ContextMenu>
+        />
       )}
     </div>
   );

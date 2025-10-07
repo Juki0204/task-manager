@@ -52,19 +52,19 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateT
 
       <h3 className="text-sm font-bold text-white py-1">■ 状態変更</h3>
       <ul className="flex flex-col gap-0.5 border-b border-slate-400 pb-1 mb-1">
-        <ChangeInProgress taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeInProgress>
-        <ChangeInterrupt taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeInterrupt>
-        <ChangeConfirm taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeConfirm>
-        <ChangeNotYetStarted taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeNotYetStarted>
-        <ChangeRemove taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeRemove>
+        <ChangeInProgress taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
+        <ChangeInterrupt taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
+        <ChangeConfirm taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
+        <ChangeNotYetStarted taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
+        <ChangeRemove taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
       </ul>
 
       <ul className="flex flex-col gap-0.5">
         {onCopyTask && (
-          <InsertCopyTask taskId={taskId} onClick={onClose} onCopyTask={(t) => onCopyTask(t)}></InsertCopyTask>
+          <InsertCopyTask taskId={taskId} onClick={onClose} onCopyTask={(t) => onCopyTask(t)} />
         )}
 
-        <ChangeDelete taskId={taskId} taskSerial={taskSerial} onClick={onClose} updateTaskStatus={updateTaskStatus}></ChangeDelete>
+        <ChangeDelete taskId={taskId} taskSerial={taskSerial} onClick={onClose} updateTaskStatus={updateTaskStatus} />
       </ul>
 
     </div>

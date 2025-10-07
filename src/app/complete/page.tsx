@@ -112,7 +112,7 @@ export default function CompletedTaskPage() {
             setIsOpen(true);
           }}
           onContextMenu={handleContextMenu}
-        ></TaskList>}
+        />}
 
       {/* 共通モーダル */}
       <Dialog
@@ -143,7 +143,7 @@ export default function CompletedTaskPage() {
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler}></UpdateTask>
+              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
             )}
           </DialogPanel>
         </div>
@@ -157,7 +157,7 @@ export default function CompletedTaskPage() {
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
           updateTaskStatus={updateTaskStatus}
-        ></ContextMenu>
+        />
       )}
     </div>
   );

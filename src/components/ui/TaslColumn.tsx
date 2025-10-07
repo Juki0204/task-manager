@@ -41,7 +41,7 @@ export function TaskColumn({
           task={task}
           onClick={onClick}
           onContextMenu={onContextMenu}
-        ></PersonalCard>
+        />
       ))}
     </div>
   )

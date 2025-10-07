@@ -22,7 +22,7 @@ export default function TaskList({ taskList, user, onClick, onContextMenu }: Tas
       group-[.rowListStyle]:flex group-[.rowListStyle]:gap-0.5 group-[.rowListStyle]:flex-col group-[.rowListStyle]:overflow-x-auto">
       {taskList.length > 0
         ? taskList.map(task => (
-          <Card user={user} key={task.id} task={task} onClick={onClick} onContextMenu={onContextMenu}></Card>
+          <Card user={user} key={task.id} task={task} onClick={onClick} onContextMenu={onContextMenu} />
         ))
         : <p className="text-center text-white">該当するタスクがありません。</p>
       }

@@ -300,7 +300,7 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
               }}
               className="absolute top-8 right-8 cursor-pointer"
             />
-            <FileModal file={selectedFile ? selectedFile : currentTaskFile[0]}></FileModal>
+            <FileModal file={selectedFile ? selectedFile : currentTaskFile[0]} />
           </DialogPanel>
         </div>
       </Dialog>

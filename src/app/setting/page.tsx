@@ -20,7 +20,7 @@ export default function SettingPage() {
         </div>
 
         <div className="bg-zinc-700 p-4 col-span-3 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]">
-          {activeMenu === "requester" && <RequesterSetting></RequesterSetting>}
+          {activeMenu === "requester" && <RequesterSetting />}
         </div>
 
       </div>

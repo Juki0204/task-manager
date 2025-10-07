@@ -61,7 +61,7 @@ export default function Header() {
               {/* <p className="text-white">所属：{currentUserEmployee}</p>
             <p className="text-white">Email：{currentUserEmail}</p> */}
             </div>
-            <LogoutBtn></LogoutBtn>
+            <LogoutBtn />
           </div>
 
           <div className="flex gap-4 items-center relative pt-2">
@@ -72,7 +72,6 @@ export default function Header() {
               <option value='cardListStyle'>カード型リスト</option>
               <option value='rowListStyle'>列型リスト</option>
             </select>
-            {/* <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }}></AddTaskBtn> */}
             {pathname !== "/personal" && (
               <div className="flex items-center gap-2 border-l px-4 border-neutral-500">
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
@@ -97,7 +96,7 @@ export default function Header() {
                     })
                   }
                   defaultText="クライアント"
-                ></MultiSelectPopover>
+                />
 
                 <MultiSelectPopover
                   options={[
@@ -118,7 +117,7 @@ export default function Header() {
                     })
                   }
                   defaultText="作業担当者"
-                ></MultiSelectPopover>
+                />
 
                 <MultiSelectPopover
                   options={[
@@ -138,7 +137,7 @@ export default function Header() {
                     })
                   }
                   defaultText="作業状況"
-                ></MultiSelectPopover>
+                />
 
                 {/* <CorrectBtn className="!m-0 py-2 !w-30 text-sm rounded-md" onClick={handleApply}>フィルタリング</CorrectBtn> */}
                 {/* <CorrectBtn className="!m-0 py-2 !w-30 text-sm rounded-md bg-slate-500" onClick={resetFilters}>リセット</CorrectBtn> */}

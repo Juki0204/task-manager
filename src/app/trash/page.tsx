@@ -113,7 +113,7 @@ export default function TrashTaskPage() {
             setIsOpen(true);
           }}
           onContextMenu={handleContextMenu}
-        ></TaskList>}
+        />}
 
       {/* 共通モーダル */}
       <Dialog
@@ -144,7 +144,7 @@ export default function TrashTaskPage() {
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler}></UpdateTask>
+              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
             )}
           </DialogPanel>
         </div>
@@ -158,7 +158,7 @@ export default function TrashTaskPage() {
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
           updateTaskStatus={updateTaskStatus}
-        ></ContextMenu>
+        />
       )}
     </div>
   );

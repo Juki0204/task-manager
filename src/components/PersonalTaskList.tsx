@@ -26,7 +26,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
-      ></TaskColumn>
+      />
 
       <TaskColumn
         id="InProgress"
@@ -36,7 +36,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
-      ></TaskColumn>
+      />
 
       <TaskColumn
         id="Confirm"
@@ -46,7 +46,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
-      ></TaskColumn>
+      />
 
       <TaskColumn
         id="Completed"
@@ -69,7 +69,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
-      ></TaskColumn>
+      />
 
     </div>
   )
