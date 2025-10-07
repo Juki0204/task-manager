@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useDraggable } from "@dnd-kit/core";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
-import { useAuth } from "@/app/AuthProvider";
 
 interface CardPropd {
   task: Task;
@@ -29,7 +28,7 @@ export default function PersonalCard({
   onContextMenu,
   ...props
 }: CardPropd) {
-  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
+  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false); //タスクステータスの監視
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id, data: { task, initStatus: task.status } });
 
   const draggableStyle = transform
@@ -42,6 +41,7 @@ export default function PersonalCard({
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
 
+  //担当者別色設定
   function definePersonalColor(manager: string) {
     if (manager === '谷') {
       setPersonalBorder('taniBorder');
@@ -67,6 +67,7 @@ export default function PersonalCard({
     }
   }
 
+  //優先度別色設定
   function definePriorityStyle(priority: string | undefined) {
     if (priority === '急') {
       setPriorityStyle('bg-red-300 text-red-800');
@@ -77,6 +78,7 @@ export default function PersonalCard({
     }
   }
 
+  //作業状況別色設定
   function defineStatusStyle(status: string) {
     if (status === '未着手') {
       setStatusStyle('bg-neutral-300 text-neutral-800');

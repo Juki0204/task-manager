@@ -1,6 +1,5 @@
 import { Task } from "@/utils/types/task";
 import { TaskColumn } from "./ui/TaslColumn";
-import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 interface PersonalTaskListProps {
   taskList: Task[];
