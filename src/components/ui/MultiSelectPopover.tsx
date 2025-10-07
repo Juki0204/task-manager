@@ -24,7 +24,7 @@ export default function MultiSelectPopover({ options, onChange, defaultText }: M
       <Popover className="relative">
         {({ open }) => (
           <>
-            <PopoverButton className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none">
+            <PopoverButton className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white pl-3 pr-2 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none">
               <span className="truncate flex-1 text-left">
                 {selected.length > 0
                   ? options.filter((opt) => selected.includes(opt.id)).map((opt) => opt.label).join(", ")

@@ -18,7 +18,6 @@ import { LuNotebookPen } from "react-icons/lu";
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
-import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 
 
 interface task {

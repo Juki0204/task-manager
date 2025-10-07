@@ -76,7 +76,13 @@ export default function AllTaskPage() {
     });
     const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
 
-    return clientMatch && assigneeMatch && statusMatch;
+    const searchMatch =
+      !filters.searchKeywords ||
+      task.title?.includes(filters.searchKeywords) ||
+      task.description?.includes(filters.searchKeywords) ||
+      task.requester?.includes(filters.searchKeywords);
+
+    return clientMatch && assigneeMatch && statusMatch && searchMatch;
   });
 
   useEffect(() => {

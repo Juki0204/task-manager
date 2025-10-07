@@ -7,6 +7,8 @@ import { BsPersonCheck } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
+import HighlightText from "./ui/HighlightText";
+import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
 interface CardPropd {
   task: Task;
@@ -22,6 +24,7 @@ interface CardPropd {
 
 export default function Card({ task, user, onClick, onContextMenu, ...props }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
+  const { filters } = useTaskListPreferences();
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
@@ -115,7 +118,9 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
                 :
                 <FaRegQuestionCircle />
           }
-          <span className="truncate flex-1">{task.title}</span>
+          <span className="truncate flex-1">
+            <HighlightText text={task.title} keyword={filters.searchKeywords} />
+          </span>
         </h3>
 
         <div className="w-fit flex gap-1 items-center pl-1
@@ -133,13 +138,13 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
         <div className="line-clamp-2 w-full text-sm
         group-[.cardListStyle]:h-10 group-[.cardListStyle]:mb-3
         group-[.rowListStyle]:[grid-area:dis]">
-          {task.description}
+          <HighlightText text={task.description} keyword={filters.searchKeywords} />
         </div>
 
         <div className="grid gap-2 text-sm grid-cols-6
         group-[.cardListStyle]:mb-2
         group-[.rowListStyle]:[grid-area:cli-mana] group-[.rowListStyle]:gap-1">
-          <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《{task.requester}》</div>
+          <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《<HighlightText text={task.requester} keyword={filters.searchKeywords} />》</div>
           <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div>
 

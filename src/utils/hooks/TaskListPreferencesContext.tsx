@@ -7,6 +7,7 @@ type Filters = {
   clients: string[]; //クライアント
   assignees: string[]; //担当者
   statuses: string[]; //ステータス
+  searchKeywords: string | null; //検索
 }
 
 type TaskListPreferencesContextType = {
@@ -42,16 +43,18 @@ export function TaskListPreferencesProvider({ children }: { children: React.Reac
 
   //フィルタリング
   const [filters, setFilters] = useState<Filters>({
+    clients: [],
     assignees: [],
     statuses: [],
-    clients: [],
+    searchKeywords: null,
   });
 
   const resetFilters = () => {
     setFilters({
+      clients: [],
       assignees: [],
       statuses: [],
-      clients: [],
+      searchKeywords: null,
     })
   }
 
