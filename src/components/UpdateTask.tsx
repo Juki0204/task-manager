@@ -286,6 +286,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   useEffect(() => {
     getRequesters(client);
     console.log(task);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client]);
 
 
