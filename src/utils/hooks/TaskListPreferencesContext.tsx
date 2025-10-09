@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 type TaskListStyle = "cardListStyle" | "rowListStyle";
+type TaskListSortType = "byDate" | "byManager";
 type Filters = {
   clients: string[]; //クライアント
   assignees: string[]; //担当者
@@ -13,6 +14,8 @@ type Filters = {
 type TaskListPreferencesContextType = {
   taskListStyle: TaskListStyle;
   setTaskListStyle: (style: TaskListStyle) => void;
+  taskListSortType: TaskListSortType;
+  setTaskListSortType: (style: TaskListSortType) => void;
   filters: Filters;
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
@@ -25,21 +28,34 @@ const TaskListPreferencesContext = createContext<TaskListPreferencesContextType 
 
 export function TaskListPreferencesProvider({ children }: { children: React.ReactNode }) {
   const [taskListStyle, setTaskListStyle] = useState<TaskListStyle>("cardListStyle");
+  const [taskListSortType, setTaskListSortType] = useState<TaskListSortType>("byDate");
 
   // 初回に localStorage から読み込み
   useEffect(() => {
-    const saved = localStorage.getItem("taskListStyle");
-    if (saved === "rowListStyle" || saved === "cardListStyle") {
-      setTaskListStyle(saved);
+    const savedStyle = localStorage.getItem("taskListStyle");
+    if (savedStyle === "rowListStyle" || savedStyle === "cardListStyle") {
+      setTaskListStyle(savedStyle);
+    }
+
+    const savedSortType = localStorage.getItem("taskListSortType");
+    if (savedSortType === "byDate" || savedSortType === "byManager") {
+      setTaskListSortType(savedSortType);
     }
   }, []);
 
-  // 値が変わったら localStorage に保存
+  //taskListStyle
   useEffect(() => {
     if (taskListStyle) {
       localStorage.setItem("taskListStyle", taskListStyle);
     }
   }, [taskListStyle]);
+
+  //taskListSotyType
+  useEffect(() => {
+    if (taskListSortType) {
+      localStorage.setItem("taskListSortType", taskListSortType);
+    }
+  }, [taskListSortType]);
 
   //フィルタリング
   const [filters, setFilters] = useState<Filters>({
@@ -63,6 +79,8 @@ export function TaskListPreferencesProvider({ children }: { children: React.Reac
       value={{
         taskListStyle,
         setTaskListStyle,
+        taskListSortType,
+        setTaskListSortType,
         filters,
         setFilters,
         resetFilters,

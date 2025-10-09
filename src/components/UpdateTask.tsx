@@ -178,7 +178,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
         remarks: remarks,
         method: method,
         updated_manager: currentUserName,
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toLocaleDateString("sv-SE"),
       })
       .eq('serial', serial)
       .select()

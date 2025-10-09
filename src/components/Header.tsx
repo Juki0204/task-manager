@@ -7,13 +7,14 @@ import { useAuth } from "@/app/AuthProvider";
 import { Button, Input } from "@headlessui/react";
 import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
 
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaRegCreditCard } from "react-icons/fa";
+
 import { IoSettingsOutline } from "react-icons/io5";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import MultiSelectPopover from "./ui/MultiSelectPopover";
 
-type taskListStyle = "rowListStyle" | "cardListStyle";
-
+type TaskListStyle = "rowListStyle" | "cardListStyle";
+type TaskListSortType = "byDate" | "byManager";
 
 export default function Header() {
   const { user } = useAuth();
@@ -23,7 +24,7 @@ export default function Header() {
   // const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
   // const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
 
-  const { taskListStyle, setTaskListStyle, filters, setFilters } = useTaskListPreferences();
+  const { taskListStyle, setTaskListStyle, taskListSortType, setTaskListSortType, filters, setFilters } = useTaskListPreferences();
 
   const setCurrentUser = async () => {
     if (user) {
@@ -68,12 +69,23 @@ export default function Header() {
             {pathname !== "/personal" && (
               <select
                 value={taskListStyle}
-                onChange={(e) => setTaskListStyle(e.target.value as taskListStyle)}
-                className="w-fit py-1.5 px-3 bg-neutral-300 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
+                onChange={(e) => setTaskListStyle(e.target.value as TaskListStyle)}
+                className="w-fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
                 <option value='cardListStyle'>カード型リスト</option>
                 <option value='rowListStyle'>列型リスト</option>
               </select>
             )}
+
+            {pathname === "/" && (
+              <select
+                value={taskListSortType}
+                onChange={(e) => setTaskListSortType(e.target.value as TaskListSortType)}
+                className="w-fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
+                <option value='byDate'>日付順ソート</option>
+                <option value='byManager'>担当者順ソート</option>
+              </select>
+            )}
+
             {pathname !== "/personal" && (
               <div className="flex items-center gap-2 border-l px-4 border-neutral-500">
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>

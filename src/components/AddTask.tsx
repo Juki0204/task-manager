@@ -161,7 +161,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
         requester: requester,
         title: taskTitle,
         description: taskDescription,
-        request_date: requestDate,
+        request_date: requestDate ? requestDate : new Date().toLocaleDateString("sv-SE"),
         finish_date: finishDate,
         manager: manager,
         status: status,

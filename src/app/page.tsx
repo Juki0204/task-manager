@@ -27,7 +27,7 @@ export default function AllTaskPage() {
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
-  const { filters } = useTaskListPreferences();
+  const { taskListSortType, filters } = useTaskListPreferences();
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -85,6 +85,29 @@ export default function AllTaskPage() {
     return clientMatch && assigneeMatch && statusMatch && searchMatch;
   });
 
+  const sortTask = (task: Task[]) => {
+    const sortedTask = [...task].sort((a, b) => {
+      if (taskListSortType === "byDate") {
+        return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
+      }
+
+      if (taskListSortType === "byManager") {
+        const managerA = a.manager ? a.manager : "";
+        const managerB = b.manager ? b.manager : "";
+
+        // 未担当（空文字）は常に最後に
+        if (managerA === "" && managerB !== "") return 1;
+        if (managerA !== "" && managerB === "") return -1;
+
+        return managerA.localeCompare(managerB, "ja");
+      }
+
+      return 0;
+    });
+
+    return sortedTask;
+  }
+
   useEffect(() => {
     if (activeTask) {
       const updated = taskList.find((t) => t.id === activeTask.id);
@@ -102,7 +125,7 @@ export default function AllTaskPage() {
       {user &&
         <TaskList
           user={user}
-          taskList={filteredTaskList}
+          taskList={sortTask(filteredTaskList)}
           onClick={(t: Task) => {
             if (isOpen) return;
 
