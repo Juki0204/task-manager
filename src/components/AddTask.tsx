@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { DialogTitle, Button } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
-import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
+import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
@@ -52,6 +52,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(true);
 
 
   //ファイル添付監視
@@ -261,6 +262,14 @@ export default function AddTask({ onClose }: AddTaskProps) {
   //   setUploadedFiles([]); //添付ファイル
   // }
 
+  const handleContentCheck = (taskTitle: string, taskDescription: string) => {
+    if (taskTitle && taskDescription) {
+      setIsValid(false);
+    } else {
+      setIsValid(true);
+    }
+  }
+
   useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -295,9 +304,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
           <option value="不明">不明</option>
         </AddTaskSelect>
 
-        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} />
+        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
 
-        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)} />
+        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
 
         <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 
@@ -315,9 +324,9 @@ export default function AddTask({ onClose }: AddTaskProps) {
           <option value="作業中">作業中</option>
           <option value="作業途中">作業途中</option>
           <option value="確認中">確認中</option>
-          <option value="完了">完了</option>
+          {/* <option value="完了">完了</option> */}
           <option value="保留">保留</option>
-          <option value="中止">中止</option>
+          {/* <option value="中止">中止</option> */}
           <option value="詳細待ち">詳細待ち</option>
         </AddTaskSelect>
 
@@ -355,8 +364,8 @@ export default function AddTask({ onClose }: AddTaskProps) {
         </Button>
         <Button
           onClick={() => addTask()}
-          disabled={isSubmitting}
-          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400"
+          disabled={isValid || isSubmitting}
+          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
         >
           {isSubmitting ? "追加中..." : "新規追加"}
         </Button>

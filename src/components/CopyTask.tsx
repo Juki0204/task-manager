@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { DialogTitle, Button } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
-import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
+import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
@@ -58,6 +58,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
   const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
+  const [isValid, setIsValid] = useState<boolean>(true);
 
   //ファイル添付監視
   const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,23 +153,6 @@ export default function UpdateTask({ task, user, onClose }: task) {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    console.log({
-      client: client,
-      requester: requester,
-      title: taskTitle,
-      description: taskDescription,
-      request_date: requestDate,
-      finish_date: finishDate,
-      manager: manager,
-      status: status,
-      priority: priority,
-      remarks: remarks,
-      method: method,
-      created_manager: currentUserName,
-      updated_manager: currentUserName,
-      serial: generateSerial(currentTaskNum),
-    })
-
     const { data: taskData, error: addTaskError } = await supabase
       .from('tasks')
       .insert({
@@ -262,6 +246,15 @@ export default function UpdateTask({ task, user, onClose }: task) {
   }
 
 
+  const handleContentCheck = (taskTitle: string, taskDescription: string) => {
+    if (taskTitle && taskDescription) {
+      setIsValid(false);
+    } else {
+      setIsValid(true);
+    }
+  }
+
+
   useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -271,6 +264,11 @@ export default function UpdateTask({ task, user, onClose }: task) {
     getRequesters(client);
     getClientTaskNum(client);
   }, [client]);
+
+  useEffect(() => {
+    handleContentCheck(taskTitle, taskDescription);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   return (
@@ -293,9 +291,9 @@ export default function UpdateTask({ task, user, onClose }: task) {
           <option value="不明">不明</option>
         </AddTaskSelect>
 
-        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} />
+        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
 
-        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)} />
+        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
 
         <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 
@@ -353,8 +351,8 @@ export default function UpdateTask({ task, user, onClose }: task) {
         </Button>
         <Button
           onClick={() => addTask()}
-          disabled={isSubmitting}
-          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400"
+          disabled={isValid || isSubmitting}
+          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
         >
           {isSubmitting ? "追加中..." : "新規追加"}
         </Button>

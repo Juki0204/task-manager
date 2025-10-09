@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 import { DialogTitle, Button } from "@headlessui/react";
-import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/addTaskInput";
+import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskInput";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
@@ -71,6 +71,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
+  const [isValid, setIsValid] = useState<boolean>(true);
 
   //ファイル添付監視
   const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -276,6 +277,13 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   //   onClick?.();
   // };
 
+  const handleContentCheck = (taskTitle: string, taskDescription: string) => {
+    if (taskTitle && taskDescription) {
+      setIsValid(false);
+    } else {
+      setIsValid(true);
+    }
+  }
 
   useEffect(() => {
     getData();
@@ -288,6 +296,11 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
     console.log(task);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client]);
+
+  useEffect(() => {
+    handleContentCheck(taskTitle, taskDescription);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
 
   return (
@@ -309,9 +322,9 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
           <option value="不明">不明</option>
         </AddTaskSelect>
 
-        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} />
+        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
 
-        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)} />
+        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
 
         <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 
@@ -377,6 +390,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
           キャンセル
         </Button>
         <Button
+          disabled={isValid}
           onClick={() => {
             updateTask();
             onUnlock();
@@ -386,7 +400,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
             }, 500);
           }
           }
-          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer"
+          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
         >
           更新
         </Button>

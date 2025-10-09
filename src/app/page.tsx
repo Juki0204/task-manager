@@ -118,10 +118,8 @@ export default function AllTaskPage() {
 
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-34 max-w-[1600px] relative`}>
-      <div className="flex justify-between items-center relative">
-        <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
-      </div>
+    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-34 max-w-[1600px]`}>
+      <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
       {user &&
         <TaskList
           user={user}

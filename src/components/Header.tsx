@@ -48,7 +48,7 @@ export default function Header() {
   return (
     <>
       {!isExculedPath ?
-        <header className="fixed top-0 w-full min-w-340 py-2 px-4 z-10 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
+        <header className="fixed top-0 w-full min-w-400 py-2 px-4 z-10 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
           <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
             <div className="flex gap-4 flex-1">
               <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/')}>全体タスク</Button>

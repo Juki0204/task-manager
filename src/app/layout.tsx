@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900 m-0 w-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900 m-0 w-full min-w-400`}
       >
         <AuthProvider>
           <TaskListPreferencesProvider>
