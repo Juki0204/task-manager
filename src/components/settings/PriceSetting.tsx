@@ -25,7 +25,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Cat } from "lucide-react";
 
 interface PriceItem {
   id: number;
@@ -282,10 +281,12 @@ function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPri
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
       className="grid grid-cols-8 gap-1 bg-neutral-300 rounded-sm p-1 pl-5.5 relative"
     >
-      <MdDragIndicator className="absolute top-1/2 left-1 -translate-y-1/2 text-neutral-500 cursor-grab" />
+      <MdDragIndicator
+        {...listeners}
+        className="absolute top-1/2 left-1 -translate-y-1/2 text-neutral-500 cursor-grab active:cursor-grabbing"
+      />
       <Input
         type="text"
         defaultValue={item.work_name}
