@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { DialogTitle, Button } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
-import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskInput";
+import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
