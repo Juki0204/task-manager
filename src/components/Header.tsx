@@ -7,9 +7,13 @@ import { useAuth } from "@/app/AuthProvider";
 import { Button, Input } from "@headlessui/react";
 import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
 
-import { FaSearch, FaRegCreditCard } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
+import { RiTeamFill } from "react-icons/ri";
+import { IoPerson } from "react-icons/io5";
+import { FaRegCalendarCheck } from "react-icons/fa";
+import { FaGear } from "react-icons/fa6";
 
-import { IoSettingsOutline } from "react-icons/io5";
+
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import MultiSelectPopover from "./ui/MultiSelectPopover";
 
@@ -50,12 +54,41 @@ export default function Header() {
       {!isExculedPath ?
         <header className="fixed top-0 w-full min-w-400 py-2 px-4 z-10 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
           <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
-            <div className="flex gap-4 flex-1">
-              <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/')}>全体タスク</Button>
-              <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/personal')}>個人タスク</Button>
-              <Button className="rounded bg-slate-500 px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/complete')}>完了済タスク</Button>
-              <Button className="rounded bg-[#994b4b] w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-red-800 cursor-pointer" onClick={() => router.push('/trash')}><FaRegTrashAlt /></Button>
-              <Button className="rounded bg-slate-600 w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-sky-700 cursor-pointer" onClick={() => router.push('/setting')}><IoSettingsOutline /></Button>
+            <div className="flex gap-2 flex-1">
+              <Button
+                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/" ? "bg-sky-700" : "bg-slate-500 cursor-pointer"}`}
+                onClick={() => router.push('/')}
+              >
+                <RiTeamFill />全体タスク
+              </Button>
+
+              <Button
+                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/personal" ? "bg-sky-700" : "bg-slate-500 cursor-pointer"}`}
+                onClick={() => router.push('/personal')}
+              >
+                <IoPerson />個人タスク
+              </Button>
+
+              <Button
+                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/complete" ? "bg-sky-700" : "bg-slate-500 cursor-pointer"}`}
+                onClick={() => router.push('/complete')}
+              >
+                <FaRegCalendarCheck />完了済タスク
+              </Button>
+
+              <Button
+                className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-red-800 ${pathname === "/trash" ? "bg-red-800" : "bg-[#994b4b] cursor-pointer"}`}
+                onClick={() => router.push('/trash')}
+              >
+                <FaRegTrashAlt />
+              </Button>
+
+              <Button
+                className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/setting" ? "bg-sky-700" : "bg-slate-600 cursor-pointer"}`}
+                onClick={() => router.push('/setting')}
+              >
+                <FaGear />
+              </Button>
             </div>
             <div className="sm:flex gap-8 rounded-md">
               <p className="text-white flex items-center gap-2"><FaUserCircle />{currentUserName} さん</p>
@@ -65,7 +98,7 @@ export default function Header() {
             <LogoutBtn />
           </div>
 
-          <div className="flex gap-4 items-center relative pt-2 min-h-10.75">
+          <div className="flex gap-2 items-center relative pt-2 min-h-10.75">
             {pathname !== "/personal" && (
               <select
                 value={taskListStyle}
@@ -87,7 +120,7 @@ export default function Header() {
             )}
 
             {pathname !== "/personal" && (
-              <div className="flex items-center gap-2 border-l px-4 border-neutral-500">
+              <div className="flex items-center gap-2 border-l px-2 border-neutral-500">
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
                   options={[
@@ -157,7 +190,7 @@ export default function Header() {
                   <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
                   <Input
                     type="text"
-                    className="flex w-60 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none"
+                    className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none"
                     placeholder="タイトル・内容・依頼者で検索"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const value = e.target.value;

@@ -16,7 +16,7 @@ interface PersonalTaskListProps {
 
 export default function PersonalTaskList({ taskList, user, sortTask, onClick, onContextMenu }: PersonalTaskListProps) {
   return (
-    <div className="py-4 grid grid-cols-4 gap-4 w-[1568px]">
+    <div className="pb-4 grid grid-cols-4 gap-4 w-[1568px]">
       <TaskColumn
         id="NotYetStarted"
         title="未担当タスク"

@@ -118,7 +118,7 @@ export default function AllTaskPage() {
 
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-34 max-w-[1600px]`}>
+    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-30 max-w-[1600px]`}>
       <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
       {user &&
         <TaskList

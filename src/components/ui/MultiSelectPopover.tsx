@@ -20,7 +20,7 @@ export default function MultiSelectPopover({ options, onChange, defaultText }: M
   };
 
   return (
-    <div className="w-50">
+    <div className="w-46">
       <Popover className="relative">
         {({ open }) => (
           <>
