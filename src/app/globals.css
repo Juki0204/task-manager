@@ -165,3 +165,44 @@ body {
 
 .nishiBorder {background:rgb(109, 66, 207)}
 .nishiBg {background:rgba(109, 66, 207, .15)}
+
+
+
+.md-textarea {
+  & h2 {
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    padding-left: 1.25rem;
+    position: relative;
+
+    &::before {
+      content: "";
+      width: 16px;
+      aspect-ratio: 1/1;
+      border-radius: 3px;
+      background: #333;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      translate: 0 -50%;
+    }
+
+    &::after{
+      content: "";
+      width: 10px;
+      height: 6px;
+      border: solid #fff;
+      border-radius: 2px;
+      border-width: 0 0 2px 2px;
+      rotate: -45deg;
+      position: absolute;
+      top: 47%;
+      left: 3px;
+      translate: 0 -50%;
+    }
+  }
+
+  & p{
+    margin-bottom: 1rem;
+  }
+}
