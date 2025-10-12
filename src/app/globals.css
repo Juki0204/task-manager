@@ -168,7 +168,7 @@ body {
 
 
 
-.md-textarea {
+.release-note-modal {
   & h2 {
     font-weight: bold;
     border-bottom: 1px solid #ccc;
@@ -204,5 +204,53 @@ body {
 
   & p{
     margin-bottom: 1rem;
+    text-align: justify;
+    padding: 0.25rem 0;
+  }
+}
+
+
+
+.release-note {
+  & h2 {
+    font-weight: bold;
+    font-size: 16px;
+    padding: .25rem .25rem .25rem 1.25rem;
+    position: relative;
+    width: fit-content;
+
+    &::before {
+      content: "";
+      width: 16px;
+      aspect-ratio: 1/1;
+      border-radius: 3px;
+      background: #fff;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      translate: 0 -50%;
+    }
+
+    &::after{
+      content: "";
+      width: 10px;
+      height: 6px;
+      border: solid #333;
+      border-radius: 2px;
+      border-width: 0 0 2px 2px;
+      rotate: -45deg;
+      position: absolute;
+      top: 47%;
+      left: 3px;
+      translate: 0 -50%;
+    }
+  }
+
+  & p{
+    color: #ccc;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    text-align: justify;
   }
 }

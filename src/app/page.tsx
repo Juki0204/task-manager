@@ -116,7 +116,6 @@ export default function AllTaskPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
 
-
   return (
     <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-30 max-w-[1600px]`}>
       <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />

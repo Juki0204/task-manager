@@ -7,7 +7,7 @@ import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/re
 import { CorrectBtn } from "@/components/ui/Btn";
 import { usePathname, useRouter } from "next/navigation";
 
-const CURRENT_APP_VERSION = "v1_0_0"; //アップデートの度に手動で更新＋mdファイル作成
+const CURRENT_APP_VERSION = "v1_2_0"; //アップデートの度に手動で更新＋mdファイル作成
 
 export default function VersionCheckProvider({ children }: { children: React.ReactNode }) {
   const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
@@ -21,6 +21,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     '/signup',
     '/signup/confirm-mail'
   ];
+
 
   const checkVersion = useCallback(() => {
     if (excludedPaths.includes(pathname)) return;
@@ -109,8 +110,8 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
         <DialogBackdrop className="fixed inset-0 bg-black/60" aria-hidden="true" />
         <DialogPanel className="relative w-150 rounded-2xl bg-white p-6 shadow-xl">
           <DialogTitle className="text-lg font-bold text-center mb-3">リリースノート {CURRENT_APP_VERSION.replaceAll("_", ".")}</DialogTitle>
-          <div className="md-textarea" dangerouslySetInnerHTML={{ __html: marked(releaseNote ?? "") }} />
-          <p onClick={() => router.push('/release-notes')} className="text-sky-700 text-sm w-fit ml-auto mr-0 mb-4 cursor-pointer hover:opacity-70">過去の更新履歴を見る</p>
+          <div className="release-note-modal" dangerouslySetInnerHTML={{ __html: marked(releaseNote ?? "") }} />
+          <p onClick={() => { router.push('/release-notes'); handleCloseReleaseNote(); }} className="text-sky-700 text-sm w-fit ml-auto mr-0 mb-4 cursor-pointer hover:opacity-70">過去の更新履歴を見る</p>
           <div className="flex justify-center">
             <CorrectBtn onClick={() => handleCloseReleaseNote()} className="!m-0 !w-40 cursor-pointer hover:opacity-70">閉じる</CorrectBtn>
           </div>
