@@ -43,6 +43,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     // 初回利用時
     if (!lastVersion) {
       localStorage.setItem("lastVersion", CURRENT_APP_VERSION);
+      setShowUpdateModal(true);
       return;
     }
 
@@ -102,7 +103,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
       {/* リリースノートモーダル */}
       <Dialog
         open={!!releaseNote}
-        onClose={() => setReleaseNote(null)}
+        onClose={() => handleCloseReleaseNote()}
         className="fixed inset-0 z-50 flex items-center justify-center"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/60" aria-hidden="true" />
