@@ -21,7 +21,7 @@ export default function ReleaseNotesPage() {
   useEffect(() => {
     const loadNotes = async () => {
       try {
-        const res = await fetch("/release-notes/index.json");
+        const res = await fetch("/release-notes/release-notes.json");
         const metaList: ReleaseNoteMeta[] = await res.json();
 
         const fullNotes = await Promise.all(
