@@ -118,11 +118,25 @@ export default function RequesterSetting() {
     const newIndex = filtered.findIndex((r) => r.id === over.id);
 
     const newSorted = arrayMove(filtered, oldIndex, newIndex);
-    const others = requesters.filter((r) => r.company !== company);
-    const all = [...others, ...newSorted];
+    // const others = requesters.filter((r) => r.company !== company);
+    // const all = [...others, ...newSorted];
 
-    setRequesters(all); // UI即時反映
-    updateOrder(company, newSorted); // DB更新（非同期）
+    //setRequesters(all); // UI即時反映
+
+    const updateRequester = newSorted.map((r, index) => ({
+      ...r,
+      order: index,
+    }));
+
+    setRequesters((prev) => [
+      ...prev.filter((r) => r.company !== company),
+      ...updateRequester,
+    ]);
+
+    updateOrder(company, newSorted).catch((err) => {
+      console.error(err);
+      alert("順番の保存に失敗しました。");
+    }); // DB更新（非同期）
   };
 
   useEffect(() => {

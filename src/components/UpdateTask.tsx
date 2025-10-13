@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { DialogTitle, Button } from "@headlessui/react";
+import { DialogTitle, Button, Label, Input, Field } from "@headlessui/react";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
@@ -366,18 +366,18 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
         <div className="col-span-2 grid grid-cols-3 gap-x-1">
           <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
-          <div>
-            <p className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[0] && currentTaskFile[0].original_name ? currentTaskFile[0].original_name : '添付なし'}</p>
-            <input type="file" onChange={handleFileChange(0)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          </div>
-          <div>
-            <p className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[1] && currentTaskFile[1].original_name ? currentTaskFile[1].original_name : '添付なし'}</p>
-            <input type="file" onChange={handleFileChange(1)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          </div>
-          <div>
-            <p className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[2] && currentTaskFile[2].original_name ? currentTaskFile[2].original_name : '添付なし'}</p>
-            <input type="file" onChange={handleFileChange(2)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          </div>
+          <Field>
+            <Label className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[0] && currentTaskFile[0].original_name ? currentTaskFile[0].original_name : '添付なし'}</Label>
+            <Input type="file" onChange={handleFileChange(0)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+          </Field>
+          <Field>
+            <Label className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[1] && currentTaskFile[1].original_name ? currentTaskFile[1].original_name : '添付なし'}</Label>
+            <Input type="file" onChange={handleFileChange(1)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+          </Field>
+          <Field>
+            <Label className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[2] && currentTaskFile[2].original_name ? currentTaskFile[2].original_name : '添付なし'}</Label>
+            <Input type="file" onChange={handleFileChange(2)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+          </Field>
         </div>
 
       </div>

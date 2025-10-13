@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { DialogTitle, Button } from "@headlessui/react";
+import { DialogTitle, Button, Field, Input } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
@@ -337,21 +337,21 @@ export default function AddTask({ onClose }: AddTaskProps) {
           <option value="低">低</option>
         </AddTaskSelect>
 
-        <div className="col-span-1 flex flex-wrap gap-x-1">
+        <Field className="col-span-1 flex flex-wrap gap-x-1">
           <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><MdMailOutline /> 依頼手段</h3>
           <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
           <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
           <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-        </div>
+        </Field>
 
         <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} />
 
-        <div className="col-span-2 grid grid-cols-3 gap-x-1">
+        <Field className="col-span-2 grid grid-cols-3 gap-x-1">
           <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
-          <input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          <input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          <input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-        </div>
+          <Input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+          <Input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+          <Input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
+        </Field>
 
       </div>
 
