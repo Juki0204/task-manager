@@ -79,6 +79,17 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     checkVersion();
   }, [checkVersion, pathname]);
 
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        console.log("タブ復帰 → バージョンチェック");
+        checkVersion();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+  }, []);
+
   return (
     <>
       {children}
