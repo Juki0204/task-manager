@@ -63,6 +63,12 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
           const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7).getTime();
 
           return finish.getTime() >= weekAgo && finish.getTime() < endOfToday;
+        }).sort((a, b) => {
+          const finishA = a.finishDate ? new Date(`${a.finishDate}`).getTime() : 0;
+          const finishB = b.finishDate ? new Date(`${b.finishDate}`).getTime() : 0;
+
+          //完了日順ソート
+          return finishA - finishB;
         })}
         user={user}
         onClick={onClick}

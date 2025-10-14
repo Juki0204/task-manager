@@ -37,7 +37,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const [requester, setRequester] = useState<string>(''); //依頼担当者
   const [taskTitle, setTaskTitle] = useState<string>(''); //作業タイトル
   const [taskDescription, setTaskDescription] = useState<string>(''); //作業内容
-  const [requestDate, setRequestDate] = useState<string>(''); //依頼日
+  const [requestDate, setRequestDate] = useState<string>(new Date().toLocaleDateString('sv-SE')); //依頼日
   const [finishDate, setFinishDate] = useState<string>(''); //完了日
   const [manager, setManager] = useState<string>(''); //作業担当者
   const [status, setStatus] = useState<string>('未着手'); //作業状況

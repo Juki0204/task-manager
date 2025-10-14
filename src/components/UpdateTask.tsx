@@ -172,7 +172,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
         title: taskTitle,
         description: taskDescription,
         request_date: requestDate,
-        finish_date: finishDate ? finishDate : new Date().toISOString(),
+        finish_date: finishDate,
         manager: manager,
         status: status,
         priority: priority,

@@ -117,11 +117,11 @@ export function useTaskRealtime(user: UserData) {
     );
 
     //DB更新
-    if (newStatus !== "完了") {
-      const { error: updateError } = await supabase.from("tasks").update({ status: newStatus, ...extraFields }).eq("id", taskId);
+    if (newStatus === "完了" || newStatus === "確認中") {
+      const { error: finishError } = await supabase.from("tasks").update({ status: newStatus, finish_date: new Date().toLocaleDateString("sv-SE"), ...extraFields }).eq("id", taskId);
 
-      if (updateError) {
-        console.error(updateError);
+      if (finishError) {
+        console.error(finishError);
         // 失敗時は巻き戻す
         setTaskList((prev) =>
           prev.map((t) =>
@@ -130,10 +130,10 @@ export function useTaskRealtime(user: UserData) {
         );
       }
     } else {
-      const { error: finishError } = await supabase.from("tasks").update({ status: newStatus, finish_date: new Date().toLocaleDateString("sv-SE"), ...extraFields }).eq("id", taskId);
+      const { error: updateError } = await supabase.from("tasks").update({ status: newStatus, ...extraFields }).eq("id", taskId);
 
-      if (finishError) {
-        console.error(finishError);
+      if (updateError) {
+        console.error(updateError);
         // 失敗時は巻き戻す
         setTaskList((prev) =>
           prev.map((t) =>
