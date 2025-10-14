@@ -132,6 +132,14 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
     onEdit();
   }
 
+  //備考欄の文字列からURLを判別してリンク化
+  const convertUrlsToLinks = (text: string): string => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, (url) => {
+      return `<a href="${url}" target"_blank" rel="noopener noreferrer" class="text-blue-600 underline">${url}</a>`;
+    });
+  }
+
 
   // function isLocked(task: Task, currentUser: { id: string }) {
   //   if (!task.lockedById) return false;
@@ -217,7 +225,11 @@ export default function TaskDetail({ task, user, onClose, onEdit }: TaskDetailPr
 
         <li className="flex flex-col col-span-2 border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><LuNotebookPen /> 備考欄</h3>
-          <p className="whitespace-pre-wrap">{task.remarks ? task.remarks : "-"}</p>
+          {task.remarks ? (
+            <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: convertUrlsToLinks(task.remarks) }} />
+          ) : (
+            <div className="whitespace-pre-wrap">-</div>
+          )}
         </li>
 
         <li className="flex flex-col col-span-2 border-b border-neutral-300 pb-1">
