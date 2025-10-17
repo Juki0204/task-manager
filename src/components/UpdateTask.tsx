@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
+import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 
 
 interface task {
@@ -72,6 +73,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
   const [isValid, setIsValid] = useState<boolean>(true);
+  const { syncInvoiceWithTask } = useInvoiceSync();
 
   //ファイル添付監視
   const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,9 +189,10 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
     if (updateTaskError || !taskData) {
       alert('タスクの追加に失敗しました');
+    } else {
+      await uploadTaskFiles(taskId, uploadedFiles);
+      await syncInvoiceWithTask(taskId, status);
     }
-
-    await uploadTaskFiles(taskId, uploadedFiles);
   }
 
   async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
