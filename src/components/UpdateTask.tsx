@@ -192,6 +192,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
     } else {
       await uploadTaskFiles(taskId, uploadedFiles);
       await syncInvoiceWithTask(taskId, status);
+      await addUnreadTask(taskData);
     }
   }
 
@@ -272,14 +273,76 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
     // }
   }
 
-  // const handleCancelClick = () => {
-  //   setTimeout(() => {
-  //     setIsSend(false);
-  //   }, 500);
+  //remarks変更時の他者への通知
+  async function addUnreadTask(task: Task) {
+    try {
+      const taskId = task.id;
+      if (!taskId) return;
 
-  //   onClick?.();
-  // };
+      if (!task.manager) {
+        // managerが未決定の時は全ユーザーに通知
+        const { data: users, error } = await supabase
+          .from("users")
+          .select("id, unread_task_id");
 
+        if (error) throw error;
+        if (!users || users.length === 0) {
+          console.warn("No users found");
+          return;
+        }
+
+        // 各ユーザーの unread_task_id に taskId を追加して更新
+        const updates = users.map(async (user) => {
+          const currentIds = Array.isArray(user.unread_task_id)
+            ? user.unread_task_id
+            : [];
+          const updatedIds = Array.from(new Set([...currentIds, taskId]));
+
+          console.log(`Updating user ${user.id} with ${updatedIds.length} unread tasks`);
+
+          const { error: updateError } = await supabase
+            .from("users")
+            .update({ unread_task_id: updatedIds })
+            .eq("id", user.id);
+
+          if (updateError) console.error(`Failed to update user ${user.id}:`, updateError);
+        });
+
+        await Promise.all(updates);
+        return;
+      }
+
+      // managerが決まっている場合は担当者のみ通知
+      const { data: user, error } = await supabase
+        .from("users")
+        .select("id, unread_task_id")
+        .eq("name", task.manager)
+        .single();
+
+      if (error) throw error;
+
+      if (!user) {
+        console.warn(`No user found for manager: ${task.manager}`);
+        return;
+      }
+
+      const currentIds = Array.isArray(user.unread_task_id)
+        ? user.unread_task_id
+        : [];
+      const updatedIds = Array.from(new Set([...currentIds, taskId]));
+
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ unread_task_id: updatedIds })
+        .eq("id", user.id);
+
+      if (updateError) console.error(`Failed to update manager ${user.id}:`, updateError);
+    } catch (err) {
+      console.error("Error updating unread_task_id:", err);
+    }
+  }
+
+  //簡易validate
   const handleContentCheck = (taskTitle: string, taskDescription: string) => {
     if (taskTitle && taskDescription) {
       setIsValid(false);
