@@ -28,6 +28,8 @@ export default function AllTaskPage() {
   const { user } = useAuth();
   const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
   const { taskListSortType, filters } = useTaskListPreferences();
+  const [unreadIds, setUnreadIds] = useState<string[]>([]);
+  const [importantIds, setImportantIds] = useState<string[]>([]);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -108,6 +110,19 @@ export default function AllTaskPage() {
     return sortedTask;
   }
 
+  // 既読処理関数
+  const markAsRead = async (taskId: string) => {
+    // フロント即時反映
+    setUnreadIds((prev) => prev.filter((id) => id !== taskId));
+
+    // Supabase更新
+    const updatedIds = unreadIds.filter((id) => id !== taskId);
+    await supabase
+      .from("users")
+      .update({ unread_task_id: updatedIds })
+      .eq("id", user?.id);
+  };
+
   useEffect(() => {
     if (activeTask) {
       const updated = taskList.find((t) => t.id === activeTask.id);
@@ -116,6 +131,15 @@ export default function AllTaskPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
 
+  useEffect(() => {
+    if (user?.unread_task_id) {
+      setUnreadIds(user.unread_task_id);
+    }
+    if (user?.important_task_id) {
+      setImportantIds(user.important_task_id);
+    }
+  }, [user]);
+
   return (
     <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-30 max-w-[1600px]`}>
       <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
@@ -123,6 +147,8 @@ export default function AllTaskPage() {
         <TaskList
           user={user}
           taskList={sortTask(filteredTaskList)}
+          unreadIds={unreadIds}
+          importantIds={importantIds}
           onClick={(t: Task) => {
             if (isOpen) return;
 
@@ -156,7 +182,8 @@ export default function AllTaskPage() {
               <TaskDetail
                 user={user}
                 task={activeTask}
-                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
+                unreadIds={unreadIds}
+                onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
                 onEdit={() => setModalType("edit")}
               />
             )}

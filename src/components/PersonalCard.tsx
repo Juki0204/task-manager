@@ -8,15 +8,12 @@ import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useDraggable } from "@dnd-kit/core";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
+import { User } from "@/utils/types/user";
 
 interface CardPropd {
   task: Task;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    employee: string;
-  },
+  user: User;
+  unreadIds: string[];
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
 }
@@ -24,6 +21,7 @@ interface CardPropd {
 export default function PersonalCard({
   task,
   user,
+  unreadIds,
   onClick,
   onContextMenu,
   ...props
@@ -105,6 +103,8 @@ export default function PersonalCard({
     definePersonalColor(task.manager ? task.manager : "");
   }, [task]);
 
+  // console.log(unreadIds);
+
   return (
     <div
       ref={setNodeRef}
@@ -122,6 +122,7 @@ export default function PersonalCard({
         group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
+        {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}
         <div className="text-xs pb-2">{task.serial}</div>
         <h3 className="font-bold truncate flex items-center gap-1
           group-[.rowListStyle]:[grid-area:ttl]

@@ -1,20 +1,17 @@
 import { Task } from "@/utils/types/task";
 import { TaskColumn } from "./ui/TaslColumn";
+import { User } from "@/utils/types/user";
 
 interface PersonalTaskListProps {
   taskList: Task[];
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    employee: string;
-  };
+  user: User;
+  unreadIds: string[];
   sortTask: (taskList: Task[]) => Task[];
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
 }
 
-export default function PersonalTaskList({ taskList, user, sortTask, onClick, onContextMenu }: PersonalTaskListProps) {
+export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu }: PersonalTaskListProps) {
   return (
     <div className="pb-4 grid grid-cols-4 gap-4 w-[1568px]">
       <TaskColumn
@@ -22,6 +19,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
         title="未担当タスク"
         tasks={taskList.filter((task) => !task.manager)}
         user={user}
+        unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
@@ -32,6 +30,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
         title="自分のタスク（未着手・作業中）"
         tasks={sortTask(taskList).filter((task) => task.manager === user.name && task.status !== '確認中' && task.status !== '完了')}
         user={user}
+        unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
@@ -42,6 +41,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
         title="自分のタスク（確認中）"
         tasks={taskList.filter((task) => task.manager === user.name && task.status === '確認中')}
         user={user}
+        unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
@@ -71,6 +71,7 @@ export default function PersonalTaskList({ taskList, user, sortTask, onClick, on
           return finishA - finishB;
         })}
         user={user}
+        unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"

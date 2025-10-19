@@ -33,7 +33,7 @@ export default function PersonalTaskPage() {
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
-  // const [initStatus, setInitStatus] = useState<string | null>(null);
+  const [unreadIds, setUnreadIds] = useState<string[]>([]);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -117,6 +117,19 @@ export default function PersonalTaskPage() {
     }
   };
 
+  // 既読処理関数
+  const markAsRead = async (taskId: string) => {
+    // フロント即時反映
+    setUnreadIds((prev) => prev.filter((id) => id !== taskId));
+
+    // Supabase更新
+    const updatedIds = unreadIds.filter((id) => id !== taskId);
+    await supabase
+      .from("users")
+      .update({ unread_task_id: updatedIds })
+      .eq("id", user?.id);
+  };
+
 
   useEffect(() => {
     if (activeTask) {
@@ -125,6 +138,14 @@ export default function PersonalTaskPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
+
+
+  useEffect(() => {
+    if (user?.unread_task_id) {
+      setUnreadIds(user.unread_task_id);
+    }
+  }, [user]);
+
 
   if (!isReady) return <p>loading...</p>
 
@@ -142,6 +163,7 @@ export default function PersonalTaskPage() {
           <PersonalTaskList
             user={user}
             taskList={sortTask(taskList.filter((task) => task.status !== "削除済"))}
+            unreadIds={unreadIds}
             onClick={(t: Task) => {
               if (isOpen) return;
 
@@ -177,7 +199,8 @@ export default function PersonalTaskPage() {
               <TaskDetail
                 user={user}
                 task={activeTask}
-                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
+                unreadIds={unreadIds}
+                onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
                 onEdit={() => setModalType("edit")}
               />
             )}

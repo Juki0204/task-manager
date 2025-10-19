@@ -4,22 +4,20 @@ import { useEffect, useState, createContext, useContext } from "react";
 
 import { supabase } from "@/utils/supabase/supabase";
 import { usePathname, useRouter } from "next/navigation";
+import { User } from "@/utils/types/user";
 
-type UserData = {
-  id: string;
-  name: string;
-  email: string;
-  employee: string;
-} | null;
+type UserData = User | null;
 
 type AuthContextType = {
   user: UserData;
   loading: boolean;
+  refetchUser: () => Promise<void>;
 };
 
 const AuthContect = createContext<AuthContextType>({
   user: null,
   loading: true,
+  refetchUser: async () => { },
 });
 
 export const useAuth = () => useContext(AuthContect);
@@ -62,6 +60,8 @@ export default function AuthProvider({
             name: data.name,
             email: data.email,
             employee: data.employee,
+            unread_task_id: data.unread_task_id,
+            important_task_id: data.important_task_id,
           });
         }
       }
@@ -80,10 +80,33 @@ export default function AuthProvider({
     }
   }
 
+  //初回
   useEffect(() => {
     getCurrentSession();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  //ポーリング
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getCurrentSession();
+    }, 15000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  //フォーカス時に再フェッチ
+  useEffect(() => {
+    const handleFocus = () => {
+      getCurrentSession();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   //アプリ全体で右クリック禁止
   useEffect(() => {
@@ -97,7 +120,7 @@ export default function AuthProvider({
   }, []);
 
   return (
-    <AuthContect.Provider value={{ user, loading }}>
+    <AuthContect.Provider value={{ user, loading, refetchUser: getCurrentSession }}>
       <div className={isLoaded ? "opacity-0 pointer-events-none w-full h-lvh grid place-content-center fixed top-0 left-0 transition-opacity bg-white z-[99999]"
         : "w-full h-lvh grid place-content-center fixed transition-opacity top-0 left-0 bg-white z-[99999] animate-loading-fade-out"}>
         <span className="loading loading-spinner loading-lg"></span>

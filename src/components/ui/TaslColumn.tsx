@@ -3,17 +3,14 @@
 import { useDroppable } from "@dnd-kit/core";
 import { Task } from "@/utils/types/task";
 import PersonalCard from "../PersonalCard";
+import { User } from "@/utils/types/user";
 
 interface TaskColumnProps {
   id: string;
   title: string;
   tasks: Task[];
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    employee: string;
-  };
+  user: User;
+  unreadIds: string[];
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   className: string;
@@ -24,6 +21,7 @@ export function TaskColumn({
   title,
   tasks,
   user,
+  unreadIds,
   onClick,
   onContextMenu,
   className
@@ -39,6 +37,7 @@ export function TaskColumn({
           user={user}
           key={task.id}
           task={task}
+          unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
         />

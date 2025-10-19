@@ -3,26 +3,26 @@ import { RiCalendarScheduleLine } from "react-icons/ri";
 import { MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { BsPersonCheck } from "react-icons/bs";
+import { IoFlag } from "react-icons/io5";
 
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import HighlightText from "./ui/HighlightText";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
+import { User } from "@/utils/types/user";
+import { supabase } from "@/utils/supabase/supabase";
 
 interface CardPropd {
   task: Task;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    employee: string;
-  },
+  user: User;
+  unreadIds: string[];
+  importantIds: string[];
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
 }
 
-export default function Card({ task, user, onClick, onContextMenu, ...props }: CardPropd) {
+export default function Card({ task, user, unreadIds, importantIds, handleImportantTask, onClick, onContextMenu, ...props }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
 
@@ -103,10 +103,18 @@ export default function Card({ task, user, onClick, onContextMenu, ...props }: C
         onClick={() => onClick(task)}
         id={task.id}
         className={`${personalBg} w-full rounded-xl p-4 text-white tracking-wide cursor-pointer relative
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
+        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[90px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
-        <div className="text-xs group-[.cardListStyle]:pb-2">{task.serial}</div>
+        {unreadIds && unreadIds.includes(task.id) && (
+          <div className="absolute group-[.cardListStyle]:top-3 group-[.cardListStyle]:left-1.75 group-[.cardListStyle]:w-0.75 group-[.cardListStyle]:h-39.5 left-1.5 w-1 h-5.5 bg-[#ffff00] rounded-full" />
+        )}
+        <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1">
+          <div onClick={(e) => {
+            e.stopPropagation();
+          }}><IoFlag className={`text-sm ${importantIds.includes(task.id) ? "text-red-500" : "opacity-20 grayscale-100"}`} /></div>
+          {task.serial}
+        </div>
         <h3 className="font-bold flex items-center gap-1
           group-[.rowListStyle]:[grid-area:ttl]
           group-[.rowListStyle]:text-sm">

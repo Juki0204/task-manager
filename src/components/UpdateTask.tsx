@@ -19,16 +19,12 @@ import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
+import { User } from "@/utils/types/user";
 
 
 interface task {
   task: Task;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    employee: string;
-  },
+  user: User;
   onCancel: () => void;
   onComplete: () => void;
   onUnlock: () => void;
@@ -48,6 +44,7 @@ interface taskFileMeta {
 export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock }: task) {
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
+  const [currentUserId, setCurrentUserId] = useState<string>('');
 
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
   const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
@@ -99,6 +96,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const getData = async () => {
     if (user) {
       setCurrentUserName(user.name);
+      setCurrentUserId(user.id);
     }
 
     //クライアント一覧取得
@@ -192,7 +190,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
     } else {
       await uploadTaskFiles(taskId, uploadedFiles);
       await syncInvoiceWithTask(taskId, status);
-      await addUnreadTask(taskData);
+      if (remarks) await addUnreadTask(taskData);
     }
   }
 
@@ -283,7 +281,8 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
         // managerが未決定の時は全ユーザーに通知
         const { data: users, error } = await supabase
           .from("users")
-          .select("id, unread_task_id");
+          .select("id, unread_task_id")
+          .not("id", "eq", currentUserId);
 
         if (error) throw error;
         if (!users || users.length === 0) {

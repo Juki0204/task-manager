@@ -18,16 +18,12 @@ import { LuNotebookPen } from "react-icons/lu";
 import { v4 as uuidv4 } from 'uuid';
 import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
+import { User } from "@/utils/types/user";
 
 
 interface task {
   task: Task;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    employee: string;
-  },
+  user: User;
   onClose: () => void;
 }
 
