@@ -18,6 +18,7 @@ interface CardPropd {
   user: User;
   unreadIds: string[];
   importantIds: string[];
+  handleImportantTask: (taskId: string) => Promise<void>;
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
 }
@@ -103,7 +104,7 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
         onClick={() => onClick(task)}
         id={task.id}
         className={`${personalBg} w-full rounded-xl p-4 text-white tracking-wide cursor-pointer relative
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[90px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
+        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[100px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (
@@ -112,7 +113,8 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
         <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1">
           <div onClick={(e) => {
             e.stopPropagation();
-          }}><IoFlag className={`text-sm ${importantIds.includes(task.id) ? "text-red-500" : "opacity-20 grayscale-100"}`} /></div>
+            handleImportantTask(task.id);
+          }}><IoFlag className={`text-lg -ml-0.5 ${importantIds.includes(task.id) ? "text-red-500" : "opacity-10 grayscale-100"}`} /></div>
           {task.serial}
         </div>
         <h3 className="font-bold flex items-center gap-1

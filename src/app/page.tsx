@@ -123,6 +123,52 @@ export default function AllTaskPage() {
       .eq("id", user?.id);
   };
 
+
+  async function handleImportantTask(taskId: string) {
+    if (!user) return;
+    if (!taskId) return;
+
+    setImportantIds((prev) => prev.filter((id) => id !== taskId));
+
+    const { data: importantTasks, error } = await supabase
+      .from("users")
+      .select("important_task_id")
+      .eq("id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Failed to fetch important_task_id:", error);
+      return;
+    }
+
+    const currentIds = Array.isArray(importantTasks.important_task_id)
+      ? importantTasks.important_task_id
+      : [];
+
+    const updatedIds = currentIds.includes(taskId)
+      ? currentIds.filter((id) => id !== taskId)
+      : [...currentIds, taskId];
+
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({ important_task_id: updatedIds })
+      .eq("id", user.id);
+
+    if (updateError) {
+      console.error(`Failed to update important_task_id for user ${user.id}:`, updateError);
+    } else {
+      console.log("important_task_id updated:", updatedIds);
+
+      if (currentIds.includes(taskId)) {
+        // 削除モード
+        setImportantIds((prev) => prev.filter((id) => id !== taskId));
+      } else {
+        // 追加モード
+        setImportantIds((prev) => [...prev, taskId]);
+      }
+    }
+  }
+
   useEffect(() => {
     if (activeTask) {
       const updated = taskList.find((t) => t.id === activeTask.id);
@@ -149,6 +195,7 @@ export default function AllTaskPage() {
           taskList={sortTask(filteredTaskList)}
           unreadIds={unreadIds}
           importantIds={importantIds}
+          handleImportantTask={handleImportantTask}
           onClick={(t: Task) => {
             if (isOpen) return;
 
