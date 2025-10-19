@@ -16,9 +16,9 @@ import { supabase } from "@/utils/supabase/supabase";
 interface CardPropd {
   task: Task;
   user: User;
-  unreadIds: string[];
-  importantIds: string[];
-  handleImportantTask: (taskId: string) => Promise<void>;
+  unreadIds?: string[];
+  importantIds?: string[];
+  handleImportantTask?: (taskId: string) => Promise<void>;
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
 }
@@ -111,10 +111,14 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
           <div className="absolute group-[.cardListStyle]:top-3 group-[.cardListStyle]:left-1.75 group-[.cardListStyle]:w-0.75 group-[.cardListStyle]:h-39.5 left-1.5 w-1 h-5.5 bg-[#ffff00] rounded-full" />
         )}
         <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1">
-          <div onClick={(e) => {
-            e.stopPropagation();
-            handleImportantTask(task.id);
-          }}><IoFlag className={`text-lg -ml-0.5 ${importantIds.includes(task.id) ? "text-red-500" : "opacity-10 grayscale-100"}`} /></div>
+          {handleImportantTask && (
+            <div onClick={(e) => {
+              e.stopPropagation();
+              handleImportantTask(task.id);
+            }}>
+              <IoFlag className={`text-lg -ml-0.5 ${importantIds?.includes(task.id) ? "text-red-500" : "opacity-10 grayscale-100"}`} />
+            </div>
+          )}
           {task.serial}
         </div>
         <h3 className="font-bold flex items-center gap-1

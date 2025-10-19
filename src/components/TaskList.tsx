@@ -6,9 +6,9 @@ import { Task } from "@/utils/types/task"
 interface TaskListProps {
   taskList: Task[];
   user: User;
-  unreadIds: string[];
-  importantIds: string[];
-  handleImportantTask: (taskId: string) => Promise<void>;
+  unreadIds?: string[];
+  importantIds?: string[];
+  handleImportantTask?: (taskId: string) => Promise<void>;
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
 }

@@ -31,7 +31,7 @@ interface taskFileMeta {
 interface TaskDetailProps {
   task: Task;
   user: User;
-  unreadIds: string[];
+  unreadIds?: string[];
   onClose: () => void;
   onEdit: () => void;
 }
@@ -223,7 +223,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
         <li className="flex flex-col col-span-2 border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm">
             <LuNotebookPen /> 備考欄
-            {user && unreadIds.includes(task.id) && (<div className="left-1.5 w-2 h-2 bg-yellow-300 rounded-full" />)}
+            {user && unreadIds?.includes(task.id) && (<div className="left-1.5 w-2 h-2 bg-yellow-300 rounded-full" />)}
           </h3>
           {task.remarks ? (
             <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: convertUrlsToLinks(task.remarks) }} />
