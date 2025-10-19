@@ -99,7 +99,7 @@ export default function Header() {
           </div>
 
           <div className="flex gap-2 items-center relative pt-2 min-h-10.75">
-            {pathname !== "/personal" && (
+            {pathname !== "/personal" && pathname !== "/invoice" && (
               <select
                 value={taskListStyle}
                 onChange={(e) => setTaskListStyle(e.target.value as TaskListStyle)}
@@ -119,7 +119,7 @@ export default function Header() {
               </select>
             )}
 
-            {pathname !== "/personal" && (
+            {pathname !== "/personal" && pathname !== "/invoice" && (
               <div className="flex items-center gap-2 border-l px-2 border-neutral-500">
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
