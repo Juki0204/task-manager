@@ -9,7 +9,7 @@ import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
 
 import { FaSearch } from "react-icons/fa";
 import { RiTeamFill } from "react-icons/ri";
-import { IoPerson } from "react-icons/io5";
+import { IoPerson, IoReceipt } from "react-icons/io5";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 
@@ -89,6 +89,15 @@ export default function Header() {
               >
                 <FaGear />
               </Button>
+
+              <div className="border-l border-neutral-500 px-2 flex">
+                <Button
+                  className={`flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:bg-purple-700 ${pathname === "/invoice" ? "bg-purple-700" : "bg-slate-500 cursor-pointer"}`}
+                  onClick={() => router.push('/invoice')}
+                >
+                  <IoReceipt />請求一覧
+                </Button>
+              </div>
             </div>
             <div className="sm:flex gap-8 rounded-md">
               <p className="text-white flex items-center gap-2"><FaUserCircle />{currentUserName} さん</p>

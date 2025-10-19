@@ -11,7 +11,7 @@ export default function InvoicePage() {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
   const { user } = useAuth();
 
-  const [currentMonth, setCurrentMonth] = useState<string>("10");
+  const [currentMonth, setCurrentMonth] = useState<string>((new Date().getMonth() + 1).toLocaleString("ja-JP"));
 
   const getInvoice = async () => {
     const { data: invoiceData, error: invoiceError } = await supabase
