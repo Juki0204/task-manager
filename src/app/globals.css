@@ -37,12 +37,12 @@ body {
   &::before{
     content: "";
     position: absolute;
-    width: calc(100% - 4px);
-    height: calc(100% - 4px);
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
     inset: 0;
     margin: auto;
     z-index: -1;
-    border-radius: 12px;
+    /* border-radius: 12px; */
     background: #262626;
   }
 
@@ -53,7 +53,7 @@ body {
     height: 100%;
     inset: 0;
     z-index: -2;
-    border-radius: 12px;
+    /* border-radius: 12px; */
     background: conic-gradient(from var(--angle), #525252, #cccccc, #525252);
     animation: 2s background-spin linear infinite;
   }
@@ -81,12 +81,12 @@ body {
   &::before{
     content: "";
     position: absolute;
-    width: calc(100% - 4px);
-    height: calc(100% - 4px);
+    width: 100%;
+    height: 100%;
     inset: 0;
     margin: auto;
     z-index: -1;
-    border-radius: 12px;
+    /* border-radius: 12px; */
     background: #262626;
   }
 
@@ -96,10 +96,16 @@ body {
     filter: brightness(1.2);
 
     &::before{
-      width: calc(100% - 8px);
-      height: calc(100% - 8px);
-      border-radius: 10px;
+      width: calc(100% - 2px);
+      height: calc(100% - 2px);
+      /* border-radius: 10px; */
     }
+  }
+}
+
+.cardListStyle .static-border{
+  &::before{
+    border-radius: 6px; 
   }
 }
 
@@ -112,7 +118,7 @@ body {
   position: absolute;
   inset: 0;
   margin: auto;
-  border-radius: 12px;
+  /* border-radius: 12px; */
   background: rgba(41, 41, 41, 0.8);
   color: #fff;
   font-weight: bold;
@@ -148,24 +154,26 @@ body {
 
 /* personal colors */
 
-.taniBorder {background:rgb(175, 77, 118)}
-.taniBg {background:rgba(175, 77, 144, .15)}
+.taniBorder.inprogress {background:rgb(175, 77, 118)}
+.taniBg {background:conic-gradient(rgb(175, 77, 144)) no-repeat 0 50% / 5px 100%, rgba(175, 77, 144, .15)}
 
-.iiBorder {background:rgb(50, 127, 67)}
-.iiBg {background:rgba(50, 127, 67, .15)}
+.iiBorder.inprogress {background:rgb(50, 127, 67)}
+.iiBg {background:conic-gradient(rgb(50, 127, 67)) no-repeat 0 50% / 5px 100%, rgba(50, 127, 67, .15)}
 
-.hamaBorder {background:rgb(161, 122, 29)}
-.hamaBg {background:rgba(161, 122, 29, .15)}
+.hamaBorder.inprogress {background:rgb(161, 122, 29)}
+.hamaBg {background:conic-gradient(rgb(161, 122, 29)) no-repeat 0 50% / 5px 100%, rgba(161, 122, 29, .15)}
 
-.taguBorder {background:rgb(165, 39, 39)}
-.taguBg {background:rgba(165, 39, 39, .15)}
+.taguBorder.inprogress {background:rgb(165, 39, 39)}
+.taguBg {background:conic-gradient(rgb(165, 39, 39)) no-repeat 0 50% / 5px 100%, rgba(165, 39, 39, .15)}
 
-.kamaBorder {background:rgb(39, 125, 165)}
-.kamaBg {background:rgba(39, 125, 165, .15)}
+/* .kamaBorder {background:rgb(39, 125, 165)}
+.kamaBg {background:rgba(39, 125, 165, .15)} */
 
-.nishiBorder {background:rgb(109, 66, 207)}
-.nishiBg {background:rgba(109, 66, 207, .15)}
+.nishiBorder.inprogress {background:rgb(109, 66, 207)}
+.nishiBg {background:conic-gradient(rgb(109, 66, 207)) no-repeat 0 50% / 5px 100%, rgba(109, 66, 207, .15)}
 
+.defaultBrder.inprogress {background:rgb(55, 55, 55)}
+.defaultBg  {background:conic-gradient(rgb(55, 55, 55)) no-repeat 0 50% / 5px 100%, rgba(55, 55, 55, .15)}
 
 
 .release-note-modal {

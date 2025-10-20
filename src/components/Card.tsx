@@ -53,8 +53,8 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
       setPersonalBorder('nishiBorder');
       setPersonalBg('nishiBg');
     } else {
-      setPersonalBorder('bg-neutral-600');
-      setPersonalBg('bg-neutral-800/25');
+      setPersonalBorder('defaultBorder');
+      setPersonalBg('defaultBg');
     }
   }
 
@@ -97,18 +97,18 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-xl min-w-90 group-[.rowListStyle]:w-[1568px]`}>
+      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} group-[.cardListStyle]:rounded-md min-w-90 group-[.rowListStyle]:w-[1568px]`}>
       {task.lockedById && <div className="editing-overlay"><span className="editing-overlay-text">{task.lockedByName}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={() => onClick(task)}
         id={task.id}
-        className={`${personalBg} w-full rounded-xl p-4 text-white tracking-wide cursor-pointer relative
+        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative group-[.cardListStyle]:rounded-sm group-[.cardListStyle]:h-full
         group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[100px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (
-          <div className="absolute group-[.cardListStyle]:top-3 group-[.cardListStyle]:left-1.75 group-[.cardListStyle]:w-0.75 group-[.cardListStyle]:h-39.5 left-1.5 w-1 h-5.5 bg-[#ffff00] rounded-full" />
+          <div className="absolute group-[.cardListStyle]:top-1 group-[.cardListStyle]:w-0.75 group-[.cardListStyle]:rounded-full group-[.cardListStyle]:h-44 left-2 w-1 h-8 bg-[#ffff00]" />
         )}
         <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1">
           {handleImportantTask && (

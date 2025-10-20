@@ -46,32 +46,59 @@ export function useInvoiceSync() {
         const matchedPrice = bestScore >= 0.4 ? prices[bestIndex].price : null;
         const matchedName = bestScore >= 0.4 ? prices[bestIndex].work_name : null;
 
-        // invoiceへ追加
-        const { error: invoiceError } = await supabase.from("invoice").upsert({
-          id: task.id,
-          client: task.client,
-          requester: task.requester,
-          title: task.title,
-          description: task.description,
-          finish_date: task.finish_date,
-          manager: task.manager,
-          remarks: task.remarks,
-          created_at: task.created_at,
-          serial: task.serial,
-          work_name: matchedName,
-          amount: matchedPrice,
-          category: null,
-          device: null,
-          degree: null,
-          work_time: null,
-          adjustment: null,
-          total_amount: matchedPrice,
-        });
+        const { data: existing } = await supabase
+          .from("invoice")
+          .select("id")
+          .eq("id", taskId)
+          .maybeSingle();
 
-        if (invoiceError) {
-          console.error("invoice登録失敗:", invoiceError);
+        if (existing) {
+          await supabase
+            .from("invoice")
+            .update({
+              id: taskId,
+              client: task.client,
+              requester: task.requester,
+              title: task.title,
+              description: task.description,
+              finish_date: task.finish_date,
+              manager: task.manager,
+              remarks: null,
+              created_at: task.created_at,
+              serial: task.serial,
+              work_name: matchedName,
+              amount: matchedPrice,
+              category: null,
+              device: null,
+              degree: null,
+              work_time: null,
+              adjustment: null,
+              total_amount: matchedPrice,
+            })
+            .eq("id", taskId);
         } else {
-          console.log(`invoiceに登録しました（類似度: ${bestScore.toFixed(2)}）`);
+          await supabase
+            .from("invoice")
+            .insert({
+              id: task.id,
+              client: task.client,
+              requester: task.requester,
+              title: task.title,
+              description: task.description,
+              finish_date: task.finish_date,
+              manager: task.manager,
+              remarks: null,
+              created_at: task.created_at,
+              serial: task.serial,
+              work_name: matchedName,
+              amount: matchedPrice,
+              category: null,
+              device: null,
+              degree: null,
+              work_time: null,
+              adjustment: null,
+              total_amount: matchedPrice,
+            });
         }
       }
 

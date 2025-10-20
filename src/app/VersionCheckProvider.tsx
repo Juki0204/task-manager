@@ -7,7 +7,7 @@ import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/re
 import { CorrectBtn } from "@/components/ui/Btn";
 import { usePathname, useRouter } from "next/navigation";
 
-const CURRENT_APP_VERSION = "v1_3_0"; //アップデートの度に手動で更新＋mdファイル作成
+const CURRENT_APP_VERSION = "v1_3_1"; //アップデートの度に手動で更新＋mdファイル作成
 
 export default function VersionCheckProvider({ children }: { children: React.ReactNode }) {
   const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
