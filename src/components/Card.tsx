@@ -110,7 +110,7 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
         {unreadIds && unreadIds.includes(task.id) && (
           <div className="absolute group-[.cardListStyle]:top-1 group-[.cardListStyle]:w-0.75 group-[.cardListStyle]:rounded-full group-[.cardListStyle]:h-44 left-2 w-1 h-8 bg-[#ffff00]" />
         )}
-        <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1">
+        <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1.5">
           {handleImportantTask && (
             <div onClick={(e) => {
               e.stopPropagation();
@@ -142,11 +142,11 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
           group-[.rowListStyle]:[grid-area:status] group-[.rowListStyle]:pl-3">
           {
             task.priority ?
-              <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
+              <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
               :
               <span className="w-7 h-6 opacity-0"></span>
           }
-          <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
+          <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
         <div className="line-clamp-2 w-full text-sm

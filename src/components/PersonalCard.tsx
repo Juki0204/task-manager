@@ -143,11 +143,11 @@ export default function PersonalCard({
           group-[.rowListStyle]:[grid-area:status] group-[.rowListStyle]:pl-3">
           {
             task.priority ?
-              <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
+              <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
               :
               <span className="w-7 h-6 opacity-0"></span>
           }
-          <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
+          <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
         <div className="line-clamp-2 w-full text-sm

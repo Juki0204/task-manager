@@ -13,7 +13,7 @@ interface PersonalTaskListProps {
 
 export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu }: PersonalTaskListProps) {
   return (
-    <div className="pb-4 grid grid-cols-4 gap-4 w-[1568px]">
+    <div className="pb-4 grid grid-cols-4 gap-2 w-[1568px]">
       <TaskColumn
         id="NotYetStarted"
         title="未担当タスク"
@@ -22,7 +22,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-zinc-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-zinc-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
       />
 
       <TaskColumn
@@ -33,7 +33,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-gray-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-gray-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
       />
 
       <TaskColumn
@@ -44,7 +44,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-slate-700 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-slate-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
       />
 
       <TaskColumn
@@ -74,7 +74,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-slate-600 p-2 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-slate-600 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
       />
 
     </div>

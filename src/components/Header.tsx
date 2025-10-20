@@ -7,7 +7,8 @@ import { useAuth } from "@/app/AuthProvider";
 import { Button, Input } from "@headlessui/react";
 import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
 
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaHistory } from "react-icons/fa";
+
 import { RiTeamFill } from "react-icons/ri";
 import { IoPerson, IoReceipt } from "react-icons/io5";
 import { FaRegCalendarCheck } from "react-icons/fa";
@@ -99,7 +100,7 @@ export default function Header() {
                 </Button>
               </div>
             </div>
-            <div className="sm:flex gap-8 rounded-md">
+            <div className="sm:flex gap-4 rounded-md items-center">
               <p className="text-white flex items-center gap-2"><FaUserCircle />{currentUserName} さん</p>
               {/* <p className="text-white">所属：{currentUserEmployee}</p>
             <p className="text-white">Email：{currentUserEmail}</p> */}
