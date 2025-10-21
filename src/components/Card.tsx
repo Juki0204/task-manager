@@ -97,14 +97,14 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} group-[.cardListStyle]:rounded-md min-w-90 group-[.rowListStyle]:w-[1568px]`}>
+      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} group-[.cardListStyle]:rounded-md min-w-[1868px]`}>
       {task.lockedById && <div className="editing-overlay"><span className="editing-overlay-text">{task.lockedByName}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={() => onClick(task)}
         id={task.id}
         className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative group-[.cardListStyle]:rounded-sm group-[.cardListStyle]:h-full
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[100px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
+        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[110px_280px_600px_360px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (
@@ -132,7 +132,7 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
                 :
                 <FaRegQuestionCircle />
           }
-          <span className="truncate flex-1">
+          <span className="truncate flex-1 group-[.rowListStyle]:pr-3">
             <HighlightText text={task.title} keyword={filters.searchKeywords} />
           </span>
         </h3>

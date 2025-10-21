@@ -36,7 +36,7 @@ export default function InvoicePage() {
   return (
     <div className="p-1 py-4 sm:p-4 !pt-30 relative overflow-x-hidden">
       <h2 className="p-1 pb-4 text-white text-xl font-bold text-center">{currentMonth}月度請求一覧</h2>
-      <div className="pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-600">
+      <div className="pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
         <ul className="relative text-white whitespace-nowrap w-[2500px] box-border">
           <li className="grid grid-cols-[90px_240px_240px_auto_100px_100px_100px_100px_160px_50px_60px_100px_100px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
             <p className="border border-neutral-700 p-1 bg-neutral-100 sticky left-0">No.</p>

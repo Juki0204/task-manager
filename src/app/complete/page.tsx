@@ -99,7 +99,7 @@ export default function CompletedTaskPage() {
 
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-30 max-w-[1600px] relative`}>
+    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-30 max-w-[1920px] relative`}>
       {user &&
         <TaskList
           user={user}

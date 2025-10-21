@@ -60,8 +60,8 @@ export default function PersonalCard({
       setPersonalBorder('nishiBorder');
       setPersonalBg('nishiBg');
     } else {
-      setPersonalBorder('bg-neutral-600');
-      setPersonalBg('bg-neutral-800/25');
+      setPersonalBorder('defaultBorder');
+      setPersonalBg('defaultBg');
     }
   }
 
@@ -112,13 +112,13 @@ export default function PersonalCard({
       {...attributes}
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-xl min-w-90 group-[.rowListStyle]:w-[1568px] ${isDragging ? "!z-50" : ""}`}>
+      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-md min-w-90 group-[.rowListStyle]:w-[1568px] ${isDragging ? "!z-50" : ""}`}>
       {task.lockedById && <div className="editing-overlay"><span className="editing-overlay-text">{task.lockedByName}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={() => onClick(task)}
         id={task.id}
-        className={`${personalBg} w-full rounded-xl p-4 text-white tracking-wide cursor-pointer relative
+        className={`${personalBg} w-full rounded-sm p-4 text-white tracking-wide cursor-pointer relative
         group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
         {...props}
       >

@@ -53,8 +53,8 @@ export default function Header() {
   return (
     <>
       {!isExculedPath ?
-        <header className="fixed top-0 w-full min-w-400 py-2 px-4 z-10 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
-          <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
+        <header className="fixed top-0 w-full min-w-[1920px] py-2 px-4 z-10 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
+          <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500 pr-4">
             <div className="flex gap-2 flex-1">
               <Button
                 className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/" ? "bg-sky-700" : "bg-slate-500 cursor-pointer"}`}
@@ -109,7 +109,7 @@ export default function Header() {
           </div>
 
           <div className="flex gap-2 items-center relative pt-2 min-h-10.75">
-            {pathname !== "/personal" && pathname !== "/invoice" && (
+            {pathname !== "/personal" && pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
               <select
                 value={taskListStyle}
                 onChange={(e) => setTaskListStyle(e.target.value as TaskListStyle)}
@@ -129,7 +129,7 @@ export default function Header() {
               </select>
             )}
 
-            {pathname !== "/personal" && pathname !== "/invoice" && (
+            {pathname !== "/personal" && pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
               <div className="flex items-center gap-2 border-l px-2 border-neutral-500">
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
