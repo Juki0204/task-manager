@@ -87,7 +87,7 @@ export default function InvoiceList({ invoices, user }: InvoiceListProps) {
             <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.amount ?? "-"}</div>
             <div className="border border-l-0 border-t-0 border-neutral-700"><EditableCell className="text-right" recordId={i.id} field="adjustment" type="tel" value={i.adjustment ?? 0} user={user} /></div>
             <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.total_amount ?? "-"}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.remarks && i.remarks !== "" ? i.remarks : "-"}</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700"><EditableCell recordId={i.id} field="remarks" value={i.remarks ?? ""} user={user} /></div>
           </div>
         )
         )}
