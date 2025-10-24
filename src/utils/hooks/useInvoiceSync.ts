@@ -26,25 +26,25 @@ export function useInvoiceSync() {
           return;
         }
 
-        const { data: prices, error: priceError } = await supabase
-          .from("prices")
-          .select("work_name, price");
+        // const { data: prices, error: priceError } = await supabase
+        //   .from("prices")
+        //   .select("work_name, price");
 
-        if (priceError || !prices) {
-          console.error("prices取得失敗:", priceError);
-          return;
-        }
+        // if (priceError || !prices) {
+        //   console.error("prices取得失敗:", priceError);
+        //   return;
+        // }
 
-        const targetText = `${task.title} ${task.description ?? ""}`;
-        const bestMatch = stringSimilarity.findBestMatch(
-          targetText,
-          prices.map((p) => p.work_name)
-        );
+        // const targetText = `${task.title} ${task.description ?? ""}`;
+        // const bestMatch = stringSimilarity.findBestMatch(
+        //   targetText,
+        //   prices.map((p) => p.work_name)
+        // );
 
-        const bestIndex = bestMatch.bestMatchIndex;
-        const bestScore = bestMatch.bestMatch.rating;
-        const matchedPrice = bestScore >= 0.4 ? prices[bestIndex].price : null;
-        const matchedName = bestScore >= 0.4 ? prices[bestIndex].work_name : null;
+        // const bestIndex = bestMatch.bestMatchIndex;
+        // const bestScore = bestMatch.bestMatch.rating;
+        // const matchedPrice = bestScore >= 0.4 ? prices[bestIndex].price : null;
+        // const matchedName = bestScore >= 0.4 ? prices[bestIndex].work_name : null;
 
         const { data: existing } = await supabase
           .from("invoice")
@@ -66,14 +66,14 @@ export function useInvoiceSync() {
               remarks: null,
               created_at: task.created_at,
               serial: task.serial,
-              work_name: matchedName,
-              amount: matchedPrice,
+              work_name: null,
+              amount: null,
               category: null,
               device: null,
               degree: null,
               work_time: null,
               adjustment: null,
-              total_amount: matchedPrice,
+              total_amount: null,
             })
             .eq("id", taskId);
         } else {
@@ -90,14 +90,14 @@ export function useInvoiceSync() {
               remarks: null,
               created_at: task.created_at,
               serial: task.serial,
-              work_name: matchedName,
-              amount: matchedPrice,
+              work_name: null,
+              amount: null,
               category: null,
               device: null,
               degree: null,
               work_time: null,
               adjustment: null,
-              total_amount: matchedPrice,
+              total_amount: null,
             });
         }
       }

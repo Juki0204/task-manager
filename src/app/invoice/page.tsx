@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { Invoice } from "@/utils/types/invoice";
+import InvoiceList from "@/components/invoice/InvoiceList";
 
 export default function InvoicePage() {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
@@ -31,51 +32,50 @@ export default function InvoicePage() {
 
   useEffect(() => {
     getInvoice();
+
+    // Realtime購読（行追加・更新）
+    const channel = supabase
+      .channel("invoice")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "invoice" },
+        (payload) => {
+          setInvoices((prev): Invoice[] | null => {
+            if (!prev) return null;
+
+            if (payload.eventType === "INSERT") {
+              return [...prev, payload.new as Invoice];
+            }
+
+            if (payload.eventType === "UPDATE") {
+              return prev.map((inv) => inv.id === payload.new.id ? (payload.new as Invoice) : inv);
+            }
+
+            if (payload.eventType === "DELETE") {
+              return prev.filter((inv) => inv.id !== payload.old.id);
+            }
+
+            return prev;
+          })
+          getInvoice(); // シンプルに再取得（最初はこれでOK）
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    }
   }, []);
+
+  // useEffect(() => {
+  //   getInvoice();
+  // }, []);
 
   return (
     <div className="p-1 py-4 sm:p-4 !pt-30 relative overflow-x-hidden">
       <h2 className="p-1 pb-4 text-white text-xl font-bold text-center">{currentMonth}月度請求一覧</h2>
       <div className="pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-        <ul className="relative text-white whitespace-nowrap w-[2500px] box-border">
-          <li className="grid grid-cols-[90px_240px_240px_auto_100px_100px_100px_100px_160px_50px_60px_100px_100px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
-            <p className="border border-neutral-700 p-1 bg-neutral-100 sticky left-0">No.</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-22.5">クライアント</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-82.5">作業タイトル</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">作業内容</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">完了日</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">担当者</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">大カテゴリ</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">中カテゴリ</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">小カテゴリ</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">点数</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">修正度</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">仮請求額</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">修正金額</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">本請求額</p>
-            <p className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">備考欄</p>
-          </li>
-          {invoices &&
-            invoices.map((i) => (
-              <li key={i.id} className="grid grid-cols-[90px_240px_240px_auto_100px_100px_100px_100px_160px_50px_60px_100px_100px_100px_500px] items-center border-neutral-700 text-sm">
-                <p className="border border-t-0 border-neutral-700 p-2 bg-neutral-900 sticky left-0 text-center">{i.serial}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 sticky left-22.5">{i.client}《{i.requester}》</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 sticky left-82.5">{i.title}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.description}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-center">{i.finish_date ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-center">{i.manager}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.category ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.device ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.work_name ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.pieces ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.degree ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.amount ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.adjustment ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.total_amount ?? "-"}</p>
-                <p className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.remarks && i.remarks !== "" ? i.remarks : "-"}</p>
-              </li>
-            ))}
-        </ul>
+        {user && <InvoiceList invoices={invoices} user={user} />}
       </div>
     </div >
   );
