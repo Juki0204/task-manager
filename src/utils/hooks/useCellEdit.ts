@@ -94,7 +94,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
             }
           }
 
-          if (field === "work_name") {
+          if (field === "work_name") { // 小カテゴリ変更時は仮請求額が都度変わるので都度反映する
 
             const { data: price } = await supabase
               .from("prices")
@@ -124,11 +124,32 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
           }
 
         } else {
+          if (field === "description") { // 作業内容更新時は点数チェック
+            function extractPoints(text: string): number | null {
+              const matchResult = text.match(/([\d０-９]+)\s*点/);
 
-          await supabase
-            .from(tableName)
-            .update({ [field]: newValue })
-            .eq("id", recordId);
+              if (matchResult) {
+                const half = matchResult[1].replace(/[０-９]/g, (d) =>
+                  String.fromCharCode(d.charCodeAt(0) - 0xfee0)
+                );
+                return Number(half);
+              }
+
+              return null;
+            }
+            const matchLength = extractPoints(String(newValue));
+
+            await supabase
+              .from(tableName)
+              .update({ [field]: newValue, "pieces": matchLength ?? null })
+              .eq("id", recordId);
+
+          } else { // 請求金額にも関係ない点数チェックもない項目
+            await supabase
+              .from(tableName)
+              .update({ [field]: newValue })
+              .eq("id", recordId);
+          }
         }
       } catch (err) {
         console.error(err);
