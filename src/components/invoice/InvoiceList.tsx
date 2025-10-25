@@ -6,7 +6,7 @@ import { User } from "@/utils/types/user";
 
 import { MdTask } from "react-icons/md";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 import InvoiceTaskDetail from "./InvoiceTaskDetail";
@@ -17,9 +17,16 @@ interface InvoiceListProps {
   user: User;
 }
 
+interface PriceList {
+  workName: string;
+  price: number;
+  category: string;
+}
+
 export default function InvoiceList({ invoices, user }: InvoiceListProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [priceList, setPriceList] = useState<string[] | null>(null);
 
   const handleActiveTask = async (id: string) => {
     const { data: task, error } = await supabase
@@ -31,6 +38,26 @@ export default function InvoiceList({ invoices, user }: InvoiceListProps) {
     if (error) console.log(error);
     setActiveTask(task);
   }
+
+  const getPrices = async () => {
+    const { data: prices } = await supabase
+      .from("prices")
+      .select("*");
+
+    if (!prices) return;
+    const formatPrices: string[] = [];
+    prices.forEach(p => {
+      formatPrices.push(p.work_name);
+    });
+    setPriceList(formatPrices);
+    console.log(
+      formatPrices
+    )
+  }
+
+  useEffect(() => {
+    getPrices();
+  }, []);
 
   return (
     <div className="relative text-white whitespace-nowrap w-[2500px] box-border">
@@ -55,39 +82,47 @@ export default function InvoiceList({ invoices, user }: InvoiceListProps) {
       {invoices &&
         invoices.map((i) => (
           <div key={i.id} className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_160px_50px_60px_100px_100px_100px_500px] items-center border-neutral-700 text-sm">
-            <div className="grid place-content-center border border-t-0 border-neutral-700 p-2 bg-neutral-900 sticky left-0 hover:bg-neutral-800"><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 sticky left-10 text-center">{i.serial}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 sticky left-32.5">{i.client}《{i.requester}》</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 sticky left-92.5"><EditableCell recordId={i.id} field="title" value={i.title} user={user} /></div>
-            <div className="border border-l-0 border-t-0 border-neutral-700"><EditableCell recordId={i.id} field="description" value={i.description} user={user} /></div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-center">{i.finish_date ?? "-"}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-center">{i.manager}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.category ?? "-"}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700">
+            <div className="grid place-content-center border border-t-0 border-neutral-700 min-h-9 p-2 bg-neutral-900 sticky left-0 hover:bg-neutral-800"><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 bg-slate-900 sticky left-10 text-center">{i.serial}</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 bg-slate-900 sticky left-32.5">{i.client}《{i.requester}》</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-92.5"><EditableCell recordId={i.id} field="title" value={i.title} user={user} /></div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9"><EditableCell recordId={i.id} field="description" value={i.description} user={user} /></div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 bg-slate-900 text-center">{i.finish_date ?? "-"}</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 bg-slate-900 text-center">{i.manager}</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 bg-slate-900 text-center">{i.category ?? "-"}</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 text-center">
               <EditableSelect
                 recordId={i.id}
-                field="description"
-                value={i.device ?? "-"}
+                field="device"
+                value={i.device ?? ""}
                 user={user}
                 options={["PC", "スマホ", "レスポンシブ", "会員サイト"]}
               />
             </div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900">{i.work_name ?? "-"}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700"><EditableCell className="text-center" recordId={i.id} field="pieces" value={i.pieces ?? "-"} user={user} /></div>
-            <div className="border border-l-0 border-t-0 border-neutral-700">
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 bg-neutral-900">
               <EditableSelect
                 recordId={i.id}
-                field="device"
-                value={i.device ?? "-"}
+                field="work_name"
+                value={i.work_name ?? ""}
+                user={user}
+                options={priceList ?? []}
+              />
+            </div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9"><EditableCell className="text-center" recordId={i.id} field="pieces" type="tel" value={i.pieces ?? ""} user={user} /></div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9">
+              <EditableSelect
+                recordId={i.id}
+                field="degree"
+                value={i.degree ?? ""}
                 user={user}
                 options={["50", "80", "100", "120"]}
                 className="text-right"
               />
             </div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.amount ?? "-"}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700"><EditableCell className="text-right" recordId={i.id} field="adjustment" type="tel" value={i.adjustment ?? 0} user={user} /></div>
-            <div className="border border-l-0 border-t-0 border-neutral-700 p-2 bg-neutral-900 text-right">{i.total_amount ?? "-"}</div>
-            <div className="border border-l-0 border-t-0 border-neutral-700"><EditableCell recordId={i.id} field="remarks" value={i.remarks ?? ""} user={user} /></div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 bg-slate-900 text-right">{i.amount ?? "-"}</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9"><EditableCell className="text-right" recordId={i.id} field="adjustment" type="tel" value={i.adjustment ?? 0} user={user} /></div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 bg-slate-900 text-right">{i.total_amount ?? "-"}</div>
+            <div className="border border-l-0 border-t-0 border-neutral-700 min-h-9"><EditableCell recordId={i.id} field="remarks" value={i.remarks ?? ""} user={user} /></div>
           </div>
         )
         )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase/supabase";
+import { Invoice } from "../types/invoice";
 
 interface UseCellEditProps {
   recordId: string;
@@ -18,6 +19,8 @@ interface InvoiceEditingStateTable {
 export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   const [lockedByOther, setLockedByOther] = useState<boolean>(false);
   const [lockedUser, setLockedUser] = useState<string>("");
+
+  const calcAmountTarget: string[] = ["work_name", "device", "degree", "adjustment", "pieces"];
 
   useEffect(() => {
     const channel = supabase
@@ -61,14 +64,75 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
   async function handleSave(newValue: string | number, oldValue: string | number, tableName: string = "invoice") {
     if (newValue !== oldValue) {
-      const { error } = await supabase
-        .from(tableName)
-        .update({ [field]: newValue })
-        .eq("id", recordId);
+      try {
+        if (calcAmountTarget.includes(field)) { // 金額計算に影響があるフィールド
+          const { data: invoice } = await supabase
+            .from(tableName)
+            .select("*")
+            .eq("id", recordId)
+            .single();
 
-      if (error) {
-        console.error(error);
-      } else {
+          const target = invoice as Invoice;
+
+          const calcList = {
+            pieces: target.pieces ?? 1,
+            amount: target.amount ?? 0,
+            device: target.device === "会員サイト" ? 1.5 : 1,
+            degree: target.degree ? target.degree : 100,
+            adjustment: target.adjustment ?? 0,
+          }
+
+          if (field in calcList) {
+            if (field === "device") {
+              // device の場合は「会員サイト」なら 1.5、それ以外は 1
+              calcList.device =
+                typeof newValue === "string" && newValue.includes("会員サイト") ? 1.5 : 1;
+            } else {
+              // それ以外は数値変換して代入
+              calcList[field as keyof typeof calcList] =
+                typeof newValue === "string" ? Number(newValue) || 0 : newValue;
+            }
+          }
+
+          if (field === "work_name") {
+
+            const { data: price } = await supabase
+              .from("prices")
+              .select("price, category")
+              .eq("work_name", newValue)
+              .single();
+
+            if (!price) return;
+
+            // ( 仮請求額 × 作業点数 × デバイス（会員サイトのみ1.5） × 修正度 ) + 修正金額
+            const resultAmount = (price.price * calcList.pieces * calcList.device * (calcList.degree * 0.01)) + calcList.adjustment;
+
+            await supabase
+              .from(tableName)
+              .update({ "work_name": newValue, "amount": price.price, "category": price.category, "total_amount": resultAmount })
+              .eq("id", recordId);
+
+          } else {
+
+            // ( 仮請求額 × 作業点数 × デバイス（会員サイトのみ1.5） × 修正度 ) + 修正金額
+            const resultAmount = (calcList.amount * calcList.pieces * calcList.device * (calcList.degree * 0.01)) + calcList.adjustment;
+
+            await supabase
+              .from(tableName)
+              .update({ [field]: newValue, "total_amount": resultAmount })
+              .eq("id", recordId);
+          }
+
+        } else {
+
+          await supabase
+            .from(tableName)
+            .update({ [field]: newValue })
+            .eq("id", recordId);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
         console.log("Success to Update Invoice.");
       }
     }

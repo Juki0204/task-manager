@@ -33,9 +33,9 @@ export default function EditableSelect({ recordId, field, value, options, user, 
   return (
     <div
       onDoubleClick={startEditing}
-      className={`border-neutral-700 ${className} ${editing
+      className={`border-neutral-700 min-h-9 ${className} ${editing
         ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700"
-        : "bg-neutral-900 hover:bg-neutral-800"
+        : "bg-neutral-900 hover:bg-neutral-700"
         }`}
     >
       {lockedByOther && (<div className="editing-cell"><span className="editing-cell-text">{lockedUser}さんが編集中...</span></div>)}
@@ -55,7 +55,7 @@ export default function EditableSelect({ recordId, field, value, options, user, 
           ))}
         </Select>
       ) : (
-        <span className="p-2 block">{value}</span>
+        <span className="p-2 block">{value === "" ? "-" : value}{field === "degree" && value && "%"}</span>
       )}
     </div>
   );

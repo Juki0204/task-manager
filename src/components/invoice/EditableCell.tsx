@@ -45,26 +45,27 @@ export default function EditableCell({ recordId, field, value, user, className, 
   return (
     <div
       onDoubleClick={startEditing}
-      className={`border-neutral-700 p-2 ${className} ${editing
+      className={`border-neutral-700 p-2 min-h-9 ${className} ${editing
         ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700"
-        : "bg-neutral-900 hover:bg-neutral-800"
+        : "bg-neutral-900 hover:bg-neutral-700"
         }`}
     >
       {lockedByOther && (<div className="editing-cell"><span className="editing-cell-text">{lockedUser}さんが編集中...</span></div>)}
       {editing ? (
         <Input
           autoFocus
-          className="w-full border border-blue-400 data-focus:outline-0 data-focus:border-0"
+          className={`w-full border border-blue-400 data-focus:outline-0 data-focus:border-0 ${type === "tel" ? "text-right" : ""}`}
           type={type ?? "text"}
           value={tempValue}
           onChange={(e) => setTempValue(e.target.value)}
           onBlur={saveValue}
+          onFocus={(e) => e.target.select()}
           onKeyDown={(e) => {
             if (e.key === "Enter") saveValue();
           }}
         />
       ) : (
-        <span>{value}</span>
+        <>{value === "" ? (field === "remarks" ? "" : "") : value}</>
       )}
     </div>
   );
