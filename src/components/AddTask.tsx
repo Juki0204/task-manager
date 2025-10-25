@@ -129,7 +129,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
         requesterNameList.push(requester.name);
       });
       setRequesterList(requesterNameList);
-      setRequester(requesterNameList[0]);
     }
   }
 
@@ -262,8 +261,8 @@ export default function AddTask({ onClose }: AddTaskProps) {
   //   setUploadedFiles([]); //添付ファイル
   // }
 
-  const handleContentCheck = (taskTitle: string, taskDescription: string) => {
-    if (taskTitle && taskDescription) {
+  const handleContentCheck = (requester: string, taskTitle: string, taskDescription: string) => {
+    if (requester && taskTitle && taskDescription) {
       setIsValid(false);
     } else {
       setIsValid(true);
@@ -297,16 +296,17 @@ export default function AddTask({ onClose }: AddTaskProps) {
           ))}
         </AddTaskSelect>
 
-        <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
+        <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
+          <option disabled value="">選択して下さい</option>
           {requesterList.map(requester => (
             <option key={requester} value={requester}>{requester}</option>
           ))}
           <option value="不明">不明</option>
         </AddTaskSelect>
 
-        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
+        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
 
-        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
+        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
 
         <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 

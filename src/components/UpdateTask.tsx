@@ -142,6 +142,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
         requesterNameList.push(requester.name);
       });
       setRequesterList(requesterNameList);
+      setRequester(requesterNameList[0]);
     }
   }
 
@@ -358,7 +359,6 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
   useEffect(() => {
     getRequesters(client);
-    console.log(task);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client]);
 
