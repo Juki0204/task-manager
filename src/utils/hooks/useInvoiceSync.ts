@@ -46,6 +46,21 @@ export function useInvoiceSync() {
         // const matchedPrice = bestScore >= 0.4 ? prices[bestIndex].price : null;
         // const matchedName = bestScore >= 0.4 ? prices[bestIndex].work_name : null;
 
+        // 作業点数自動判別（全角数字対応）
+        function extractPoints(text: string): number | null {
+          const matchResult = text.match(/([\d０-９]+)\s*点/);
+
+          if (matchResult) {
+            const half = matchResult[1].replace(/[０-９]/g, (d) =>
+              String.fromCharCode(d.charCodeAt(0) - 0xfee0)
+            );
+            return Number(half);
+          }
+
+          return null;
+        }
+        const matchLength = extractPoints(task.description);
+
         const { data: existing } = await supabase
           .from("invoice")
           .select("id")
@@ -71,6 +86,7 @@ export function useInvoiceSync() {
               category: null,
               device: null,
               degree: null,
+              pieces: matchLength,
               work_time: null,
               adjustment: null,
               total_amount: null,
@@ -95,6 +111,7 @@ export function useInvoiceSync() {
               category: null,
               device: null,
               degree: null,
+              pieces: matchLength,
               work_time: null,
               adjustment: null,
               total_amount: null,
