@@ -1,9 +1,10 @@
 "use client";
 
 import { useCellEdit } from "@/utils/hooks/useCellEdit";
+import { Invoice } from "@/utils/types/invoice";
 import { User } from "@/utils/types/user";
 import { Select } from "@headlessui/react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState, useRef, useEffect } from "react";
 
 interface EditableCellProps {
   recordId: string;
@@ -12,9 +13,10 @@ interface EditableCellProps {
   options: string[];
   user: User;
   className?: string;
+  setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
 }
 
-export default function EditableSelect({ recordId, field, value, options, user, className }: EditableCellProps) {
+export default function EditableSelect({ recordId, field, value, options, user, className, setInvoices }: EditableCellProps) {
   const userId = user.id;
   const [editing, setEditing] = useState<boolean>(false);
   const [tempValue, setTempValue] = useState<string | number>(value);
@@ -26,6 +28,14 @@ export default function EditableSelect({ recordId, field, value, options, user, 
   }
 
   async function saveValue(newValue: string | number) {
+    setInvoices((prev) =>
+      prev
+        ? prev.map((inv) =>
+          inv.id === recordId ? { ...inv, [field]: newValue } : inv
+        )
+        : prev
+    );
+
     setEditing(false);
     await handleSave(newValue, value);
   }
@@ -35,7 +45,7 @@ export default function EditableSelect({ recordId, field, value, options, user, 
       onDoubleClick={startEditing}
       className={`border-neutral-700 min-h-9 ${className} ${editing
         ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700"
-        : "bg-neutral-900 hover:bg-neutral-700"
+        : ""
         }`}
     >
       {lockedByOther && (<div className="editing-cell"><span className="editing-cell-text">{lockedUser}さんが編集中...</span></div>)}

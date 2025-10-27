@@ -57,7 +57,7 @@ export default function InvoicePage() {
 
             return prev;
           })
-          getInvoice(); // シンプルに再取得（最初はこれでOK）
+          // getInvoice();
         }
       )
       .subscribe();
@@ -75,7 +75,7 @@ export default function InvoicePage() {
     <div className="p-1 py-4 sm:p-4 !pt-30 relative overflow-x-hidden">
       <h2 className="p-1 pb-4 text-white text-xl font-bold text-center">{currentMonth}月度請求一覧</h2>
       <div className="pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-        {user && <InvoiceList invoices={invoices} user={user} />}
+        {user && <InvoiceList setInvoices={setInvoices} invoices={invoices} user={user} />}
       </div>
     </div >
   );
