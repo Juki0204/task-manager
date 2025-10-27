@@ -62,12 +62,12 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
 
   return (
     <div className="relative text-white whitespace-nowrap w-[2500px] box-border">
-      <div className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_160px_50px_60px_100px_100px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
+      <div className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
         <div className="border border-neutral-700 p-1 bg-neutral-100 sticky left-0">確認</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-10">No.</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-32.5">クライアント</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-92.5">作業タイトル</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-152.5">作業内容</div>
+        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-10 z-20">No.</div>
+        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-32.5 z-20">クライアント</div>
+        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-92.5 z-20">作業タイトル</div>
+        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-152.5 z-20">作業内容</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">完了日</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">担当者</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">大カテゴリ</div>
@@ -82,12 +82,12 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
       </div>
       {invoices &&
         invoices.map((i, index) => (
-          <div key={i.id} className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_160px_50px_60px_100px_100px_100px_500px] items-center border-neutral-700 text-sm">
-            <div className={`grid place-content-center border border-t-0 border-neutral-700 min-h-9 p-2 sticky left-0 hover:bg-neutral-700 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-10 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.serial}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-32.5 ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.client}《{i.requester}》</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-92.5 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell recordId={i.id} field="title" value={i.title} user={user} setInvoices={setInvoices} /></div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-152.5 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell recordId={i.id} field="description" value={i.description} user={user} setInvoices={setInvoices} /></div>
+          <div key={i.id} className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-700 text-sm">
+            <div className={`grid place-content-center border border-t-0 border-neutral-700 min-h-9 p-2 sticky left-0 z-20 hover:bg-neutral-700 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-10 z-20 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.serial}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-32.5 z-20 ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.client}《{i.requester}》</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-92.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell recordId={i.id} field="title" value={i.title} user={user} setInvoices={setInvoices} /></div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-152.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell recordId={i.id} field="description" value={i.description} user={user} setInvoices={setInvoices} /></div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.finish_date ?? "-"}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.manager}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.category ?? "-"}</div>
@@ -101,7 +101,7 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 overflow-hidden ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
               <EditableSelect
                 recordId={i.id}
                 field="work_name"
