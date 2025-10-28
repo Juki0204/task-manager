@@ -142,7 +142,6 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
         requesterNameList.push(requester.name);
       });
       setRequesterList(requesterNameList);
-      setRequester(requesterNameList[0]);
     }
   }
 
