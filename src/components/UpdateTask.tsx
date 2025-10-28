@@ -55,8 +55,8 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const [requester, setRequester] = useState<string>(task.requester); //依頼担当者
   const [taskTitle, setTaskTitle] = useState<string>(task.title); //作業タイトル
   const [taskDescription, setTaskDescription] = useState<string>(task.description); //作業内容
-  const [requestDate, setRequestDate] = useState<string>(task.requestDate); //依頼日
-  const [finishDate, setFinishDate] = useState<string>(task.finishDate ? task.finishDate : ''); //完了日
+  const [requestDate, setRequestDate] = useState<string>(task.request_date); //依頼日
+  const [finishDate, setFinishDate] = useState<string>(task.finish_date ? task.finish_date : ''); //完了日
   const [manager, setManager] = useState<string>(task.manager ? task.manager : ''); //作業担当者
   const [status, setStatus] = useState<string>(task.status); //作業状況
   const [priority, setPriority] = useState<string>(task.priority ? task.priority : ''); //優先度

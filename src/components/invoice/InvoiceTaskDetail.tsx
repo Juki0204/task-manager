@@ -25,7 +25,7 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
-  function definePriorityStyle(priority: string | undefined) {
+  function definePriorityStyle(priority: string | null) {
     if (priority === '急') {
       setPriorityStyle('bg-red-300 text-red-800');
     } else if (priority === '高') {
@@ -110,12 +110,12 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
 
         <li className="flex flex-col border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><RiCalendarScheduleLine /> 依頼日</h3>
-          <p>{task.requestDate}</p>
+          <p>{task.request_date}</p>
         </li>
 
         <li className="flex flex-col border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><FaRegCheckCircle /> 完了日</h3>
-          <p>{task.finishDate ? task.finishDate : "-"}</p>
+          <p>{task.finish_date ? task.finish_date : "-"}</p>
         </li>
 
         <li className="flex flex-col border-b border-neutral-300">

@@ -7,17 +7,24 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { Invoice } from "@/utils/types/invoice";
 import InvoiceList from "@/components/invoice/InvoiceList";
+import { Select } from "@headlessui/react";
 
 export default function InvoicePage() {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
   const { user } = useAuth();
 
+  const [currentYear, setCurrentYear] = useState<string>("2025");
   const [currentMonth, setCurrentMonth] = useState<string>((new Date().getMonth() + 1).toLocaleString("ja-JP"));
 
   const getInvoice = async () => {
+    const fromDate = `${currentYear}-${currentMonth}-01`;
+    const toDate = `${currentYear}-${currentMonth}-31`;
+
     const { data: invoiceData, error: invoiceError } = await supabase
       .from('invoice')
-      .select('*');
+      .select('*')
+      .gte("finish_date", fromDate)
+      .lte("finish_date", toDate);
 
     if (invoiceError) {
       console.error('Failed to select invoice:', invoiceError);
@@ -73,7 +80,16 @@ export default function InvoicePage() {
 
   return (
     <div className="p-1 py-4 sm:p-4 !pt-30 relative overflow-x-hidden">
-      <h2 className="p-1 pb-4 text-white text-xl font-bold text-center">{currentMonth}月度請求一覧</h2>
+      <h2 className="flex justify-center items-center gap-1 p-1 pb-4 text-white text-xl font-bold text-center">
+        <Select onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 py-1">
+          <option value="2025">2025</option>
+        </Select>
+        年
+        <Select onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-700 rounded-md px-2 py-1">
+          <option value="10">10</option>
+        </Select>
+        月度 請求一覧
+      </h2>
       <div className="pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
         {user && <InvoiceList setInvoices={setInvoices} invoices={invoices} user={user} />}
       </div>

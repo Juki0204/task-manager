@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase/supabase";
 import { Task } from "../types/task";
-import { dbTaskProps, mapDbTaskToTask } from "../function/mapDbTaskToTask";
 import { toast } from "sonner";
 
 type UserData = {
@@ -22,14 +21,13 @@ export function useTaskRealtime(user: UserData) {
 
     if (tasks) {
       // console.log(tasks);
-      const taskData: Task[] = tasks.map(task => mapDbTaskToTask(task));
-      taskData.sort((a, b) => {
-        const dataA = new Date(a.requestDate).getTime();
-        const dataB = new Date(b.requestDate).getTime();
+      tasks.sort((a, b) => {
+        const dataA = new Date(a.request_date).getTime();
+        const dataB = new Date(b.request_date).getTime();
         return dataA - dataB;
       });
 
-      setTaskList(taskData);
+      setTaskList(tasks);
     }
   }
 
@@ -47,8 +45,8 @@ export function useTaskRealtime(user: UserData) {
 
       if (priA !== priB) return priB - priA;
 
-      const dateA = new Date(a.requestDate).getTime();
-      const dateB = new Date(b.requestDate).getTime();
+      const dateA = new Date(a.request_date).getTime();
+      const dateB = new Date(b.request_date).getTime();
       return dateA - dateB;
     });
     return sortTaskData;
@@ -71,14 +69,14 @@ export function useTaskRealtime(user: UserData) {
 
           if (payload.eventType === "INSERT") {
             // toast.success(`新しいタスクが追加されました。`);
-            setTaskList((prev) => [...prev, mapDbTaskToTask(payload.new as dbTaskProps)]);
+            setTaskList((prev) => [...prev, payload.new as Task]);
           }
 
           if (payload.eventType === "UPDATE") {
             // toast.info('タスクが更新されました。');
             setTaskList((prev) =>
               prev.map((t) =>
-                t.id === payload.new.id ? mapDbTaskToTask(payload.new as dbTaskProps) : t
+                t.id === payload.new.id ? payload.new as Task : t
               )
             );
           }

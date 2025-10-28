@@ -48,7 +48,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
   const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
   const [selectedFile, setSelectedFile] = useState<taskFileMeta | null>(null);
 
-  function definePriorityStyle(priority: string | undefined) {
+  function definePriorityStyle(priority: string | null) {
     if (priority === '急') {
       setPriorityStyle('bg-red-300 text-red-800');
     } else if (priority === '高') {
@@ -202,12 +202,12 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
 
         <li className="flex flex-col border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><RiCalendarScheduleLine /> 依頼日</h3>
-          <p>{task.requestDate}</p>
+          <p>{task.request_date}</p>
         </li>
 
         <li className="flex flex-col border-b border-neutral-300">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><FaRegCheckCircle /> 完了日</h3>
-          <p>{task.finishDate ? task.finishDate : "-"}</p>
+          <p>{task.finish_date ? task.finish_date : "-"}</p>
         </li>
 
         <li className="flex flex-col border-b border-neutral-300">
@@ -275,8 +275,8 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
         </Button>
 
         <div className="text-xs">
-          <p>作成日時: {task.createdManager} {formatDateJST(task.createdAt)}</p>
-          <p>最終更新: {task.updatedManager} {formatDateJST(task.updatedAt)}</p>
+          <p>作成日時: {task.created_manager} {formatDateJST(task.created_at)}</p>
+          <p>最終更新: {task.updated_manager} {formatDateJST(task.updated_at)}</p>
         </div>
         <Button
           onClick={onClose}

@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
-import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 
 
@@ -206,7 +205,7 @@ export function InsertCopyTask({ taskId, onClick, onCopyTask }: InsertCopyTaskPr
       .single();
 
     if (!data) return false;
-    setCopiedTask(mapDbTaskToTask(data));
+    setCopiedTask(data);
   };
 
   useEffect(() => {

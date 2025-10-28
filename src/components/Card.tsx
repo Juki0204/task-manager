@@ -11,7 +11,6 @@ import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import HighlightText from "./ui/HighlightText";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import { User } from "@/utils/types/user";
-import { supabase } from "@/utils/supabase/supabase";
 
 interface CardPropd {
   task: Task;
@@ -58,7 +57,7 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
     }
   }
 
-  function definePriorityStyle(priority: string | undefined) {
+  function definePriorityStyle(priority: string | null) {
     if (priority === '急') {
       setPriorityStyle('bg-red-300 text-red-800');
     } else if (priority === '高') {
@@ -97,8 +96,8 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.lockedById ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} group-[.cardListStyle]:rounded-md min-w-[1868px]`}>
-      {task.lockedById && <div className="editing-overlay"><span className="editing-overlay-text">{task.lockedByName}さんが編集中...</span></div>}
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} group-[.cardListStyle]:rounded-md min-w-[1868px]`}>
+      {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={() => onClick(task)}
@@ -164,8 +163,8 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
 
         <div className="grid gap-2 text-sm grid-cols-6
         group-[.rowListStyle]:[grid-area:date]">
-          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.requestDate}</div>
-          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finishDate ? task.finishDate : "-"}</div>
+          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.request_date}</div>
+          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
         </div>
       </div>
     </div>

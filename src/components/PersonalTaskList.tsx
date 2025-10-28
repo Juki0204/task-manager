@@ -52,10 +52,10 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         title="今週の完了タスク"
         tasks={taskList.filter((task) => {
           if (task.manager !== user.name || task.status !== '完了') return false;
-          if (!task.finishDate) return false;
+          if (!task.finish_date) return false;
 
           // finishDateを常にローカル日付として解釈
-          const finish = new Date(`${task.finishDate}T00:00:00`);
+          const finish = new Date(`${task.finish_date}T00:00:00`);
           const today = new Date();
 
           // 今日の0時時点から7日前の0時までを計算
@@ -64,8 +64,8 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
 
           return finish.getTime() >= weekAgo && finish.getTime() < endOfToday;
         }).sort((a, b) => {
-          const finishA = a.finishDate ? new Date(`${a.finishDate}`).getTime() : 0;
-          const finishB = b.finishDate ? new Date(`${b.finishDate}`).getTime() : 0;
+          const finishA = a.finish_date ? new Date(`${a.finish_date}`).getTime() : 0;
+          const finishB = b.finish_date ? new Date(`${b.finish_date}`).getTime() : 0;
 
           //完了日順ソート
           return finishA - finishB;

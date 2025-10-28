@@ -90,7 +90,7 @@ export default function AllTaskPage() {
   const sortTask = (task: Task[]) => {
     const sortedTask = [...task].sort((a, b) => {
       if (taskListSortType === "byDate") {
-        return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
+        return new Date(a.request_date).getTime() - new Date(b.request_date).getTime();
       }
 
       if (taskListSortType === "byManager") {
