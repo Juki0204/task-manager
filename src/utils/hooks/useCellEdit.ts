@@ -65,6 +65,8 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   async function handleSave(newValue: string | number, oldValue: string | number, tableName: string = "invoice") {
     if (newValue !== oldValue) {
       try {
+        const formatNewValue = newValue === "" ? null : newValue;
+
         if (calcAmountTarget.includes(field)) { // 金額計算に影響があるフィールド
           const { data: invoice } = await supabase
             .from(tableName)
@@ -86,11 +88,11 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
             if (field === "device") {
               // device の場合は「会員サイト」なら 1.5、それ以外は 1
               calcList.device =
-                typeof newValue === "string" && newValue.includes("会員サイト") ? 1.5 : 1;
+                typeof formatNewValue === "string" && formatNewValue.includes("会員サイト") ? 1.5 : 1;
             } else {
               // それ以外は数値変換して代入
               calcList[field as keyof typeof calcList] =
-                typeof newValue === "string" ? Number(newValue) || 0 : newValue;
+                typeof formatNewValue === "string" ? Number(formatNewValue) || 0 : formatNewValue === null ? 0 : formatNewValue;
             }
           }
 
@@ -99,7 +101,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
             const { data: price } = await supabase
               .from("prices")
               .select("price, category")
-              .eq("work_name", newValue)
+              .eq("work_name", formatNewValue)
               .single();
 
             if (!price) return;
@@ -109,7 +111,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
             await supabase
               .from(tableName)
-              .update({ "work_name": newValue, "amount": price.price, "category": price.category, "total_amount": resultAmount })
+              .update({ "work_name": formatNewValue, "amount": price.price, "category": price.category, "total_amount": resultAmount })
               .eq("id", recordId);
 
           } else {
@@ -119,7 +121,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
             await supabase
               .from(tableName)
-              .update({ [field]: newValue, "total_amount": resultAmount })
+              .update({ [field]: formatNewValue, "total_amount": resultAmount })
               .eq("id", recordId);
           }
 
@@ -137,17 +139,17 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
               return null;
             }
-            const matchLength = extractPoints(String(newValue));
+            const matchLength = extractPoints(String(formatNewValue));
 
             await supabase
               .from(tableName)
-              .update({ [field]: newValue, "pieces": matchLength ?? null })
+              .update({ [field]: formatNewValue, "pieces": matchLength ?? null })
               .eq("id", recordId);
 
           } else { // 請求金額にも関係ない点数チェックもない項目
             await supabase
               .from(tableName)
-              .update({ [field]: newValue })
+              .update({ [field]: formatNewValue })
               .eq("id", recordId);
           }
         }
