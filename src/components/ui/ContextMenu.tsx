@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete, ChangeRemove, ChangeConfirm, InsertCopyTask } from "./ContextMenuBtn";
+import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeDelete, ChangeRemove, ChangeConfirm, InsertCopyTask, ChangeComplete } from "./ContextMenuBtn";
 import { Task } from "@/utils/types/task";
 
 type ContextMenuProps = {
@@ -55,6 +55,7 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateT
         <ChangeInProgress taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
         <ChangeInterrupt taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
         <ChangeConfirm taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
+        <ChangeComplete taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
         <ChangeNotYetStarted taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
         <ChangeRemove taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
       </ul>

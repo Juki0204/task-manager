@@ -1,4 +1,4 @@
-import { FaRegStickyNote, FaRegTrashAlt, FaRegPauseCircle, FaRegPlayCircle } from "react-icons/fa";
+import { FaRegStickyNote, FaRegTrashAlt, FaRegPauseCircle, FaRegPlayCircle, FaRegCalendarCheck } from "react-icons/fa";
 import { MdPersonRemove, MdOutlineFactCheck } from "react-icons/md";
 import { LuCopyPlus } from "react-icons/lu";
 
@@ -10,6 +10,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 import { mapDbTaskToTask } from "@/utils/function/mapDbTaskToTask";
+import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 
 
 
@@ -148,6 +149,37 @@ export function ChangeRemove({ taskId, onClick, updateTaskStatus }: RemoveProps)
       className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <MdPersonRemove />担当から外す
+    </li>
+  );
+}
+
+
+
+//---------Complete Btn---------
+
+type CompleteProps = {
+  taskId: string;
+  onClick: () => void;
+  updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
+}
+
+export function ChangeComplete({ taskId, onClick, updateTaskStatus }: CompleteProps) {
+  const { syncInvoiceWithTask } = useInvoiceSync();
+
+  const handleComplete = async () => {
+    await updateTaskStatus(taskId, "完了", "");
+    await syncInvoiceWithTask(taskId, "完了");
+  }
+
+  return (
+    <li
+      onClick={async () => {
+        await handleComplete();
+        onClick();
+      }}
+      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+    >
+      <FaRegCalendarCheck />完了
     </li>
   );
 }
