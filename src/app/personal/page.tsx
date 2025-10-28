@@ -166,6 +166,7 @@ export default function PersonalTaskPage() {
             unreadIds={unreadIds}
             onClick={(t: Task) => {
               if (isOpen) return;
+              if (menu.visible) return;
 
               setActiveTask(t);
               setModalType("detail");

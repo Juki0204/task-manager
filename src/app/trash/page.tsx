@@ -107,6 +107,7 @@ export default function TrashTaskPage() {
           taskList={filteredTaskList}
           onClick={(t: Task) => {
             if (isOpen) return;
+            if (menu.visible) return;
 
             setActiveTask(t);
             setModalType("detail");
