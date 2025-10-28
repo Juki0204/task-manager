@@ -23,6 +23,7 @@ import {
   useSensors,
   MouseSensor
 } from "@dnd-kit/core";
+import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 
 
 
@@ -34,6 +35,7 @@ export default function PersonalTaskPage() {
   const { user } = useAuth();
   const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
   const [unreadIds, setUnreadIds] = useState<string[]>([]);
+  const { syncInvoiceWithTask } = useInvoiceSync();
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -112,8 +114,8 @@ export default function PersonalTaskPage() {
         : { manager: user.name }
 
       console.log(newStatus, prevStatus);
-      updateTaskStatus(taskId, formatNewStatus, prevStatus, alt);
-
+      await updateTaskStatus(taskId, formatNewStatus, prevStatus, alt);
+      await syncInvoiceWithTask(taskId, formatNewStatus);
     }
   };
 
