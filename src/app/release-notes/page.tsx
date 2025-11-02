@@ -50,7 +50,7 @@ export default function ReleaseNotesPage() {
   if (loading) return <p className="text-white text-center tracking-widest">読み込み中...</p>
 
   return (
-    <div className="p-1 py-4 sm:p-4 !pt-30 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+    <div className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
       <h2 className="text-2xl font-bold text-white mb-6 text-center">過去のアプリ更新履歴一覧</h2>
       <div className="space-y-4">
         {notes.map((note, index) => (

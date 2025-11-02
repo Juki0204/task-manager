@@ -32,7 +32,7 @@ export default function TaskNotesViewer() {
       ? "max-h-9"
       : viewerState === "middle"
         ? "max-h-46"
-        : "max-h-[calc(100svh-7rem)]";
+        : "max-h-[calc(100svh-10.5rem)]";
 
   const scrollToBottom = () => {
     const el = notesRef.current;
@@ -167,7 +167,7 @@ export default function TaskNotesViewer() {
               </AnimatePresence>
             </div>
           </div>
-        </div >
+        </div>
       )}
     </>
   )

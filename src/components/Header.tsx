@@ -200,8 +200,8 @@ export default function Header() {
                   <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
                   <Input
                     type="text"
-                    className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none"
-                    placeholder="タイトル・内容・依頼者で検索"
+                    className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                    placeholder="No./タイトル/内容/依頼者"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const value = e.target.value;
 

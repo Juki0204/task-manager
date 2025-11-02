@@ -13,12 +13,12 @@ export default function InvoicePage() {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
   const { user } = useAuth();
 
-  const [currentYear, setCurrentYear] = useState<string>("2025");
-  const [currentMonth, setCurrentMonth] = useState<string>((new Date().getMonth() + 1).toLocaleString("ja-JP"));
+  const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear()));
+  const [currentMonth, setCurrentMonth] = useState<string>(String(new Date().getMonth()));
 
-  const getInvoice = async () => {
-    const fromDate = `${currentYear}-${currentMonth}-01`;
-    const toDate = `${currentYear}-${currentMonth}-31`;
+  const getInvoice = async (year: string, month: string) => {
+    const fromDate = `${year}-${month}-01`;
+    const toDate = `${year}-${month}-31`;
 
     const { data: invoiceData, error: invoiceError } = await supabase
       .from('invoice')
@@ -38,7 +38,7 @@ export default function InvoicePage() {
   }
 
   useEffect(() => {
-    getInvoice();
+    getInvoice(currentYear, currentMonth);
 
     // Realtime購読（行追加・更新）
     const channel = supabase
@@ -74,24 +74,41 @@ export default function InvoicePage() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   getInvoice();
-  // }, []);
+  useEffect(() => {
+    getInvoice(currentYear, currentMonth);
+  }, [currentMonth, currentYear]);
 
   return (
-    <div className="p-1 py-4 sm:p-4 !pt-30 relative overflow-x-hidden">
+    <div className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 relative overflow-x-hidden">
       <h2 className="flex justify-center items-center gap-1 p-1 pb-4 text-white text-xl font-bold text-center">
-        <Select onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 py-1">
+        <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 py-1">
+          <option value="2024">2024</option>
           <option value="2025">2025</option>
+          <option value="2026">2026</option>
         </Select>
         年
-        <Select onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-700 rounded-md px-2 py-1">
+        <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-700 rounded-md px-2 py-1">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
           <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
         </Select>
         月度 請求一覧
       </h2>
       <div className="pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-        {user && <InvoiceList setInvoices={setInvoices} invoices={invoices} user={user} />}
+        {user && invoices && invoices.length > 0 ? (
+          <InvoiceList setInvoices={setInvoices} invoices={invoices} user={user} />
+        ) : (
+          <p className="text-white text-center my-5">請求するタスクがありません</p>
+        )}
       </div>
     </div >
   );

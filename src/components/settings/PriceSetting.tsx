@@ -32,25 +32,27 @@ interface PriceItem {
   work_name: string;
   price: number;
   category: string;
+  work_description: string;
 }
 
 interface updatePriceType {
   work_name: string;
   price: string;
+  work_description: string;
 }
 
 const CATEGORIES = ["WEB", "印刷", "出力", "その他"];
 
 export default function RequesterSetting() {
   const [prices, setPrices] = useState<PriceItem[]>([]);
-  const [newPrices, setNewPrices] = useState<Record<string, { work_name: string; price: string }>>({
-    WEB: { work_name: "", price: "" },
-    印刷: { work_name: "", price: "" },
-    出力: { work_name: "", price: "" },
-    その他: { work_name: "", price: "" },
+  const [newPrices, setNewPrices] = useState<Record<string, { work_name: string; price: string; work_description: string; }>>({
+    WEB: { work_name: "", price: "", work_description: "" },
+    印刷: { work_name: "", price: "", work_description: "" },
+    出力: { work_name: "", price: "", work_description: "" },
+    その他: { work_name: "", price: "", work_description: "" },
   });
 
-  const [fixPrice, setFixPrice] = useState({ work_name: "", price: "" });
+  const [fixPrice, setFixPrice] = useState({ work_name: "", price: "", work_description: "" });
   const { user } = useAuth();
 
   const sensors = useSensors(useSensor(PointerSensor, {
@@ -86,13 +88,14 @@ export default function RequesterSetting() {
         work_name: newPrices[category].work_name,
         price: Number(newPrices[category].price),
         category: category,
+        work_description: newPrices[category].work_description,
       });
 
     if (error) {
       alert("登録に失敗しました");
     } else {
       if (user) toast.success(`${user.name}さんが料金一覧を更新しました`);
-      setNewPrices((prev) => ({ ...prev, [category]: { work_name: "", price: "" } }));
+      setNewPrices((prev) => ({ ...prev, [category]: { work_name: "", price: "", work_description: "" } }));
       getPrices();
     }
   }
@@ -193,10 +196,9 @@ export default function RequesterSetting() {
               >
                 <ul className="flex flex-col gap-1 py-2">
                   <li className="grid grid-cols-8 gap-0.5 pl-5.5 bg-neutral-300 rounded-sm p-1 pr-0.5">
-                    <span className="col-span-4 pr-5.5 text-center border-r border-neutral-400">作業名</span>
+                    <span className="col-span-5 pr-5.5 text-center border-r border-neutral-400">作業名</span>
                     <span className="col-span-2 text-center border-r border-neutral-400">単価</span>
-                    <span className="col-span-1 text-center border-r border-neutral-400">更新</span>
-                    <span className="col-span-1 text-center">削除</span>
+                    <span className="col-span-1 text-center">編集</span>
                   </li>
 
                   {categoryPrices.map((p) => (
@@ -226,7 +228,7 @@ export default function RequesterSetting() {
                 }
                 type="text"
                 placeholder="作業名を入力"
-                className="col-span-4 bg-white rounded-sm px-2"
+                className="col-span-5 bg-white rounded-sm px-2"
               />
               <Input
                 value={newPrice.price || ""}
@@ -245,9 +247,33 @@ export default function RequesterSetting() {
                 addPrice(priceIndex, cat);
                 setNewPrices((prev) => ({
                   ...prev,
-                  [cat]: { work_name: "", price: "" },
+                  [cat]: { work_name: "", price: "", work_description: "" },
                 }));
-              }} className="col-span-2 !mt-0 text-sm !p-1 cursor-pointer hover:opacity-70">追加</CorrectBtn>
+              }} className="col-span-1 !mt-0 text-sm !p-1 rounded-md cursor-pointer hover:opacity-70">追加</CorrectBtn>
+
+              <Input
+                value={newPrice.work_description || ""}
+                onChange={(e) =>
+                  setNewPrices((prev) => ({
+                    ...prev,
+                    [cat]: { ...prev[cat], work_description: e.target.value },
+                  }))
+                }
+                type="text"
+                placeholder="作業内容の詳細説明を入力"
+                className="col-span-7 bg-white rounded-sm px-2"
+              />
+              <Button
+                onClick={() => {
+                  setNewPrices((prev) => ({
+                    ...prev,
+                    [cat]: { work_name: "", price: "", work_description: "" },
+                  }));
+                }}
+                className="col-span-1 bg-red-700 p-1 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
+              >
+                リセット
+              </Button>
             </div>
           </div>
         );
@@ -262,8 +288,8 @@ interface SortablePriceItemProps {
   item: PriceItem;
   updatePrice: (id: number, updated: Partial<PriceItem>) => Promise<void>;
   deletePrice: (id: number) => Promise<void>;
-  fixPrice: { work_name: string; price: string };
-  setFixPrice: React.Dispatch<React.SetStateAction<{ work_name: string; price: string }>>;
+  fixPrice: { work_name: string; price: string, work_description: string };
+  setFixPrice: React.Dispatch<React.SetStateAction<{ work_name: string; price: string, work_description: string }>>;
 }
 
 function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPrice }: SortablePriceItemProps) {
@@ -291,7 +317,7 @@ function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPri
         type="text"
         defaultValue={item.work_name}
         onChange={(e) => setFixPrice((prev: updatePriceType) => ({ ...prev, work_name: e.target.value }))}
-        className="col-span-4 rounded-sm bg-neutral-200 px-1"
+        className="col-span-5 rounded-sm bg-neutral-200 px-1"
       />
       <Input
         type="tel"
@@ -303,11 +329,20 @@ function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPri
         onClick={() => updatePrice(item.id, {
           work_name: fixPrice.work_name || item.work_name,
           price: Number(fixPrice.price || item.price),
+          work_description: fixPrice.work_description || item.work_description,
         })}
         className="col-span-1 bg-sky-700 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
       >
         変更
       </Button>
+
+      <Input
+        type="text"
+        defaultValue={item.work_description}
+        placeholder="作業内容の詳細説明を記載"
+        onChange={(e) => setFixPrice((prev: updatePriceType) => ({ ...prev, work_description: e.target.value }))}
+        className="col-span-7 rounded-sm bg-neutral-200 px-1 placeholder:text-neutral-400"
+      />
       <Button
         onClick={() => deletePrice(item.id)}
         className="col-span-1 bg-red-700 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
