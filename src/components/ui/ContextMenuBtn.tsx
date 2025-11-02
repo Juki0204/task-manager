@@ -244,6 +244,25 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
   const handleDelete = async () => {
     await updateTaskStatus(taskId, "削除済", "");
 
+    const { data: deleteTask } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("id", taskId)
+      .single();
+
+    const { error } = await supabase.from("task_notes").insert({
+      task_serial: taskSerial,
+      message: `【${taskSerial}】タスク「${deleteTask.title}」を削除しました。`,
+      diff: {},
+      old_record: {},
+      new_record: {},
+      changed_by: user?.name,
+      changed_at: new Date().toISOString(),
+      type: "delete",
+    });
+
+    if (error) console.error(error);
+
     setIsOpen(false);
     toast.error(`${user?.name}さんが、タスク:${taskSerial}を削除しました。`);
     onClick();

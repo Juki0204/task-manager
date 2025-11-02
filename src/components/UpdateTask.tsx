@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 import { User } from "@/utils/types/user";
+import { compareHistory } from "@/utils/function/comparHistory";
+import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 
 
 interface task {
@@ -164,6 +166,14 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   }
 
   const updateTask = async () => {
+    //変更前のタスク
+    const { data: oldTaskData } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("serial", serial)
+      .single();
+
+    //変更処理と変更後のタスク
     const { data: taskData, error: updateTaskError } = await supabase
       .from('tasks')
       .update({
@@ -187,11 +197,35 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
     if (updateTaskError || !taskData) {
       alert('タスクの追加に失敗しました');
-    } else {
-      await uploadTaskFiles(taskId, uploadedFiles);
-      await syncInvoiceWithTask(taskId, status);
-      if (remarks) await addUnreadTask(taskData);
+      console.error('タスクの追加に失敗しました:', updateTaskError);
+      return;
     }
+
+    //差分比較～変更ログ生成
+    const diff = compareHistory(taskData, oldTaskData);
+    if (diff.changedKeys.length === 0) return;
+
+    const message = generateChangeMessage(diff, taskData);
+    if (!message) return;
+
+    const { error } = await supabase.from("task_notes").insert({
+      task_serial: serial,
+      message,
+      diff,
+      old_record: oldTaskData,
+      new_record: taskData,
+      changed_by: task.updated_manager,
+      changed_at: new Date().toISOString(),
+      type: "changed",
+    });
+
+    if (error) console.error(error);
+
+    //添付ファイルアップ、請求タスク判定、備考欄変更通知
+    await uploadTaskFiles(taskId, uploadedFiles);
+    await syncInvoiceWithTask(taskId, status);
+    if (remarks) await addUnreadTask(taskData);
+
   }
 
   async function uploadTaskFiles(taskId: string, files: (File | null)[]) {

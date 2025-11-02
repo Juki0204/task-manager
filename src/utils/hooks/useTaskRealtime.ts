@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabase/supabase";
 import { Task } from "../types/task";
 import { toast } from "sonner";
+import { compareHistory } from "../function/comparHistory";
+import { generateChangeMessage } from "../function/generateChangeMessage";
 
 type UserData = {
   id: string;
@@ -64,7 +66,7 @@ export function useTaskRealtime(user: UserData) {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "tasks" },
-        (payload) => {
+        async (payload) => {
           // console.log('realtime:', payload);
 
           if (payload.eventType === "INSERT") {
@@ -74,6 +76,7 @@ export function useTaskRealtime(user: UserData) {
 
           if (payload.eventType === "UPDATE") {
             // toast.info('タスクが更新されました。');
+
             setTaskList((prev) =>
               prev.map((t) =>
                 t.id === payload.new.id ? payload.new as Task : t
@@ -82,7 +85,7 @@ export function useTaskRealtime(user: UserData) {
           }
 
           if (payload.eventType === "DELETE") {
-            toast.error('タスクが削除されました。');
+            // toast.error('タスクが削除されました。');
             setTaskList((prev) => prev.filter((t) => t.id !== payload.old.id));
           }
         }

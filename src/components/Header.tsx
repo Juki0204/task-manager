@@ -52,7 +52,7 @@ export default function Header() {
 
   return (
     <>
-      {!isExculedPath ?
+      {!isExculedPath && (
         <header className="fixed top-0 w-full min-w-[1920px] py-2 px-4 z-50 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
           <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500 pr-4">
             <div className="flex gap-2 flex-1">
@@ -219,9 +219,7 @@ export default function Header() {
             )}
           </div>
         </header>
-        :
-        <></>
-      }
+      )}
     </>
   )
 }

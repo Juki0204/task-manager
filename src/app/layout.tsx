@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import { TaskListPreferencesProvider } from "@/utils/hooks/TaskListPreferencesContext";
 import FilterResetWatcher from "@/components/FilterResetWatcher";
 import VersionCheckProvider from "./VersionCheckProvider";
+import TaskNotesViewer from "@/components/TaskNotesViewer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,7 @@ export default function RootLayout({
               <FilterResetWatcher />
               <Header />
               {children}
+              <TaskNotesViewer />
             </TaskListPreferencesProvider>
           </AuthProvider>
         </VersionCheckProvider>

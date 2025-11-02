@@ -118,7 +118,9 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
               <IoFlag className={`text-lg -ml-0.5 ${importantIds?.includes(task.id) ? "text-red-500" : "opacity-10 grayscale-100"}`} />
             </div>
           )}
-          {task.serial}
+          <span>
+            <HighlightText text={task.serial} keyword={filters.searchKeywords} />
+          </span>
         </div>
         <h3 className="font-bold flex items-center gap-1
           group-[.rowListStyle]:[grid-area:ttl]

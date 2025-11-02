@@ -3,6 +3,7 @@ const path = require("path");
 
 const notesDir = path.join(process.cwd(), "public", "release-notes");
 const outputPath = path.join(notesDir, "release-notes.json");
+const versionPath = path.join(notesDir, "version.json");
 
 interface JsonMeda {
   version: string;
@@ -34,5 +35,15 @@ const releaseNotes = files.map((file: string) => {
 releaseNotes.sort((a: JsonMeda, b: JsonMeda) => (a.date < b.date ? 1 : -1));
 
 fs.writeFileSync(outputPath, JSON.stringify(releaseNotes, null, 2), "utf-8");
+
+//バージョンチェック用の最新バージョンをversion.jsonに記述
+if (releaseNotes.length > 0) {
+  const latestVersion = releaseNotes[0].version;
+
+  const versionData = { latest: latestVersion }
+  fs.writeFileSync(versionPath, JSON.stringify(versionData, null, 2), "utf-8");
+
+  console.log(`version.json を更新しました。${latestVersion}`);
+}
 
 console.log(`release-note.json を作成しました。(${files.length}件)`);

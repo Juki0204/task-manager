@@ -18,6 +18,8 @@ import { LuNotebookPen } from "react-icons/lu";
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
+import { compareHistory } from "@/utils/function/comparHistory";
+import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 
 
 interface AddTaskProps {
@@ -191,6 +193,20 @@ export default function AddTask({ onClose }: AddTaskProps) {
     if (addTaskNumError) {
       alert('タスクナンバーの更新に失敗しました')
     }
+
+    //追加ログ生成
+    const { error } = await supabase.from("task_notes").insert({
+      task_serial: taskData.serial,
+      message: `【${taskData.serial}】タスク「${taskData.title}」を新規追加しました。`,
+      diff: {},
+      old_record: {},
+      new_record: {},
+      changed_by: taskData.created_manager,
+      changed_at: new Date().toISOString(),
+      type: "added",
+    });
+
+    if (error) console.error(error);
 
 
     const taskId = taskData.id;

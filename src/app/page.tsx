@@ -80,6 +80,7 @@ export default function AllTaskPage() {
 
     const searchMatch =
       !filters.searchKeywords ||
+      task.serial?.includes(filters.searchKeywords) ||
       task.title?.includes(filters.searchKeywords) ||
       task.description?.includes(filters.searchKeywords) ||
       task.requester?.includes(filters.searchKeywords);
@@ -187,7 +188,7 @@ export default function AllTaskPage() {
   }, [user]);
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 !pt-30 max-w-[1920px] m-auto`}>
+    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1920px] m-auto`}>
       <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
       {user &&
         <TaskList
