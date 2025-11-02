@@ -53,6 +53,7 @@ export default function RequesterSetting() {
   });
 
   const [fixPrice, setFixPrice] = useState({ work_name: "", price: "", work_description: "" });
+  const [editingId, setEditingId] = useState<number | null>(null);
   const { user } = useAuth();
 
   const sensors = useSensors(useSensor(PointerSensor, {
@@ -209,6 +210,8 @@ export default function RequesterSetting() {
                       deletePrice={deletePrice}
                       setFixPrice={setFixPrice}
                       fixPrice={fixPrice}
+                      editingId={editingId}
+                      setEditingId={setEditingId}
                     />
                   ))}
                 </ul>
@@ -242,14 +245,16 @@ export default function RequesterSetting() {
                 placeholder="1000"
                 className="col-span-2 bg-white rounded-sm px-2 text-right"
               />
-              <CorrectBtn onClick={() => {
-                const priceIndex = [...prices].filter(p => p.category === "WEB").length;
-                addPrice(priceIndex, cat);
-                setNewPrices((prev) => ({
-                  ...prev,
-                  [cat]: { work_name: "", price: "", work_description: "" },
-                }));
-              }} className="col-span-1 !mt-0 text-sm !p-1 rounded-md cursor-pointer hover:opacity-70">追加</CorrectBtn>
+              <CorrectBtn
+                disabled={newPrices[cat].price !== "" && newPrices[cat].work_name !== "" && newPrices[cat].work_description !== "" ? false : true}
+                onClick={() => {
+                  const priceIndex = [...prices].filter(p => p.category === "WEB").length;
+                  addPrice(priceIndex, cat);
+                  setNewPrices((prev) => ({
+                    ...prev,
+                    [cat]: { work_name: "", price: "", work_description: "" },
+                  }));
+                }} className="col-span-1 !mt-0 text-sm !p-1 rounded-md cursor-pointer hover:opacity-70 data-disabled:pointer-events-none">追加</CorrectBtn>
 
               <Input
                 value={newPrice.work_description || ""}
@@ -270,7 +275,7 @@ export default function RequesterSetting() {
                     [cat]: { work_name: "", price: "", work_description: "" },
                   }));
                 }}
-                className="col-span-1 bg-red-700 p-1 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
+                className="col-span-1 bg-red-700 p-1 rounded-md text-white text-sm cursor-pointer hover:opacity-60 data-disabled:grayscale"
               >
                 リセット
               </Button>
@@ -290,9 +295,11 @@ interface SortablePriceItemProps {
   deletePrice: (id: number) => Promise<void>;
   fixPrice: { work_name: string; price: string, work_description: string };
   setFixPrice: React.Dispatch<React.SetStateAction<{ work_name: string; price: string, work_description: string }>>;
+  editingId: number | null;
+  setEditingId: (id: number | null) => void;
 }
 
-function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPrice }: SortablePriceItemProps) {
+function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPrice, editingId, setEditingId }: SortablePriceItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: item.id,
   });
@@ -301,6 +308,8 @@ function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPri
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+  console.log(editingId, item.id);
 
   return (
     <li
@@ -316,22 +325,32 @@ function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPri
       <Input
         type="text"
         defaultValue={item.work_name}
-        onChange={(e) => setFixPrice((prev: updatePriceType) => ({ ...prev, work_name: e.target.value }))}
+        onChange={(e) => {
+          setFixPrice((prev: updatePriceType) => ({ ...prev, work_name: e.target.value }));
+          setEditingId(item.id);
+        }}
         className="col-span-5 rounded-sm bg-neutral-200 px-1"
       />
       <Input
         type="tel"
         defaultValue={item.price}
-        onChange={(e) => setFixPrice((prev: updatePriceType) => ({ ...prev, price: e.target.value }))}
+        onChange={(e) => {
+          setFixPrice((prev: updatePriceType) => ({ ...prev, price: e.target.value }));
+          setEditingId(item.id);
+        }}
         className="col-span-2 rounded-sm bg-neutral-200 px-1 text-right"
       />
       <Button
-        onClick={() => updatePrice(item.id, {
-          work_name: fixPrice.work_name || item.work_name,
-          price: Number(fixPrice.price || item.price),
-          work_description: fixPrice.work_description || item.work_description,
-        })}
-        className="col-span-1 bg-sky-700 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
+        disabled={editingId !== item.id}
+        onClick={() => {
+          updatePrice(item.id, {
+            work_name: fixPrice.work_name || item.work_name,
+            price: Number(fixPrice.price || item.price),
+            work_description: fixPrice.work_description || item.work_description,
+          });
+          setEditingId(null); // 保存後リセット
+        }}
+        className="col-span-1 bg-sky-700 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60 data-disabled:grayscale data-disabled:opacity-50 data-disabled:pointer-events-none"
       >
         変更
       </Button>
@@ -340,7 +359,10 @@ function SortablePriceItem({ item, updatePrice, deletePrice, fixPrice, setFixPri
         type="text"
         defaultValue={item.work_description}
         placeholder="作業内容の詳細説明を記載"
-        onChange={(e) => setFixPrice((prev: updatePriceType) => ({ ...prev, work_description: e.target.value }))}
+        onChange={(e) => {
+          setFixPrice((prev: updatePriceType) => ({ ...prev, work_description: e.target.value }));
+          setEditingId(item.id);
+        }}
         className="col-span-7 rounded-sm bg-neutral-200 px-1 placeholder:text-neutral-400"
       />
       <Button
