@@ -182,7 +182,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
         title: taskTitle,
         description: taskDescription,
         request_date: requestDate,
-        finish_date: status === "完了" && !finishDate ? new Date().toLocaleDateString("sv-SE") : finishDate,
+        finish_date: (status === "完了" || status === "確認中") && !finishDate ? new Date().toLocaleDateString("sv-SE") : finishDate,
         manager: manager,
         status: status,
         priority: priority,
