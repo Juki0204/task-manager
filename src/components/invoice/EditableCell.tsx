@@ -16,9 +16,21 @@ interface EditableCellProps {
   className?: string;
   type?: string;
   setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
+  activeCell: { recordId: string; field: string; } | null;
+  setActiveCell: Dispatch<SetStateAction<{ recordId: string, field: string } | null>>;
 }
 
-export default function EditableCell({ recordId, field, value, user, className, type, setInvoices }: EditableCellProps) {
+export default function EditableCell({
+  recordId,
+  field,
+  value,
+  user,
+  className,
+  type,
+  setInvoices,
+  activeCell,
+  setActiveCell
+}: EditableCellProps) {
   const userId = user.id;
   const [editing, setEditing] = useState<boolean>(false);
   const [tempValue, setTempValue] = useState<string | number>(value);
@@ -68,9 +80,11 @@ export default function EditableCell({ recordId, field, value, user, className, 
   return (
     <div
       onDoubleClick={startEditing}
-      className={`border-neutral-700 p-2 min-h-9 ${className} ${editing
-        ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700"
-        : ""
+      onClick={(e) => { e.stopPropagation(); setActiveCell({ recordId, field }); }}
+      className={`border-neutral-700 p-2 min-h-9 ${className}
+        ${editing || activeCell?.recordId === recordId && activeCell?.field === field
+          ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700"
+          : ""
         }`}
     >
       {lockedByOther && (<div className="editing-cell"><span className="editing-cell-text">{lockedUser}さんが編集中...</span></div>)}

@@ -55,9 +55,18 @@ export function useTaskNotesRealtime() {
       )
       .subscribe();
 
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        // console.log("タブ復帰 → 再購読しました");
+        fetchNotes();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     return () => {
       channel.unsubscribe();
       supabase.removeChannel(channel);
+      document.removeEventListener("visibilitychange", handleVisibility);
     }
   }, []);
 

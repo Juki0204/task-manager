@@ -18,6 +18,8 @@ interface EditableCellProps {
   user: User;
   className?: string;
   setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
+  activeCell: { recordId: string; field: string; } | null;
+  setActiveCell: Dispatch<SetStateAction<{ recordId: string, field: string } | null>>;
 }
 
 export default function EditableSelect({
@@ -28,6 +30,8 @@ export default function EditableSelect({
   user,
   className,
   setInvoices,
+  activeCell,
+  setActiveCell
 }: EditableCellProps) {
   const userId = user.id;
   const [editing, setEditing] = useState(false);
@@ -87,7 +91,12 @@ export default function EditableSelect({
     <div
       ref={popoverRef}
       onDoubleClick={startEditing}
-      className={`relative border-neutral-700 min-h-9 ${className} ${editing ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700" : ""}`}
+      onClick={(e) => { e.stopPropagation(); setActiveCell({ recordId, field }); }}
+      className={`relative border-neutral-700 min-h-9 ${className}
+        ${editing || activeCell?.recordId === recordId && activeCell?.field === field
+          ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700"
+          : ""
+        }`}
     >
       {lockedByOther && (
         <div className="editing-cell">

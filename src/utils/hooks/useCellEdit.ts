@@ -90,9 +90,13 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
               calcList.device =
                 typeof formatNewValue === "string" && formatNewValue.includes("会員サイト") ? 1.5 : 1;
             } else {
-              // それ以外は数値変換して代入
-              calcList[field as keyof typeof calcList] =
-                typeof formatNewValue === "string" ? Number(formatNewValue) || 0 : formatNewValue === null ? 0 : formatNewValue;
+              // それ以外は数値変換して代入、ただし空文字やnullの時は上書きさせない
+              if (formatNewValue !== "" && formatNewValue !== null) {
+                calcList[field as keyof typeof calcList] =
+                  typeof formatNewValue === "string"
+                    ? Number(formatNewValue)
+                    : formatNewValue;
+              }
             }
           }
 

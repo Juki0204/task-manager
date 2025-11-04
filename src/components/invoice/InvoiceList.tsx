@@ -28,6 +28,7 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [priceList, setPriceList] = useState<string[] | null>(null);
+  const [activeCell, setActiveCell] = useState<{ recordId: string; field: string; } | null>(null);
 
   const handleActiveTask = async (id: string) => {
     const { data: task, error } = await supabase
@@ -61,7 +62,7 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
   }, []);
 
   return (
-    <div className="relative text-white whitespace-nowrap w-[2500px] box-border">
+    <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2500px] box-border">
       <div className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
         <div className="border border-neutral-700 p-1 bg-neutral-100 sticky left-0">確認</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-10 z-20">No.</div>
@@ -86,8 +87,28 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
             <div className={`grid place-content-center border border-t-0 border-neutral-700 min-h-9 p-2 sticky left-0 z-20 hover:bg-neutral-700 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-10 z-20 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.serial}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-32.5 z-20 ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.client}《{i.requester}》</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-92.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell recordId={i.id} field="title" value={i.title} user={user} setInvoices={setInvoices} /></div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-152.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell recordId={i.id} field="description" value={i.description} user={user} setInvoices={setInvoices} /></div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-92.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+              <EditableCell
+                recordId={i.id}
+                field="title"
+                value={i.title}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+              />
+            </div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-152.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+              <EditableCell
+                recordId={i.id}
+                field="description"
+                value={i.description}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+              />
+            </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.finish_date ?? "-"}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.manager}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.category ?? "-"}</div>
@@ -99,6 +120,8 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 user={user}
                 options={["PC", "スマホ", "レスポンシブ", "会員サイト"]}
                 setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
               />
             </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 overflow-hidden ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
@@ -109,9 +132,23 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 user={user}
                 options={priceList ?? []}
                 setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell className="text-center" recordId={i.id} field="pieces" type="tel" value={i.pieces ?? ""} user={user} setInvoices={setInvoices} /></div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+              <EditableCell
+                className="text-center"
+                recordId={i.id}
+                field="pieces"
+                type="tel"
+                value={i.pieces ?? ""}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+              />
+            </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
               <EditableSelect
                 recordId={i.id}
@@ -121,12 +158,36 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 options={["50", "80", "100", "120"]}
                 className="text-right"
                 setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
               />
             </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.amount ?? "-"}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell className="text-right" recordId={i.id} field="adjustment" type="tel" value={i.adjustment ?? 0} user={user} setInvoices={setInvoices} /></div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+              <EditableCell
+                className="text-right"
+                recordId={i.id}
+                field="adjustment"
+                type="tel"
+                value={i.adjustment ?? 0}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+              />
+            </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.total_amount ?? "-"}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><EditableCell recordId={i.id} field="remarks" value={i.remarks ?? ""} user={user} setInvoices={setInvoices} /></div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+              <EditableCell
+                recordId={i.id}
+                field="remarks"
+                value={i.remarks ?? ""}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+              />
+            </div>
           </div>
         )
         )}
