@@ -124,7 +124,7 @@ export default function EditableSelect({
     }
   };
 
-  /** ✅ Popoverのopenを外側で安全に反映する */
+  // Popoverのopenを外側で安全に反映する
   const handlePopoverToggle = (isOpen: boolean) => {
     queueMicrotask(() => setPopoverOpen(isOpen));
   };
@@ -153,7 +153,7 @@ export default function EditableSelect({
       {editing ? (
         <Popover>
           {({ open, close }) => {
-            handlePopoverToggle(open); // ✅ Hook外で安全に呼べる
+            handlePopoverToggle(open);
 
             return (
               <>

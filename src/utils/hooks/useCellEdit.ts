@@ -62,131 +62,184 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
     return true;
   }
 
-  async function handleSave(newValue: string | number, oldValue: string | number, tableName: string = "invoice") {
-    if (newValue !== oldValue) {
-      try {
-        const formatNewValue = newValue === "" ? null : newValue;
+  const formatNullValue = (value: unknown): number | null => {
+    if (typeof value === "number") return Number.isFinite(value) ? value : null;
+    if (typeof value === "string") {
+      const str = value.trim();
+      if (str === "") return null;
+      const num = Number(str);
+      return Number.isFinite(num) ? num : null;
+    }
+    return null;
+  }
 
-        if (calcAmountTarget.includes(field)) { // 金額計算に影響があるフィールド
-          const { data: invoice } = await supabase
-            .from(tableName)
-            .select("*")
-            .eq("id", recordId)
-            .single();
+  const deviceFactor = (device: string | null | undefined): number => device && device.includes("会員サイト") ? 1.5 : 1;
 
-          const target = invoice as Invoice;
+  const safeAmount = (num: number): number => (Number.isFinite(num) ? num : 0);
 
-          const calcList = {
-            pieces: target.pieces ?? 1,
-            amount: target.amount ?? 0,
-            device: target.device === "会員サイト" ? 1.5 : 1,
-            degree: target.degree ? target.degree : 100,
-            adjustment: target.adjustment ?? 0,
-          }
+  async function handleSave(
+    newValue: string | number,
+    oldValue: string | number,
+    tableName: string = "invoice"
+  ) {
+    if (newValue === oldValue) return;
 
-          if (field in calcList) {
-            if (field === "device") {
-              // device の場合は「会員サイト」なら 1.5、それ以外は 1
-              calcList.device =
-                typeof formatNewValue === "string" && formatNewValue.includes("会員サイト") ? 1.5 : 1;
-            } else {
-              // それ以外は数値変換して代入、ただし空文字やnullの時は上書きさせない
-              if (formatNewValue !== "" && formatNewValue !== null) {
-                calcList[field as keyof typeof calcList] =
-                  typeof formatNewValue === "string"
-                    ? Number(formatNewValue)
-                    : formatNewValue;
-              }
-            }
-          }
+    try {
+      const formatNewValue = newValue === "" ? null : newValue;
+      const isCalcField = calcAmountTarget.includes(field);
 
-          if (field === "work_name") { // 小カテゴリ変更時は仮請求額が都度変わるので都度反映する
+      const { data: invoice, error: invoiceErr } = await supabase
+        .from(tableName)
+        .select("*")
+        .eq("id", recordId)
+        .maybeSingle();
 
-            const { data: price } = await supabase
-              .from("prices")
-              .select("price, category")
-              .eq("work_name", formatNewValue)
-              .maybeSingle();
-
-            if (!price) {
-              await supabase
-                .from(tableName)
-                .update({
-                  "work_name": null,
-                  "amount": 0,
-                  "category": null,
-                  "total_amount": 0
-                })
-                .eq("id", recordId);
-
-              return;
-            }
-
-            // ( 仮請求額 × 作業点数 × デバイス（会員サイトのみ1.5） × 修正度 ) + 修正金額
-            const resultAmount = (price.price * calcList.pieces * calcList.device * (calcList.degree * 0.01)) + calcList.adjustment;
-
-            await supabase
-              .from(tableName)
-              .update({
-                "work_name": formatNewValue,
-                "amount": price.price,
-                "category": price.category,
-                "total_amount": resultAmount
-              })
-              .eq("id", recordId);
-
-          } else {
-
-            // ( 仮請求額 × 作業点数 × デバイス（会員サイトのみ1.5） × 修正度 ) + 修正金額
-            const resultAmount = (calcList.amount * calcList.pieces * calcList.device * (calcList.degree * 0.01)) + calcList.adjustment;
-
-            await supabase
-              .from(tableName)
-              .update({ [field]: formatNewValue, "total_amount": resultAmount })
-              .eq("id", recordId);
-          }
-
-        } else {
-          if (field === "description") { // 作業内容更新時は点数チェック
-            function extractPoints(text: string): number | null {
-              const matchResult = text.match(/([\d０-９]+)\s*点/);
-
-              if (matchResult) {
-                const half = matchResult[1].replace(/[０-９]/g, (d) =>
-                  String.fromCharCode(d.charCodeAt(0) - 0xfee0)
-                );
-                return Number(half);
-              }
-
-              return null;
-            }
-            const matchLength = extractPoints(String(formatNewValue));
-
-            await supabase
-              .from(tableName)
-              .update({ [field]: formatNewValue, "pieces": matchLength ?? null })
-              .eq("id", recordId);
-
-          } else { // 請求金額にも関係ない点数チェックもない項目
-            await supabase
-              .from(tableName)
-              .update({ [field]: formatNewValue })
-              .eq("id", recordId);
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        console.log("Success to Update Invoice.");
+      if (invoiceErr) {
+        console.error("invoiceのフェッチに失敗しました:", invoiceErr);
+        return;
       }
+
+      if (!invoice) {
+        console.error("invoiceがありません。");
+        return;
+      }
+
+      const target = invoice as Invoice;
+
+      //作業点数
+      const nextPieces = field === "pieces"
+        ? formatNullValue(formatNewValue) ?? 1
+        : formatNullValue(target.pieces) ?? 1;
+
+      //仮請求額
+      let nextAmount = formatNullValue(target.amount) ?? 0;
+
+      //作業デバイス（計算用係数）
+      const nextDeviceFactor = field === "device"
+        ? deviceFactor(typeof formatNewValue === "string" ? formatNewValue : null)
+        : deviceFactor(target.device ?? null);
+
+      //修正度
+      const nextDegree = field === "degree"
+        ? formatNullValue(formatNewValue) ?? 100
+        : formatNullValue(target.degree) ?? 100;
+
+      //修正金額
+      const nextAdjustment = field === "adjustment"
+        ? formatNullValue(formatNewValue) ?? 0
+        : formatNullValue(target.adjustment) ?? 0;
+
+
+      // ---------------- work_name 変更時 ----------------
+      if (field === "work_name") {
+        const { data: priceRow, error: priceErr } = await supabase
+          .from("prices")
+          .select("price, category")
+          .eq("work_name", formatNewValue)
+          .maybeSingle();
+
+        if (priceErr) {
+          console.error("priceのフェッチに失敗しました:", priceErr);
+          return;
+        }
+
+        if (!priceRow) {
+          const { error } = await supabase
+            .from(tableName)
+            .update({
+              "work_name": null,
+              "amount": 0,
+              "category": null,
+              "total_amount": 0
+            })
+            .eq("id", recordId);
+
+          if (error) console.error("請求データの更新に失敗しました:", error);
+          return;
+        }
+
+        nextAmount = formatNullValue(priceRow.price) ?? 0;
+
+        const total = safeAmount(nextAmount) * nextPieces * nextDeviceFactor * (nextDegree * 0.01) + nextAdjustment;
+
+        const { error } = await supabase
+          .from(tableName)
+          .update({
+            "work_name": formatNewValue,
+            "amount": safeAmount(nextAmount),
+            "category": priceRow.category ?? null,
+            "total_amount": safeAmount(total),
+          })
+          .eq("id", recordId);
+
+        if (error) console.error("請求データの更新に失敗しました:", error);
+        return;
+      }
+
+
+      // ---------------- work_name 以外の計算に関係する箇所の変更時 ----------------
+      if (isCalcField) {
+        const total = safeAmount(nextAmount) * nextPieces * nextDeviceFactor * (nextDegree * 0.01) + nextAdjustment;
+
+        const updatePayload: Record<string, any> = {
+          total_amount: safeAmount(total),
+        };
+
+        if (field === "pieces" || field === "degree" || field === "adjustment") {
+          updatePayload[field] = formatNullValue(formatNewValue);
+        } else if (field === "device") {
+          updatePayload.device = typeof formatNewValue === "string" && formatNewValue.trim() !== "" ? formatNewValue : null;
+        } else if (field === "amount") {
+          updatePayload.amount = formatNullValue(formatNewValue);
+        } else {
+          updatePayload[field] = formatNewValue ?? null;
+        }
+
+        const { error } = await supabase
+          .from(tableName)
+          .update(updatePayload)
+          .eq("id", recordId);
+
+        if (error) console.error("請求データの更新に失敗しました:", error);
+      } else {
+
+        // ---------------- 上記以外の計算に関係しない箇所の変更時 ----------------
+        if (field === "description") {
+          //点数抽出でpieces自動入力
+          const extractPoints = (text: string): number | null => {
+            const matchResult = text.match(/([\d０-９]+)\s*点/);
+            if (!matchResult) return null;
+
+            const half = matchResult[1].replace(/[０-９]/g, (d) =>
+              String.fromCharCode(d.charCodeAt(0) - 0xfee0)
+            );
+            return Number.isFinite(Number(half)) ? Number(half) : null;
+          }
+
+          const matchLength = typeof formatNewValue === "string" ? extractPoints(formatNewValue) : null;
+
+          const { error } = await supabase
+            .from(tableName)
+            .update({ [field]: formatNewValue ?? null, "pieces": matchLength })
+            .eq("id", recordId);
+
+          if (error) console.error("請求データの更新に失敗しました:", error);
+        }
+      }
+    } catch (err) {
+      console.error("handleSave関数の処理を完了できませんでした:", err);
+    } finally {
+      console.log("請求データの更新が完了しました。");
     }
 
-    await supabase
+    const { error: delErr } = await supabase
       .from("invoice_editing_state")
       .delete()
       .eq("record_id", recordId)
       .eq("field_name", field)
       .eq("user_id", userId);
+
+    if (delErr) console.error("編集状態をアンロックできませんでした:", delErr);
   }
 
   return {
