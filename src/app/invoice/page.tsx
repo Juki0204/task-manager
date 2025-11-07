@@ -103,7 +103,7 @@ export default function InvoicePage() {
         </Select>
         月度 請求一覧
       </h2>
-      <div className="pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+      <div className="scroll-container pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
         {user && invoices && invoices.length > 0 ? (
           <InvoiceList setInvoices={setInvoices} invoices={invoices} user={user} />
         ) : (

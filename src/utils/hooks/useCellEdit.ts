@@ -106,16 +106,33 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
               .from("prices")
               .select("price, category")
               .eq("work_name", formatNewValue)
-              .single();
+              .maybeSingle();
 
-            if (!price) return;
+            if (!price) {
+              await supabase
+                .from(tableName)
+                .update({
+                  "work_name": null,
+                  "amount": 0,
+                  "category": null,
+                  "total_amount": 0
+                })
+                .eq("id", recordId);
+
+              return;
+            }
 
             // ( 仮請求額 × 作業点数 × デバイス（会員サイトのみ1.5） × 修正度 ) + 修正金額
             const resultAmount = (price.price * calcList.pieces * calcList.device * (calcList.degree * 0.01)) + calcList.adjustment;
 
             await supabase
               .from(tableName)
-              .update({ "work_name": formatNewValue, "amount": price.price, "category": price.category, "total_amount": resultAmount })
+              .update({
+                "work_name": formatNewValue,
+                "amount": price.price,
+                "category": price.category,
+                "total_amount": resultAmount
+              })
               .eq("id", recordId);
 
           } else {

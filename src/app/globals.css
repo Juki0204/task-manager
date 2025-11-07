@@ -292,3 +292,28 @@ body {
     text-align: justify;
   }
 }
+
+.animate-shake {
+  animation: shake .5s linear .1s forwards;
+}
+
+@keyframes shake {
+  0% {
+    translate: -3px 0;
+  }
+  10%{
+    translate: 3px 0;
+  }
+  20% {
+    translate: -3px 0;
+  }
+  30%{
+    translate: 3px 0;
+  }
+  40%{
+    translate: 0 0;
+  }
+  100%{
+    translate: 0 0;
+  }
+}

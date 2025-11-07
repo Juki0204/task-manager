@@ -5,7 +5,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { Invoice } from "@/utils/types/invoice";
 import { User } from "@/utils/types/user";
 import { Input } from "@headlessui/react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface EditableCellProps {
@@ -16,8 +16,10 @@ interface EditableCellProps {
   className?: string;
   type?: string;
   setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
-  activeCell: { recordId: string; field: string; } | null;
-  setActiveCell: Dispatch<SetStateAction<{ recordId: string, field: string } | null>>;
+  activeCell: { recordId: string; field: string } | null;
+  setActiveCell: Dispatch<SetStateAction<{ recordId: string; field: string } | null>>;
+  handleKeyNavigation: (key: "up" | "down" | "left" | "right") => void;
+  registerCellRef: (id: string, field: string, el: HTMLDivElement | null) => void;
 }
 
 export default function EditableCell({
@@ -29,12 +31,27 @@ export default function EditableCell({
   type,
   setInvoices,
   activeCell,
-  setActiveCell
+  setActiveCell,
+  handleKeyNavigation,
+  registerCellRef,
 }: EditableCellProps) {
   const userId = user.id;
-  const [editing, setEditing] = useState<boolean>(false);
+  const [editing, setEditing] = useState(false);
   const [tempValue, setTempValue] = useState<string | number>(value);
-  const { lockedByOther, lockedUser, handleEditStart, handleSave } = useCellEdit({ recordId, field, userId });
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const { lockedByOther, lockedUser, handleEditStart, handleSave } = useCellEdit({
+    recordId,
+    field,
+    userId,
+  });
+
+  const isActive = activeCell?.recordId === recordId && activeCell?.field === field;
+
+  // 親にref登録（マウント・アンマウント時）
+  useEffect(() => {
+    registerCellRef(recordId, field, containerRef.current);
+    return () => registerCellRef(recordId, field, null);
+  }, [recordId, field, registerCellRef]);
 
   async function startEditing() {
     const ok = await handleEditStart();
@@ -52,6 +69,7 @@ export default function EditableCell({
 
     setEditing(false);
     await handleSave(tempValue, value);
+
     const { data: task, error } = await supabase
       .from("invoice")
       .select("*")
@@ -60,7 +78,6 @@ export default function EditableCell({
 
     if (error) {
       console.error(error);
-
       setInvoices((prev) =>
         prev
           ? prev.map((inv) =>
@@ -72,34 +89,79 @@ export default function EditableCell({
 
     if (field === "title" && tempValue !== value) {
       toast.success(`${user.name}さんが${task.serial}の作業タイトルを変更しました`);
-    } else if (field === "desctiption" && tempValue !== value) {
+    } else if (field === "description" && tempValue !== value) {
       toast.success(`${user.name}さんが${task.serial}の作業内容を変更しました`);
     }
   }
 
+  // キー操作
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (editing) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        setEditing(false);
+        saveValue();
+        handleKeyNavigation(e.shiftKey ? "up" : "down");
+      } else if (e.key === "Tab") {
+        e.preventDefault();
+        setEditing(false);
+        saveValue();
+        handleKeyNavigation(e.shiftKey ? "left" : "right");
+      }
+    } else {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        startEditing();
+      } else if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
+        e.preventDefault();
+        const map = {
+          ArrowUp: "up",
+          ArrowDown: "down",
+          ArrowLeft: "left",
+          ArrowRight: "right",
+          Tab: e.shiftKey ? "left" : "right",
+        } as const;
+        handleKeyNavigation(map[e.key as keyof typeof map]);
+      }
+    }
+  };
+
   return (
     <div
+      data-record-id={recordId}
+      data-field={field}
+      ref={containerRef}
+      tabIndex={isActive ? 0 : -1} // ロービング tabindex
       onDoubleClick={startEditing}
-      onClick={(e) => { e.stopPropagation(); setActiveCell({ recordId, field }); }}
-      className={`border-neutral-700 p-2 min-h-9 ${className}
-        ${editing || activeCell?.recordId === recordId && activeCell?.field === field
-          ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700"
-          : ""
-        }`}
+      onClick={(e) => {
+        e.stopPropagation();
+        setActiveCell({ recordId, field });
+      }}
+      onKeyDown={handleKeyDown}
+      className={`border-neutral-700 p-2 min-h-9 ${className ?? ""}
+        ${isActive ? "bg-blue-900/50 outline -outline-offset-1 outline-blue-700" : ""}
+        ${editing ? "!bg-blue-800/40 !outline-blue-400" : ""}
+      `}
     >
-      {lockedByOther && (<div className="editing-cell"><span className="editing-cell-text">{lockedUser}さんが編集中...</span></div>)}
+      {lockedByOther && (
+        <div className="editing-cell">
+          <span className="editing-cell-text">{lockedUser}さんが編集中...</span>
+        </div>
+      )}
+
       {editing ? (
         <Input
           autoFocus
-          className={`w-full border border-blue-400 data-focus:outline-0 data-focus:border-0 ${type === "tel" ? "text-right" : ""}`}
+          autoComplete="off"
+          name={`${recordId}-${field}`}
+          className={`w-full border data-focus:outline-0 data-focus:border-0 ${type === "tel" ? "text-right" : ""
+            }`}
           type={type ?? "text"}
           value={tempValue}
           onChange={(e) => setTempValue(e.target.value)}
           onBlur={saveValue}
           onFocus={(e) => e.target.select()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") saveValue();
-          }}
+          onClick={(e) => e.stopPropagation()}
         />
       ) : (
         <>{value === "" ? (field === "remarks" ? "" : "") : value}</>

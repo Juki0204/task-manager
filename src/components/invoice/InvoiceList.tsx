@@ -2,15 +2,15 @@
 
 import { Invoice } from "@/utils/types/invoice";
 import EditableCell from "../invoice/EditableCell";
+import EditableSelect from "../invoice/EditableSelect";
 import { User } from "@/utils/types/user";
-
 import { MdTask } from "react-icons/md";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 import InvoiceTaskDetail from "./InvoiceTaskDetail";
-import EditableSelect from "./EditableSelect";
+import EditableCombobox from "./EditableCombobox";
 
 interface InvoiceListProps {
   invoices: Invoice[] | null;
@@ -18,57 +18,120 @@ interface InvoiceListProps {
   setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
 }
 
-interface PriceList {
-  workName: string;
-  price: number;
-  category: string;
-}
+// COLUMNS定義（右左移動に使う）
+const FIELDS = [
+  "title", "description", "device", "work_name",
+  "pieces", "degree", "adjustment", "remarks",
+] as const;
+
+type FieldName = (typeof FIELDS)[number];
 
 export default function InvoiceList({ invoices, user, setInvoices }: InvoiceListProps) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [priceList, setPriceList] = useState<string[] | null>(null);
-  const [activeCell, setActiveCell] = useState<{ recordId: string; field: string; } | null>(null);
+  const [activeCell, setActiveCell] = useState<{ recordId: string; field: string } | null>(null);
 
-  const handleActiveTask = async (id: string) => {
-    const { data: task, error } = await supabase
-      .from("tasks")
-      .select("*")
-      .eq("id", id)
-      .single();
+  // 親でrefレジストリを保持（ロービング tabindex 用）
+  const cellRefs = useRef(new Map<string, HTMLDivElement>());
+  const registerCellRef = (id: string, field: string, el: HTMLDivElement | null) => {
+    const key = `${id}::${field}`;
+    if (el) cellRefs.current.set(key, el);
+    else cellRefs.current.delete(key);
+  };
 
-    if (error) console.log(error);
-    setActiveTask(task);
-  }
-
-  const getPrices = async () => {
-    const { data: prices } = await supabase
-      .from("prices")
-      .select("*");
-
-    if (!prices) return;
-    const formatPrices: string[] = [];
-    prices.forEach(p => {
-      formatPrices.push(p.work_name);
-    });
-    setPriceList(formatPrices);
-    console.log(
-      formatPrices
-    )
-  }
-
+  // アクティブセル変更時に自動フォーカス
   useEffect(() => {
-    getPrices();
+    if (!activeCell) return;
+    const key = `${activeCell.recordId}::${activeCell.field}`;
+    const el = cellRefs.current.get(key);
+    if (el) {
+      el.focus();
+      el.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }
+  }, [activeCell]);
+
+  // タスク詳細モーダル開く
+  const handleActiveTask = async (id: string) => {
+    const { data: task } = await supabase.from("tasks").select("*").eq("id", id).single();
+    if (task) setActiveTask(task);
+  };
+
+  // 価格一覧を取得
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("prices").select("*");
+      if (!data) return;
+      setPriceList(data.map((p) => p.work_name));
+    })();
   }, []);
 
+  // ナビゲーション処理
+  const handleKeyNavigation = (dir: "up" | "down" | "left" | "right") => {
+    if (!activeCell || !invoices) return;
+
+    const rowIndex = invoices.findIndex((i) => i.id === activeCell.recordId);
+    const colIndex = FIELDS.indexOf(activeCell.field as FieldName);
+    if (rowIndex === -1 || colIndex === -1) return;
+
+    let nextRow = rowIndex;
+    let nextCol = colIndex;
+
+    switch (dir) {
+      case "up":
+        nextRow = Math.max(0, rowIndex - 1);
+        break;
+      case "down":
+        nextRow = Math.min(invoices.length - 1, rowIndex + 1);
+        break;
+      case "left":
+        nextCol = Math.max(0, colIndex - 1);
+        break;
+      case "right":
+        nextCol = Math.min(FIELDS.length - 1, colIndex + 1);
+        break;
+    }
+
+    setActiveCell({ recordId: invoices[nextRow].id, field: FIELDS[nextCol] });
+  };
+
+  useEffect(() => {
+    if (!activeCell) return;
+
+    const activeEl = document.querySelector(
+      `[data-record-id="${activeCell.recordId}"][data-field="${activeCell.field}"]`
+    ) as HTMLElement | null;
+    console.log(activeEl);
+
+    const standardEl = document.getElementById("standardPosition");
+    const scrollContainer = document.querySelector(".scroll-container");
+
+    if (!activeEl || !standardEl || !scrollContainer) return;
+
+    const activeRect = activeEl.getBoundingClientRect();
+    const standardRect = standardEl.getBoundingClientRect();
+    const containerRect = scrollContainer.getBoundingClientRect();
+
+    // 「作業内容」右端より左にある（＝見切れてる）
+    if (activeRect.left < standardRect.right) {
+      const diff = standardRect.right - activeRect.left;
+      scrollContainer.scrollLeft -= diff + 10; // +10 は余白
+    }
+
+    // 逆に右端に行きすぎた場合（オプション）
+    if (activeRect.right > containerRect.right) {
+      scrollContainer.scrollLeft += activeRect.right - containerRect.right + 10;
+    }
+  }, [activeCell]);
+
   return (
-    <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2500px] box-border">
-      <div className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
+    <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2400px] box-border">
+      <div className="grid grid-cols-[40px_90px_200px_240px_auto_100px_80px_80px_90px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
         <div className="border border-neutral-700 p-1 bg-neutral-100 sticky left-0">確認</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-10 z-20">No.</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-32.5 z-20">クライアント</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-92.5 z-20">作業タイトル</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-152.5 z-20">作業内容</div>
+        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-82.5 z-20">作業タイトル</div>
+        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-142.5 z-20" id="standardPosition">作業内容</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">完了日</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">担当者</div>
         <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">大カテゴリ</div>
@@ -83,11 +146,11 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
       </div>
       {invoices &&
         invoices.map((i, index) => (
-          <div key={i.id} className="grid grid-cols-[40px_90px_240px_240px_auto_100px_100px_100px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-700 text-sm">
+          <div key={i.id} className="grid grid-cols-[40px_90px_200px_240px_auto_100px_80px_80px_90px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-700 text-sm">
             <div className={`grid place-content-center border border-t-0 border-neutral-700 min-h-9 p-2 sticky left-0 z-20 hover:bg-neutral-700 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-10 z-20 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.serial}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-32.5 z-20 ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.client}《{i.requester}》</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-92.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-82.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
               <EditableCell
                 recordId={i.id}
                 field="title"
@@ -96,9 +159,11 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-152.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-142.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
               <EditableCell
                 recordId={i.id}
                 field="description"
@@ -107,6 +172,8 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.finish_date ?? "-"}</div>
@@ -122,10 +189,12 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 overflow-hidden ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
-              <EditableSelect
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+              <EditableCombobox
                 recordId={i.id}
                 field="work_name"
                 value={i.work_name ?? ""}
@@ -134,6 +203,8 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
@@ -147,6 +218,8 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
@@ -160,9 +233,11 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.amount ?? "-"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.amount ?? "0"}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
               <EditableCell
                 className="text-right"
@@ -174,9 +249,11 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.total_amount ?? "-"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.total_amount ?? "0"}</div>
             <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
               <EditableCell
                 recordId={i.id}
@@ -186,6 +263,8 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
               />
             </div>
           </div>
