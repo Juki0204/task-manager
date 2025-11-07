@@ -20,7 +20,7 @@ export default function SettingPage() {
 
         <div className="bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-9.5rem)]">
           <div className="flex justify-between items-center py-2 px-3 rounded-md bg-slate-800">
-            <p className="text-white">Last Update：2025-11-02</p>
+            <p className="text-white">Last Update：2025-11-08</p>
             <div onClick={() => router.push('/release-notes')} className="flex gap-1 justify-center items-center py-1 px-2 w-fit rounded-sm bg-green-800 text-white hover:cursor-pointer hover:opacity-60">
               <FaHistory className="text-sm" /><span className="text-xs font-bold">過去の更新履歴</span>
             </div>

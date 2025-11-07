@@ -181,6 +181,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
       if (isCalcField) {
         const total = safeAmount(nextAmount) * nextPieces * nextDeviceFactor * (nextDegree * 0.01) + nextAdjustment;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updatePayload: Record<string, any> = {
           total_amount: safeAmount(total),
         };
