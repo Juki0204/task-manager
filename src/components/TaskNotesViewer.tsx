@@ -17,6 +17,7 @@ import { CgBorderStyleSolid } from "react-icons/cg";
 import { DiffResult } from "@/utils/function/comparHistory";
 import { Task } from "@/utils/types/task";
 import { usePathname } from "next/navigation";
+import { highlightDiff } from "@/utils/function/highlightDiff";
 
 
 
@@ -192,12 +193,26 @@ function DiffItem({
   oldValue: string | null | undefined;
   newValue: string | null | undefined;
 }) {
+  const isLongField = label === "備考欄" || label === "作業内容";
+  const hasDiff = oldValue && newValue && oldValue !== newValue;
+
   return (
     <div className="flex gap-2 items-center border-l-2 border-blue-400 pl-2">
-      <p className="font-semibold text-gray-300">【{label}】</p>
-      <p className={`text-gray-500 ${!oldValue || oldValue === "" ? "" : "line-through"}`}>{formatValue(oldValue)}</p>
+      <h4 className="font-semibold text-gray-300 whitespace-nowrap">【{label}】</h4>
+      <div className={`text-gray-500 leading-relaxed ${!oldValue || oldValue === "" ? "" : "line-through"}`}>{formatValue(oldValue)}</div>
       <BiSolidRightArrow className="font-sm" />
-      <p className="text-gray-300">{formatValue(newValue)}</p>
+
+      {isLongField && hasDiff ? (
+        <div
+          className="text-gray-300 leading-relaxed"
+          dangerouslySetInnerHTML={{
+            __html: highlightDiff(oldValue ?? "", newValue ?? ""),
+          }}
+        />
+      ) : (
+        <div className="text-gray-300">{formatValue(newValue)}</div>
+      )
+      }
     </div>
   )
 }
