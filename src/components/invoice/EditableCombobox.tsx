@@ -189,6 +189,8 @@ export default function EditableCombobox({
               setIsInvalid(false);
             }}
             onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing) return; //変換中は処理しない
+
               if (e.key === "ArrowDown") {
                 e.preventDefault();
                 setSelectedIndex((prev) => {

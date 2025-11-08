@@ -68,6 +68,7 @@ export default function TaskNotesViewer() {
     if (savedState === "single" || savedState === "middle" || savedState === "full") {
       setViewerState(savedState);
     }
+    scrollToBottom();
   }, []);
 
   useEffect(() => {

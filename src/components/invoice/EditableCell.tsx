@@ -96,6 +96,8 @@ export default function EditableCell({
 
   // キー操作
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.nativeEvent.isComposing) return; //変換中は処理しない
+
     if (editing) {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -141,6 +143,7 @@ export default function EditableCell({
       className={`border-neutral-700 p-2 min-h-9 ${className ?? ""}
         ${isActive ? "bg-blue-900/50 outline -outline-offset-1 outline-blue-700" : ""}
         ${editing ? "!bg-blue-800/40 !outline-blue-400" : ""}
+        ${typeof value === "number" && value < 0 ? "text-red-400" : ""}
       `}
     >
       {lockedByOther && (
