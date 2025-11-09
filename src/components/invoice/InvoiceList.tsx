@@ -62,7 +62,7 @@ export default function InvoiceList({ invoices, user, setInvoices }: InvoiceList
     (async () => {
       const { data } = await supabase.from("prices").select("*");
       if (!data) return;
-      setPriceList(data.map((p) => p.work_name));
+      setPriceList(data.map((p) => p.work_name).sort((a, b) => a.localeCompare(b, "ja")));
     })();
   }, []);
 
