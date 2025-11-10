@@ -79,7 +79,14 @@ export default function TrashTaskPage() {
     });
     const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
 
-    return clientMatch && assigneeMatch && statusMatch;
+    const searchMatch =
+      !filters.searchKeywords ||
+      task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+      task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+      task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+      task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+
+    return clientMatch && assigneeMatch && statusMatch && searchMatch;
   });
 
   useEffect(() => {
