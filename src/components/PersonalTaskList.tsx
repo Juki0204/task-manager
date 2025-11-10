@@ -1,6 +1,7 @@
 import { Task } from "@/utils/types/task";
 import { TaskColumn } from "./ui/TaskColumn";
 import { User } from "@/utils/types/user";
+import { useState } from "react";
 
 interface PersonalTaskListProps {
   taskList: Task[];
@@ -9,9 +10,10 @@ interface PersonalTaskListProps {
   sortTask: (taskList: Task[]) => Task[];
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
+  currentClickTask: string | null;
 }
 
-export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu }: PersonalTaskListProps) {
+export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu, currentClickTask }: PersonalTaskListProps) {
   return (
     <div className="pb-4 grid grid-cols-4 gap-2 min-w-[1868px]">
       <TaskColumn
@@ -23,6 +25,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-zinc-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        currentClickTask={currentClickTask}
       />
 
       <TaskColumn
@@ -34,6 +37,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-gray-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        currentClickTask={currentClickTask}
       />
 
       <TaskColumn
@@ -45,6 +49,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        currentClickTask={currentClickTask}
       />
 
       <TaskColumn
@@ -75,6 +80,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onClick={onClick}
         onContextMenu={onContextMenu}
         className="bg-slate-600 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        currentClickTask={currentClickTask}
       />
 
     </div>

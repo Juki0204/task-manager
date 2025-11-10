@@ -14,6 +14,7 @@ interface TaskColumnProps {
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   className: string;
+  currentClickTask: string | null;
 }
 
 export function TaskColumn({
@@ -24,7 +25,8 @@ export function TaskColumn({
   unreadIds,
   onClick,
   onContextMenu,
-  className
+  className,
+  currentClickTask
 }: TaskColumnProps) {
   const { setNodeRef } = useDroppable({ id });
 
@@ -41,6 +43,7 @@ export function TaskColumn({
           unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
+          currentClickTask={currentClickTask}
         />
       ))}
     </div>

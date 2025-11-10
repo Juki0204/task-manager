@@ -17,6 +17,7 @@ interface CardPropd {
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   data: { containerId: string };
+  currentClickTask: string | null;
 }
 
 export default function PersonalCard({
@@ -26,6 +27,7 @@ export default function PersonalCard({
   onClick,
   onContextMenu,
   data,
+  currentClickTask,
   ...props
 }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false); //タスクステータスの監視
@@ -115,7 +117,11 @@ export default function PersonalCard({
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
       className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-md min-w-90 group-[.rowListStyle]:w-[1568px] ${isDragging ? "!z-50" : ""}`}>
+
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
+
+      {task.id === currentClickTask && <div className="w-full h-full bg-transparent border-2 border-blue-500 absolute top-0 left-0 rounded-md z-10 pointer-events-none"></div>}
+
       {/* カード（概要） */}
       <div
         onClick={() => onClick(task)}

@@ -33,6 +33,7 @@ export default function PersonalTaskPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeContainerId, setActiveContainerId] = useState<string | null>(null);
+  const [currentClickTask, setCurrentClickTask] = useState<string | null>(null);
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
@@ -88,6 +89,8 @@ export default function PersonalTaskPage() {
     const { active } = event;
     const fromContainer = active.data.current?.data.containerId as string | undefined;
     setActiveContainerId(fromContainer ?? null);
+    console.log(active);
+    setCurrentClickTask(String(active.id));
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -150,6 +153,14 @@ export default function PersonalTaskPage() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (currentClickTask && !isOpen) {
+      setTimeout(() => {
+        setCurrentClickTask(null);
+      }, 5000);
+    }
+  }, [currentClickTask, isOpen]);
+
 
   if (!isReady) return <p>loading...</p>
 
@@ -173,9 +184,11 @@ export default function PersonalTaskPage() {
               if (menu.visible) return;
 
               setActiveTask(t);
+              setCurrentClickTask(t.id);
               setModalType("detail");
               setIsOpen(true);
             }}
+            currentClickTask={currentClickTask}
             onContextMenu={handleContextMenu}
             sortTask={sortTask}
           />
