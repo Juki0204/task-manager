@@ -211,8 +211,7 @@ function DiffItem({
         />
       ) : (
         <div className="text-gray-300">{formatValue(newValue)}</div>
-      )
-      }
+      )}
     </div>
   )
 }

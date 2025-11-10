@@ -27,28 +27,28 @@ const TaskListPreferencesContext = createContext<TaskListPreferencesContextType 
 );
 
 export function TaskListPreferencesProvider({ children }: { children: React.ReactNode }) {
-  const [taskListStyle, setTaskListStyle] = useState<TaskListStyle>("cardListStyle");
+  const [taskListStyle, setTaskListStyle] = useState<TaskListStyle>("rowListStyle");
   const [taskListSortType, setTaskListSortType] = useState<TaskListSortType>("byDate");
 
   // 初回に localStorage から読み込み
-  useEffect(() => {
-    const savedStyle = localStorage.getItem("taskListStyle");
-    if (savedStyle === "rowListStyle" || savedStyle === "cardListStyle") {
-      setTaskListStyle(savedStyle);
-    }
+  // useEffect(() => {
+  //   const savedStyle = localStorage.getItem("taskListStyle");
+  //   if (savedStyle === "rowListStyle" || savedStyle === "cardListStyle") {
+  //     setTaskListStyle(savedStyle);
+  //   }
 
-    const savedSortType = localStorage.getItem("taskListSortType");
-    if (savedSortType === "byDate" || savedSortType === "byManager") {
-      setTaskListSortType(savedSortType);
-    }
-  }, []);
+  //   const savedSortType = localStorage.getItem("taskListSortType");
+  //   if (savedSortType === "byDate" || savedSortType === "byManager") {
+  //     setTaskListSortType(savedSortType);
+  //   }
+  // }, []);
 
   //taskListStyle
-  useEffect(() => {
-    if (taskListStyle) {
-      localStorage.setItem("taskListStyle", taskListStyle);
-    }
-  }, [taskListStyle]);
+  // useEffect(() => {
+  //   if (taskListStyle) {
+  //     localStorage.setItem("taskListStyle", taskListStyle);
+  //   }
+  // }, [taskListStyle]);
 
   //taskListSotyType
   useEffect(() => {

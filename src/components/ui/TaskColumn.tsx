@@ -36,6 +36,7 @@ export function TaskColumn({
         <PersonalCard
           user={user}
           key={task.id}
+          data={{ containerId: id }}
           task={task}
           unreadIds={unreadIds}
           onClick={onClick}

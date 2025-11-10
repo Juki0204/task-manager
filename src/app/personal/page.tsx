@@ -21,7 +21,8 @@ import {
   //DragStartEvent,
   useSensor,
   useSensors,
-  MouseSensor
+  MouseSensor,
+  DragStartEvent
 } from "@dnd-kit/core";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 
@@ -31,6 +32,7 @@ export default function PersonalTaskPage() {
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeContainerId, setActiveContainerId] = useState<string | null>(null);
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
@@ -82,15 +84,11 @@ export default function PersonalTaskPage() {
 
   const sensors = useSensors(mouseSensor);
 
-  // const handleDragStart = (event: DragStartEvent) => {
-  //   const { active } = event;
-  //   const taskId = active.id;
-
-  //   const task = taskList.find((t) => t.id === taskId);
-  //   if (task) {
-  //     setInitStatus(task.status);
-  //   }
-  // }
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const fromContainer = active.data.current?.data.containerId as string | undefined;
+    setActiveContainerId(fromContainer ?? null);
+  }
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { over, active } = event;
@@ -101,6 +99,10 @@ export default function PersonalTaskPage() {
       const taskId = active.id as string;
       const newStatus = over.id as string;
       const prevStatus = active.data.current?.initStatus;
+
+      const startContainer = activeContainerId; //ドラッグ開始エリア検知
+
+      if (newStatus === startContainer) return; //同一エリア内で 掴む→離す は無駄な状態更新せず
 
       const formatNewStatus = newStatus === "NotYetStarted" ? "未着手"
         : newStatus === "InProgress" && prevStatus === "確認中" ? "作業中"
@@ -152,13 +154,13 @@ export default function PersonalTaskPage() {
   if (!isReady) return <p>loading...</p>
 
   return (
-    <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1600px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+    <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1920px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
       <div className="flex justify-between items-center">
         <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
       </div>
       {user &&
         <DndContext
-          // onDragStart={handleDragStart}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           sensors={sensors}
         >

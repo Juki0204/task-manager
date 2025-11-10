@@ -13,7 +13,7 @@ interface PersonalTaskListProps {
 
 export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu }: PersonalTaskListProps) {
   return (
-    <div className="pb-4 grid grid-cols-4 gap-2 w-[1568px]">
+    <div className="pb-4 grid grid-cols-4 gap-2 min-w-[1868px]">
       <TaskColumn
         id="NotYetStarted"
         title="未担当タスク"

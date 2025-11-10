@@ -4,7 +4,7 @@ import { MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { BsPersonCheck } from "react-icons/bs";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useDraggable } from "@dnd-kit/core";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
@@ -16,6 +16,7 @@ interface CardPropd {
   unreadIds: string[];
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
+  data: { containerId: string };
 }
 
 export default function PersonalCard({
@@ -24,10 +25,11 @@ export default function PersonalCard({
   unreadIds,
   onClick,
   onContextMenu,
+  data,
   ...props
 }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false); //タスクステータスの監視
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id, data: { task, initStatus: task.status } });
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id, data: { task, initStatus: task.status, data } });
 
   const draggableStyle = transform
     ? { transform: `translate(${transform.x}px, ${transform.y}px)` }

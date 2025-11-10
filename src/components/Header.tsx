@@ -109,7 +109,7 @@ export default function Header() {
           </div>
 
           <div className="flex gap-2 items-center relative pt-2 min-h-10.75">
-            {pathname !== "/personal" && pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
+            {/* {pathname !== "/personal" && pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
               <select
                 value={taskListStyle}
                 onChange={(e) => setTaskListStyle(e.target.value as TaskListStyle)}
@@ -117,7 +117,7 @@ export default function Header() {
                 <option value='cardListStyle'>カード型リスト</option>
                 <option value='rowListStyle'>列型リスト</option>
               </select>
-            )}
+            )} */}
 
             {pathname === "/" && (
               <select
