@@ -153,6 +153,7 @@ export default function PersonalTaskPage() {
     }
   }, [user]);
 
+  //5秒後にタスクのハイライトを解除
   useEffect(() => {
     if (currentClickTask && !isOpen) {
       setTimeout(() => {
