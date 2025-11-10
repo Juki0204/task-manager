@@ -166,7 +166,7 @@ export default function PersonalTaskPage() {
   if (!isReady) return <p>loading...</p>
 
   return (
-    <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1920px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+    <div onClick={handleCloseContextMenu} className="cardListStyle group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 mx-auto max-w-[1920px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
       <div className="flex justify-between items-center">
         <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
       </div>
