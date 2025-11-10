@@ -1,5 +1,5 @@
 import { Task } from "@/utils/types/task";
-import { TaskColumn } from "./ui/TaslColumn";
+import { TaskColumn } from "./ui/TaskColumn";
 import { User } from "@/utils/types/user";
 
 interface PersonalTaskListProps {
