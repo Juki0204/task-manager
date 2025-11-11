@@ -214,7 +214,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
       diff,
       old_record: oldTaskData,
       new_record: taskData,
-      changed_by: task.updated_manager,
+      changed_by: currentUserName,
       changed_at: new Date().toISOString(),
       type: "changed",
     });

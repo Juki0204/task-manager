@@ -9,12 +9,13 @@ export interface DiffResult {
 export function compareHistory(newRow: Task, oldRow: Task): DiffResult {
   const exclude = [
     "id",
+    "status",
     "method",
     "finish_date",
     "created_at",
     "created_manager",
     "updated_at",
-    "updated_managerm",
+    "updated_manager",
     "serial",
     "locked_by_id",
     "locked_by_name",

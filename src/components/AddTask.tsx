@@ -201,7 +201,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
       diff: {},
       old_record: {},
       new_record: {},
-      changed_by: taskData.created_manager,
+      changed_by: currentUserName,
       changed_at: new Date().toISOString(),
       type: "added",
     });
