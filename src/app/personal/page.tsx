@@ -1,7 +1,7 @@
 "use client";
 
 // import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddTask from "@/components/AddTask";
 
 import PersonalTaskList from "@/components/PersonalTaskList";
@@ -18,11 +18,10 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import {
   DndContext,
   DragEndEvent,
-  //DragStartEvent,
+  DragStartEvent,
   useSensor,
   useSensors,
-  MouseSensor,
-  DragStartEvent
+  MouseSensor
 } from "@dnd-kit/core";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 
@@ -33,7 +32,10 @@ export default function PersonalTaskPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeContainerId, setActiveContainerId] = useState<string | null>(null);
+
   const [currentClickTask, setCurrentClickTask] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const timerRef = useRef<NodeJS.Timeout>(null);
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
@@ -89,11 +91,13 @@ export default function PersonalTaskPage() {
     const { active } = event;
     const fromContainer = active.data.current?.data.containerId as string | undefined;
     setActiveContainerId(fromContainer ?? null);
-    console.log(active);
     setCurrentClickTask(String(active.id));
+    setIsDragging(true);
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
+    setIsDragging(false);
+
     const { over, active } = event;
     if (!user) return;
     if (!over) return;
@@ -155,12 +159,25 @@ export default function PersonalTaskPage() {
 
   //5秒後にタスクのハイライトを解除
   useEffect(() => {
-    if (currentClickTask && !isOpen) {
-      setTimeout(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    if (currentClickTask && !isOpen && !isDragging) {
+      timerRef.current = setTimeout(() => {
         setCurrentClickTask(null);
+        timerRef.current = null;
       }, 5000);
     }
-  }, [currentClickTask, isOpen]);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  }, [currentClickTask, isOpen, isDragging]);
 
 
   if (!isReady) return <p>loading...</p>
