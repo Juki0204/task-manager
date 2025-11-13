@@ -121,6 +121,11 @@ export default function TrashTaskPage() {
             setIsOpen(true);
           }}
           onContextMenu={handleContextMenu}
+          onEdit={(t: Task) => {
+            setActiveTask(t);
+            setModalType("edit");
+            setIsOpen(true);
+          }}
         />}
 
       {/* 共通モーダル */}

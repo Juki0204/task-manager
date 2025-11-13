@@ -403,7 +403,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
   return (
     <>
-      <DialogTitle className="font-bold text-left col-span-2 sticky">タスク更新</DialogTitle>
+      <DialogTitle className="font-bold text-center col-span-2 sticky">タスク編集</DialogTitle>
 
       <div className=" max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
 

@@ -9,6 +9,8 @@ import { Task } from "@/utils/types/task";
 import { useDraggable } from "@dnd-kit/core";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { User } from "@/utils/types/user";
+import { supabase } from "@/utils/supabase/supabase";
+import { toast } from "sonner";
 
 interface CardPropd {
   task: Task;
@@ -18,6 +20,7 @@ interface CardPropd {
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   data: { containerId: string };
   currentClickTask: string | null;
+  onEdit: (task: Task) => void;
 }
 
 export default function PersonalCard({
@@ -28,6 +31,7 @@ export default function PersonalCard({
   onContextMenu,
   data,
   currentClickTask,
+  onEdit,
   ...props
 }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false); //タスクステータスの監視
@@ -107,7 +111,58 @@ export default function PersonalCard({
     definePersonalColor(task.manager ? task.manager : "");
   }, [task]);
 
-  // console.log(unreadIds);
+
+  //編集ロック
+  const lockedTaskHandler = async () => {
+    const { data } = await supabase
+      .from('tasks')
+      .update({
+        locked_by_id: user.id,
+        locked_by_name: user.name,
+        locked_by_at: new Date().toISOString(),
+      })
+      .eq("id", task.id)
+      .is("locked_by_id", null)
+      .select();
+
+    if (!data?.length) {
+      toast.error('他のユーザーが編集中です');
+      return;
+    }
+
+    console.log("locked task: taskId =", task.id);
+  }
+
+  // クリック判定(シングル・ダブル)
+  const DOUBLE_CLICK_GRACE = 200;
+  const timerRef = useRef<NodeJS.Timeout>(null);
+  const handleDoubleClick = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    console.log("ダブルクリックです");
+    lockedTaskHandler();
+    if (!editingUser) {
+      onEdit(task);
+    }
+  }
+
+  const handleSingleClick = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+      return;
+    }
+
+    timerRef.current = setTimeout(() => {
+      console.log("シングルクリックです");
+      onClick(task);
+      timerRef.current = null;
+    }, DOUBLE_CLICK_GRACE);
+  }
+
 
   return (
     <div
@@ -124,7 +179,8 @@ export default function PersonalCard({
 
       {/* カード（概要） */}
       <div
-        onClick={() => onClick(task)}
+        onClick={handleSingleClick}
+        onDoubleClick={handleDoubleClick}
         id={task.id}
         className={`${personalBg} w-full rounded-sm p-4 text-white tracking-wide cursor-pointer relative
         group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}

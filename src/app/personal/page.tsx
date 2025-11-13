@@ -209,6 +209,12 @@ export default function PersonalTaskPage() {
             currentClickTask={currentClickTask}
             onContextMenu={handleContextMenu}
             sortTask={sortTask}
+            onEdit={(t: Task) => {
+              setActiveTask(t);
+              setCurrentClickTask(t.id);
+              setModalType("edit");
+              setIsOpen(true);
+            }}
           />
         </DndContext>}
 

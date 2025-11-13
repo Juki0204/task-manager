@@ -11,9 +11,10 @@ interface PersonalTaskListProps {
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   currentClickTask: string | null;
+  onEdit: (t: Task) => void;
 }
 
-export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu, currentClickTask }: PersonalTaskListProps) {
+export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu, currentClickTask, onEdit }: PersonalTaskListProps) {
   return (
     <div className="pb-4 grid grid-cols-4 gap-2 min-w-[1868px]">
       <TaskColumn
@@ -26,6 +27,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onContextMenu={onContextMenu}
         className="bg-zinc-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
+        onEdit={onEdit}
       />
 
       <TaskColumn
@@ -38,6 +40,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onContextMenu={onContextMenu}
         className="bg-gray-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
+        onEdit={onEdit}
       />
 
       <TaskColumn
@@ -50,6 +53,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onContextMenu={onContextMenu}
         className="bg-slate-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
+        onEdit={onEdit}
       />
 
       <TaskColumn
@@ -81,6 +85,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         onContextMenu={onContextMenu}
         className="bg-slate-600 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
+        onEdit={onEdit}
       />
 
     </div>

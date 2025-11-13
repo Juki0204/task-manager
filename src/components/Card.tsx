@@ -5,12 +5,14 @@ import { FiPhone } from "react-icons/fi";
 import { BsPersonCheck } from "react-icons/bs";
 import { IoFlag } from "react-icons/io5";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import HighlightText from "./ui/HighlightText";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import { User } from "@/utils/types/user";
+import { supabase } from "@/utils/supabase/supabase";
+import { toast } from "sonner";
 
 interface CardPropd {
   task: Task;
@@ -20,9 +22,10 @@ interface CardPropd {
   handleImportantTask?: (taskId: string) => Promise<void>;
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
+  onEdit: (t: Task) => void;
 }
 
-export default function Card({ task, user, unreadIds, importantIds, handleImportantTask, onClick, onContextMenu, ...props }: CardPropd) {
+export default function Card({ task, user, unreadIds, importantIds, handleImportantTask, onClick, onContextMenu, onEdit, ...props }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
 
@@ -93,6 +96,58 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
     definePersonalColor(task.manager ? task.manager : "");
   }, [task]);
 
+
+  //編集ロック
+  const lockedTaskHandler = async () => {
+    const { data } = await supabase
+      .from('tasks')
+      .update({
+        locked_by_id: user.id,
+        locked_by_name: user.name,
+        locked_by_at: new Date().toISOString(),
+      })
+      .eq("id", task.id)
+      .is("locked_by_id", null)
+      .select();
+
+    if (!data?.length) {
+      toast.error('他のユーザーが編集中です');
+      return;
+    }
+
+    console.log("locked task: taskId =", task.id);
+  }
+
+  // クリック判定(シングル・ダブル)
+  const DOUBLE_CLICK_GRACE = 200;
+  const timerRef = useRef<NodeJS.Timeout>(null);
+  const handleDoubleClick = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    console.log("ダブルクリックです");
+    lockedTaskHandler();
+    if (!editingUser) {
+      onEdit(task);
+    }
+  }
+
+  const handleSingleClick = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+      return;
+    }
+
+    timerRef.current = setTimeout(() => {
+      console.log("シングルクリックです");
+      onClick(task);
+      timerRef.current = null;
+    }, DOUBLE_CLICK_GRACE);
+  }
+
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
@@ -100,7 +155,8 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
-        onClick={() => onClick(task)}
+        onClick={handleSingleClick}
+        onDoubleClick={handleDoubleClick}
         id={task.id}
         className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative group-[.cardListStyle]:rounded-sm group-[.cardListStyle]:h-full
         group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[110px_280px_600px_360px_120px_auto]  group-[.rowListStyle]:py-2`}
