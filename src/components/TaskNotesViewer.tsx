@@ -70,7 +70,7 @@ export default function TaskNotesViewer() {
       setViewerState(savedState);
     }
     scrollToBottom();
-  }, []);
+  }, [notes]);
 
   useEffect(() => {
     if (viewerState) {
