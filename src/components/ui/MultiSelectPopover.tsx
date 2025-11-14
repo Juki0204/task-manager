@@ -21,7 +21,7 @@ export default function MultiSelectPopover({ options, onChange, defaultText }: M
 
   return (
     <div className="w-46">
-      <Popover className="relative">
+      <Popover className="relative z-30">
         {({ open }) => (
           <>
             <PopoverButton className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white pl-3 pr-2 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none">
