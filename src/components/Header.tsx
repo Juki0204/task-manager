@@ -7,7 +7,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { Button, Input } from "@headlessui/react";
 import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
 
-import { FaSearch, FaHistory } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 
 import { RiTeamFill } from "react-icons/ri";
 import { IoPerson, IoReceipt } from "react-icons/io5";
@@ -18,7 +18,7 @@ import { FaGear } from "react-icons/fa6";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import MultiSelectPopover from "./ui/MultiSelectPopover";
 
-type TaskListStyle = "rowListStyle" | "cardListStyle";
+// type TaskListStyle = "rowListStyle" | "cardListStyle";
 type TaskListSortType = "byDate" | "byManager";
 
 export default function Header() {
@@ -29,7 +29,14 @@ export default function Header() {
   // const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
   // const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
 
-  const { taskListStyle, setTaskListStyle, taskListSortType, setTaskListSortType, filters, setFilters } = useTaskListPreferences();
+  const {
+    //taskListStyle,
+    //setTaskListStyle,
+    taskListSortType,
+    setTaskListSortType,
+    filters,
+    setFilters
+  } = useTaskListPreferences();
 
   const setCurrentUser = async () => {
     if (user) {

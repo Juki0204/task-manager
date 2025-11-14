@@ -9,7 +9,6 @@ import { Invoice } from "@/utils/types/invoice";
 import InvoiceList from "@/components/invoice/InvoiceList";
 import { Input, Select } from "@headlessui/react";
 import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
-import { idText } from "typescript";
 import { FaSearch } from "react-icons/fa";
 
 type Filters = {
