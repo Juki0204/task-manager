@@ -171,7 +171,7 @@ export default function PersonalCard({
       {...attributes}
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-md min-w-90 group-[.rowListStyle]:w-[1568px] ${isDragging ? "!z-50" : ""}`}>
+      className={`${task.locked_by_id ? "rolling-border after:rounded-md before:rounded-md" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-md min-w-90 group-[.rowListStyle]:w-[1568px] ${isDragging ? "!z-50" : ""}`}>
 
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
 

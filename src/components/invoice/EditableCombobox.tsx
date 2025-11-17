@@ -226,10 +226,12 @@ export default function EditableCombobox({
                 e.preventDefault();
                 setEditing(false);
                 saveValue("");
+                setActiveCell({ recordId, field }); //アクティブセルがリセットされるのを防ぐ
               } else if (e.key === "Escape") {
                 e.preventDefault();
                 setEditing(false);
                 setTempValue(String(value));
+                setActiveCell({ recordId, field }); //アクティブセルがリセットされるのを防ぐ
               }
             }}
           />

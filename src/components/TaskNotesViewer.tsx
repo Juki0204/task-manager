@@ -93,9 +93,9 @@ export default function TaskNotesViewer() {
   return (
     <>
       {!isExculedPath && (
-        <div className="fixed bottom-4 inset-x-0 m-auto w-96/100 max-w-460 flex flex-col items-end z-50">
+        <div className="fixed bottom-4 inset-x-0 m-auto w-96/100 max-w-460 flex flex-col items-end z-50 pointer-events-none">
           {/* ログ一覧表切り替えボタン */}
-          <div className="flex gap-4 pr-1">
+          <div className="flex gap-4 pr-1 pointer-events-auto">
             <ul className="flex gap-0.5 items-center z-50">
               <li onClick={() => setViewerType("all")} className={`grid place-content-center backdrop-blur-md w-8 h-6 bg-black/50 rounded-tl-md rounded-tr-md text-white text-sm cursor-pointer hover:opacity-100 ${viewerType === "all" ? "opacity-100 pointer-events-none" : "opacity-20"}`}>ALL</li>
               <li onClick={() => setViewerType("added")} className={`grid place-content-center backdrop-blur-md w-8 h-6 bg-black/50 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-20"}`}><AiOutlineFileAdd /></li>
@@ -110,7 +110,7 @@ export default function TaskNotesViewer() {
           </div>
 
           {/* ログ一覧 */}
-          <div className="w-full bg-black/50 border border-neutral-700 backdrop-blur-md rounded-md shadow-lg pl-3 pr-2 py-2">
+          <div className="w-full bg-black/50 border border-neutral-700 backdrop-blur-md rounded-md shadow-lg pl-3 pr-2 py-2 pointer-events-auto">
             <div ref={notesRef} className={`
               w-full overflow-y-auto text-sm
               [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
