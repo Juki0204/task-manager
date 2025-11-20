@@ -50,36 +50,36 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const [currentTaskInit, setCurrentTaskInit] = useState<string>('');
   const [currentTaskNum, setCurrentTaskNum] = useState<string>('');
 
-  const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
-  const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
+  // const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
+  // const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(true);
 
 
   //ファイル添付監視
-  const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newFile = e.target.files?.[0] || null;
-    if (!newFile) return;
+  // const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newFile = e.target.files?.[0] || null;
+  //   if (!newFile) return;
 
-    //allowedExtensionsの拡張子以外は非対応
-    const fileType = newFile.name.split('.').pop()?.toLowerCase();
-    if (!fileType || !allowedExtensions.includes(fileType)) {
-      alert(`このファイル形式（.${fileType}）はアップロードできません。`);
-      e.target.value = '';
-      return;
-    }
+  //   //allowedExtensionsの拡張子以外は非対応
+  //   const fileType = newFile.name.split('.').pop()?.toLowerCase();
+  //   if (!fileType || !allowedExtensions.includes(fileType)) {
+  //     alert(`このファイル形式（.${fileType}）はアップロードできません。`);
+  //     e.target.value = '';
+  //     return;
+  //   }
 
-    //添付ファイルをuploadFilesに格納
-    setUploadedFiles(prev => {
-      const copy = [...prev];
-      copy[index] = newFile;
-      // const filterd = prev.filter(file => file.name !== newFile.name);
-      // return [...filterd, newFile].slice(0, 3);
-      return copy;
-    });
-    // console.log(uploadedFiles);
-  }
+  //   //添付ファイルをuploadFilesに格納
+  //   setUploadedFiles(prev => {
+  //     const copy = [...prev];
+  //     copy[index] = newFile;
+  //     // const filterd = prev.filter(file => file.name !== newFile.name);
+  //     // return [...filterd, newFile].slice(0, 3);
+  //     return copy;
+  //   });
+  //   // console.log(uploadedFiles);
+  // }
 
 
   const getData = async () => {
@@ -210,7 +210,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
 
     const taskId = taskData.id;
-    await uploadTaskFiles(taskId, uploadedFiles);
+    // await uploadTaskFiles(taskId, uploadedFiles);
 
     setTimeout(() => {
       onClose();
@@ -219,48 +219,48 @@ export default function AddTask({ onClose }: AddTaskProps) {
     setTimeout(() => setIsSubmitting(false), 1000);
   }
 
-  async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
-    const bucket = 'shared-files';
-    const metadataArray = [];
+  // async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
+  //   const bucket = 'shared-files';
+  //   const metadataArray = [];
 
-    for (const file of files) {
-      if (file) {
-        const ext = file.name.split('.').pop();
-        const safeFileName = `${uuidv4()}.${ext}`;
-        const filePath = `${taskId}/${safeFileName}`;
+  //   for (const file of files) {
+  //     if (file) {
+  //       const ext = file.name.split('.').pop();
+  //       const safeFileName = `${uuidv4()}.${ext}`;
+  //       const filePath = `${taskId}/${safeFileName}`;
 
-        const { error } = await supabase.storage
-          .from(bucket)
-          .upload(filePath, file, { upsert: true });
+  //       const { error } = await supabase.storage
+  //         .from(bucket)
+  //         .upload(filePath, file, { upsert: true });
 
-        if (error) {
-          alert('ファイルアップロードに失敗しました');
-          continue;
-        }
+  //       if (error) {
+  //         alert('ファイルアップロードに失敗しました');
+  //         continue;
+  //       }
 
-        metadataArray.push({
-          original_name: file.name,
-          stored_name: safeFileName,
-          file_type: file.type,
-          file_path: filePath,
-          size: file.size,
-          ext: ext,
-        });
-      }
-    }
+  //       metadataArray.push({
+  //         original_name: file.name,
+  //         stored_name: safeFileName,
+  //         file_type: file.type,
+  //         file_path: filePath,
+  //         size: file.size,
+  //         ext: ext,
+  //       });
+  //     }
+  //   }
 
-    const { error: insertError } = await supabase
-      .from('task_files').insert([
-        {
-          task_id: taskId,
-          files: metadataArray,
-        }
-      ]);
+  //   const { error: insertError } = await supabase
+  //     .from('task_files').insert([
+  //       {
+  //         task_id: taskId,
+  //         files: metadataArray,
+  //       }
+  //     ]);
 
-    if (insertError) {
-      alert('メタデータの登録に失敗しました');
-    }
-  }
+  //   if (insertError) {
+  //     alert('メタデータの登録に失敗しました');
+  //   }
+  // }
 
   // const resetForm = () => {
   //   setClient(clientList[0]); //クライアント
@@ -304,21 +304,32 @@ export default function AddTask({ onClose }: AddTaskProps) {
       <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
-      <div className=" max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+      <div className="min-w-[30rem] max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
 
-        <AddTaskSelect name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
-          {clientList.map(client => (
-            <option key={client} value={client}>{client}</option>
-          ))}
-        </AddTaskSelect>
+        <div className="col-span-2 flex gap-4">
+          <Field className="flex flex-col">
+            <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><MdMailOutline /> 依頼手段</h3>
+            <div className="flex gap-x-1">
+              <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+              <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+              <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+            </div>
+          </Field>
 
-        <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
-          <option disabled value="">選択して下さい</option>
-          {requesterList.map(requester => (
-            <option key={requester} value={requester}>{requester}</option>
-          ))}
-          <option value="不明">不明</option>
-        </AddTaskSelect>
+          <AddTaskSelect className="flex-2" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
+            {clientList.map(client => (
+              <option key={client} value={client}>{client}</option>
+            ))}
+          </AddTaskSelect>
+
+          <AddTaskSelect className="flex-1" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
+            <option disabled value="">選択して下さい</option>
+            {requesterList.map(requester => (
+              <option key={requester} value={requester}>{requester}</option>
+            ))}
+            <option value="不明">不明</option>
+          </AddTaskSelect>
+        </div>
 
         <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
 
@@ -328,46 +339,41 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
         <AddTaskInput name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
 
-        <AddTaskSelect name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
-          {userNameList.map(name => (
-            <option key={name} value={name}>{name}</option>
-          ))}
-          <option value=''>未決定</option>
-        </AddTaskSelect>
+        <div className="col-span-2 flex gap-x-4">
+          <AddTaskSelect className="flex-1" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
+            {userNameList.map(name => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+            <option value=''>未決定</option>
+          </AddTaskSelect>
 
-        <AddTaskSelect name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="未着手">未着手</option>
-          <option value="作業中">作業中</option>
-          <option value="作業途中">作業途中</option>
-          <option value="確認中">確認中</option>
-          {/* <option value="完了">完了</option> */}
-          <option value="保留">保留</option>
-          {/* <option value="中止">中止</option> */}
-          <option value="詳細待ち">詳細待ち</option>
-        </AddTaskSelect>
+          <AddTaskSelect className="flex-1" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="未着手">未着手</option>
+            <option value="作業中">作業中</option>
+            <option value="作業途中">作業途中</option>
+            <option value="確認中">確認中</option>
+            {/* <option value="完了">完了</option> */}
+            <option value="保留">保留</option>
+            {/* <option value="中止">中止</option> */}
+            <option value="詳細待ち">詳細待ち</option>
+          </AddTaskSelect>
 
-        <AddTaskSelect name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
-          <option value=""></option>
-          <option value="急">至急</option>
-          <option value="高">高</option>
-          <option value="低">低</option>
-        </AddTaskSelect>
-
-        <Field className="col-span-1 flex flex-wrap gap-x-1">
-          <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><MdMailOutline /> 依頼手段</h3>
-          <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-          <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-          <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-        </Field>
+          <AddTaskSelect className="flex-1" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <option value=""></option>
+            <option value="急">至急</option>
+            <option value="高">高</option>
+            <option value="低">低</option>
+          </AddTaskSelect>
+        </div>
 
         <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} />
 
-        <Field className="col-span-2 grid grid-cols-3 gap-x-1">
+        {/* <Field className="col-span-2 grid grid-cols-3 gap-x-1">
           <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
           <Input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
           <Input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
           <Input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-        </Field>
+        </Field> */}
 
       </div>
 

@@ -19,14 +19,14 @@ import { User } from "@/utils/types/user";
 
 
 
-interface taskFileMeta {
-  original_name: string,
-  stored_name: string,
-  file_type: string,
-  file_path: string,
-  size: string,
-  ext: string,
-}
+// interface taskFileMeta {
+//   original_name: string,
+//   stored_name: string,
+//   file_type: string,
+//   file_path: string,
+//   size: string,
+//   ext: string,
+// }
 
 interface TaskDetailProps {
   task: Task;
@@ -45,8 +45,8 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
-  const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
-  const [selectedFile, setSelectedFile] = useState<taskFileMeta | null>(null);
+  // const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
+  // const [selectedFile, setSelectedFile] = useState<taskFileMeta | null>(null);
 
   function definePriorityStyle(priority: string | null) {
     if (priority === '急') {
@@ -90,23 +90,23 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
     return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ` + `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 
-  const getTaskFiles = async () => {
-    const { data: fileMetadata } = await supabase
-      .from('task_files')
-      .select('*')
-      .eq("task_id", task.id);
+  // const getTaskFiles = async () => {
+  //   const { data: fileMetadata } = await supabase
+  //     .from('task_files')
+  //     .select('*')
+  //     .eq("task_id", task.id);
 
-    if (fileMetadata && fileMetadata[0]) {
-      const taskFileArray = [];
-      // console.log(fileMetadata);
-      for (const file of fileMetadata[0].files) {
-        taskFileArray.push(file);
-      }
+  //   if (fileMetadata && fileMetadata[0]) {
+  //     const taskFileArray = [];
+  //     // console.log(fileMetadata);
+  //     for (const file of fileMetadata[0].files) {
+  //       taskFileArray.push(file);
+  //     }
 
-      setCurrentTaskFile(taskFileArray);
-      // console.log(taskFileArray);
-    }
-  }
+  //     setCurrentTaskFile(taskFileArray);
+  //     // console.log(taskFileArray);
+  //   }
+  // }
 
   const lockedTaskHandler = async () => {
     const { data } = await supabase
@@ -158,7 +158,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status)
-    getTaskFiles();
+    // getTaskFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
 
@@ -232,7 +232,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
           )}
         </li>
 
-        <li className="flex flex-col col-span-2 border-b border-neutral-300 pb-1">
+        {/* <li className="flex flex-col col-span-2 border-b border-neutral-300 pb-1">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><IoDocumentAttachOutline /> 関連ファイル</h3>
           <div className="flex flex-col gap-1">
             {currentTaskFile.length ?
@@ -261,7 +261,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
               (<p className="text-sm">添付されたファイルはありません</p>)
             }
           </div>
-        </li>
+        </li> */}
       </ul>
 
       <div className="flex gap-x-4 flex-wrap justify-between col-span-2">
@@ -288,7 +288,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
 
 
       {/* ファイル閲覧用モーダル */}
-      <Dialog
+      {/* <Dialog
         open={isFileOpen}
         onClose={() => {
           setIsFileOpen(false);
@@ -315,7 +315,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
             <FileModal file={selectedFile ? selectedFile : currentTaskFile[0]} />
           </DialogPanel>
         </div>
-      </Dialog>
+      </Dialog> */}
     </>
   )
 }

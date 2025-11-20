@@ -51,31 +51,31 @@ export default function UpdateTask({ task, user, onClose }: task) {
   const [currentTaskNum, setCurrentTaskNum] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
-  const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
+  // const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
+  // const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
   const [isValid, setIsValid] = useState<boolean>(true);
 
   //ファイル添付監視
-  const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newFile = e.target.files?.[0] || null;
-    if (!newFile) return;
+  // const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newFile = e.target.files?.[0] || null;
+  //   if (!newFile) return;
 
-    //allowedExtensionsの拡張子以外は非対応
-    const fileType = newFile.name.split('.').pop()?.toLowerCase();
-    if (!fileType || !allowedExtensions.includes(fileType)) {
-      alert(`このファイル形式（.${fileType}）はアップロードできません。`);
-      e.target.value = '';
-      return;
-    }
+  //   //allowedExtensionsの拡張子以外は非対応
+  //   const fileType = newFile.name.split('.').pop()?.toLowerCase();
+  //   if (!fileType || !allowedExtensions.includes(fileType)) {
+  //     alert(`このファイル形式（.${fileType}）はアップロードできません。`);
+  //     e.target.value = '';
+  //     return;
+  //   }
 
-    //添付ファイルをuploadFilesに格納
-    setUploadedFiles(prev => {
-      const copy = [...prev];
-      copy[index] = newFile;
-      return copy;
-    });
-  }
+  //   //添付ファイルをuploadFilesに格納
+  //   setUploadedFiles(prev => {
+  //     const copy = [...prev];
+  //     copy[index] = newFile;
+  //     return copy;
+  //   });
+  // }
 
   const getData = async () => {
     if (user) {
@@ -189,7 +189,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
 
 
     const taskId = taskData.id;
-    await uploadTaskFiles(taskId, uploadedFiles);
+    // await uploadTaskFiles(taskId, uploadedFiles);
 
     setTimeout(() => {
       onClose();
@@ -198,48 +198,48 @@ export default function UpdateTask({ task, user, onClose }: task) {
     setTimeout(() => setIsSubmitting(false), 1000);
   }
 
-  async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
-    const bucket = 'shared-files';
-    const metadataArray = [];
+  // async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
+  //   const bucket = 'shared-files';
+  //   const metadataArray = [];
 
-    for (const file of files) {
-      if (file) {
-        const ext = file.name.split('.').pop();
-        const safeFileName = `${uuidv4()}.${ext}`;
-        const filePath = `${taskId}/${safeFileName}`;
+  //   for (const file of files) {
+  //     if (file) {
+  //       const ext = file.name.split('.').pop();
+  //       const safeFileName = `${uuidv4()}.${ext}`;
+  //       const filePath = `${taskId}/${safeFileName}`;
 
-        const { error } = await supabase.storage
-          .from(bucket)
-          .upload(filePath, file, { upsert: true });
+  //       const { error } = await supabase.storage
+  //         .from(bucket)
+  //         .upload(filePath, file, { upsert: true });
 
-        if (error) {
-          alert('ファイルアップロードに失敗しました');
-          continue;
-        }
+  //       if (error) {
+  //         alert('ファイルアップロードに失敗しました');
+  //         continue;
+  //       }
 
-        metadataArray.push({
-          original_name: file.name,
-          stored_name: safeFileName,
-          file_type: file.type,
-          file_path: filePath,
-          size: file.size,
-          ext: ext,
-        });
-      }
-    }
+  //       metadataArray.push({
+  //         original_name: file.name,
+  //         stored_name: safeFileName,
+  //         file_type: file.type,
+  //         file_path: filePath,
+  //         size: file.size,
+  //         ext: ext,
+  //       });
+  //     }
+  //   }
 
-    const { error: insertError } = await supabase
-      .from('task_files').insert([
-        {
-          task_id: taskId,
-          files: metadataArray,
-        }
-      ]);
+  //   const { error: insertError } = await supabase
+  //     .from('task_files').insert([
+  //       {
+  //         task_id: taskId,
+  //         files: metadataArray,
+  //       }
+  //     ]);
 
-    if (insertError) {
-      alert('メタデータの登録に失敗しました');
-    }
-  }
+  //   if (insertError) {
+  //     alert('メタデータの登録に失敗しました');
+  //   }
+  // }
 
 
   const handleContentCheck = (taskTitle: string, taskDescription: string) => {
@@ -272,20 +272,32 @@ export default function UpdateTask({ task, user, onClose }: task) {
       <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
-      <div className=" max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+      <div className="min-w-[30rem] max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
 
-        <AddTaskSelect name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
-          {clientList.map(client => (
-            <option key={client} value={client}>{client}</option>
-          ))}
-        </AddTaskSelect>
+        <div className="col-span-2 flex gap-4">
+          <div className="flex flex-col">
+            <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><MdMailOutline /> 依頼手段</h3>
+            <div className="flex gap-x-1">
+              <MailRadio defaultChecked={task.method === 'mail' ? true : false} name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+              <TelRadio defaultChecked={task.method === 'tel' ? true : false} name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+              <OtherRadio defaultChecked={task.method === 'other' ? true : false} name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+            </div>
+          </div>
 
-        <AddTaskSelect name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
-          {requesterList.map(requester => (
-            <option key={requester} value={requester}>{requester}</option>
-          ))}
-          <option value="不明">不明</option>
-        </AddTaskSelect>
+          <AddTaskSelect className="flex-2" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
+            {clientList.map(client => (
+              <option key={client} value={client}>{client}</option>
+            ))}
+          </AddTaskSelect>
+
+          <AddTaskSelect className="flex-1" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
+            {requesterList.map(requester => (
+              <option key={requester} value={requester}>{requester}</option>
+            ))}
+            <option value="不明">不明</option>
+          </AddTaskSelect>
+
+        </div>
 
         <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
 
@@ -320,21 +332,14 @@ export default function UpdateTask({ task, user, onClose }: task) {
           <option value="低">低</option>
         </AddTaskSelect>
 
-        <div className="col-span-1 flex flex-wrap gap-x-1">
-          <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><MdMailOutline /> 依頼手段</h3>
-          <MailRadio defaultChecked={task.method === 'mail' ? true : false} name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-          <TelRadio defaultChecked={task.method === 'tel' ? true : false} name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-          <OtherRadio defaultChecked={task.method === 'other' ? true : false} name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-        </div>
-
         <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} />
 
-        <Field className="col-span-2 grid grid-cols-3 gap-x-1">
+        {/* <Field className="col-span-2 grid grid-cols-3 gap-x-1">
           <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
           <Input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
           <Input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
           <Input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-        </Field>
+        </Field> */}
 
       </div>
 

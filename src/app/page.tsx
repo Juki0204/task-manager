@@ -230,7 +230,7 @@ export default function AllTaskPage() {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
+          <DialogPanel className="relative min-w-md max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-6 pr-5.5">
             {modalType === "add" && <AddTask onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} />}
             {modalType === "detail" && activeTask && user && (
               <TaskDetail
