@@ -5,6 +5,8 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
 import { Button, Input } from "@headlessui/react";
+import { RiExchange2Line } from "react-icons/ri";
+import { TbReload } from "react-icons/tb";
 
 import {
   DndContext,
@@ -71,6 +73,22 @@ export default function PriceSetting() {
   const { user } = useAuth();
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [message, setMessage] = useState<string>("");
+
+  const [lastUpdate, setLastUpdate] = useState<string | null>(null);
+
+  //最後にベクトル変換を行った日時の取得
+  const getLastUpdate = async () => {
+    const { data: lastUpdateDate } = await supabase
+      .from("settings")
+      .select("*")
+      .eq("key", "last_embedding_run")
+      .single();
+
+    setLastUpdate(new Date(lastUpdateDate?.value).toLocaleString("sv-SE"));
+  }
 
   // Supabase CRUD
   const getPrices = async () => {
@@ -193,8 +211,46 @@ export default function PriceSetting() {
     });
   };
 
+
+  //ベクトル変換
+  const handleGenerateEmbeddings = async () => {
+    setIsProcessing(true);
+    setMessage("ベクトル生成を開始しました。しばらくお待ちください...");
+
+    try {
+      const response = await fetch("/api/generate-embeddings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(`成功: ${data.message} (更新数: ${data.updated_count})`);
+        console.log('ログ:', data.logs);
+      } else {
+        setMessage(`失敗: ${data.message} (エラー: ${data.error})`);
+        console.error(data);
+      }
+    } catch (error) {
+      setMessage(`致命的なエラーが発生しました。コンソールを確認してください。`);
+      console.error('Fetch Error:', error);
+    } finally {
+      setIsProcessing(false);
+      setLastUpdate(new Date().toLocaleString("sv-SE"));
+      setTimeout(() => {
+        setMessage("");
+      }, 5000);
+    }
+  }
+
+
+
   useEffect(() => {
     getPrices();
+    getLastUpdate();
   }, []);
 
 
@@ -498,6 +554,29 @@ export default function PriceSetting() {
             </div>
           );
         })}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 justify-end border-t border-neutral-500 pt-2">
+        <p className="w-fit text-white">Last Embedding: {lastUpdate}</p>
+        <Button
+          onClick={handleGenerateEmbeddings}
+          disabled={isProcessing}
+          className={`flex gap-1 items-center py-2 pl-4 text-sm text-white rounded-md font-bold cursor-pointer hover:bg-sky-700 ${isProcessing ? "bg-neutral-500 pr-4" : "bg-sky-800 pr-2"}`}
+        >
+          {isProcessing ?
+            (
+              <>
+                <TbReload className="text-lg animate-spin" />ベクトル変換中...
+              </>
+            ) : (
+              <>
+                <RiExchange2Line className="text-lg" />ベクトル変換（Gemini-embedding-001）
+              </>
+            )
+          }
+        </Button>
+
+        {message && <p className="w-full text-right text-xs text-white">{message}</p>}
       </div>
     </div>
   );

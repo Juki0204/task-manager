@@ -2,14 +2,36 @@
 
 import { useCallback } from "react";
 import { supabase } from "../supabase/supabase";
-import stringSimilarity from "string-similarity";
 
-import { Task } from "../types/task";
 
-type Price = {
-  work_name: string;
-  price: number;
+//請求データのベクトルデータを生成するAPIを呼び出すヘルパー関数
+async function generateInvoiceEmbedding(invoiceData: { id: string, client: string, title: string, description: string }) {
+  const payload = {
+    invoiceId: invoiceData.id,
+    client: invoiceData.client,
+    title: invoiceData.title,
+    description: invoiceData.description,
+  };
+
+  try {
+    const response = await fetch("/api/generate-invoice-embeddings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      console.error("ベクトル生成APIエラーレスポンス:", errData);
+      throw new Error(`ベクトル生成APIの呼び出しに失敗しました: ${response.status} ${response.statusText}`);
+    }
+
+    console.log(`請求書ID ${invoiceData.id} のベクトル生成を正常に開始しました。`);
+  } catch (err) {
+    console.error(`請求書ID ${invoiceData.id} のベクトル生成処理中にエラーが発生しました:`, err);
+  }
 }
+
 
 export function useInvoiceSync() {
   const syncInvoiceWithTask = useCallback(async (taskId: string, newStatus: string) => {
@@ -25,26 +47,6 @@ export function useInvoiceSync() {
           console.error("タスク取得失敗:", taskError);
           return;
         }
-
-        // const { data: prices, error: priceError } = await supabase
-        //   .from("prices")
-        //   .select("work_name, price");
-
-        // if (priceError || !prices) {
-        //   console.error("prices取得失敗:", priceError);
-        //   return;
-        // }
-
-        // const targetText = `${task.title} ${task.description ?? ""}`;
-        // const bestMatch = stringSimilarity.findBestMatch(
-        //   targetText,
-        //   prices.map((p) => p.work_name)
-        // );
-
-        // const bestIndex = bestMatch.bestMatchIndex;
-        // const bestScore = bestMatch.bestMatch.rating;
-        // const matchedPrice = bestScore >= 0.4 ? prices[bestIndex].price : null;
-        // const matchedName = bestScore >= 0.4 ? prices[bestIndex].work_name : null;
 
         // 作業点数自動判別（全角数字対応）
         function extractPoints(text: string): number | null {
@@ -67,60 +69,57 @@ export function useInvoiceSync() {
           .eq("id", taskId)
           .maybeSingle();
 
+        const invoicePayload = {
+          id: taskId,
+          client: task.client,
+          requester: task.requester,
+          title: task.title,
+          description: task.description,
+          finish_date: task.finish_date,
+          manager: task.manager,
+          remarks: null,
+          created_at: task.created_at,
+          serial: task.serial,
+          work_name: null,
+          amount: null,
+          category: null,
+          device: null,
+          degree: null,
+          pieces: matchLength,
+          work_time: null,
+          adjustment: null,
+          total_amount: null,
+          // embedding: null,
+        };
+
+        // ベクトル生成に必要なデータ (APIに渡すため)
+        const embeddingData = {
+          id: taskId,
+          client: task.client,
+          title: task.title,
+          description: task.description,
+        };
+
         if (existing) {
           await supabase
             .from("invoice")
-            .update({
-              id: taskId,
-              client: task.client,
-              requester: task.requester,
-              title: task.title,
-              description: task.description,
-              finish_date: task.finish_date,
-              manager: task.manager,
-              remarks: null,
-              created_at: task.created_at,
-              serial: task.serial,
-              work_name: null,
-              amount: null,
-              category: null,
-              device: null,
-              degree: null,
-              pieces: matchLength,
-              work_time: null,
-              adjustment: null,
-              total_amount: null,
-            })
+            .update(invoicePayload)
             .eq("id", taskId);
+
         } else {
           await supabase
             .from("invoice")
-            .insert({
-              id: task.id,
-              client: task.client,
-              requester: task.requester,
-              title: task.title,
-              description: task.description,
-              finish_date: task.finish_date,
-              manager: task.manager,
-              remarks: null,
-              created_at: task.created_at,
-              serial: task.serial,
-              work_name: null,
-              amount: null,
-              category: null,
-              device: null,
-              degree: null,
-              pieces: matchLength,
-              work_time: null,
-              adjustment: null,
-              total_amount: null,
-            });
+            .insert(invoicePayload);
         }
+
+        //請求書レコードが確定した後、非同期でベクトル生成APIを呼び出す
+        await generateInvoiceEmbedding(embeddingData);
+
       }
 
       //一度完了になってから再度作業状況が戻った場合
       else {
+        // ベクトル付きのレコードを削除
         const { error: deleteError } = await supabase
           .from("invoice")
           .delete()
