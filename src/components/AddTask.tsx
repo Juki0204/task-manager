@@ -20,6 +20,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
 import { compareHistory } from "@/utils/function/comparHistory";
 import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
+import AddTaskRemarks from "./ui/AddTaskRemarks";
 
 
 interface AddTaskProps {
@@ -366,7 +367,11 @@ export default function AddTask({ onClose }: AddTaskProps) {
           </AddTaskSelect>
         </div>
 
-        <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} />
+        <div className="flex flex-col col-span-2">
+          <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
+          <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
+        </div>
+        {/* <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} /> */}
 
         {/* <Field className="col-span-2 grid grid-cols-3 gap-x-1">
           <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>

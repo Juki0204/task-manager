@@ -27,7 +27,7 @@ interface otherRadioProps extends ComponentPropsWithoutRef<"input"> {
 export function MailRadio({ name, id, onClick, ...props }: mailRadioProps) {
   return (
     <>
-      <Field data-tooltip-id="mailRadio" data-tooltip-content="メールでの依頼" className="relative aspect-square w-8 h-fit bg-neutral-300 text-neutral-700 rounded-sm overflow-hidden [font-size:0]">
+      <Field data-tooltip-id="mailRadio" data-tooltip-content="メールでの依頼" className="relative aspect-square w-8 h-fit bg-neutral-200 text-neutral-700 rounded-sm overflow-hidden [font-size:0]">
         <Input type="radio" name={name} id={id} value="mail" {...props} onClick={onClick} className="w-full h-full hidden peer" />
         <Label htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 transition duration-300"><MdMailOutline className="w-full h-full" /></Label>
       </Field>
@@ -39,7 +39,7 @@ export function MailRadio({ name, id, onClick, ...props }: mailRadioProps) {
 export function TelRadio({ name, id, onClick, ...props }: telRadioProps) {
   return (
     <>
-      <Field data-tooltip-id="telRadio" data-tooltip-content="電話での依頼" className="relative aspect-square w-8 h-fit bg-neutral-300 text-neutral-700 rounded-sm overflow-hidden [font-size:0]">
+      <Field data-tooltip-id="telRadio" data-tooltip-content="電話での依頼" className="relative aspect-square w-8 h-fit bg-neutral-200 text-neutral-700 rounded-sm overflow-hidden [font-size:0]">
         <Input type="radio" name={name} id={id} value="tel" {...props} onClick={onClick} className="w-full h-full hidden peer" />
         <Label htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 transition duration-300"><FiPhone className="w-full h-full" /></Label>
       </Field>
@@ -51,7 +51,7 @@ export function TelRadio({ name, id, onClick, ...props }: telRadioProps) {
 export function OtherRadio({ name, id, onClick, ...props }: otherRadioProps) {
   return (
     <>
-      <Field data-tooltip-id="otherRadio" data-tooltip-content="打ち合わせ等での依頼" className="relative aspect-square w-8 h-fit bg-neutral-300 text-neutral-700 rounded-sm overflow-hidden [font-size:0]">
+      <Field data-tooltip-id="otherRadio" data-tooltip-content="打ち合わせ等での依頼" className="relative aspect-square w-8 h-fit bg-neutral-200 text-neutral-700 rounded-sm overflow-hidden [font-size:0]">
         <Input type="radio" name={name} id={id} value="other" {...props} onClick={onClick} className="w-full h-full hidden peer" />
         <Label htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 transition duration-300"><FaRegQuestionCircle className="w-full h-full" /></Label>
       </Field>

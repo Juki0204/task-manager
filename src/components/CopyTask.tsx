@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
 import { User } from "@/utils/types/user";
+import AddTaskRemarks from "./ui/AddTaskRemarks";
 
 
 interface task {
@@ -307,32 +308,39 @@ export default function UpdateTask({ task, user, onClose }: task) {
 
         <AddTaskInput name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
 
-        <AddTaskSelect name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
-          {userNameList.map(name => (
-            <option key={name} value={name}>{name}</option>
-          ))}
-          <option value=''>未決定</option>
-        </AddTaskSelect>
+        <div className="col-span-2 flex gap-x-4">
+          <AddTaskSelect className="flex-1" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
+            {userNameList.map(name => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+            <option value=''>未決定</option>
+          </AddTaskSelect>
 
-        <AddTaskSelect name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="未着手">未着手</option>
-          <option value="作業中">作業中</option>
-          <option value="作業途中">作業途中</option>
-          <option value="確認中">確認中</option>
-          <option value="完了">完了</option>
-          <option value="保留">保留</option>
-          <option value="中止">中止</option>
-          <option value="詳細待ち">詳細待ち</option>
-        </AddTaskSelect>
+          <AddTaskSelect className="flex-1" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="未着手">未着手</option>
+            <option value="作業中">作業中</option>
+            <option value="作業途中">作業途中</option>
+            <option value="確認中">確認中</option>
+            <option value="完了">完了</option>
+            <option value="保留">保留</option>
+            <option value="中止">中止</option>
+            <option value="詳細待ち">詳細待ち</option>
+          </AddTaskSelect>
 
-        <AddTaskSelect name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
-          <option value=""></option>
-          <option value="急">至急</option>
-          <option value="高">高</option>
-          <option value="低">低</option>
-        </AddTaskSelect>
+          <AddTaskSelect className="flex-1" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <option value=""></option>
+            <option value="急">至急</option>
+            <option value="高">高</option>
+            <option value="低">低</option>
+          </AddTaskSelect>
+        </div>
 
-        <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} />
+        <div className="flex flex-col col-span-2">
+          <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
+          <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
+        </div>
+
+        {/* <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} /> */}
 
         {/* <Field className="col-span-2 grid grid-cols-3 gap-x-1">
           <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>

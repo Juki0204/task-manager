@@ -16,6 +16,7 @@ import FileModal from "./FileModal";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { toast } from "sonner";
 import { User } from "@/utils/types/user";
+import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
 
 
 
@@ -226,7 +227,13 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
             {user && unreadIds?.includes(task.id) && (<div className="left-1.5 w-2 h-2 bg-yellow-300 rounded-full" />)}
           </h3>
           {task.remarks ? (
-            <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: convertUrlsToLinks(task.remarks) }} />
+            <div className={`whitespace-pre-wrap
+              min-h-[200px] w-full cursor-text focus:outline-none prose prose-sm max-w-none [&_*]:min-h-[1.5rem] [&>div]:min-h-[200px] [&>div]:focus:outline-none [&>div]:p-0.5
+              [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:has-[li[data-checked]]:pl-0
+              [&_li[data-checked]]:list-none [&_li[data-checked]]:flex [&_li[data-checked]]:items-start [&_li[data-checked]]:gap-2 [&_li[data-checked]>label]:flex [&_li[data-checked]>label]:items-start [&_li[data-checked]>div]:flex-1
+              [&_li[data-checked='true']>div]:line-through [&_li[data-checked='true']>div]:text-gray-400 [&_li[data-checked]]:pointer-events-none
+              [&_a]:text-blue-600 [&_a]:underline [&_a]:underline-offset-2 [&_a]:hover:cursor-pointer
+              [&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
           ) : (
             <div className="whitespace-pre-wrap">-</div>
           )}
