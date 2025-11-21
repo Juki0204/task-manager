@@ -36,6 +36,53 @@ export default function InvoicePage() {
   const [sortState, setSortState] = useState<SortStates>("byDate");
   const [filteredInvoices, setFiteredInvoices] = useState<Invoice[] | null>(null);
 
+  const [totalInvoices, setTotalInvoices] = useState<{
+    web: number,
+    dtp: number,
+    print: number,
+    other: number,
+    taskCount: number,
+    unclaimed: number,
+    claimed: number,
+    amount: number,
+    adjustment: number,
+    totalAmount: number,
+  }>
+    ({
+      web: 0,
+      dtp: 0,
+      print: 0,
+      other: 0,
+      taskCount: 0,
+      unclaimed: 0,
+      claimed: 0,
+      amount: 0,
+      adjustment: 0,
+      totalAmount: 0,
+    });
+
+  const [totalClients, setTotalClients] = useState<{
+    nmb: number,
+    sno: number,
+    tnm: number,
+    tng: number,
+    umd: number,
+    umg: number,
+    nks: number,
+    tmr: number,
+    oks: number,
+  }>({
+    nmb: 0,
+    sno: 0,
+    tnm: 0,
+    tng: 0,
+    umd: 0,
+    umg: 0,
+    nks: 0,
+    tmr: 0,
+    oks: 0,
+  })
+
   //フィルタリング
   const [filters, setFilters] = useState<Filters>({
     clients: [],
@@ -89,6 +136,51 @@ export default function InvoicePage() {
       setFiteredInvoices(sortInvoiceData);
       console.log(invoiceData);
     }
+  }
+
+  const calcTotalInvoices = (invoices: Invoice[] | null) => {
+    if (!invoices) return;
+
+    console.log("invoicesの計算を開始します。");
+
+    let amo: number = 0;
+    let adj: number = 0;
+    let totalAmo: number = 0;
+
+    invoices.forEach(i => {
+      amo = amo + (i.amount ? i.amount : 0);
+      adj = adj + (i.adjustment ? i.adjustment : 0);
+      totalAmo = totalAmo + (i.total_amount ? i.total_amount : 0);
+    });
+
+    setTotalInvoices({
+      web: invoices.filter(i => i.category === "WEB").length,
+      dtp: invoices.filter(i => i.category === "印刷").length,
+      print: invoices.filter(i => i.category === "出力").length,
+      other: invoices.filter(i => i.category === "その他").length,
+      taskCount: invoices.length,
+      unclaimed: invoices.filter(i => i.total_amount === 0 || i.total_amount === null).length,
+      claimed: invoices.filter(i => i.total_amount !== 0 && i.total_amount !== null).length,
+      amount: amo,
+      adjustment: adj,
+      totalAmount: totalAmo,
+    });
+  }
+
+  const calcInvoiceClients = (invoices: Invoice[] | null) => {
+    if (!invoices) return;
+
+    setTotalClients({
+      nmb: invoices.filter(i => i.serial.includes("NMB")).length,
+      sno: invoices.filter(i => i.serial.includes("SNO")).length,
+      tnm: invoices.filter(i => i.serial.includes("TNM")).length,
+      tng: invoices.filter(i => i.serial.includes("TNG")).length,
+      umd: invoices.filter(i => i.serial.includes("UMD")).length,
+      umg: invoices.filter(i => i.serial.includes("UMG")).length,
+      nks: invoices.filter(i => i.serial.includes("NKS")).length,
+      tmr: invoices.filter(i => i.serial.includes("TMR")).length,
+      oks: invoices.filter(i => i.serial.includes("OKS")).length,
+    })
   }
 
   useEffect(() => {
@@ -164,6 +256,11 @@ export default function InvoicePage() {
 
     URL.revokeObjectURL(url);
   }
+
+  useEffect(() => {
+    calcTotalInvoices(invoices);
+    calcInvoiceClients(invoices);
+  }, [invoices]);
 
   useEffect(() => {
     getInvoice(currentYear, currentMonth);
@@ -292,6 +389,7 @@ export default function InvoicePage() {
       </div>
 
       <div className="scroll-container p-1 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+
         {user &&
           (filteredInvoices && filteredInvoices.length > 0 ? (
             <InvoiceList setInvoices={setInvoices} invoices={filteredInvoices} sortState={sortState} user={user} />
@@ -301,6 +399,53 @@ export default function InvoicePage() {
               <p className="text-white text-center my-5">請求するタスクがありません</p>
             </>
           ))}
+      </div>
+
+      <div className="w-fit mr-auto ml-auto mt-3 mb-5">
+        <div className="w-466 grid grid-cols-31 items-center text-sm text-center text-neutral-950 font-bold">
+          <div className="border col-span-1 border-neutral-700 p-1 bg-neutral-100">難波</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">新大阪</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">谷町</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">谷町G</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">梅田</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">梅田G</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">中州</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">玉乱堂</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">奥様</div>
+
+          <div className="border col-span-2 border-neutral-700 p-1 bg-neutral-100">WEB案件</div>
+          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100">印刷案件</div>
+          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100">出力案件</div>
+          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">その他案件</div>
+          <div className="border col-span-2 border-neutral-700 p-1 bg-neutral-100">総作業件数</div>
+          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-red-100">未請求件数</div>
+          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">請求件数</div>
+          <div className="border col-span-3 border-neutral-700 p-1 bg-neutral-100">仮請求額</div>
+          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100">調整額</div>
+          <div className="border col-span-3 border-l-0 border-neutral-700 p-1 bg-blue-100">本請求額</div>
+        </div>
+        <div className="w-466 grid grid-cols-31 items-center border-neutral-700 text-sm tracking-wider">
+          <div className="border col-span-1 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.nmb}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.sno}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tnm}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tng}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.umd}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.umg}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.nks}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tmr}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalClients.oks}件</div>
+
+          <div className="border col-span-2 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.web}件</div>
+          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.dtp}件</div>
+          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.print}件</div>
+          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalInvoices.other}件</div>
+          <div className="border col-span-2 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.taskCount}件</div>
+          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.unclaimed}件</div>
+          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalInvoices.claimed}件</div>
+          <div className="border col-span-3 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right font-bold">{totalInvoices.amount.toLocaleString()}円</div>
+          <div className={`border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right font-bold ${totalInvoices.adjustment < 0 ? "text-red-400" : "text-white"}`}>{totalInvoices.adjustment.toLocaleString()}円</div>
+          <div className="border col-span-3 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right font-bold">{totalInvoices.totalAmount.toLocaleString()}円</div>
+        </div>
       </div>
     </div >
   );
