@@ -7,9 +7,14 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { Invoice } from "@/utils/types/invoice";
 import InvoiceList from "@/components/invoice/InvoiceList";
-import { Input, Select } from "@headlessui/react";
+import { Button, Input, Select } from "@headlessui/react";
 import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
+
 import { FaSearch } from "react-icons/fa";
+import { LuDownload } from "react-icons/lu";
+import { exportInvoice, exportProcessingInvoice } from "@/utils/function/exportInvoice";
+
+
 
 type Filters = {
   clients: string[]; //クライアント
@@ -123,6 +128,43 @@ export default function InvoicePage() {
     }
   }, []);
 
+  async function downloadInvoice(invoices: Invoice[], mode: "invoice" | "processing") {
+    const res = await fetch("/api/export-invoice", {
+      method: "POST",
+      body: JSON.stringify({
+        invoices,
+        mode: mode,
+      }),
+    });
+
+    const disposition = res.headers.get("Content-Disposition");
+    let filename = "invoice.xlsx"; //デフォルトor名前がない場合
+
+    if (disposition) {
+      //日本語ファイル名をデコード
+      const filenameStarMatch = disposition.match(/filename\*=UTF-8''(.+)/);
+      if (filenameStarMatch && filenameStarMatch[1]) {
+        filename = decodeURIComponent(filenameStarMatch[1]);
+      } else {
+        //英数字のみの場合はそのまま
+        const filenameMatch = disposition.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
   useEffect(() => {
     getInvoice(currentYear, currentMonth);
   }, [currentMonth, currentYear]);
@@ -134,98 +176,121 @@ export default function InvoicePage() {
 
   return (
     <div className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 relative overflow-x-hidden min-h-[80svh]">
-      <div className="flex justify-start items-end gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700">
-        <h2 className="flex justify-center items-end gap-1 text-white text-xl font-bold text-center">
-          <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-          </Select>
-          年
-          <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-          </Select>
-          月度 請求一覧
-        </h2>
+      <div className="flex justify-between mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+        <div className="flex justify-start items-end gap-4">
+          <h2 className="flex justify-center items-end gap-1 text-white text-xl font-bold text-center">
+            <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </Select>
+            年
+            <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </Select>
+            月度 請求一覧
+          </h2>
 
-        <div className="flex justify-right gap-2 h-fit">
-          <Select value={sortState} onChange={(e) => setSortState(e.target.value as SortStates)} className="bg-white rounded-md px-2 pb-0.5 text-sm font-bold">
-            <option value="byDate">完了日順</option>
-            <option value="byClient">クライアント順(昇順)</option>
-            <option value="byClientRev">クライアント順(降順)</option>
-          </Select>
-          <MultiSelectPopover
-            options={[
-              { id: 1, label: "難波秘密倶楽部" },
-              { id: 2, label: "新大阪秘密倶楽部" },
-              { id: 3, label: "谷町秘密倶楽部" },
-              { id: 4, label: "谷町人妻ゴールデン" },
-              { id: 5, label: "梅田人妻秘密倶楽部" },
-              { id: 6, label: "梅田ゴールデン" },
-              { id: 7, label: "中州秘密倶楽部" },
-              { id: 8, label: "奥様クラブ" },
-              { id: 9, label: "快楽玉乱堂" },
-            ]}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
-              setFilters({
-                ...filters,
-                clients: e.target.checked
-                  ? [...filters.clients, label]
-                  : filters.clients.filter((c) => c !== label)
-              })
-            }
-            defaultText="作業担当者"
-          />
-
-          <MultiSelectPopover
-            options={[
-              { id: 1, label: "浜口" },
-              { id: 2, label: "飯塚" },
-              { id: 3, label: "谷" },
-              { id: 4, label: "田口" },
-              { id: 6, label: "西谷" },
-            ]}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
-              setFilters({
-                ...filters,
-                assignees: e.target.checked
-                  ? [...filters.assignees, label]
-                  : filters.assignees.filter((a) => a !== label)
-              })
-            }
-            defaultText="作業担当者"
-          />
-
-          <div className="relative">
-            <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
-            <Input
-              type="text"
-              className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
-              placeholder="No./タイトル/内容/依頼者"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-
+          <div className="flex justify-right gap-2 h-fit">
+            <Select value={sortState} onChange={(e) => setSortState(e.target.value as SortStates)} className="bg-white rounded-md px-2 pb-0.5 text-sm font-bold">
+              <option value="byDate">完了日順</option>
+              <option value="byClient">クライアント順(昇順)</option>
+              <option value="byClientRev">クライアント順(降順)</option>
+            </Select>
+            <MultiSelectPopover
+              options={[
+                { id: 1, label: "難波秘密倶楽部" },
+                { id: 2, label: "新大阪秘密倶楽部" },
+                { id: 3, label: "谷町秘密倶楽部" },
+                { id: 4, label: "谷町人妻ゴールデン" },
+                { id: 5, label: "梅田人妻秘密倶楽部" },
+                { id: 6, label: "梅田ゴールデン" },
+                { id: 7, label: "中州秘密倶楽部" },
+                { id: 8, label: "奥様クラブ" },
+                { id: 9, label: "快楽玉乱堂" },
+              ]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
                 setFilters({
                   ...filters,
-                  searchKeywords: value.trim() === "" ? null : value,
-                });
-              }}
+                  clients: e.target.checked
+                    ? [...filters.clients, label]
+                    : filters.clients.filter((c) => c !== label)
+                })
+              }
+              defaultText="作業担当者"
             />
+
+            <MultiSelectPopover
+              options={[
+                { id: 1, label: "浜口" },
+                { id: 2, label: "飯塚" },
+                { id: 3, label: "谷" },
+                { id: 4, label: "田口" },
+                { id: 6, label: "西谷" },
+              ]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
+                setFilters({
+                  ...filters,
+                  assignees: e.target.checked
+                    ? [...filters.assignees, label]
+                    : filters.assignees.filter((a) => a !== label)
+                })
+              }
+              defaultText="作業担当者"
+            />
+
+            <div className="relative">
+              <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
+              <Input
+                type="text"
+                className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                placeholder="No./タイトル/内容/依頼者"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+
+                  setFilters({
+                    ...filters,
+                    searchKeywords: value.trim() === "" ? null : value,
+                  });
+                }}
+              />
+            </div>
           </div>
         </div>
-
+        <div className="flex gap-2">
+          <Button
+            onClick={() => {
+              if (!filteredInvoices) return;
+              downloadInvoice(filteredInvoices, "invoice");
+            }}
+            className="px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer bg-purple-700"
+          >
+            <LuDownload />
+            <span>当月請求データ</span>
+          </Button>
+          <Button
+            onClick={() => {
+              if (!filteredInvoices) return;
+              downloadInvoice(filteredInvoices, "processing");
+            }}
+            className="px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer bg-purple-700">
+            <LuDownload />
+            <span>請求書加工用データ</span>
+          </Button>
+        </div>
       </div>
+
       <div className="scroll-container p-1 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
         {user &&
           (filteredInvoices && filteredInvoices.length > 0 ? (

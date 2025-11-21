@@ -18,4 +18,5 @@ export interface Invoice {
   work_time?: string;
   adjustment?: number;
   total_amount?: number;
+  embedding?: number[];
 }
