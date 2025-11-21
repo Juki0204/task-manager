@@ -402,7 +402,7 @@ export default function InvoicePage() {
       </div>
 
       <div className="w-fit mr-auto ml-auto mt-3 mb-5">
-        <div className="w-466 grid grid-cols-31 items-center text-sm text-center text-neutral-950 font-bold">
+        <div className="w-430 grid grid-cols-27 items-center text-sm text-center text-neutral-950 font-bold">
           <div className="border col-span-1 border-neutral-700 p-1 bg-neutral-100">難波</div>
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">新大阪</div>
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">谷町</div>
@@ -413,18 +413,20 @@ export default function InvoicePage() {
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">玉乱堂</div>
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">奥様</div>
 
-          <div className="border col-span-2 border-neutral-700 p-1 bg-neutral-100">WEB案件</div>
-          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100">印刷案件</div>
-          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100">出力案件</div>
-          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">その他案件</div>
+          <div className="border col-span-1 border-neutral-700 p-1 bg-neutral-100">WEB</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">印刷</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">出力</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">その他</div>
+
           <div className="border col-span-2 border-neutral-700 p-1 bg-neutral-100">総作業件数</div>
           <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-red-100">未請求件数</div>
           <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">請求件数</div>
+
           <div className="border col-span-3 border-neutral-700 p-1 bg-neutral-100">仮請求額</div>
           <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100">調整額</div>
           <div className="border col-span-3 border-l-0 border-neutral-700 p-1 bg-blue-100">本請求額</div>
         </div>
-        <div className="w-466 grid grid-cols-31 items-center border-neutral-700 text-sm tracking-wider">
+        <div className="w-430 grid grid-cols-27 items-center border-neutral-700 text-sm tracking-wider">
           <div className="border col-span-1 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.nmb}件</div>
           <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.sno}件</div>
           <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tnm}件</div>
@@ -435,18 +437,20 @@ export default function InvoicePage() {
           <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tmr}件</div>
           <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalClients.oks}件</div>
 
-          <div className="border col-span-2 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.web}件</div>
-          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.dtp}件</div>
-          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.print}件</div>
-          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalInvoices.other}件</div>
+          <div className="border col-span-1 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.web}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.dtp}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.print}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalInvoices.other}件</div>
+
           <div className="border col-span-2 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.taskCount}件</div>
           <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.unclaimed}件</div>
           <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalInvoices.claimed}件</div>
+
           <div className="border col-span-3 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right font-bold">{totalInvoices.amount.toLocaleString()}円</div>
           <div className={`border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right font-bold ${totalInvoices.adjustment < 0 ? "text-red-400" : "text-white"}`}>{totalInvoices.adjustment.toLocaleString()}円</div>
           <div className="border col-span-3 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right font-bold">{totalInvoices.totalAmount.toLocaleString()}円</div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
