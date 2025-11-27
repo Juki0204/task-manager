@@ -263,20 +263,6 @@ export default function AddTask({ onClose }: AddTaskProps) {
   //   }
   // }
 
-  // const resetForm = () => {
-  //   setClient(clientList[0]); //クライアント
-  //   setRequester(''); //依頼担当者
-  //   setTaskTitle(''); //作業タイトル
-  //   setTaskDescription(''); //作業内容
-  //   setRequestDate(''); //依頼日
-  //   setFinishDate(''); //完了日
-  //   setManager(''); //作業担当者
-  //   setStatus('未着手'); //作業状況
-  //   setPriority(''); //優先度
-  //   setRemarks(''); //備考欄
-  //   setMethod(''); //依頼手段
-  //   setUploadedFiles([]); //添付ファイル
-  // }
 
   const handleContentCheck = (requester: string, taskTitle: string, taskDescription: string) => {
     if (requester && taskTitle && taskDescription) {

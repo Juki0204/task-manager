@@ -129,6 +129,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
     }
   }
 
+  //タスクのシリアルナンバー生成用管理番号取得
   const getClientTaskNum = async (client: string) => {
     const { data: cl } = await supabase
       .from('clients')
@@ -187,6 +188,20 @@ export default function UpdateTask({ task, user, onClose }: task) {
     if (addTaskNumError) {
       alert('タスクナンバーの更新に失敗しました')
     }
+
+    //追加ログ生成
+    const { error } = await supabase.from("task_notes").insert({
+      task_serial: taskData.serial,
+      message: `【${taskData.serial}】タスク「${taskData.title}」を新規追加しました。`,
+      diff: {},
+      old_record: {},
+      new_record: {},
+      changed_by: currentUserName,
+      changed_at: new Date().toISOString(),
+      type: "added",
+    });
+
+    if (error) console.error(error);
 
 
     const taskId = taskData.id;
