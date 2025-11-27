@@ -4,35 +4,6 @@ import { useCallback } from "react";
 import { supabase } from "../supabase/supabase";
 
 
-//請求データのベクトルデータを生成するAPIを呼び出すヘルパー関数
-async function generateInvoiceEmbedding(invoiceData: { id: string, client: string, title: string, description: string }) {
-  const payload = {
-    invoiceId: invoiceData.id,
-    client: invoiceData.client,
-    title: invoiceData.title,
-    description: invoiceData.description,
-  };
-
-  try {
-    const response = await fetch("/api/generate-invoice-embeddings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errData = await response.json();
-      console.error("ベクトル生成APIエラーレスポンス:", errData);
-      throw new Error(`ベクトル生成APIの呼び出しに失敗しました: ${response.status} ${response.statusText}`);
-    }
-
-    console.log(`請求書ID ${invoiceData.id} のベクトル生成を正常に開始しました。`);
-  } catch (err) {
-    console.error(`請求書ID ${invoiceData.id} のベクトル生成処理中にエラーが発生しました:`, err);
-  }
-}
-
-
 export function useInvoiceSync() {
   const syncInvoiceWithTask = useCallback(async (taskId: string, newStatus: string) => {
     try {
@@ -92,14 +63,6 @@ export function useInvoiceSync() {
           // embedding: null,
         };
 
-        // ベクトル生成に必要なデータ (APIに渡すため)
-        const embeddingData = {
-          id: taskId,
-          client: task.client,
-          title: task.title,
-          description: task.description,
-        };
-
         if (existing) {
           await supabase
             .from("invoice")
@@ -111,10 +74,6 @@ export function useInvoiceSync() {
             .from("invoice")
             .insert(invoicePayload);
         }
-
-        //請求書レコードが確定した後、非同期でベクトル生成APIを呼び出す
-        await generateInvoiceEmbedding(embeddingData);
-
       }
 
       //一度完了になってから再度作業状況が戻った場合
