@@ -257,6 +257,30 @@ export default function InvoicePage() {
     URL.revokeObjectURL(url);
   }
 
+  const [invoiceDL, setInvoiceDL] = useState(false);
+  const [processingDL, setProcessingDL] = useState<boolean>(false);
+
+  async function handleDownload(type: "invoice" | "processing") {
+    if (!filteredInvoices) return;
+    try {
+      if (type === "invoice") {
+        setInvoiceDL(true);
+        await downloadInvoice(filteredInvoices, "invoice");
+      }
+      if (type === "processing") {
+        setProcessingDL(true);
+        await downloadInvoice(filteredInvoices, "processing");
+      }
+    } finally {
+      if (type === "invoice") {
+        setInvoiceDL(false);
+      }
+      if (type === "processing") {
+        setProcessingDL(false);
+      }
+    }
+  }
+
   useEffect(() => {
     calcTotalInvoices(invoices);
     calcInvoiceClients(invoices);
@@ -367,23 +391,32 @@ export default function InvoicePage() {
         </div>
         <div className="flex gap-2">
           <Button
+            disabled={invoiceDL}
             onClick={() => {
-              if (!filteredInvoices) return;
-              downloadInvoice(filteredInvoices, "invoice");
+              handleDownload("invoice");
             }}
-            className="px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer bg-purple-700"
+            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${invoiceDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-700"}`}
           >
             <LuDownload />
-            <span>当月請求データ</span>
+            {invoiceDL ? (
+              <span>処理中...</span>
+            ) : (
+              <span>当月請求データ</span>
+            )}
           </Button>
           <Button
+            disabled={processingDL}
             onClick={() => {
-              if (!filteredInvoices) return;
-              downloadInvoice(filteredInvoices, "processing");
+              handleDownload("processing");
             }}
-            className="px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer bg-purple-700">
+            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${processingDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-700"}`}
+          >
             <LuDownload />
-            <span>請求書加工用データ</span>
+            {processingDL ? (
+              <span>処理中...</span>
+            ) : (
+              <span>請求書加工用データ</span>
+            )}
           </Button>
         </div>
       </div>
