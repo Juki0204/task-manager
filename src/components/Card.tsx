@@ -159,7 +159,7 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
         onDoubleClick={handleDoubleClick}
         id={task.id}
         className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative group-[.cardListStyle]:rounded-sm group-[.cardListStyle]:h-full
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[110px_280px_600px_360px_120px_auto]  group-[.rowListStyle]:py-2`}
+        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[110px_280px_600px_360px_120px_auto] group-[.rowListStyle]:py-2 hover:brightness-150`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (

@@ -317,3 +317,113 @@ body {
     translate: 0 0;
   }
 }
+
+
+
+/* Tiptap のベーススタイル */
+.tiptap-base {
+  max-width: none;
+  cursor: text;
+  white-space: normal;
+
+  & * {
+    min-height: 1.5rem;
+  }
+
+  &  h1 {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: bold;
+  }
+
+  &  h2 {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: bold;
+  }
+
+  & h3 {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: bold;
+  }
+
+  & a {
+    color: #2563eb;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+
+  & ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+
+    &:has(li[data-checked]) {
+      padding-left: 0;
+    }
+
+    & li[data-checked] {
+          min-height: 1.5rem;
+      list-style: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    & li[data-checked] > label {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    & li[data-checked] > div {
+      flex: 1;
+    }
+
+    & li[data-checked="true"] > div {
+      text-decoration: line-through;
+      color: #9ca3af; /* gray-400 */
+    }
+  }
+
+  & code {
+    padding: .25rem .5rem;
+    background: #444;
+    color: #fff;
+    border-radius: .5rem;
+  }
+
+  & blockquote{
+    border-left: 4px solid #999;
+    padding: .25rem .5rem;
+    margin: .25rem auto;
+  }
+
+  & hr {
+    margin: 1rem 0;
+    min-height: 0;
+    color: #999;
+  }
+}
+
+/* 編集画面用 */
+.tiptap-editor {
+  min-height: 200px;
+  outline: none;
+  padding: 2px;
+  background: transparent;
+
+  & > div {
+    min-height: 200px;
+    outline: none;
+    padding: 2px;
+  }
+}
+
+/* 閲覧画面用 */
+.tiptap-viewer {
+  white-space: pre-wrap;
+  min-height: 100px;
+  cursor: default;
+
+  & li[data-checked] {
+    pointer-events: none;
+  }
+}
