@@ -58,7 +58,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
 
       <TaskColumn
         id="Completed"
-        title="今週の完了タスク"
+        title="直近1週間の完了タスク"
         tasks={taskList.filter((task) => {
           if (task.manager !== user.name || task.status !== '完了') return false;
           if (!task.finish_date) return false;

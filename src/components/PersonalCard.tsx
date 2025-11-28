@@ -183,7 +183,7 @@ export default function PersonalCard({
         onDoubleClick={handleDoubleClick}
         id={task.id}
         className={`${personalBg} w-full rounded-sm p-4 text-white tracking-wide cursor-pointer relative
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto]  group-[.rowListStyle]:py-2`}
+        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto] group-[.rowListStyle]:py-2 hover:brightness-125`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}

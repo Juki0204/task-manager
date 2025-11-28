@@ -34,7 +34,7 @@ export function TaskColumn({
 
   return (
     <div ref={setNodeRef} className={className}>
-      <h2 className="font-bold text-white p-1">{title}</h2>
+      <h2 className="font-bold text-white p-1 text-center">{title}</h2>
 
       {tasks.map(task => (
         <PersonalCard
