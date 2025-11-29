@@ -2,32 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
-import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import { Button, DialogTitle } from "@headlessui/react";
 import { MdDriveFileRenameOutline, MdLaptopChromebook, MdMailOutline, MdOutlineStickyNote2 } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
-import { FaRegBuilding, FaRegCheckCircle, FaRegImage, FaRegQuestionCircle } from "react-icons/fa";
+import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
-import { IoDocumentAttachOutline, IoPersonAddOutline } from "react-icons/io5";
+import { IoPersonAddOutline } from "react-icons/io5";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { BsPersonCheck } from "react-icons/bs";
 import { LuNotebookPen } from "react-icons/lu";
 import { supabase } from "@/utils/supabase/supabase";
-import FileModal from "./FileModal";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { toast } from "sonner";
 import { User } from "@/utils/types/user";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
+import { TaskNote } from "@/utils/hooks/useTaskNotesRealtime";
 
-
-
-// interface taskFileMeta {
-//   original_name: string,
-//   stored_name: string,
-//   file_type: string,
-//   file_path: string,
-//   size: string,
-//   ext: string,
-// }
 
 interface TaskDetailProps {
   task: Task;
@@ -41,13 +31,11 @@ interface TaskDetailProps {
 export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: TaskDetailProps) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
 
-  const [isFileOpen, setIsFileOpen] = useState<boolean>(false);
-
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
-  // const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
-  // const [selectedFile, setSelectedFile] = useState<taskFileMeta | null>(null);
+  const [notes, setNotes] = useState<TaskNote[] | null>([]);
+  const [notesOpen, setNotesOpen] = useState<boolean>(false);
 
   function definePriorityStyle(priority: string | null) {
     if (priority === '急') {
@@ -82,32 +70,11 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
   function formatDateJST(dateString: string): string {
     const date = new Date(dateString);
 
-    // UTCをベースにしているので、getUTC系で取り出して+9時間する
-    // const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-
     const pad = (n: number) => String(n).padStart(2, "0");
 
-    // return `${jst.getFullYear()}/${pad(jst.getMonth() + 1)}/${pad(jst.getDate())} ` + `${pad(jst.getHours())}:${pad(jst.getMinutes())}:${pad(jst.getSeconds())}`;
     return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ` + `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
 
-  // const getTaskFiles = async () => {
-  //   const { data: fileMetadata } = await supabase
-  //     .from('task_files')
-  //     .select('*')
-  //     .eq("task_id", task.id);
-
-  //   if (fileMetadata && fileMetadata[0]) {
-  //     const taskFileArray = [];
-  //     // console.log(fileMetadata);
-  //     for (const file of fileMetadata[0].files) {
-  //       taskFileArray.push(file);
-  //     }
-
-  //     setCurrentTaskFile(taskFileArray);
-  //     // console.log(taskFileArray);
-  //   }
-  // }
 
   const lockedTaskHandler = async () => {
     const { data } = await supabase
@@ -130,38 +97,24 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
     onEdit();
   }
 
-  //備考欄の文字列からURLを判別してリンク化
-  const convertUrlsToLinks = (text: string): string => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(urlRegex, (url) => {
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">${url}</a>`;
-    });
+  //変更履歴ログの取得
+  const getFixedNotes = async () => {
+    const { data: notes, error: notesError } = await supabase
+      .from("task_notes")
+      .select("*")
+      .eq("task_serial", task.serial);
+
+    if (!notes) return;
+
+    setNotes(notes);
   }
-
-
-  // function isLocked(task: Task, currentUser: { id: string }) {
-  //   if (!task.lockedById) return false;
-
-  //   if (task.lockedByAt) {
-  //     const lockedAt = new Date(task.lockedByAt).getTime();
-  //     const now = Date.now();
-
-  //     //10分以上経過したかチェック
-  //     const expired = now - lockedAt > 10 * 60 * 1000;
-
-  //     if (expired) return false;
-
-  //     return task.lockedById !== currentUser.id;
-  //   }
-
-  // }
 
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status)
-    // getTaskFiles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getFixedNotes();
   }, [task]);
+
 
   return (
     <>
@@ -233,39 +186,9 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
           )}
         </li>
 
-        {/* <li className="flex flex-col col-span-2 border-b border-neutral-300 pb-1">
-          <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><IoDocumentAttachOutline /> 関連ファイル</h3>
-          <div className="flex flex-col gap-1">
-            {currentTaskFile.length ?
-              currentTaskFile.map(file => (
-                <div
-                  key={file.stored_name}
-                  onClick={() => {
-                    setSelectedFile(file);
-                    setIsFileOpen(true);
-                  }}
-                  className="flex gap-1 items-center text-sm p-1 w-full rounded-md bg-neutral-300 cursor-pointer"
-                >
-                  {
-                    file.ext === 'eml' ?
-                      <>
-                        <MdMailOutline className="w-5 h-5" /> <span className="flex-1 truncate">{file.original_name}</span>
-                      </>
-                      : // 'jpg' || 'jpeg' || 'png' || 'gif'
-                      <>
-                        <FaRegImage className="w-5 h-5" /> {file.original_name}
-                      </>
-                  }
-                </div>
-              ))
-              :
-              (<p className="text-sm">添付されたファイルはありません</p>)
-            }
-          </div>
-        </li> */}
       </ul>
 
-      <div className="flex gap-x-4 flex-wrap justify-between col-span-2">
+      <div className="flex gap-x-4 flex-wrap justify-between col-span-2 mb-0">
         <Button
           disabled={!!editingUser}
           onClick={lockedTaskHandler}
@@ -287,36 +210,21 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
         </Button>
       </div>
 
-
-      {/* ファイル閲覧用モーダル */}
-      {/* <Dialog
-        open={isFileOpen}
-        onClose={() => {
-          setIsFileOpen(false);
-          setSelectedFile(null);
-        }}
-        transition
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
-      >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
-
-        <div className="fixed inset-0 flex w-full items-center justify-center p-4">
-          <DialogPanel className="relative w-11/12 max-w-2xl space-y-4 rounded-2xl bg-neutral-100 p-8">
-            <DialogTitle className="font-bold text-left col-span-2 flex gap-1 items-center pr-8">
-              {selectedFile?.original_name}
-            </DialogTitle>
-
-            <GrClose
-              onClick={() => {
-                setIsFileOpen(false);
-                setSelectedFile(null);
-              }}
-              className="absolute top-8 right-8 cursor-pointer"
-            />
-            <FileModal file={selectedFile ? selectedFile : currentTaskFile[0]} />
-          </DialogPanel>
+      {notes && notes.length > 0 && (
+        <div onClick={() => setNotesOpen(!notesOpen)} className={`w-70 min-h-30 h-full max-h-[60svh] p-4 pr-2 bg-blue-50 rounded-br-xl absolute top-6 -z-10
+          after:content-['変更履歴'] after:font-bold after:[writing-mode:vertical-rl] after:text-sm after:leading-none after:tracking-[0.25rem] after:rounded-r-md after:bg-blue-50 after:p-2 after:pl-1 after:absolute after:top-0 after:left-full
+          transition-all duration-200 ${notesOpen ? "-right-69" : "right-0"}
+        `}>
+          <div className="h-full pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+            {notes?.map(note => (
+              <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
+                <span className="block">{new Date(note.changed_at).toLocaleDateString("sv-SE")}</span>
+                {note.changed_by}さんが{note.message.substring(10)}
+              </p>
+            ))}
+          </div>
         </div>
-      </Dialog> */}
+      )}
     </>
   )
 }
