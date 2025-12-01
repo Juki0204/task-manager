@@ -211,8 +211,8 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
       </div>
 
       {notes && notes.length > 0 && (
-        <div onClick={() => setNotesOpen(!notesOpen)} className={`w-70 min-h-30 h-full max-h-[60svh] p-4 pr-2 bg-blue-50 rounded-br-xl absolute top-6 -z-10
-          after:content-['変更履歴'] after:font-bold after:[writing-mode:vertical-rl] after:text-sm after:leading-none after:tracking-[0.25rem] after:rounded-r-md after:bg-blue-50 after:p-2 after:pl-1 after:absolute after:top-0 after:left-full
+        <div onClick={() => setNotesOpen(!notesOpen)} className={`w-70 min-h-30 h-full max-h-[60svh] p-4 pr-2 bg-amber-50 rounded-br-xl absolute top-6 -z-10
+          after:content-['変更履歴'] after:font-bold after:[writing-mode:vertical-rl] after:text-sm after:leading-none after:tracking-[0.25rem] after:rounded-r-md after:bg-amber-50 after:p-2.5 after:pl-1.5 after:absolute after:top-0 after:left-full
           transition-all duration-200 ${notesOpen ? "-right-69" : "right-0"}
         `}>
           <div className="h-full pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">

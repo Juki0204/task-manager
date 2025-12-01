@@ -62,10 +62,10 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
 
     // バージョン変更時 ⇒ 再ログインモーダル表示
     if (lastVersion !== CURRENT_APP_VERSION) {
-      console.log("最新バージョンがリリースされています");
+      //console.log("最新バージョンがリリースされています");
       setShowUpdateModal(true);
     } else {
-      console.log("バージョンは最新です");
+      //console.log("バージョンは最新です");
     }
   }, [pathname, CURRENT_APP_VERSION]);
 
@@ -98,7 +98,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
   useEffect(() => {
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        console.log("タブ復帰 → バージョンチェック");
+        //console.log("タブ復帰 → バージョンチェック");
         checkVersion();
       }
     };

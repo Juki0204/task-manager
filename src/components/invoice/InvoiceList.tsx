@@ -105,7 +105,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
     const activeEl = document.querySelector(
       `[data-record-id="${activeCell.recordId}"][data-field="${activeCell.field}"]`
     ) as HTMLElement | null;
-    console.log(activeEl);
+    //console.log(activeEl);
 
     const standardEl = document.getElementById("standardPosition");
     const scrollContainer = document.querySelector(".scroll-container");

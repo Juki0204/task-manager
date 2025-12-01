@@ -122,7 +122,7 @@ export default function PersonalTaskPage() {
       const alt = newStatus === "NotYetStarted" ? { manager: null }
         : { manager: user.name }
 
-      console.log(newStatus, prevStatus);
+      //console.log(newStatus, prevStatus);
       await updateTaskStatus(taskId, formatNewStatus, prevStatus, alt);
       await syncInvoiceWithTask(taskId, formatNewStatus);
     }

@@ -30,7 +30,7 @@ export default function TrashTaskPage() {
   const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
   const { filters } = useTaskListPreferences();
 
-  console.log(taskList.filter((t) => t.status === "削除済"));
+  //console.log(taskList.filter((t) => t.status === "削除済"));
   const [menu, setMenu] = useState<{
     visible: boolean,
     x: number,

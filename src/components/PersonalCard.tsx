@@ -142,7 +142,7 @@ export default function PersonalCard({
       timerRef.current = null;
     }
 
-    console.log("ダブルクリックです");
+    //console.log("ダブルクリックです");
     lockedTaskHandler();
     if (!editingUser) {
       onEdit(task);
@@ -157,7 +157,7 @@ export default function PersonalCard({
     }
 
     timerRef.current = setTimeout(() => {
-      console.log("シングルクリックです");
+      //console.log("シングルクリックです");
       onClick(task);
       timerRef.current = null;
     }, DOUBLE_CLICK_GRACE);

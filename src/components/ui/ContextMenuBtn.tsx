@@ -215,7 +215,7 @@ export function InsertCopyTask({ taskId, onClick, onCopyTask }: InsertCopyTaskPr
   return (
     <li
       onClick={async () => {
-        console.log(copiedTask);
+        //console.log(copiedTask);
         if (!copiedTask) return;
         onCopyTask(copiedTask);
         onClick();

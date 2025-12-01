@@ -134,14 +134,14 @@ export default function InvoicePage() {
       })
       setInvoices(sortInvoiceData);
       setFiteredInvoices(sortInvoiceData);
-      console.log(invoiceData);
+      //console.log(invoiceData);
     }
   }
 
   const calcTotalInvoices = (invoices: Invoice[] | null) => {
     if (!invoices) return;
 
-    console.log("invoicesの計算を開始します。");
+    //console.log("invoicesの計算を開始します。");
 
     let amo: number = 0;
     let adj: number = 0;
@@ -292,7 +292,7 @@ export default function InvoicePage() {
 
   useEffect(() => {
     setFiteredInvoices(filteringInvoices(invoices));
-    console.log(filteringInvoices(invoices));
+    //console.log(filteringInvoices(invoices));
   }, [sortState, filters]);
 
   return (

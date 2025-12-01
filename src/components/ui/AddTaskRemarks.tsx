@@ -95,6 +95,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
       <div className="flex justify-between">
         <div className="flex flex-wrap gap-0.5 mb-1 pb-1 items-center border-b border-neutral-300">
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("bold") ? "bg-neutral-300" : ""}`}
           >
@@ -102,6 +103,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           </Button>
 
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("italic") ? "bg-neutral-300" : ""}`}
           >
@@ -109,6 +111,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           </Button>
 
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("heading", { level: 1 }) ? "bg-neutral-300" : ""}`}
           >
@@ -116,6 +119,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           </Button>
 
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("heading", { level: 2 }) ? "bg-neutral-300" : ""}`}
           >
@@ -123,6 +127,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           </Button>
 
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("heading", { level: 3 }) ? "bg-neutral-300" : ""}`}
           >
@@ -130,6 +135,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           </Button>
 
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("bulletList") ? "bg-neutral-300" : ""}`}
           >
@@ -137,6 +143,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           </Button>
 
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleTaskList().run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("taskList") ? "bg-neutral-300" : ""}`}
           >
@@ -144,6 +151,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           </Button>
 
           <Button
+            tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHighlight().run()}
             className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("highlight") ? "bg-neutral-300" : ""}`}
           >
@@ -152,6 +160,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
 
           <div className="relative">
             <Button
+              tabIndex={-1}
               onClick={() => {
                 const current = editor.getAttributes("link").href;
                 setLinkUrl(current || "");
@@ -243,7 +252,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
         </div>
 
         <div>
-          <Button onClick={() => setHintOpen(!hintOpen)} className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${hintOpen ? "bg-neutral-300" : ""}`}>
+          <Button tabIndex={-1} onClick={() => setHintOpen(!hintOpen)} className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${hintOpen ? "bg-neutral-300" : ""}`}>
             <FaRegLightbulb className={`${hintOpen ? "text-amber-500" : "text-yellow-700"}`} />
           </Button>
         </div>
@@ -254,7 +263,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
         className={`tiptap-base tiptap-editor`}
       />
 
-      <div className={`${hintOpen ? " left-[calc(100%+20px)] opacity-100" : "left-0 opacity-0"} w-60 absolute left-0 -z-10 bottom-0 shadow-md bg-neutral-100 rounded-md p-3 whitespace-nowrap transition-all duration-300`}>
+      <div className={`${hintOpen ? " left-[calc(100%+20px)] opacity-100" : "left-0 opacity-0"} w-70 absolute left-0 -z-10 bottom-0 shadow-md bg-neutral-100 rounded-2xl p-4 whitespace-nowrap transition-all duration-300`}>
         <h3 className="pb-1 mb-1 text-center text-sm font-bold">使用可能な記法一覧</h3>
         <div className="grid grid-cols-2 text-sm font-bold text-center mb-1">
           <p>記法</p>

@@ -36,7 +36,7 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateT
       newTop = y - menuRect.height - 10;
     }
 
-    console.log(newTop, newLeft);
+    //console.log(newTop, newLeft);
 
     setPos({ top: newTop, left: newLeft });
   }, [x, y]);
