@@ -11,6 +11,8 @@ import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { User } from "@/utils/types/user";
 import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
+import HighlightText from "./ui/HighlightText";
+import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
 interface CardPropd {
   task: Task;
@@ -21,6 +23,7 @@ interface CardPropd {
   data: { containerId: string };
   currentClickTask: string | null;
   onEdit: (task: Task) => void;
+  isDraggable: boolean;
 }
 
 export default function PersonalCard({
@@ -32,10 +35,12 @@ export default function PersonalCard({
   data,
   currentClickTask,
   onEdit,
+  isDraggable,
   ...props
 }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false); //タスクステータスの監視
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id, data: { task, initStatus: task.status, data } });
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: task.id, data: { task, initStatus: task.status, data }, disabled: !isDraggable });
+  const { filters } = useTaskListPreferences();
 
   const draggableStyle = transform
     ? { transform: `translate(${transform.x}px, ${transform.y}px)` }
@@ -187,7 +192,9 @@ export default function PersonalCard({
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}
-        <div className="text-xs pb-2">{task.serial}</div>
+        <div className="text-xs pb-2">
+          <HighlightText text={task.serial} keyword={filters.searchKeywords} />
+        </div>
         <h3 className="font-bold truncate flex items-center gap-1
           group-[.rowListStyle]:[grid-area:ttl]
           group-[.rowListStyle]:text-sm">
@@ -199,7 +206,7 @@ export default function PersonalCard({
                 :
                 <FaRegQuestionCircle />
           }
-          {task.title}
+          <HighlightText text={task.title} keyword={filters.searchKeywords} />
         </h3>
 
         <div className="w-fit flex gap-1 items-center pl-1
@@ -217,13 +224,13 @@ export default function PersonalCard({
         <div className="line-clamp-2 w-full text-sm
         group-[.cardListStyle]:h-10 group-[.cardListStyle]:mb-3
         group-[.rowListStyle]:[grid-area:dis]">
-          {task.description}
+          <HighlightText text={task.description} keyword={filters.searchKeywords} />
         </div>
 
         <div className="grid gap-2 text-sm grid-cols-6
         group-[.cardListStyle]:mb-2
         group-[.rowListStyle]:[grid-area:cli-mana] group-[.rowListStyle]:gap-1">
-          <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《{task.requester}》</div>
+          <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《<HighlightText text={task.requester} keyword={filters.searchKeywords} />》</div>
           <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div>
 

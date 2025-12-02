@@ -341,6 +341,7 @@ export default function InvoicePage() {
                 { id: 8, label: "奥様クラブ" },
                 { id: 9, label: "快楽玉乱堂" },
               ]}
+              selectedLabels={filters.clients}
               onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
                 setFilters({
                   ...filters,
@@ -360,6 +361,7 @@ export default function InvoicePage() {
                 { id: 4, label: "田口" },
                 { id: 6, label: "西谷" },
               ]}
+              selectedLabels={filters.assignees}
               onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
                 setFilters({
                   ...filters,

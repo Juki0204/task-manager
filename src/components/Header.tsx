@@ -60,7 +60,7 @@ export default function Header() {
   return (
     <>
       {!isExculedPath && (
-        <header className="fixed top-0 w-full min-w-[1920px] py-2 px-4 z-50 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
+        <header className="fixed top-0 w-full min-w-[1900px] py-2 px-4 z-50 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
           <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
             <div className="flex gap-2 flex-1">
               <Button
@@ -136,8 +136,8 @@ export default function Header() {
               </select>
             )}
 
-            {pathname !== "/personal" && pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
-              <div className="flex items-center gap-2 border-l px-2 border-neutral-500">
+            {pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
+              <div className={`flex items-center gap-2 border-neutral-500 ${pathname === "/personal" ? "" : "border-l px-2"}`}>
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
                   options={[
@@ -151,6 +151,7 @@ export default function Header() {
                     { id: 8, label: "奥様クラブ" },
                     { id: 9, label: "快楽玉乱堂" },
                   ]}
+                  selectedLabels={filters.clients}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
                     setFilters({
                       ...filters,
@@ -168,10 +169,10 @@ export default function Header() {
                     { id: 2, label: "飯塚" },
                     { id: 3, label: "谷" },
                     { id: 4, label: "田口" },
-                    { id: 5, label: "鎌倉" },
-                    { id: 6, label: "西谷" },
-                    { id: 7, label: "未担当" },
+                    { id: 5, label: "西谷" },
+                    { id: 6, label: "未担当" },
                   ]}
+                  selectedLabels={filters.assignees}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
                     setFilters({
                       ...filters,
@@ -192,6 +193,7 @@ export default function Header() {
                     { id: 5, label: "詳細待ち" },
                     { id: 6, label: "保留" },
                   ]}
+                  selectedLabels={filters.statuses}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
                     setFilters({
                       ...filters,

@@ -24,6 +24,7 @@ import {
   MouseSensor
 } from "@dnd-kit/core";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
+import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
 
 
@@ -39,6 +40,7 @@ export default function PersonalTaskPage() {
 
   const { user } = useAuth();
   const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
+  const { filters, setFilters } = useTaskListPreferences();
   const [unreadIds, setUnreadIds] = useState<string[]>([]);
   const { syncInvoiceWithTask } = useInvoiceSync();
 
@@ -142,6 +144,27 @@ export default function PersonalTaskPage() {
   };
 
 
+  const filteredTaskList = taskList.filter((task) => {
+    if (task.status === "削除済") return false;
+
+    const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
+    const assigneeMatch = task.manager === null || task.manager === "" || filters.assignees.length === 0 || filters.assignees.some((assignee) => {
+      if (assignee === "未担当") return task.manager === "";
+      return task.manager === assignee;
+    });
+    const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+
+    const searchMatch =
+      !filters.searchKeywords ||
+      task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+      task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+      task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+      task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+
+    return clientMatch && assigneeMatch && statusMatch && searchMatch;
+  });
+
+
   useEffect(() => {
     if (activeTask) {
       const updated = taskList.find((t) => t.id === activeTask.id);
@@ -150,11 +173,24 @@ export default function PersonalTaskPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
 
-
+  const initializedRef = useRef(false);
   useEffect(() => {
-    if (user?.unread_task_id) {
+    if (!user) return;
+    if (initializedRef.current) return;
+
+    if (user.unread_task_id) {
       setUnreadIds(user.unread_task_id);
     }
+
+    setFilters({
+      clients: [],
+      assignees: [user.name],
+      statuses: [],
+      searchKeywords: null,
+    });
+
+    initializedRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   //5秒後にタスクのハイライトを解除
@@ -195,7 +231,7 @@ export default function PersonalTaskPage() {
         >
           <PersonalTaskList
             user={user}
-            taskList={sortTask(taskList.filter((task) => task.status !== "削除済"))}
+            taskList={sortTask(filteredTaskList)}
             unreadIds={unreadIds}
             onClick={(t: Task) => {
               if (isOpen) return;

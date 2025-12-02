@@ -33,7 +33,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
       <TaskColumn
         id="InProgress"
         title="自分のタスク（未着手・作業中）"
-        tasks={sortTask(taskList).filter((task) => task.manager === user.name && task.status !== '確認中' && task.status !== '完了')}
+        tasks={sortTask(taskList).filter((task) => task.manager && task.status !== '確認中' && task.status !== '完了')}
         user={user}
         unreadIds={unreadIds}
         onClick={onClick}
@@ -46,7 +46,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
       <TaskColumn
         id="Confirm"
         title="自分のタスク（確認中）"
-        tasks={taskList.filter((task) => task.manager === user.name && task.status === '確認中')}
+        tasks={taskList.filter((task) => task.status === '確認中')}
         user={user}
         unreadIds={unreadIds}
         onClick={onClick}
@@ -60,7 +60,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         id="Completed"
         title="直近1週間の完了タスク"
         tasks={taskList.filter((task) => {
-          if (task.manager !== user.name || task.status !== '完了') return false;
+          if (task.status !== '完了') return false;
           if (!task.finish_date) return false;
 
           // finishDateを常にローカル日付として解釈

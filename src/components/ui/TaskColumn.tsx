@@ -47,6 +47,9 @@ export function TaskColumn({
           onContextMenu={onContextMenu}
           currentClickTask={currentClickTask}
           onEdit={onEdit}
+          isDraggable={
+            !task.manager || task.manager === user.name
+          }
         />
       ))}
     </div>
