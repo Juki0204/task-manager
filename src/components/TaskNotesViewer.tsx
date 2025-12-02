@@ -27,6 +27,7 @@ export default function TaskNotesViewer() {
   const [viewerType, setViewerType] = useState<"all" | "added" | "changed" | "delete">("all");
 
   const notesRef = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   const viewerHeight =
     viewerState === "single"
@@ -82,6 +83,26 @@ export default function TaskNotesViewer() {
     if (viewerState === "single") scrollToBottom();
   }, [viewerState, viewerType, notes.length]);
 
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent | WheelEvent) => {
+      const wrapper = wrapperRef.current;
+      if (!wrapper) return;
+
+      if (!wrapper.contains(e.target as Node)) {
+        setViewerState("single");
+        setTimeout(() => scrollToBottom(), 500);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("wheel", handleOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("wheel", handleOutside);
+    }
+  }, []);
+
   //ログイン前のページではレンダリングしない
   const falsePathname = ['/login', '/reset', '/signup']
   const pathname = usePathname();
@@ -93,7 +114,7 @@ export default function TaskNotesViewer() {
   return (
     <>
       {!isExculedPath && (
-        <div className="fixed bottom-4 inset-x-0 m-auto w-96/100 max-w-460 flex flex-col items-end z-50 pointer-events-none">
+        <div ref={wrapperRef} className="fixed bottom-4 inset-x-0 m-auto w-96/100 max-w-460 flex flex-col items-end z-50 pointer-events-none">
           {/* ログ一覧表切り替えボタン */}
           <div className="flex gap-4 pr-1 pointer-events-auto">
             <ul className="flex gap-0.5 items-center z-50">
@@ -111,8 +132,10 @@ export default function TaskNotesViewer() {
 
           {/* ログ一覧 */}
           <div className="w-full bg-black/50 border border-neutral-700 backdrop-blur-md rounded-md shadow-lg pl-3 pr-2 py-2 pointer-events-auto">
-            <div ref={notesRef} className={`
-              w-full overflow-y-auto text-sm
+            <div
+              ref={notesRef}
+              className={`
+              w-full overflow-y-auto text-sm transition-all duration-300
               [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
               ${viewerHeight}
             `}>
