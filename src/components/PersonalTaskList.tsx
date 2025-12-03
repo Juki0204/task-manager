@@ -25,40 +25,40 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-zinc-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-[#484850] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
       />
 
       <TaskColumn
         id="InProgress"
-        title="自分のタスク（未着手・作業中）"
+        title="未着手・作業中タスク"
         tasks={sortTask(taskList).filter((task) => task.manager && task.status !== '確認中' && task.status !== '完了')}
         user={user}
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-gray-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-[#425066] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
       />
 
       <TaskColumn
         id="Confirm"
-        title="自分のタスク（確認中）"
+        title="確認中タスク"
         tasks={taskList.filter((task) => task.status === '確認中')}
         user={user}
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-slate-700 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-[#354b4e] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
       />
 
       <TaskColumn
         id="Completed"
-        title="直近1週間の完了タスク"
+        title="完了済タスク（直近1週間）"
         tasks={taskList.filter((task) => {
           if (task.status !== '完了') return false;
           if (!task.finish_date) return false;
@@ -83,7 +83,7 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         unreadIds={unreadIds}
         onClick={onClick}
         onContextMenu={onContextMenu}
-        className="bg-slate-600 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
+        className="bg-[#4b4a3e] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
       />

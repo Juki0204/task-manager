@@ -225,7 +225,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
           <div className="h-[calc(100%-1.25rem)] pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
             {notes?.map(note => (
               <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
-                <span className="block">{new Date(note.changed_at).toLocaleDateString("sv-SE")}</span>
+                <span className="block">{new Date(note.changed_at).toLocaleString("sv-SE")}</span>
                 {note.changed_by}さんが{note.message.substring(10)}
               </p>
             ))}

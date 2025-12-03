@@ -187,17 +187,14 @@ export default function PersonalCard({
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full rounded-sm p-4 text-white tracking-wide cursor-pointer relative
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[80px_240px_500px_340px_120px_auto] group-[.rowListStyle]:py-2 hover:brightness-125`}
+        className={`${personalBg} w-full rounded-sm p-4 pl-5 text-white tracking-wide cursor-pointer relative hover:brightness-125`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}
         <div className="text-xs pb-2">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
         </div>
-        <h3 className="font-bold truncate flex items-center gap-1
-          group-[.rowListStyle]:[grid-area:ttl]
-          group-[.rowListStyle]:text-sm">
+        <h3 className="font-bold truncate flex items-center gap-1">
           {
             task.method === 'mail' ?
               <MdMailOutline />
@@ -209,9 +206,7 @@ export default function PersonalCard({
           <HighlightText text={task.title} keyword={filters.searchKeywords} />
         </h3>
 
-        <div className="w-fit flex gap-1 items-center pl-1
-          group-[.cardListStyle]:absolute group-[.cardListStyle]:top-4 group-[.cardListStyle]:right-4
-          group-[.rowListStyle]:[grid-area:status] group-[.rowListStyle]:pl-3">
+        <div className="w-fit flex gap-1 items-center pl-1 absolute top-4 right-4">
           {
             task.priority ?
               <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
@@ -221,18 +216,16 @@ export default function PersonalCard({
           <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
-        <div className="line-clamp-2 w-full text-sm
-        group-[.cardListStyle]:h-10 group-[.cardListStyle]:mb-3
-        group-[.rowListStyle]:[grid-area:dis]">
+        <div className="line-clamp-2 w-full truncate text-sm h-5 mb-2">
           <HighlightText text={task.description} keyword={filters.searchKeywords} />
         </div>
 
-        <div className="grid gap-2 text-sm grid-cols-6
+        {/* <div className="grid gap-2 text-sm grid-cols-6
         group-[.cardListStyle]:mb-2
         group-[.rowListStyle]:[grid-area:cli-mana] group-[.rowListStyle]:gap-1">
           <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《<HighlightText text={task.requester} keyword={filters.searchKeywords} />》</div>
           <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
-        </div>
+        </div> */}
 
         <div className="grid gap-2 text-sm grid-cols-6
         group-[.rowListStyle]:[grid-area:date]">
