@@ -202,20 +202,27 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
           <p>作成日時: {task.created_manager} {formatDateJST(task.created_at)}</p>
           <p>最終更新: {task.updated_manager} {formatDateJST(task.updated_at)}</p>
         </div>
-        <Button
-          onClick={onClose}
-          className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
-        >
-          閉じる
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            disabled={notes && notes.length > 0 ? false : true}
+            onClick={() => setNotesOpen(!notesOpen)}
+            className="bg-green-900 text-white rounded px-4 py-2 text-sm data-hover:bg-green-800 cursor-pointer disabled:grayscale-100 disabled:opacity-50"
+          >
+            変更履歴
+          </Button>
+          <Button
+            onClick={onClose}
+            className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
+          >
+            閉じる
+          </Button>
+        </div>
       </div>
 
       {notes && notes.length > 0 && (
-        <div onClick={() => setNotesOpen(!notesOpen)} className={`w-70 min-h-30 h-full max-h-[60svh] p-4 pr-2 bg-amber-50 rounded-br-xl absolute top-6 -z-10
-          after:content-['変更履歴'] after:font-bold after:[writing-mode:vertical-rl] after:text-sm after:leading-none after:tracking-[0.25rem] after:rounded-r-md after:bg-amber-50 after:p-2.5 after:pl-1.5 after:absolute after:top-0 after:left-full
-          transition-all duration-200 ${notesOpen ? "-right-69" : "right-0"}
-        `}>
-          <div className="h-full pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+        <div className={`w-80 h-120 bg-white p-4 pr-3 rounded-2xl absolute bottom-0 -z-10 transition-all duration-200 ${notesOpen ? "left-[calc(100%+1rem)]" : "left-0"}`}>
+          <h3 className="font-bold text-sm">変更履歴ログ</h3>
+          <div className="h-[calc(100%-1.25rem)] pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
             {notes?.map(note => (
               <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
                 <span className="block">{new Date(note.changed_at).toLocaleDateString("sv-SE")}</span>
