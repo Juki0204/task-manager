@@ -12,8 +12,6 @@ import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 
 import { FaSearch } from "react-icons/fa";
 import { LuDownload } from "react-icons/lu";
-import { exportInvoice, exportProcessingInvoice } from "@/utils/function/exportInvoice";
-
 
 
 type Filters = {
@@ -218,6 +216,7 @@ export default function InvoicePage() {
     return () => {
       supabase.removeChannel(channel);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function downloadInvoice(invoices: Invoice[], mode: "invoice" | "processing") {
@@ -292,7 +291,7 @@ export default function InvoicePage() {
 
   useEffect(() => {
     setFiteredInvoices(filteringInvoices(invoices));
-    //console.log(filteringInvoices(invoices));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortState, filters]);
 
   return (
@@ -397,7 +396,7 @@ export default function InvoicePage() {
             onClick={() => {
               handleDownload("invoice");
             }}
-            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${invoiceDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-700"}`}
+            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${invoiceDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
             <LuDownload />
             {invoiceDL ? (
@@ -411,7 +410,7 @@ export default function InvoicePage() {
             onClick={() => {
               handleDownload("processing");
             }}
-            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${processingDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-700"}`}
+            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${processingDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
             <LuDownload />
             {processingDL ? (

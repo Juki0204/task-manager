@@ -103,7 +103,7 @@ export default function EditableCombobox({
     const handleClickOutside = (e: MouseEvent) => {
       if (!editing) return;
       const el = containerRef.current;
-      const list = listRef.current;
+      // const list = listRef.current;
       const target = e.target as HTMLElement;
 
       if (el && el.contains(target)) return;
@@ -113,6 +113,7 @@ export default function EditableCombobox({
     };
     if (editing) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editing]);
 
 
@@ -252,7 +253,7 @@ export default function EditableCombobox({
             ref={listRef}
             static
             anchor="bottom start"
-            className="absolute z-10 mt-1 !max-h-60 !w-80 bg-white tracking-wider border border-gray-300 rounded-md shadow-md overflow-y-auto
+            className="absolute z-10 mt-1 !max-h-90 !w-70 text-sm bg-white tracking-wider border border-gray-300 rounded-md shadow-md overflow-y-auto
               [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
           >
             {filteredOptions.length > 0 ? (

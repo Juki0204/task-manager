@@ -43,7 +43,7 @@ body {
     margin: auto;
     z-index: -1;
     /* border-radius: 12px; */
-    background: #262626;
+    background: #2d2d2d;
   }
 
   &::after{
@@ -87,13 +87,11 @@ body {
     margin: auto;
     z-index: -1;
     /* border-radius: 12px; */
-    background: #262626;
+    background: #2d2d2d;
   }
 
   &.inprogress {
     padding: 4px;
-    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
-    filter: brightness(1.2);
 
     &::before{
       width: calc(100% - 2px);
@@ -185,25 +183,37 @@ body {
 /* personal colors */
 
 .taniBorder.inprogress {background:rgb(175, 77, 118)}
-.taniBg {background:conic-gradient(rgb(175, 77, 144)) no-repeat 0 50% / 5px 100%, rgba(175, 77, 144, .15)}
+.taniBg {background:conic-gradient(rgb(175, 77, 144)) no-repeat 0 50% / 5px 100%, rgba(175, 77, 144, .18)}
 
 .iiBorder.inprogress {background:rgb(50, 127, 67)}
-.iiBg {background:conic-gradient(rgb(50, 127, 67)) no-repeat 0 50% / 5px 100%, rgba(50, 127, 67, .15)}
+.iiBg {background:conic-gradient(rgb(50, 127, 67)) no-repeat 0 50% / 5px 100%, rgba(50, 127, 67, .18)}
 
 .hamaBorder.inprogress {background:rgb(161, 122, 29)}
-.hamaBg {background:conic-gradient(rgb(161, 122, 29)) no-repeat 0 50% / 5px 100%, rgba(161, 122, 29, .15)}
+.hamaBg {background:conic-gradient(rgb(161, 122, 29)) no-repeat 0 50% / 5px 100%, rgba(161, 122, 29, .18)}
 
 .taguBorder.inprogress {background:rgb(165, 39, 39)}
-.taguBg {background:conic-gradient(rgb(165, 39, 39)) no-repeat 0 50% / 5px 100%, rgba(165, 39, 39, .15)}
-
-/* .kamaBorder {background:rgb(39, 125, 165)}
-.kamaBg {background:rgba(39, 125, 165, .15)} */
+.taguBg {background:conic-gradient(rgb(165, 39, 39)) no-repeat 0 50% / 5px 100%, rgba(165, 39, 39, .18)}
 
 .nishiBorder.inprogress {background:rgb(109, 66, 207)}
-.nishiBg {background:conic-gradient(rgb(109, 66, 207)) no-repeat 0 50% / 5px 100%, rgba(109, 66, 207, .15)}
+.nishiBg {background:conic-gradient(rgb(109, 66, 207)) no-repeat 0 50% / 5px 100%, rgba(109, 66, 207, .18)}
 
-.defaultBrder.inprogress {background:rgb(55, 55, 55)}
-.defaultBg  {background:conic-gradient(rgb(55, 55, 55)) no-repeat 0 50% / 5px 100%, rgba(55, 55, 55, .15)}
+.defaultBrder.inprogress {background:rgb(77, 77, 77)}
+.defaultBg  {background:conic-gradient(rgb(77, 77, 77)) no-repeat 0 50% / 5px 100%, rgba(77, 77, 77, .18)}
+
+
+.inprogress{
+  & .taniBg {background:conic-gradient(rgb(175, 77, 144)) no-repeat 0 50% / 5px 100%, rgba(175, 77, 144, .35)}
+
+  & .iiBg {background:conic-gradient(rgb(50, 127, 67)) no-repeat 0 50% / 5px 100%, rgba(50, 127, 67, .35)}
+
+  & .hamaBg {background:conic-gradient(rgb(161, 122, 29)) no-repeat 0 50% / 5px 100%, rgba(161, 122, 29, .35)}
+
+  & .taguBg {background:conic-gradient(rgb(165, 39, 39)) no-repeat 0 50% / 5px 100%, rgba(165, 39, 39, .35)}
+
+  & .nishiBg {background:conic-gradient(rgb(109, 66, 207)) no-repeat 0 50% / 5px 100%, rgba(109, 66, 207, .35)}
+
+  & .defaultBg  {background:conic-gradient(rgb(77, 77, 77)) no-repeat 0 50% / 5px 100%, rgba(77, 77, 77, .35)}
+}
 
 
 .release-note-modal {

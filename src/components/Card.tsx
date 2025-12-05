@@ -25,6 +25,7 @@ interface CardPropd {
   onEdit: (t: Task) => void;
 }
 
+
 export default function Card({ task, user, unreadIds, importantIds, handleImportantTask, onClick, onContextMenu, onEdit, ...props }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
@@ -35,65 +36,58 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
 
+  const managerStyles: Record<string, { border: string; bg: string; }> = {
+    "谷": { border: "taniBorder", bg: "taniBg" },
+    "飯塚": { border: "iiBorder", bg: "iiBg" },
+    "浜口": { border: "hamaBorder", bg: "hamaBg" },
+    "田口": { border: "taguBorder", bg: "taguBg" },
+    "西谷": { border: "nishiBorder", bg: "nishiBg" },
+  } as const;
+
   function definePersonalColor(manager: string) {
-    if (manager === '谷') {
-      setPersonalBorder('taniBorder');
-      setPersonalBg('taniBg');
-    } else if (manager === '飯塚') {
-      setPersonalBorder('iiBorder');
-      setPersonalBg('iiBg');
-    } else if (manager === '浜口') {
-      setPersonalBorder('hamaBorder');
-      setPersonalBg('hamaBg');
-    } else if (manager === '田口') {
-      setPersonalBorder('taguBorder');
-      setPersonalBg('taguBg');
-    } else if (manager === '鎌倉') {
-      setPersonalBorder('kamaBorder');
-      setPersonalBg('kamaBg');
-    } else if (manager === '西谷') {
-      setPersonalBorder('nishiBorder');
-      setPersonalBg('nishiBg');
-    } else {
-      setPersonalBorder('defaultBorder');
-      setPersonalBg('defaultBg');
+    const style = managerStyles[manager] ?? {
+      border: "defaultBorder",
+      bg: "defaultBg",
+    };
+
+    setPersonalBorder(style.border);
+    setPersonalBg(style.bg);
+  }
+
+  const priorityStyles: Record<string, string> = {
+    "急": "bg-red-300 text-red-800",
+    "高": "bg-orange-300 text-orange-800",
+    "低": "bg-emerald-300 text-emerald-800",
+  } as const;
+
+  function definePriorityStyle(priority: string | null) {
+    if (priority) {
+      const style = priorityStyles[priority] ?? ""
+      setPriorityStyle(style);
     }
   }
 
-  function definePriorityStyle(priority: string | null) {
-    if (priority === '急') {
-      setPriorityStyle('bg-red-300 text-red-800');
-    } else if (priority === '高') {
-      setPriorityStyle('bg-orange-300 text-orange-800');
-    } else if (priority === '低') {
-      setPriorityStyle('bg-emerald-300 text-emerald-800');
-    }
+  const statusStyles: Record<string, string> = {
+    "未着手": "bg-neutral-300 text-neutral-800",
+    "作業中": "bg-blue-300 text-blue-800",
+    "作業途中": "bg-blue-200 text-blue-800",
+    "確認中": "bg-pink-300 text-pink-800",
+    "完了": "bg-green-300 text-green-800",
+    "保留": "bg-yellow-300 text-yellow-800",
+    "中止": "bg-neutral-600 text-neutral-200",
+    "詳細待ち": "bg-neutral-500 text-neutral-200",
   }
 
   function defineStatusStyle(status: string) {
-    if (status === '未着手') {
-      setStatusStyle('bg-neutral-300 text-neutral-800');
-    } else if (status === '作業中') {
-      setStatusStyle('bg-blue-300 text-blue-800');
-    } else if (status === '作業途中') {
-      setStatusStyle('bg-blue-200 text-blue-800');
-    } else if (status === '確認中') {
-      setStatusStyle('bg-pink-300 text-pink-800');
-    } else if (status === '完了') {
-      setStatusStyle('bg-green-300 text-green-800');
-    } else if (status === '保留') {
-      setStatusStyle('bg-yellow-300 text-yellow-800');
-    } else if (status === '中止') {
-      setStatusStyle('bg-neutral-600 text-neutral-200');
-    } else if (status === '詳細待ち') {
-      setStatusStyle('bg-neutral-500 text-neutral-200');
-    }
+    const style = statusStyles[status];
+    setStatusStyle(style);
   }
 
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status);
     definePersonalColor(task.manager ? task.manager : "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
 
 
@@ -151,15 +145,14 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} group-[.cardListStyle]:rounded-md min-w-[1868px]`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} min-w-[1868px] shadow-xs shadow-black/30`}>
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative group-[.cardListStyle]:rounded-sm group-[.cardListStyle]:h-full
-        group-[.rowListStyle]:grid group-[.rowListStyle]:[grid-template-areas:'id_ttl_dis_cli-mana_status_date'] group-[.rowListStyle]:items-center group-[.rowListStyle]:grid-cols-[110px_280px_600px_360px_120px_auto] group-[.rowListStyle]:py-2 hover:brightness-150`}
+        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_ttl_dis_cli-mana_status_date'] items-center grid-cols-[110px_280px_600px_360px_120px_auto] py-2 hover:brightness-150`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (

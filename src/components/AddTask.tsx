@@ -1,25 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { DialogTitle, Button, Field, Input } from "@headlessui/react";
+import { DialogTitle, Button, Field } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
-import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskForm";
+import { AddTaskInput, AddTaskSelect } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
 import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline } from "react-icons/md";
-import { IoPersonAddOutline, IoDocumentAttachOutline } from "react-icons/io5";
+import { IoPersonAddOutline } from "react-icons/io5";
 import { BsPersonCheck } from "react-icons/bs";
 import { TbClockExclamation } from "react-icons/tb";
 import { LuNotebookPen } from "react-icons/lu";
 
-import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
-import { compareHistory } from "@/utils/function/comparHistory";
-import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
 
 
@@ -210,7 +207,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
     if (error) console.error(error);
 
 
-    const taskId = taskData.id;
+    // const taskId = taskData.id;
     // await uploadTaskFiles(taskId, uploadedFiles);
 
     setTimeout(() => {

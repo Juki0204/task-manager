@@ -64,35 +64,35 @@ export default function Header() {
           <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
             <div className="flex gap-2 flex-1">
               <Button
-                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/" ? "bg-sky-700" : "bg-slate-500 cursor-pointer"}`}
+                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
                 onClick={() => router.push('/')}
               >
                 <RiTeamFill />全体タスク
               </Button>
 
               <Button
-                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/personal" ? "bg-sky-700" : "bg-slate-500 cursor-pointer"}`}
+                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/personal" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
                 onClick={() => router.push('/personal')}
               >
                 <IoPerson />個人タスク
               </Button>
 
               <Button
-                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/complete" ? "bg-sky-700" : "bg-slate-500 cursor-pointer"}`}
+                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/complete" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
                 onClick={() => router.push('/complete')}
               >
                 <FaRegCalendarCheck />完了済タスク
               </Button>
 
               <Button
-                className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-red-800 ${pathname === "/trash" ? "bg-red-800" : "bg-[#994b4b] cursor-pointer"}`}
+                className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-red-500/50 ${pathname === "/trash" ? "bg-red-500/50" : "bg-[#994b4b] cursor-pointer"}`}
                 onClick={() => router.push('/trash')}
               >
                 <FaRegTrashAlt />
               </Button>
 
               <Button
-                className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-sky-700 ${pathname === "/setting" ? "bg-sky-700" : "bg-slate-600 cursor-pointer"}`}
+                className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/setting" ? "bg-blue-500/50" : "bg-slate-600 cursor-pointer"}`}
                 onClick={() => router.push('/setting')}
               >
                 <FaGear />
@@ -100,7 +100,7 @@ export default function Header() {
 
               <div className="border-l border-neutral-500 px-2 flex">
                 <Button
-                  className={`flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:bg-purple-700 ${pathname === "/invoice" ? "bg-purple-700" : "bg-slate-500 cursor-pointer"}`}
+                  className={`flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:bg-purple-500/50 ${pathname === "/invoice" ? "bg-purple-500/50" : "bg-slate-500 cursor-pointer"}`}
                   onClick={() => router.push('/invoice')}
                 >
                   <IoReceipt />請求一覧
@@ -137,7 +137,7 @@ export default function Header() {
             )}
 
             {pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
-              <div className={`flex items-center gap-2 border-neutral-500 ${pathname === "/personal" ? "" : "border-l px-2"}`}>
+              <div className={`flex items-center gap-2 border-neutral-500 ${pathname === "/personal" || pathname === "/complete" || pathname === "/trash" ? "" : "border-l px-2"}`}>
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
                   options={[

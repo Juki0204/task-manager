@@ -1,7 +1,6 @@
 import { Task } from "@/utils/types/task";
 import { TaskColumn } from "./ui/TaskColumn";
 import { User } from "@/utils/types/user";
-import { useState } from "react";
 
 interface PersonalTaskListProps {
   taskList: Task[];
@@ -12,9 +11,26 @@ interface PersonalTaskListProps {
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   currentClickTask: string | null;
   onEdit: (t: Task) => void;
+  draggingTaskId: string | null;
+  draggingTaskPrevIndex: number | null;
+  flyAnimationRef: React.RefObject<((taskId: string) => void) | null>;
+  lastDropRef: React.RefObject<{ x: number, y: number } | null>;
 }
 
-export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, onClick, onContextMenu, currentClickTask, onEdit }: PersonalTaskListProps) {
+export default function PersonalTaskList({
+  taskList,
+  user,
+  unreadIds,
+  sortTask,
+  onClick,
+  onContextMenu,
+  currentClickTask,
+  onEdit,
+  draggingTaskId,
+  draggingTaskPrevIndex,
+  flyAnimationRef,
+  lastDropRef,
+}: PersonalTaskListProps) {
   return (
     <div className="pb-4 grid grid-cols-4 gap-2 min-w-[1868px]">
       <TaskColumn
@@ -28,6 +44,10 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         className="bg-[#484850] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
+        draggingTaskId={draggingTaskId}
+        draggingTaskPrevIndex={draggingTaskPrevIndex}
+        flyAnimationRef={flyAnimationRef}
+        lastDropRef={lastDropRef}
       />
 
       <TaskColumn
@@ -41,6 +61,10 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         className="bg-[#425066] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
+        draggingTaskId={draggingTaskId}
+        draggingTaskPrevIndex={draggingTaskPrevIndex}
+        flyAnimationRef={flyAnimationRef}
+        lastDropRef={lastDropRef}
       />
 
       <TaskColumn
@@ -54,6 +78,10 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         className="bg-[#354b4e] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
+        draggingTaskId={draggingTaskId}
+        draggingTaskPrevIndex={draggingTaskPrevIndex}
+        flyAnimationRef={flyAnimationRef}
+        lastDropRef={lastDropRef}
       />
 
       <TaskColumn
@@ -86,6 +114,10 @@ export default function PersonalTaskList({ taskList, user, unreadIds, sortTask, 
         className="bg-[#4b4a3e] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]"
         currentClickTask={currentClickTask}
         onEdit={onEdit}
+        draggingTaskId={draggingTaskId}
+        draggingTaskPrevIndex={draggingTaskPrevIndex}
+        flyAnimationRef={flyAnimationRef}
+        lastDropRef={lastDropRef}
       />
 
     </div>

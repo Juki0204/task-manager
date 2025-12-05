@@ -16,6 +16,10 @@ interface TaskColumnProps {
   className: string;
   currentClickTask: string | null;
   onEdit: (t: Task) => void;
+  draggingTaskId: string | null;
+  draggingTaskPrevIndex: number | null;
+  flyAnimationRef: React.RefObject<((taskId: string) => void) | null>;
+  lastDropRef: React.RefObject<{ x: number, y: number } | null>;
 }
 
 export function TaskColumn({
@@ -28,7 +32,11 @@ export function TaskColumn({
   onContextMenu,
   className,
   currentClickTask,
-  onEdit
+  onEdit,
+  draggingTaskId,
+  draggingTaskPrevIndex,
+  flyAnimationRef,
+  lastDropRef,
 }: TaskColumnProps) {
   const { setNodeRef } = useDroppable({ id });
 
@@ -36,7 +44,7 @@ export function TaskColumn({
     <div ref={setNodeRef} className={className}>
       <h2 className="font-bold text-white p-1 text-center">{title}</h2>
 
-      {tasks.map(task => (
+      {tasks.map((task, index) => (
         <PersonalCard
           user={user}
           key={task.id}
@@ -50,6 +58,11 @@ export function TaskColumn({
           isDraggable={
             !task.manager || task.manager === user.name
           }
+          draggingTaskId={draggingTaskId}
+          draggingTaskPrevIndex={draggingTaskPrevIndex}
+          index={index}
+          flyAnimationRef={flyAnimationRef}
+          lastDropRef={lastDropRef}
         />
       ))}
     </div>

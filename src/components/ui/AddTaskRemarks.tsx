@@ -7,9 +7,6 @@ import { Markdown } from "@tiptap/markdown";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import Placeholder from "@tiptap/extension-placeholder";
-import Link from "@tiptap/extension-link";
-import { TextStyleKit } from '@tiptap/extension-text-style';
-import Color from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 
 import { useState } from "react";
@@ -30,6 +27,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
+        link: { openOnClick: true },
       }),
       Markdown,
       TaskList,
@@ -37,9 +35,6 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
       Placeholder.configure({
         placeholder: "備考を入力（MarkDown対応）",
       }),
-      Link.configure({ openOnClick: true }),
-      TextStyleKit,
-      Color.configure({ types: ["textStyle"] }),
       Highlight.configure({ multicolor: true }),
     ],
     content: value || "",
@@ -60,16 +55,6 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
   const [showBgColor, setShowBgColor] = useState<boolean>(false);
   const [showLinkInput, setShowLinkInput] = useState<boolean>(false);
   const [linkUrl, setLinkUrl] = useState("");
-
-  const colors = [
-    "#000000",
-    "#e11d48",
-    "#2563eb",
-    "#16a34a",
-    "#f59e0b",
-    "#6366f1",
-    "#d946ef",
-  ];
 
   const [selectedIcon, setSelectedIcon] = useState<"image" | "link" | "mail" | null>(null);
 

@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900 m-0 w-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#222222] m-0 w-full`}
       >
         <VersionCheckProvider>
           <AuthProvider>

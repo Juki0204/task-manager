@@ -44,6 +44,11 @@ export default function PersonalTaskPage() {
   const [unreadIds, setUnreadIds] = useState<string[]>([]);
   const { syncInvoiceWithTask } = useInvoiceSync();
 
+  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
+  const lastDropRef = useRef<{ x: number, y: number } | null>(null);
+  const flyAnimationRef = useRef<null | ((taskId: string) => void)>(null);
+  const [draggingTaskPrevIndex, setDraggingTaskPrevIndex] = useState<number | null>(null);
+
   const [menu, setMenu] = useState<{
     visible: boolean,
     x: number,
@@ -91,18 +96,24 @@ export default function PersonalTaskPage() {
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
+
     const fromContainer = active.data.current?.data.containerId as string | undefined;
+
     setActiveContainerId(fromContainer ?? null);
-    setCurrentClickTask(String(active.id));
+    setCurrentClickTask(active.id as string);
+
+    setDraggingTaskId(active.id as string);
     setIsDragging(true);
+
+    const idx = taskList.findIndex((t) => t.id === active.id);
+    setDraggingTaskPrevIndex(idx);
   }
 
   const handleDragEnd = async (event: DragEndEvent) => {
     setIsDragging(false);
 
     const { over, active } = event;
-    if (!user) return;
-    if (!over) return;
+    if (!user || !over) return;
 
     if (active.id !== over.id) {
       const taskId = active.id as string;
@@ -124,7 +135,17 @@ export default function PersonalTaskPage() {
       const alt = newStatus === "NotYetStarted" ? { manager: null }
         : { manager: user.name }
 
-      //console.log(newStatus, prevStatus);
+      //dnd-kit が計算した "現在地の絶対座標"
+      const rect = active.rect.current.translated;
+      lastDropRef.current = { x: rect?.left ?? 0, y: rect?.top ?? 0 };
+
+      // ★ 1フレーム後にカードへ命令を送る
+      requestAnimationFrame(() => {
+        if (flyAnimationRef.current) {
+          flyAnimationRef.current(active.id as string);
+        }
+      });
+
       await updateTaskStatus(taskId, formatNewStatus, prevStatus, alt);
       await syncInvoiceWithTask(taskId, formatNewStatus);
     }
@@ -251,6 +272,10 @@ export default function PersonalTaskPage() {
               setModalType("edit");
               setIsOpen(true);
             }}
+            draggingTaskId={draggingTaskId}
+            draggingTaskPrevIndex={draggingTaskPrevIndex}
+            flyAnimationRef={flyAnimationRef}
+            lastDropRef={lastDropRef}
           />
         </DndContext>}
 

@@ -357,7 +357,7 @@ export default function PriceSetting() {
                                 },
                               }))
                             }
-                            className="col-span-1 bg-red-700 p-1 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
+                            className="col-span-1 bg-red-800/80 p-1 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
                           >
                             リセット
                           </Button>
@@ -489,7 +489,7 @@ export default function PriceSetting() {
                                 },
                               }))
                             }
-                            className="col-span-1 bg-red-700 p-1 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
+                            className="col-span-1 bg-red-800/80 p-1 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
                           >
                             リセット
                           </Button>

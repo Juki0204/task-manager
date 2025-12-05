@@ -222,7 +222,7 @@ function SortableRequesterItem({ item, deleteRequester }: SrotableRequesterItemP
       <span>{item.name}</span>
       <Button
         onClick={() => deleteRequester(item.id)}
-        className="bg-red-700 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
+        className="bg-red-800/80 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
       >
         削除
       </Button>

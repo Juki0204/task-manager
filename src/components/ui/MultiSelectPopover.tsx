@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
 
@@ -12,7 +12,6 @@ interface MultiSelectPopoverProps {
 }
 
 export default function MultiSelectPopover({ options, selectedLabels, onChange, defaultText }: MultiSelectPopoverProps) {
-  const [selected, setSelected] = useState<number[]>([]);
 
   return (
     <div className="w-46">

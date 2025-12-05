@@ -141,7 +141,7 @@ export default function SortablePriceItem({
       {/* ----- 削除ボタン ----- */}
       <Button
         onClick={() => deletePrice(item.id)}
-        className="col-span-1 bg-red-700 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
+        className="col-span-1 bg-red-800/80 px-2 rounded-md text-white text-sm cursor-pointer hover:opacity-60"
       >
         削除
       </Button>

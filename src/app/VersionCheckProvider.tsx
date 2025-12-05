@@ -67,6 +67,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     } else {
       //console.log("バージョンは最新です");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, CURRENT_APP_VERSION]);
 
   //再ログイン

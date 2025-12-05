@@ -37,34 +37,33 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
   const [notes, setNotes] = useState<TaskNote[] | null>([]);
   const [notesOpen, setNotesOpen] = useState<boolean>(false);
 
+  const priorityStyles: Record<string, string> = {
+    "急": "bg-red-300 text-red-800",
+    "高": "bg-orange-300 text-orange-800",
+    "低": "bg-emerald-300 text-emerald-800",
+  } as const;
+
   function definePriorityStyle(priority: string | null) {
-    if (priority === '急') {
-      setPriorityStyle('bg-red-300 text-red-800');
-    } else if (priority === '高') {
-      setPriorityStyle('bg-orange-300 text-orange-800');
-    } else if (priority === '低') {
-      setPriorityStyle('bg-emerald-300 text-emerald-800');
+    if (priority) {
+      const style = priorityStyles[priority] ?? ""
+      setPriorityStyle(style);
     }
   }
 
+  const statusStyles: Record<string, string> = {
+    "未着手": "bg-neutral-300 text-neutral-800",
+    "作業中": "bg-blue-300 text-blue-800",
+    "作業途中": "bg-blue-200 text-blue-800",
+    "確認中": "bg-pink-300 text-pink-800",
+    "完了": "bg-green-300 text-green-800",
+    "保留": "bg-yellow-300 text-yellow-800",
+    "中止": "bg-neutral-600 text-neutral-200",
+    "詳細待ち": "bg-neutral-500 text-neutral-200",
+  }
+
   function defineStatusStyle(status: string) {
-    if (status === '未着手') {
-      setStatusStyle('bg-neutral-300 text-neutral-800');
-    } else if (status === '作業中') {
-      setStatusStyle('bg-blue-300 text-blue-800');
-    } else if (status === '作業途中') {
-      setStatusStyle('bg-blue-200 text-blue-800');
-    } else if (status === '確認中') {
-      setStatusStyle('bg-pink-300 text-pink-800');
-    } else if (status === '完了') {
-      setStatusStyle('bg-green-300 text-green-800');
-    } else if (status === '保留') {
-      setStatusStyle('bg-yellow-300 text-yellow-800');
-    } else if (status === '中止') {
-      setStatusStyle('bg-neutral-600 text-neutral-200');
-    } else if (status === '詳細待ち') {
-      setStatusStyle('bg-neutral-500 text-neutral-200');
-    }
+    const style = statusStyles[status];
+    setStatusStyle(style);
   }
 
   function formatDateJST(dateString: string): string {
@@ -99,7 +98,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
 
   //変更履歴ログの取得
   const getFixedNotes = async () => {
-    const { data: notes, error: notesError } = await supabase
+    const { data: notes } = await supabase
       .from("task_notes")
       .select("*")
       .eq("task_serial", task.serial);
@@ -113,6 +112,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status)
     getFixedNotes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
 
 
@@ -206,7 +206,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
           <Button
             disabled={notes && notes.length > 0 ? false : true}
             onClick={() => setNotesOpen(!notesOpen)}
-            className="bg-green-900 text-white rounded px-4 py-2 text-sm data-hover:bg-green-800 cursor-pointer disabled:grayscale-100 disabled:opacity-50"
+            className="bg-green-900/80 text-white rounded px-4 py-2 text-sm data-hover:bg-green-800 cursor-pointer disabled:grayscale-100 disabled:opacity-50"
           >
             変更履歴
           </Button>
