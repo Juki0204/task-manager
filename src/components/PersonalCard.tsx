@@ -12,6 +12,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
 import HighlightText from "./ui/HighlightText";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
+import { FaRegBuilding } from "react-icons/fa6";
 
 interface CardPropd {
   task: Task;
@@ -62,6 +63,19 @@ export default function PersonalCard({
 
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
+
+  const clientList: Record<string, string> = {
+    "難波秘密倶楽部": "難波",
+    "新大阪秘密倶楽部": "新大阪",
+    "谷町秘密倶楽部": "谷町",
+    "谷町人妻ゴールデン": "谷G",
+    "梅田人妻秘密倶楽部": "梅田",
+    "梅田ゴールデン": "梅G",
+    "中洲秘密倶楽部": "中州",
+    "快楽玉乱堂": "玉乱堂",
+    "奥様クラブ": "奥様",
+    "シードライブ": "ｼｰﾄﾞﾗ",
+  }
 
   //カードアニメーション（戻る・飛ぶ）
   useLayoutEffect(() => {
@@ -238,7 +252,7 @@ export default function PersonalCard({
       {...attributes}
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border after:rounded-md before:rounded-md" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-md min-w-90 drop-shadow-md drop-shadow-gray-950/30 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
+      className={`${task.locked_by_id ? "rolling-border after:rounded-md before:rounded-md" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-md min-w-90 drop-shadow-md drop-shadow-gray-950/30 hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
 
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
 
@@ -249,11 +263,11 @@ export default function PersonalCard({
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full rounded-sm p-4 pl-5 text-white tracking-wide cursor-pointer relative hover:brightness-125`}
+        className={`${personalBg} w-full rounded-sm p-3 pl-4 text-white tracking-wide cursor-pointer relative`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}
-        <div className="text-xs pb-2">
+        <div className="text-sm leading-6 pb-1.5">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
         </div>
         <h3 className="font-bold truncate flex items-center gap-1">
@@ -268,7 +282,7 @@ export default function PersonalCard({
           <HighlightText text={task.title} keyword={filters.searchKeywords} />
         </h3>
 
-        <div className="w-fit flex gap-1 items-center pl-1 absolute top-4 right-4">
+        <div className="w-fit flex gap-1 items-center pl-1 absolute top-3 right-3">
           {
             task.priority ?
               <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
@@ -289,10 +303,12 @@ export default function PersonalCard({
           <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div> */}
 
-        <div className="grid gap-2 text-sm grid-cols-6
-        group-[.rowListStyle]:[grid-area:date]">
-          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.request_date}</div>
-          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
+        <div className="p-2 rounded-md overflow-hidden relative before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
+          <div className="grid gap-2 text-sm grid-cols-6">
+            <div className="col-span-2 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 《<HighlightText text={task.requester} keyword={filters.searchKeywords} />》</div>
+            <div className="col-span-2 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>
+            <div className="col-span-2 flex gap-1 items-center"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
+          </div>
         </div>
       </div>
     </div>

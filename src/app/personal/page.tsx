@@ -9,6 +9,7 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Task } from "@/utils/types/task";
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
+import CopyTask from "@/components/CopyTask";
 import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "../AuthProvider";
 import ContextMenu from "@/components/ui/ContextMenu";
@@ -29,7 +30,7 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 
 
 export default function PersonalTaskPage() {
-  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
+  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeContainerId, setActiveContainerId] = useState<string | null>(null);
@@ -311,6 +312,9 @@ export default function PersonalTaskPage() {
             {modalType === "edit" && activeTask && user && (
               <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
             )}
+            {modalType === "copy" && activeTask && user && (
+              <CopyTask user={user} task={activeTask} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}></CopyTask>
+            )}
           </DialogPanel>
         </div>
       </Dialog>
@@ -323,6 +327,13 @@ export default function PersonalTaskPage() {
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
           updateTaskStatus={updateTaskStatus}
+          onCopyTask={(t) => {
+            if (isOpen) return;
+
+            setActiveTask(t);
+            setModalType('copy');
+            setIsOpen(true);
+          }}
         />
       )}
     </div>
