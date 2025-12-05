@@ -131,36 +131,36 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   return (
     <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2400px] box-border">
       <div className="grid grid-cols-[40px_90px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
-        <div className="border border-neutral-700 p-1 bg-neutral-100 sticky left-0">確認</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-10 z-20">No.</div>
-        <div className={`border border-l-0 border-neutral-700 p-1 sticky left-32.5 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
+        <div className="border border-neutral-600 p-1 bg-neutral-100 sticky left-0">確認</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-10 z-20">No.</div>
+        <div className={`border border-l-0 border-neutral-600 p-1 sticky left-32.5 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
           クライアント
           {sortState === "byClient" && <FaSortAmountDownAlt className="absolute top-1/2 -translate-y-1/2 right-2" />}
           {sortState === "byClientRev" && <FaSortAmountDown className="absolute top-1/2 -translate-y-1/2 right-2" />}
         </div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-82.5 z-20">作業タイトル</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100 sticky left-142.5 z-20" id="standardPosition">作業内容</div>
-        <div className={`border border-l-0 border-neutral-700 p-1 ${sortState === "byDate" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-82.5 z-20">作業タイトル</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-142.5 z-20" id="standardPosition">作業内容</div>
+        <div className={`border border-l-0 border-neutral-600 p-1 ${sortState === "byDate" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
           完了日 {sortState === "byDate" && <FaSortAmountDownAlt className="absolute top-1/2 -translate-y-1/2 right-2" />}
         </div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">担当者</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">大カテゴリ</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">中カテゴリ</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">小カテゴリ</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">点数</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">修正度</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">仮請求額</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">修正金額</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">本請求額</div>
-        <div className="border border-l-0 border-neutral-700 p-1 bg-neutral-100">備考欄</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">担当者</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">大カテゴリ</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">中カテゴリ</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">小カテゴリ</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">点数</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">修正度</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">仮請求額</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">修正金額</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">本請求額</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100">備考欄</div>
       </div>
       {invoices &&
         invoices.map((i, index) => (
-          <div key={i.id} className="grid grid-cols-[40px_90px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-700 text-sm">
-            <div className={`grid place-content-center border border-t-0 border-neutral-700 min-h-9 p-2 sticky left-0 z-20 hover:bg-neutral-700 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-10 z-20 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.serial}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 sticky left-32.5 z-20 ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.client}《{i.requester}》</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-82.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+          <div key={i.id} className="grid grid-cols-[40px_90px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-600 text-sm">
+            <div className={`grid place-content-center border border-t-0 border-neutral-600 min-h-9 p-2 sticky left-0 z-20 hover:bg-neutral-600 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 p-2 sticky left-10 z-20 text-center ${index % 2 === 1 ? "bg-slate-800" : "bg-slate-700/80"}`}>{i.serial}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 p-2 sticky left-32.5 z-20 ${index % 2 === 1 ? "bg-slate-800" : "bg-slate-700/80"}`}>{i.client}《{i.requester}》</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 sticky left-82.5 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableCell
                 recordId={i.id}
                 field="title"
@@ -173,7 +173,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 sticky left-142.5 z-20 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 sticky left-142.5 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableCell
                 recordId={i.id}
                 field="description"
@@ -186,7 +186,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 text-center ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 text-center ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableCell
                 recordId={i.id}
                 field="finish_date"
@@ -200,9 +200,9 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.manager}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.category ?? "-"}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 text-center ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-800" : "bg-slate-700/80"}`}>{i.manager}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 p-2 text-center ${index % 2 === 1 ? "bg-slate-800" : "bg-slate-700/80"}`}>{i.category ?? "-"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 text-center ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableSelect
                 recordId={i.id}
                 field="device"
@@ -216,7 +216,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableCombobox
                 recordId={i.id}
                 field="work_name"
@@ -230,7 +230,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableCell
                 className="text-center"
                 recordId={i.id}
@@ -245,7 +245,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableSelect
                 recordId={i.id}
                 field="degree"
@@ -260,8 +260,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.amount ?? "0"}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-800" : "bg-slate-700/80"}`}>{i.amount ?? "0"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableCell
                 className="text-right"
                 recordId={i.id}
@@ -276,8 +276,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-900" : "bg-slate-800"}`}>{i.total_amount ?? "0"}</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-700 min-h-9 ${index % 2 === 1 ? "bg-neutral-900" : "bg-neutral-800"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 p-2 text-right ${index % 2 === 1 ? "bg-slate-800" : "bg-slate-700/80"}`}>{i.total_amount ?? "0"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 ${index % 2 === 1 ? "bg-neutral-800" : "bg-neutral-700/80"}`}>
               <EditableCell
                 recordId={i.id}
                 field="remarks"

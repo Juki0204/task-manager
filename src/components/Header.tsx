@@ -10,9 +10,10 @@ import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 
 import { RiTeamFill } from "react-icons/ri";
-import { IoPerson, IoReceipt } from "react-icons/io5";
+import { IoFlag, IoPerson, IoReceipt } from "react-icons/io5";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
+import { MdPlace } from "react-icons/md";
 
 
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
@@ -28,6 +29,17 @@ export default function Header() {
   const [currentUserName, setCurrentUserName] = useState<string>('');
   // const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
   // const [currentUserEmployee, setCurrentUserEmployee] = useState<string>('');
+
+  const pageIndex: Record<string, string> = {
+    "/": "全体タスク一覧",
+    "/personal": "個人タスク一覧",
+    "/complete": "完了タスク一覧",
+    "/important": "重要タスク一覧",
+    "/trash": "削除済タスク一覧",
+    "/setting": "各種設定",
+    "/invoice": "請求データ一覧",
+    "/release-notes": "リリースノート一覧"
+  }
 
   const {
     //taskListStyle,
@@ -45,7 +57,6 @@ export default function Header() {
       // setCurrentUserEmployee(user.employee);
     }
   }
-
 
   useEffect(() => {
     setCurrentUser();
@@ -85,6 +96,13 @@ export default function Header() {
               </Button>
 
               <Button
+                className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-red-500/50 ${pathname === "/important" ? "bg-red-500/50" : "bg-[#994b4b] cursor-pointer"}`}
+                onClick={() => router.push('/important')}
+              >
+                <IoFlag />
+              </Button>
+
+              <Button
                 className={`rounded w-10 grid place-content-center p-2 text-sm text-white font-bold data-hover:bg-red-500/50 ${pathname === "/trash" ? "bg-red-500/50" : "bg-[#994b4b] cursor-pointer"}`}
                 onClick={() => router.push('/trash')}
               >
@@ -108,6 +126,7 @@ export default function Header() {
               </div>
             </div>
             <div className="sm:flex gap-4 rounded-md items-center">
+              <div className="flex gap-1 items-center py-2 pl-4 pr-6 text-sm tracking-wider rounded-md bg-black/20 text-white"><MdPlace />{pageIndex[pathname]}</div>
               <p className="text-white flex items-center gap-2"><FaUserCircle />{currentUserName} さん</p>
               {/* <p className="text-white">所属：{currentUserEmployee}</p>
             <p className="text-white">Email：{currentUserEmail}</p> */}
@@ -127,17 +146,19 @@ export default function Header() {
             )} */}
 
             {pathname === "/" && (
-              <select
-                value={taskListSortType}
-                onChange={(e) => setTaskListSortType(e.target.value as TaskListSortType)}
-                className="w-fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
-                <option value='byDate'>日付順ソート</option>
-                <option value='byManager'>担当者順ソート</option>
-              </select>
+              <div className="pr-2 border-r border-neutral-500">
+                <select
+                  value={taskListSortType}
+                  onChange={(e) => setTaskListSortType(e.target.value as TaskListSortType)}
+                  className={`fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
+                  <option value='byDate'>日付順ソート</option>
+                  <option value='byManager'>担当者順ソート</option>
+                </select>
+              </div>
             )}
 
             {pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
-              <div className={`flex items-center gap-2 border-neutral-500 ${pathname === "/personal" || pathname === "/complete" || pathname === "/trash" ? "" : "border-l px-2"}`}>
+              <div className={`flex items-center gap-2`}>
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
                   options={[

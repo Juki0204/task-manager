@@ -108,8 +108,10 @@ type NotYetStartedProps = {
 }
 
 export function ChangeNotYetStarted({ taskId, onClick, updateTaskStatus }: NotYetStartedProps) {
+  const { user } = useAuth();
+
   const handleNotYetStarted = async () => {
-    await updateTaskStatus(taskId, "未着手", "");
+    await updateTaskStatus(taskId, "未着手", "", { manager: user?.name });
   }
 
   return (

@@ -145,31 +145,26 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} min-w-[1868px] shadow-xs shadow-black/30`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} min-w-[1868px] shadow-xs shadow-black/30 hover:brightness-125`}>
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_ttl_dis_cli-mana_status_date'] items-center grid-cols-[110px_280px_600px_360px_120px_auto] py-2 hover:brightness-150`}
+        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_ttl_dis_cli-mana_status_date'] items-center grid-cols-[110px_280px_600px_360px_120px_auto] py-2`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (
           <div className="absolute group-[.cardListStyle]:top-1 group-[.cardListStyle]:w-0.75 group-[.cardListStyle]:rounded-full group-[.cardListStyle]:h-44 left-2 w-1 h-8 bg-[#ffff00]" />
         )}
         <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1.5">
-          {handleImportantTask && (
-            <div onClick={(e) => {
-              e.stopPropagation();
-              handleImportantTask(task.id);
-            }}>
-              <IoFlag className={`text-lg -ml-0.5 ${importantIds?.includes(task.id) ? "text-red-500" : "opacity-10 grayscale-100"}`} />
-            </div>
-          )}
-          <span>
+          <div className="flex items-center gap-2">
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
-          </span>
+            {user.important_task_id.includes(task.id) && (
+              <span className="inline-block w-2 h-2 bg-red-500 rounded-full" />
+            )}
+          </div>
         </div>
         <h3 className="font-bold flex items-center gap-1
           group-[.rowListStyle]:[grid-area:ttl]

@@ -7,7 +7,7 @@ import { MdDriveFileRenameOutline, MdLaptopChromebook, MdMailOutline, MdOutlineS
 import { FiPhone } from "react-icons/fi";
 import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
-import { IoPersonAddOutline } from "react-icons/io5";
+import { IoFlag, IoPersonAddOutline } from "react-icons/io5";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { BsPersonCheck } from "react-icons/bs";
 import { LuNotebookPen } from "react-icons/lu";
@@ -33,6 +33,8 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
+
+  const [importantIds, setImportantIds] = useState<string[]>([]);
 
   const [notes, setNotes] = useState<TaskNote[] | null>([]);
   const [notesOpen, setNotesOpen] = useState<boolean>(false);
@@ -108,12 +110,63 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
     setNotes(notes);
   }
 
+  async function handleImportantTask(taskId: string) {
+    if (!user) return;
+    if (!taskId) return;
+
+    setImportantIds((prev) => prev.filter((id) => id !== taskId));
+
+    const { data: importantTasks, error } = await supabase
+      .from("users")
+      .select("important_task_id")
+      .eq("id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Failed to fetch important_task_id:", error);
+      return;
+    }
+
+    const currentIds = Array.isArray(importantTasks.important_task_id)
+      ? importantTasks.important_task_id
+      : [];
+
+    const updatedIds = currentIds.includes(taskId)
+      ? currentIds.filter((id) => id !== taskId)
+      : [...currentIds, taskId];
+
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({ important_task_id: updatedIds })
+      .eq("id", user.id);
+
+    if (updateError) {
+      console.error(`Failed to update important_task_id for user ${user.id}:`, updateError);
+    } else {
+      console.log("important_task_id updated:", updatedIds);
+
+      if (currentIds.includes(taskId)) {
+        // 削除モード
+        setImportantIds((prev) => prev.filter((id) => id !== taskId));
+      } else {
+        // 追加モード
+        setImportantIds((prev) => [...prev, taskId]);
+      }
+    }
+  }
+
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status)
     getFixedNotes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
+
+  useEffect(() => {
+    if (user?.important_task_id) {
+      setImportantIds(user.important_task_id);
+    }
+  }, [user])
 
 
   return (
@@ -203,6 +256,17 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
           <p>最終更新: {task.updated_manager} {formatDateJST(task.updated_at)}</p>
         </div>
         <div className="flex gap-2">
+          {handleImportantTask && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                handleImportantTask(task.id);
+              }}
+              className={`w-9 h-9 grid place-content-center bg-neutral-300 rounded-md hover:opacity-80 ${importantIds?.includes(task.id) ? "bg-red-700/20" : "bg-neutral-300"}`}
+            >
+              <IoFlag className={`text-xl ${importantIds?.includes(task.id) ? "text-red-500/80" : "opacity-20 grayscale-100"}`} />
+            </div>
+          )}
           <Button
             disabled={notes && notes.length > 0 ? false : true}
             onClick={() => setNotesOpen(!notesOpen)}

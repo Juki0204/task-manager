@@ -10,25 +10,26 @@ import AddTask from "@/components/AddTask";
 import TaskList from "@/components/TaskList";
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
-import CopyTask from "@/components/CopyTask";
 import ContextMenu from "@/components/ui/ContextMenu";
-import { AddTaskBtn } from "@/components/ui/Btn";
 
 import { supabase } from "@/utils/supabase/supabase";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "@/app/AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
-export default function AllTaskPage() {
-  const { taskListStyle } = useTaskListPreferences();
-  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
+type taskListStyle = "rowListStyle" | "cardListStyle";
+
+export default function TrashTaskPage() {
+
+  const [taskListStyle, setTaskListStyle] = useState<taskListStyle | null>(null);
+  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
-  const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
-  const { taskListSortType, filters } = useTaskListPreferences();
-  const [unreadIds, setUnreadIds] = useState<string[]>([]);
+  const { updateTaskStatus } = useTaskRealtime(user ?? null);
+  const [taskList, setTaskList] = useState<Task[]>([]);
+  const { filters } = useTaskListPreferences();
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -67,9 +68,18 @@ export default function AllTaskPage() {
     }
   }
 
-  const filteredTaskList = taskList.filter((task) => {
-    if (task.status === "完了" || task.status === "削除済") return false;
+  const getTasks = async () => {
+    if (!user) return;
+    const { data: tasks } = await supabase
+      .from("tasks")
+      .select("*")
+      .in("id", user.important_task_id);
 
+    if (!tasks) return;
+    setTaskList(tasks);
+  }
+
+  const filteredTaskList = taskList.filter((task) => {
     const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
     const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
       if (assignee === "未担当") return task.manager === "";
@@ -87,64 +97,32 @@ export default function AllTaskPage() {
     return clientMatch && assigneeMatch && statusMatch && searchMatch;
   });
 
-  const sortTask = (task: Task[]) => {
-    const sortedTask = [...task].sort((a, b) => {
-      if (taskListSortType === "byDate") {
-        return new Date(a.request_date).getTime() - new Date(b.request_date).getTime();
-      }
-
-      if (taskListSortType === "byManager") {
-        const managerA = a.manager ? a.manager : "";
-        const managerB = b.manager ? b.manager : "";
-
-        // 未担当（空文字）は常に最後に
-        if (managerA === "" && managerB !== "") return 1;
-        if (managerA !== "" && managerB === "") return -1;
-
-        return managerA.localeCompare(managerB, "ja");
-      }
-
-      return 0;
-    });
-
-    return sortedTask;
-  }
-
-  // 既読処理関数
-  const markAsRead = async (taskId: string) => {
-    // フロント即時反映
-    setUnreadIds((prev) => prev.filter((id) => id !== taskId));
-
-    // Supabase更新
-    const updatedIds = unreadIds.filter((id) => id !== taskId);
-    await supabase
-      .from("users")
-      .update({ unread_task_id: updatedIds })
-      .eq("id", user?.id);
-  };
+  useEffect(() => {
+    const saved = localStorage.getItem('taskListStyle');
+    if (saved === 'rowListStyle' || saved === 'cardListStyle') {
+      setTaskListStyle(saved);
+    } else {
+      setTaskListStyle('cardListStyle');
+    }
+  }, []);
 
   useEffect(() => {
-    if (activeTask) {
-      const updated = taskList.find((t) => t.id === activeTask.id);
-      if (updated) setActiveTask(updated);
+    if (taskListStyle) {
+      localStorage.setItem('taskListStyle', taskListStyle);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taskList]);
+  }, [taskListStyle]);
 
   useEffect(() => {
-    if (user?.unread_task_id) {
-      setUnreadIds(user.unread_task_id);
-    }
-  }, [user]);
+    getTasks();
+  }, [user])
+
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1920px] m-auto`}>
-      <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
+    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 m-auto max-w-[1920px] relative`}>
       {user &&
         <TaskList
           user={user}
-          taskList={sortTask(filteredTaskList)}
-          unreadIds={unreadIds}
+          taskList={filteredTaskList}
           onClick={(t: Task) => {
             if (isOpen) return;
             if (menu.visible) return;
@@ -178,24 +156,19 @@ export default function AllTaskPage() {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative min-w-md max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-6 pr-5.5 shadow-lg">
+          <DialogPanel className="relative min-w-md max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
             {modalType === "add" && <AddTask onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} />}
             {modalType === "detail" && activeTask && user && (
               <TaskDetail
                 user={user}
                 task={activeTask}
-                unreadIds={unreadIds}
-                onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
+                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
                 onEdit={() => setModalType("edit")}
               />
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler}></UpdateTask>
-            )}
-
-            {modalType === "copy" && activeTask && user && (
-              <CopyTask user={user} task={activeTask} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}></CopyTask>
+              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
             )}
           </DialogPanel>
         </div>
@@ -209,14 +182,7 @@ export default function AllTaskPage() {
           taskSerial={menu.taskSerial ? menu.taskSerial : ""}
           onClose={handleCloseContextMenu}
           updateTaskStatus={updateTaskStatus}
-          onCopyTask={(t) => {
-            if (isOpen) return;
-
-            setActiveTask(t);
-            setModalType('copy');
-            setIsOpen(true);
-          }}
-        ></ContextMenu>
+        />
       )}
     </div>
   );
