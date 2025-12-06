@@ -43,7 +43,14 @@ export default function AuthProvider({
   const [loading, setLoading] = useState<boolean>(true);
 
   const getCurrentSession = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
+    const { data: sessionData, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("セッションの取得に失敗しました:", error);
+      // アクセストークンが完全に死んでる場合はリフレッシュ
+      await supabase.auth.refreshSession();
+    }
+
     if (sessionData.session !== null) {
       const { data: { user } } = await supabase.auth.getUser();
 
