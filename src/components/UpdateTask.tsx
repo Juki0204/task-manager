@@ -402,6 +402,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   }, [])
 
 
+  //スクロールバーの有無を検知（padding調整用）
   const contentRef = useRef<HTMLDivElement>(null);
   const [hasScrollbar, setHasScrollbar] = useState(false);
 
