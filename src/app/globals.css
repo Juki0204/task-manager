@@ -415,13 +415,14 @@ body {
 
 /* 編集画面用 */
 .tiptap-editor {
-  min-height: 200px;
+  min-height: none;
   outline: none;
   padding: 2px;
   background: transparent;
 
   & > div {
-    min-height: 200px;
+    min-height: 126px;
+    height: auto;
     outline: none;
     padding: 2px;
   }
@@ -430,7 +431,7 @@ body {
 /* 閲覧画面用 */
 .tiptap-viewer {
   white-space: pre-wrap;
-  min-height: 100px;
+  min-height: 126px;
   cursor: default;
 
   & li[data-checked] {

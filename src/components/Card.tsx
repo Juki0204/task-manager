@@ -184,7 +184,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
               :
               <span className="w-7 h-6 opacity-0"></span>
           }
-          <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
+          <span className={`py-1 px-2 h-fit w-16.5 text-center rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
         <div className="line-clamp-2 w-full text-sm [grid-area:dis]">
@@ -192,13 +192,13 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         </div>
 
         <div className="grid text-sm grid-cols-6 [grid-area:cli-mana] gap-1">
-          <div className="col-span-4 flex gap-1 items-center border-neutral-600"><FaRegBuilding />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
-          <div className="col-span-2 flex gap-1 items-center border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
+          <div className="col-span-4 flex gap-1 items-center"><FaRegBuilding />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+          <div className="col-span-2 flex gap-1 items-center"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div>
 
         <div className="grid gap-2 text-sm grid-cols-6 [grid-area:date]">
-          <div className="col-span-3 flex gap-1 items-center border-b border-neutral-600"><RiCalendarScheduleLine />{task.request_date}</div>
-          <div className="col-span-3 flex gap-1 items-center border-b border-neutral-600"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
+          <div className="col-span-3 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>
+          <div className="col-span-3 flex gap-1 items-center"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
         </div>
       </div>
     </div>

@@ -292,7 +292,7 @@ export default function PersonalCard({
               :
               <span className="w-7 h-6 opacity-0"></span>
           }
-          <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
+          <span className={`py-1 px-2 h-fit w-16.5 text-center rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
         <div className="line-clamp-2 w-full truncate text-sm h-5 mb-2">

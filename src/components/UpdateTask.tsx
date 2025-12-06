@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DialogTitle, Button, Label, Input, Field } from "@headlessui/react";
 import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskForm";
@@ -402,11 +402,44 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   }, [])
 
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const check = () => {
+      const sc = el.scrollHeight > el.clientHeight;
+      setHasScrollbar(sc);
+      console.log(sc);
+    };
+
+    check();
+
+    // 中身が変化した時にも反応させる
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+
+    el.addEventListener("resize", check);
+
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("resize", check);
+    };
+  }, []);
+
   return (
     <>
       <DialogTitle className="font-bold text-center col-span-2 sticky">タスク編集</DialogTitle>
 
-      <div className="min-w-[30rem] max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+      <div
+        ref={contentRef}
+        className={`
+          ${hasScrollbar ? "pr-2" : ""}
+          max-h-[70svh] py-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+        `}
+      >
 
         <div className="col-span-2 flex gap-4">
           <div className="flex flex-col w-fit">
@@ -493,7 +526,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
       </div>
 
-      <div className="flex gap-4 justify-end col-span-2 pr-3">
+      <div className="flex gap-4 justify-end col-span-2">
         <Button
           onClick={() => { onCancel(); onUnlock(); }}
           className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"

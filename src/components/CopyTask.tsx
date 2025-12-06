@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DialogTitle, Button } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
@@ -282,12 +282,47 @@ export default function UpdateTask({ task, user, onClose }: task) {
   }, []);
 
 
+  //スクロールバーの有無を検知（padding調整用）
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const check = () => {
+      const sc = el.scrollHeight > el.clientHeight;
+      setHasScrollbar(sc);
+      console.log(sc);
+    };
+
+    check();
+
+    // 中身が変化した時にも反応させる
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+
+    el.addEventListener("resize", check);
+
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("resize", check);
+    };
+  }, []);
+
+
   return (
     <>
       <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
-      <div className="min-w-[30rem] max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+      <div
+        ref={contentRef}
+        className={`
+          ${hasScrollbar ? "pr-2" : ""}
+          max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+        `}
+      >
 
         <div className="col-span-2 flex gap-4">
           <div className="flex flex-col">

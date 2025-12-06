@@ -118,7 +118,7 @@ export default function TrashTaskPage() {
 
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 m-auto max-w-[1920px] relative`}>
+    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 m-auto max-w-[1920px] relative">
       {user &&
         <TaskList
           user={user}
@@ -156,7 +156,7 @@ export default function TrashTaskPage() {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative min-w-md max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
+          <DialogPanel className="w-120 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
             {modalType === "add" && <AddTask onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} />}
             {modalType === "detail" && activeTask && user && (
               <TaskDetail

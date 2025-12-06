@@ -77,8 +77,8 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
     }}
       className="bg-neutral-200 rounded-md p-2 pt-1.5"
     >
-      <div className="flex justify-between">
-        <div className="flex flex-wrap gap-0.5 mb-1 pb-1 items-center border-b border-neutral-300">
+      <div className="flex justify-between mb-1 border-b border-neutral-300">
+        <div className="flex flex-wrap gap-0.5 pb-1 items-center">
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleBold().run()}

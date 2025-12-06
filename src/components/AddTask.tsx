@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { DialogTitle, Button, Field } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
@@ -283,12 +283,46 @@ export default function AddTask({ onClose }: AddTaskProps) {
   //   console.log(client, requester);
   // }, [requester]);
 
+  //スクロールバーの有無を検知（padding調整用）
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const check = () => {
+      const sc = el.scrollHeight > el.clientHeight;
+      setHasScrollbar(sc);
+      console.log(sc);
+    };
+
+    check();
+
+    // 中身が変化した時にも反応させる
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+
+    el.addEventListener("resize", check);
+
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("resize", check);
+    };
+  }, []);
+
   return (
     <>
       <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
       <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
 
-      <div className="min-w-[30rem] max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+      <div
+        ref={contentRef}
+        className={`
+          ${hasScrollbar ? "pr-2" : ""}
+          max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+        `}
+      >
 
         <div className="col-span-2 flex gap-4">
           <Field className="flex flex-col">
@@ -307,7 +341,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
           </AddTaskSelect>
 
           <AddTaskSelect className="flex-1" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
-            <option disabled value="">選択して下さい</option>
+            <option disabled value="">-</option>
             {requesterList.map(requester => (
               <option key={requester} value={requester}>{requester}</option>
             ))}
