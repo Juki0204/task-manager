@@ -20,7 +20,6 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
 export default function AllTaskPage() {
-  const { taskListStyle } = useTaskListPreferences();
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -138,7 +137,7 @@ export default function AllTaskPage() {
   }, [user]);
 
   return (
-    <div onClick={handleCloseContextMenu} className={`${taskListStyle} group p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1920px] m-auto`}>
+    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1920px] m-auto">
       <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
       {user &&
         <TaskList

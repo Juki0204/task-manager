@@ -3,14 +3,16 @@
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { Button, DialogTitle } from "@headlessui/react";
+
 import { MdDriveFileRenameOutline, MdLaptopChromebook, MdMailOutline, MdOutlineStickyNote2 } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
-import { IoFlag, IoPersonAddOutline } from "react-icons/io5";
-import { RiCalendarScheduleLine } from "react-icons/ri";
+import { IoPersonAddOutline } from "react-icons/io5";
+import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
 import { BsPersonCheck } from "react-icons/bs";
 import { LuNotebookPen } from "react-icons/lu";
+
 import { supabase } from "@/utils/supabase/supabase";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { toast } from "sonner";
@@ -264,7 +266,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
               }}
               className={`w-9 h-9 grid place-content-center bg-neutral-300 rounded-md hover:opacity-80 ${importantIds?.includes(task.id) ? "bg-red-700/20" : "bg-neutral-300"}`}
             >
-              <IoFlag className={`text-xl ${importantIds?.includes(task.id) ? "text-red-500/80" : "opacity-20 grayscale-100"}`} />
+              <RiFlag2Fill className={`text-xl ${importantIds?.includes(task.id) ? "text-red-500/80" : "opacity-20 grayscale-100"}`} />
             </div>
           )}
           <Button

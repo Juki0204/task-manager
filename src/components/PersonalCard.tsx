@@ -1,5 +1,5 @@
 import { FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
-import { RiCalendarScheduleLine } from "react-icons/ri";
+import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
 import { MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 
@@ -267,8 +267,11 @@ export default function PersonalCard({
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}
-        <div className="text-sm leading-6 pb-1.5">
+        <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
+          {user.important_task_id.includes(task.id) && (
+            <RiFlag2Fill className="text-red-500/80" />
+          )}
         </div>
         <h3 className="font-bold truncate flex items-center gap-1">
           {
@@ -305,7 +308,7 @@ export default function PersonalCard({
 
         <div className="p-2 rounded-md overflow-hidden relative before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
           <div className="grid gap-2 text-sm grid-cols-6">
-            <div className="col-span-2 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 《<HighlightText text={task.requester} keyword={filters.searchKeywords} />》</div>
+            <div className="col-span-2 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
             <div className="col-span-2 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>
             <div className="col-span-2 flex gap-1 items-center"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
           </div>

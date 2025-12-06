@@ -1,9 +1,8 @@
 import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
-import { RiCalendarScheduleLine } from "react-icons/ri";
+import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
 import { MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { BsPersonCheck } from "react-icons/bs";
-import { IoFlag } from "react-icons/io5";
 
 import { useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
@@ -18,15 +17,13 @@ interface CardPropd {
   task: Task;
   user: User;
   unreadIds?: string[];
-  importantIds?: string[];
-  handleImportantTask?: (taskId: string) => Promise<void>;
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   onEdit: (t: Task) => void;
 }
 
 
-export default function Card({ task, user, unreadIds, importantIds, handleImportantTask, onClick, onContextMenu, onEdit, ...props }: CardPropd) {
+export default function Card({ task, user, unreadIds, onClick, onContextMenu, onEdit, ...props }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
 
@@ -156,19 +153,17 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (
-          <div className="absolute group-[.cardListStyle]:top-1 group-[.cardListStyle]:w-0.75 group-[.cardListStyle]:rounded-full group-[.cardListStyle]:h-44 left-2 w-1 h-8 bg-[#ffff00]" />
+          <div className="absolute left-2 w-1 h-8 bg-[#ffff00]" />
         )}
-        <div className="text-xs group-[.cardListStyle]:pb-2 flex items-center gap-1.5">
+        <div className="text-xs flex items-center gap-1.5">
           <div className="flex items-center gap-2">
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
             {user.important_task_id.includes(task.id) && (
-              <span className="inline-block w-2 h-2 bg-red-500 rounded-full" />
+              <RiFlag2Fill className="text-red-500/80 -ml-0.5 mt-0.5" />
             )}
           </div>
         </div>
-        <h3 className="font-bold flex items-center gap-1
-          group-[.rowListStyle]:[grid-area:ttl]
-          group-[.rowListStyle]:text-sm">
+        <h3 className="font-bold flex items-center gap-1 [grid-area:ttl] text-sm">
           {
             task.method === 'mail' ?
               <MdMailOutline />
@@ -177,14 +172,12 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
                 :
                 <FaRegQuestionCircle />
           }
-          <span className="truncate flex-1 group-[.rowListStyle]:pr-3">
+          <span className="truncate flex-1 pr-3">
             <HighlightText text={task.title} keyword={filters.searchKeywords} />
           </span>
         </h3>
 
-        <div className="w-fit flex gap-1 items-center pl-1
-          group-[.cardListStyle]:absolute group-[.cardListStyle]:top-4 group-[.cardListStyle]:right-4
-          group-[.rowListStyle]:[grid-area:status] group-[.rowListStyle]:pl-3">
+        <div className="w-fit flex gap-1 items-center [grid-area:status] pl-3">
           {
             task.priority ?
               <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
@@ -194,23 +187,18 @@ export default function Card({ task, user, unreadIds, importantIds, handleImport
           <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
-        <div className="line-clamp-2 w-full text-sm
-        group-[.cardListStyle]:h-10 group-[.cardListStyle]:mb-3
-        group-[.rowListStyle]:[grid-area:dis]">
+        <div className="line-clamp-2 w-full text-sm [grid-area:dis]">
           <HighlightText text={task.description} keyword={filters.searchKeywords} />
         </div>
 
-        <div className="grid gap-2 text-sm grid-cols-6
-        group-[.cardListStyle]:mb-2
-        group-[.rowListStyle]:[grid-area:cli-mana] group-[.rowListStyle]:gap-1">
-          <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《<HighlightText text={task.requester} keyword={filters.searchKeywords} />》</div>
-          <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
+        <div className="grid text-sm grid-cols-6 [grid-area:cli-mana] gap-1">
+          <div className="col-span-4 flex gap-1 items-center border-neutral-600"><FaRegBuilding />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+          <div className="col-span-2 flex gap-1 items-center border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div>
 
-        <div className="grid gap-2 text-sm grid-cols-6
-        group-[.rowListStyle]:[grid-area:date]">
-          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><RiCalendarScheduleLine />{task.request_date}</div>
-          <div className="col-span-3 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
+        <div className="grid gap-2 text-sm grid-cols-6 [grid-area:date]">
+          <div className="col-span-3 flex gap-1 items-center border-b border-neutral-600"><RiCalendarScheduleLine />{task.request_date}</div>
+          <div className="col-span-3 flex gap-1 items-center border-b border-neutral-600"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
         </div>
       </div>
     </div>
