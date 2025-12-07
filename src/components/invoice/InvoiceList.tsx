@@ -308,7 +308,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
+          <DialogPanel className="relative w-120 space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
             {activeTask && user && (
               <InvoiceTaskDetail
                 task={activeTask}
