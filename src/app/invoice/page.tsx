@@ -292,7 +292,7 @@ export default function InvoicePage() {
   useEffect(() => {
     setFiteredInvoices(filteringInvoices(invoices));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortState, filters]);
+  }, [sortState, filters, invoices]);
 
   return (
     <div className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 relative overflow-x-hidden min-h-[80svh]">

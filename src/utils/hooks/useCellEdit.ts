@@ -205,7 +205,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
       } else {
 
         // ---------------- 上記以外の計算に関係しない箇所の変更時 ----------------
-        if (field === "description") {
+        if (field === "description") { //description変更時は点数を自動抽出
           //点数抽出でpieces自動入力
           const extractPoints = (text: string): number | null => {
             const matchResult = text.match(/([\d０-９]+)\s*点/);
@@ -222,6 +222,14 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
           const { error } = await supabase
             .from(tableName)
             .update({ [field]: formatNewValue ?? null, "pieces": matchLength })
+            .eq("id", recordId);
+
+          if (error) console.error("請求データの更新に失敗しました:", error);
+
+        } else { //それ以外は通常格納
+          const { error } = await supabase
+            .from(tableName)
+            .update({ [field]: formatNewValue ?? null })
             .eq("id", recordId);
 
           if (error) console.error("請求データの更新に失敗しました:", error);

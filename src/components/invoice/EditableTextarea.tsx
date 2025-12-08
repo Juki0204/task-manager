@@ -4,7 +4,7 @@ import { useCellEdit } from "@/utils/hooks/useCellEdit";
 import { supabase } from "@/utils/supabase/supabase";
 import { Invoice } from "@/utils/types/invoice";
 import { User } from "@/utils/types/user";
-import { Input } from "@headlessui/react";
+import { Textarea } from "@headlessui/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -22,7 +22,7 @@ interface EditableCellProps {
   registerCellRef: (id: string, field: string, el: HTMLDivElement | null) => void;
 }
 
-export default function EditableCell({
+export default function EditableTextarea({
   recordId,
   field,
   value,
@@ -46,6 +46,8 @@ export default function EditableCell({
   });
 
   const isActive = activeCell?.recordId === recordId && activeCell?.field === field;
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // 親にref登録（マウント・アンマウント時）
   useEffect(() => {
@@ -128,6 +130,16 @@ export default function EditableCell({
     }
   };
 
+
+  const handleHeightChange = () => {
+    if (!textareaRef.current) return;
+    const ref = textareaRef.current;
+
+    ref.style.height = "auto";
+    ref.style.height = ref.scrollHeight + "px";
+  }
+
+
   return (
     <div
       data-record-id={recordId}
@@ -144,7 +156,7 @@ export default function EditableCell({
         ${isActive ? "bg-blue-900/50 outline -outline-offset-1 outline-blue-700" : ""}
         ${editing ? "!bg-blue-800/40 !outline-blue-400" : ""}
         ${typeof value === "number" && value < 0 ? "text-red-400" : ""}
-        h-full flex items-center
+        w-full h-auto whitespace-pre-wrap
       `}
     >
       {lockedByOther && (
@@ -154,18 +166,46 @@ export default function EditableCell({
       )}
 
       {editing ? (
-        <Input
+        <Textarea
+          ref={textareaRef}
+          rows={1}
           autoFocus
           autoComplete="off"
           name={`${recordId}-${field}`}
-          className={`w-full h-full border data-focus:outline-0 data-focus:border-0 ${type === "tel" ? "text-right" : ""
-            }`}
-          type={type ?? "text"}
+          className="w-full h-auto border data-focus:outline-0 data-focus:border-0 overflow-hidden resize-none"
           value={tempValue}
-          onChange={(e) => setTempValue(e.target.value)}
+          onChange={(e) => {
+            setTempValue(e.target.value);
+            handleHeightChange();
+          }}
           onBlur={saveValue}
-          onFocus={(e) => e.target.select()}
+          onFocus={(e) => {
+            e.target.select();
+            setTimeout(() => {
+              handleHeightChange();
+            }, 100);
+          }}
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e: React.KeyboardEvent) => {
+            if (e.key === "Enter" && e.altKey) {
+              e.stopPropagation();
+
+              if (!textareaRef.current) return;
+              const ref = textareaRef.current;
+              const start = ref.selectionStart;
+              const end = ref.selectionEnd;
+
+              const value = ref.value;
+
+              //カーソル位置に改行を挿入
+              ref.value = value.slice(0, start) + "\n" + value.slice(end);
+
+              //カーソル位置を改行の後ろに移動
+              ref.selectionStart = ref.selectionEnd = start + 1;
+
+              handleHeightChange();
+            }
+          }}
         />
       ) : (
         <>{value === "" ? (field === "remarks" ? "" : "") : value}</>

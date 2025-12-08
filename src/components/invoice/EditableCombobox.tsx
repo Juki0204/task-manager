@@ -158,8 +158,10 @@ export default function EditableCombobox({
         setActiveCell({ recordId, field });
       }}
       className={`relative border-neutral-700 min-h-9 outline-none
-        ${className} ${isActive ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700" : ""
-        }`}
+        ${className}
+        ${isActive ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700" : ""}
+        h-full flex items-center
+      `}
     >
       {lockedByOther && (
         <div className="editing-cell">
@@ -180,7 +182,7 @@ export default function EditableCombobox({
             autoFocus
             autoComplete="off"
             name={`${recordId}-${field}`}
-            className="w-full text-left p-2 bg-blue-800/40 border border-blue-400 focus:outline-none"
+            className="w-full h-full text-left p-2 bg-blue-800/40 border border-blue-400 focus:outline-none"
             displayValue={(val: string) => val ?? ""}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => {
