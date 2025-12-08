@@ -25,7 +25,7 @@ interface InvoiceListProps {
 
 // COLUMNS定義（右左移動に使う）
 const FIELDS = [
-  "title", "description", "device", "work_name",
+  "title", "description", "finish_date", "device", "work_name",
   "pieces", "degree", "adjustment", "remarks",
 ] as const;
 

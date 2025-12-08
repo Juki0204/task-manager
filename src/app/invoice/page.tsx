@@ -349,7 +349,7 @@ export default function InvoicePage() {
                     : filters.clients.filter((c) => c !== label)
                 })
               }
-              defaultText="作業担当者"
+              defaultText="クライアント"
             />
 
             <MultiSelectPopover
