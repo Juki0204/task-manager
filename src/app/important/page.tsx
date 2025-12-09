@@ -17,6 +17,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
+
 type taskListStyle = "rowListStyle" | "cardListStyle";
 
 export default function TrashTaskPage() {

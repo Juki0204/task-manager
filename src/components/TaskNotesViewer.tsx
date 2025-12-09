@@ -114,7 +114,7 @@ export default function TaskNotesViewer() {
   return (
     <>
       {!isExculedPath && (
-        <div ref={wrapperRef} className="fixed bottom-4 inset-x-0 m-auto w-96/100 max-w-460 flex flex-col items-end z-50 pointer-events-none">
+        <div ref={wrapperRef} className="fixed bottom-4 inset-x-0 m-auto w-96/100 max-w-460 flex flex-col items-end z-30 pointer-events-none">
           {/* ログ一覧表切り替えボタン */}
           <div className="flex gap-4 pr-1 pointer-events-auto">
             <ul className="flex gap-0.5 items-center z-50">

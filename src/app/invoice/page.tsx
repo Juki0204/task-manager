@@ -91,21 +91,42 @@ export default function InvoicePage() {
   const filteringInvoices = (invoices: Invoice[] | null) => {
     if (!invoices) return null;
 
-    const sorted = sortState === "byDate" ? invoices.sort((a, b) => new Date(a.finish_date).getTime() - new Date(b.finish_date).getTime())
-      : sortState === "byClient" ? invoices.sort((a, b) => a.client.localeCompare(b.client, "ja"))
-        : sortState === "byClientRev" ? invoices.sort((a, b) => b.client.localeCompare(a.client, "ja"))
-          : invoices;
+    const sorted = (() => {
+      const copy = [...invoices];
 
-    const filtered = sorted.filter((invoice) => {
-      const clientMatch = filters.clients.length === 0 || filters.clients.includes(invoice.client);
-      const assigneeMatch = filters.assignees.length === 0 || filters.assignees.includes(invoice.manager);
+      switch (sortState) {
+        case "byDate":
+          return copy.sort((a, b) => new Date(a.finish_date).getTime() - new Date(b.finish_date).getTime());
 
+        case "byClient":
+          return copy.sort((a, b) => a.client.localeCompare(b.client, "ja"));
+
+        case "byClientRev":
+          return copy.sort((a, b) => b.client.localeCompare(a.client, "ja"));
+
+        default:
+          return copy;
+      }
+    })();
+
+    const keyword = filters.searchKeywords?.toLowerCase() ?? null;
+
+    const filtered = sorted.filter((i) => {
+      //クライアント
+      const clientMatch =
+        filters.clients.length === 0 || filters.clients.includes(i.client);
+
+      //作業担当者
+      const assigneeMatch =
+        filters.assignees.length === 0 || filters.assignees.includes(i.manager);
+
+      //キーワード検索
       const searchMatch =
-        !filters.searchKeywords ||
-        invoice.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        invoice.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        invoice.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        invoice.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+        !keyword ||
+        i.serial?.toLowerCase().includes(keyword) ||
+        i.title?.toLowerCase().includes(keyword) ||
+        i.description?.toLowerCase().includes(keyword) ||
+        i.requester?.toLowerCase().includes(keyword);
 
       return clientMatch && assigneeMatch && searchMatch;
     });

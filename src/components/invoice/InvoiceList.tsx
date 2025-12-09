@@ -14,6 +14,7 @@ import EditableCombobox from "./EditableCombobox";
 import EditableTextarea from "./EditableTextarea";
 
 import { FaSortAmountDown, FaSortAmountDownAlt } from "react-icons/fa";
+import AllEditableForm from "./AllEditableForm";
 
 
 interface InvoiceListProps {
@@ -33,9 +34,30 @@ type FieldName = (typeof FIELDS)[number];
 
 export default function InvoiceList({ invoices, user, setInvoices, sortState }: InvoiceListProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAllEditableFromOpen, setIsAllEditableFromOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [priceList, setPriceList] = useState<string[] | null>(null);
   const [activeCell, setActiveCell] = useState<{ recordId: string; field: string } | null>(null);
+  const [activeRecord, setActiveRecord] = useState<{ currentId: string | null, prevId: string | null, nextId: string | null } | null>(null)
+
+  const handleActiveRecord = (recordId: string | null) => {
+    if (!recordId) return;
+
+    const siblingIsd = getSiblingInvoices(recordId);
+    setActiveRecord({ currentId: recordId, prevId: siblingIsd.prev, nextId: siblingIsd.next });
+  }
+
+  function getSiblingInvoices(targetId: string) {
+    if (!invoices) return { prev: null, next: null };
+
+    const index = invoices.findIndex(i => i.id === targetId);
+    if (index === -1) return { prev: null, next: null };
+
+    return {
+      prev: index > 0 ? invoices[index - 1].id : null,
+      next: index < invoices.length - 1 ? invoices[index + 1].id : null,
+    };
+  }
 
   // 親でrefレジストリを保持（ロービング tabindex 用）
   const cellRefs = useRef(new Map<string, HTMLDivElement>());
@@ -132,8 +154,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   return (
     <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2400px] box-border">
       <div className="grid grid-cols-[40px_90px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
-        <div className="border border-neutral-600 p-1 bg-neutral-100 sticky left-0">確認</div>
-        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-10 z-20">No.</div>
+        <div className="border border-neutral-600 p-1 bg-neutral-100 sticky left-0 z-20">一括</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-10 z-20">No.(確認)</div>
         <div className={`border border-l-0 border-neutral-600 p-1 sticky left-32.5 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
           クライアント
           {sortState === "byClient" && <FaSortAmountDownAlt className="absolute top-1/2 -translate-y-1/2 right-2" />}
@@ -158,8 +180,17 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
       {invoices &&
         invoices.map((i, index) => (
           <div key={i.id} className="grid grid-cols-[40px_90px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-600 text-sm">
-            <div className={`grid place-content-center border border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-0 z-20 hover:bg-neutral-600 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}><MdTask onClick={() => { handleActiveTask(i.id); setIsOpen(true) }} className="text-xl" /></div>
-            <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-10 z-20 text-center ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.serial}</div>
+            <div className={`grid place-content-center border border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-0 z-20 hover:bg-neutral-600 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <MdTask
+                onClick={() => {
+                  const prevId = index > 0 ? invoices[index - 1].id : null;
+                  const nextId = index < invoices.length - 1 ? invoices[index + 1].id : null;
+
+                  handleActiveRecord(i.id);
+                  setIsAllEditableFromOpen(true);
+                }} className="text-xl" />
+            </div>
+            <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-10 z-20 text-center cursor-pointer ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`} onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}>{i.serial}</div>
             <div className={`flex items-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-32.5 z-20 ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.client} 【{i.requester}】</div>
             <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full sticky left-82.5 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
               <EditableCell
@@ -194,6 +225,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 value={i.finish_date}
                 user={user}
                 type="date"
+                className="justify-center"
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
@@ -320,6 +352,37 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
           </DialogPanel>
         </div>
       </Dialog>
+
+      {/* 一括入力フォーム */}
+      <Dialog
+        open={isAllEditableFromOpen}
+        onClose={() => {
+          setIsOpen(false);
+        }}
+        // transition
+        className="relative z-40 transition duration-300 ease-out data-closed:opacity-0"
+      >
+        <DialogBackdrop onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }} className="fixed inset-0 bg-black/30" />
+
+        <div className="w-1/4 h-[calc(100svh-6.5rem)] fixed left-auto top-26 right-0 flex items-center justify-center">
+
+          {activeRecord && (
+            <AllEditableForm
+              recordId={activeRecord.currentId}
+              prevId={activeRecord.prevId}
+              nextId={activeRecord.nextId}
+              onClose={() => {
+                setIsAllEditableFromOpen(false);
+                setActiveRecord(null);
+              }}
+              onChangeRecord={(r: string) => {
+                const siblingIsd = getSiblingInvoices(r);
+                setActiveRecord({ currentId: r, prevId: siblingIsd.prev, nextId: siblingIsd.next });
+              }}
+            />
+          )}
+        </div>
+      </Dialog >
     </div>
   )
 }
