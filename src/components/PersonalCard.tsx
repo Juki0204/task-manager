@@ -269,7 +269,7 @@ export default function PersonalCard({
         {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
-          {user.important_task_id.includes(task.id) && (
+          {user.important_task_id && user.important_task_id.includes(task.id) && (
             <RiFlag2Fill className="text-red-500/80" />
           )}
         </div>

@@ -11,10 +11,9 @@ import { toast } from "sonner";
 interface EditableCellProps {
   recordId: string;
   field: string;
-  value: string | number;
+  value: string;
   user: User;
   className?: string;
-  type?: string;
   setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
   activeCell: { recordId: string; field: string } | null;
   setActiveCell: Dispatch<SetStateAction<{ recordId: string; field: string } | null>>;
@@ -28,7 +27,6 @@ export default function EditableTextarea({
   value,
   user,
   className,
-  type,
   setInvoices,
   activeCell,
   setActiveCell,
@@ -37,7 +35,7 @@ export default function EditableTextarea({
 }: EditableCellProps) {
   const userId = user.id;
   const [editing, setEditing] = useState(false);
-  const [tempValue, setTempValue] = useState<string | number>(value);
+  const [tempValue, setTempValue] = useState<string>(value);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { lockedByOther, lockedUser, handleEditStart, handleSave } = useCellEdit({
     recordId,
@@ -189,21 +187,21 @@ export default function EditableTextarea({
           onKeyDown={(e: React.KeyboardEvent) => {
             if (e.key === "Enter" && e.altKey) {
               e.stopPropagation();
-
-              if (!textareaRef.current) return;
               const ref = textareaRef.current;
+              if (!ref) return;
+
               const start = ref.selectionStart;
               const end = ref.selectionEnd;
 
-              const value = ref.value;
+              const newValue = tempValue.slice(0, start) + "\n" + tempValue.slice(end);
 
-              //カーソル位置に改行を挿入
-              ref.value = value.slice(0, start) + "\n" + value.slice(end);
+              setTempValue(newValue);
 
-              //カーソル位置を改行の後ろに移動
-              ref.selectionStart = ref.selectionEnd = start + 1;
-
-              handleHeightChange();
+              requestAnimationFrame(() => {
+                if (!ref) return;
+                ref.selectionStart = ref.selectionEnd = start + 1;
+                handleHeightChange();
+              });
             }
           }}
         />

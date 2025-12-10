@@ -158,7 +158,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         <div className="text-xs flex items-center gap-1.5">
           <div className="flex items-center gap-2">
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
-            {user.important_task_id.includes(task.id) && (
+            {user.important_task_id && user.important_task_id.includes(task.id) && (
               <RiFlag2Fill className="text-red-500/80 -ml-0.5 mt-0.5" />
             )}
           </div>
