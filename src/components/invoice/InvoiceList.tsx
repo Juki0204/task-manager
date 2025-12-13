@@ -4,7 +4,7 @@ import { Invoice } from "@/utils/types/invoice";
 import EditableCell from "../invoice/EditableCell";
 import EditableSelect from "../invoice/EditableSelect";
 import { User } from "@/utils/types/user";
-import { MdTask } from "react-icons/md";
+
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
@@ -14,6 +14,10 @@ import EditableCombobox from "./EditableCombobox";
 import EditableTextarea from "./EditableTextarea";
 
 import { FaSortAmountDown, FaSortAmountDownAlt } from "react-icons/fa";
+import { MdTask } from "react-icons/md";
+import { PiNotePencilBold } from "react-icons/pi";
+
+
 import AllEditableForm from "./AllEditableForm";
 
 
@@ -26,7 +30,7 @@ interface InvoiceListProps {
 
 // COLUMNS定義（右左移動に使う）
 const FIELDS = [
-  "title", "description", "finish_date", "device", "work_name",
+  "title", "description", "finish_date", "media", "work_name",
   "pieces", "degree", "adjustment", "remarks",
 ] as const;
 
@@ -37,7 +41,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   const [isAllEditableFromOpen, setIsAllEditableFromOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [priceList, setPriceList] = useState<string[] | null>(null);
-  const [activeCell, setActiveCell] = useState<{ recordId: string; field: string } | null>(null);
+  const [allPriceList, setAllPriceList] = useState<{ id: number, category: string, work_name: string, price: number }[] | null>(null);
+  const [activeCell, setActiveCell] = useState<{ recordId: string, field: string } | null>(null);
   const [activeRecord, setActiveRecord] = useState<{ currentId: string | null, prevId: string | null, nextId: string | null } | null>(null)
 
   const handleActiveRecord = (recordId: string | null) => {
@@ -90,6 +95,12 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
       const { data } = await supabase.from("prices").select("*");
       if (!data) return;
       setPriceList(data.map((p) => p.work_name).sort((a, b) => a.localeCompare(b, "ja")));
+      setAllPriceList(data.map((p) => ({
+        id: p.id,
+        category: p.category,
+        work_name: p.work_name,
+        price: p.price,
+      })));
     })();
   }, []);
 
@@ -153,16 +164,16 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
 
   return (
     <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2400px] box-border">
-      <div className="grid grid-cols-[40px_90px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
+      <div className="grid grid-cols-[40px_100px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
         <div className="border border-neutral-600 p-1 bg-neutral-100 sticky left-0 z-20">一括</div>
         <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-10 z-20">No.(確認)</div>
-        <div className={`border border-l-0 border-neutral-600 p-1 sticky left-32.5 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
+        <div className={`border border-l-0 border-neutral-600 p-1 sticky left-35 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
           クライアント
           {sortState === "byClient" && <FaSortAmountDownAlt className="absolute top-1/2 -translate-y-1/2 right-2" />}
           {sortState === "byClientRev" && <FaSortAmountDown className="absolute top-1/2 -translate-y-1/2 right-2" />}
         </div>
-        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-82.5 z-20">作業タイトル</div>
-        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-142.5 z-20" id="standardPosition">作業内容</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-85 z-20">作業タイトル</div>
+        <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-145 z-20" id="standardPosition">作業内容</div>
         <div className={`border border-l-0 border-neutral-600 p-1 ${sortState === "byDate" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
           完了日 {sortState === "byDate" && <FaSortAmountDownAlt className="absolute top-1/2 -translate-y-1/2 right-2" />}
         </div>
@@ -179,20 +190,25 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
       </div>
       {invoices &&
         invoices.map((i, index) => (
-          <div key={i.id} className="grid grid-cols-[40px_90px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-600 text-sm">
-            <div className={`grid place-content-center border border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-0 z-20 hover:bg-neutral-600 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
-              <MdTask
-                onClick={() => {
-                  const prevId = index > 0 ? invoices[index - 1].id : null;
-                  const nextId = index < invoices.length - 1 ? invoices[index + 1].id : null;
+          <div key={i.id} className="grid grid-cols-[40px_100px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-600 text-sm">
+            <div
+              onClick={() => {
+                const prevId = index > 0 ? invoices[index - 1].id : null;
+                const nextId = index < invoices.length - 1 ? invoices[index + 1].id : null;
 
-                  handleActiveRecord(i.id);
-                  setIsAllEditableFromOpen(true);
-                }} className="text-xl" />
+                handleActiveRecord(i.id);
+                setIsAllEditableFromOpen(true);
+              }}
+              className={`
+                grid place-content-center border border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-0 z-20 hover:bg-neutral-600
+                ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}
+              `}
+            >
+              <PiNotePencilBold className="text-lg" />
             </div>
-            <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-10 z-20 text-center cursor-pointer ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`} onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}>{i.serial}</div>
-            <div className={`flex items-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-32.5 z-20 ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.client} 【{i.requester}】</div>
-            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full sticky left-82.5 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+            <div className={`flex items-center justify-start border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-10 z-20 cursor-pointer ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`} onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}><MdTask />{i.serial}</div>
+            <div className={`flex items-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-35 z-20 ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.client} 【{i.requester}】</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full sticky left-85 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
               <EditableCell
                 recordId={i.id}
                 field="title"
@@ -205,7 +221,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 registerCellRef={registerCellRef}
               />
             </div>
-            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full sticky left-142.5 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+            <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full sticky left-145 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
               <EditableCell
                 recordId={i.id}
                 field="description"
@@ -238,10 +254,10 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
             <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full text-center ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
               <EditableSelect
                 recordId={i.id}
-                field="device"
-                value={i.device ?? ""}
+                field="media"
+                value={i.media ?? ""}
                 user={user}
-                options={["PC", "スマホ", "レスポンシブ", "会員サイト"]}
+                options={["営業", "求人", "受付", "会員", "その他"]}
                 className="justify-center"
                 setInvoices={setInvoices}
                 activeCell={activeCell}
@@ -362,15 +378,19 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
         // transition
         className="relative z-40 transition duration-300 ease-out data-closed:opacity-0"
       >
-        <DialogBackdrop onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }} className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop
+          // onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }}
+          className="fixed inset-0 bg-black/30"
+        />
 
-        <div className="w-1/4 h-[calc(100svh-6.5rem)] fixed left-auto top-26 right-0 flex items-center justify-center">
+        <div className="w-1/4 min-w-120 h-[calc(100svh-6.5rem)] fixed left-auto top-26 right-0 flex items-center justify-center">
 
           {activeRecord && (
             <AllEditableForm
               recordId={activeRecord.currentId}
               prevId={activeRecord.prevId}
               nextId={activeRecord.nextId}
+              priceList={allPriceList}
               onClose={() => {
                 setIsAllEditableFromOpen(false);
                 setActiveRecord(null);
@@ -382,7 +402,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
             />
           )}
         </div>
-      </Dialog >
+      </Dialog>
     </div>
   )
 }

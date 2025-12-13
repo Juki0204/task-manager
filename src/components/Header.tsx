@@ -21,6 +21,7 @@ import MultiSelectPopover from "./ui/MultiSelectPopover";
 
 // type TaskListStyle = "rowListStyle" | "cardListStyle";
 type TaskListSortType = "byDate" | "byManager";
+type InvoiceSortStates = "byDate" | "byClient" | "byClientRev";
 
 export default function Header() {
   const { user } = useAuth();
@@ -46,6 +47,8 @@ export default function Header() {
     //setTaskListStyle,
     taskListSortType,
     setTaskListSortType,
+    invoiceSortState,
+    setInvoiceSortState,
     filters,
     setFilters
   } = useTaskListPreferences();
@@ -145,7 +148,7 @@ export default function Header() {
               </select>
             )} */}
 
-            {pathname === "/" && (
+            {pathname === "/" ? (
               <div className="pr-2 border-r border-neutral-500">
                 <select
                   value={taskListSortType}
@@ -155,9 +158,24 @@ export default function Header() {
                   <option value='byManager'>担当者順ソート</option>
                 </select>
               </div>
-            )}
+            )
+              : pathname === "/invoice" ? (
+                <div className="pr-2 border-r border-neutral-500">
+                  <select
+                    value={invoiceSortState}
+                    onChange={(e) => setInvoiceSortState(e.target.value as InvoiceSortStates)}
+                    className={`fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
+                    <option value="byDate">完了日順</option>
+                    <option value="byClient">クライアント順(昇順)</option>
+                    <option value="byClientRev">クライアント順(降順)</option>
+                  </select>
+                </div>
+              ) : (
+                <></>
+              )
+            }
 
-            {pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
+            {pathname !== "/setting" && pathname !== "/release-notes" && (
               <div className={`flex items-center gap-2`}>
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
@@ -205,26 +223,28 @@ export default function Header() {
                   defaultText="作業担当者"
                 />
 
-                <MultiSelectPopover
-                  options={[
-                    { id: 1, label: "未着手" },
-                    { id: 2, label: "作業中" },
-                    { id: 3, label: "作業途中" },
-                    { id: 4, label: "確認中" },
-                    { id: 5, label: "詳細待ち" },
-                    { id: 6, label: "保留" },
-                  ]}
-                  selectedLabels={filters.statuses}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
-                    setFilters({
-                      ...filters,
-                      statuses: e.target.checked
-                        ? [...filters.statuses, label]
-                        : filters.statuses.filter((s) => s !== label)
-                    })
-                  }
-                  defaultText="作業状況"
-                />
+                {pathname !== "/invoice" && (
+                  <MultiSelectPopover
+                    options={[
+                      { id: 1, label: "未着手" },
+                      { id: 2, label: "作業中" },
+                      { id: 3, label: "作業途中" },
+                      { id: 4, label: "確認中" },
+                      { id: 5, label: "詳細待ち" },
+                      { id: 6, label: "保留" },
+                    ]}
+                    selectedLabels={filters.statuses}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
+                      setFilters({
+                        ...filters,
+                        statuses: e.target.checked
+                          ? [...filters.statuses, label]
+                          : filters.statuses.filter((s) => s !== label)
+                      })
+                    }
+                    defaultText="作業状況"
+                  />
+                )}
 
                 <div className="relative">
                   <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
