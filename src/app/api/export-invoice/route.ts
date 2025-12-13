@@ -18,7 +18,7 @@ interface Invoice {
   work_name?: string;
   amount?: number;
   category?: string;
-  device?: string;
+  media?: string;
   pieces?: number;
   degree?: number;
   work_time?: string;
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
         .value(invoice.finish_date ? new Date(invoice.finish_date) : "");
       sheet.cell(`F${row}`).value(invoice.manager);
       sheet.cell(`G${row}`).value(invoice.category);
-      sheet.cell(`H${row}`).value(invoice.device);
+      sheet.cell(`H${row}`).value(invoice.media);
       sheet.cell(`I${row}`).value(invoice.work_name);
       sheet.cell(`J${row}`).value(invoice.pieces);
       sheet.cell(`K${row}`).value(invoice.degree ? `${invoice.degree}%` : "");
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
       sheet.cell(`A${row}`).value(invoice.client);
       sheet.cell(`B${row}`).value(invoice.category);
-      sheet.cell(`C${row}`).value(invoice.device);
+      sheet.cell(`C${row}`).value(invoice.media);
       sheet.cell(`D${row}`).value(invoice.work_name);
       sheet.cell(`E${row}`).value(`【${invoice.title}】${invoice.description}`);
       sheet.cell(`F${row}`).value(invoice.degree ? `${invoice.degree}%` : "");

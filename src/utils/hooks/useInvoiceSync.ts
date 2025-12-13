@@ -54,7 +54,7 @@ export function useInvoiceSync() {
           work_name: null,
           amount: null,
           category: null,
-          device: null,
+          media: null,
           degree: null,
           pieces: matchLength,
           work_time: null,

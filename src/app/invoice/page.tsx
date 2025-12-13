@@ -12,17 +12,8 @@ import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 
 import { FaSearch } from "react-icons/fa";
 import { LuDownload } from "react-icons/lu";
+import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
-
-type Filters = {
-  clients: string[]; //クライアント
-  assignees: string[]; //担当者
-  searchKeywords: string | null; //検索
-}
-
-type SortStates = "byDate"
-  | "byClient"
-  | "byClientRev";
 
 export default function InvoicePage() {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
@@ -31,7 +22,7 @@ export default function InvoicePage() {
   const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear()));
   const [currentMonth, setCurrentMonth] = useState<string>(String(new Date().getMonth()));
 
-  const [sortState, setSortState] = useState<SortStates>("byDate");
+  const { invoiceSortState, setInvoiceSortState, filters, setFilters } = useTaskListPreferences();
   const [filteredInvoices, setFiteredInvoices] = useState<Invoice[] | null>(null);
 
   const [totalInvoices, setTotalInvoices] = useState<{
@@ -81,20 +72,13 @@ export default function InvoicePage() {
     oks: 0,
   })
 
-  //フィルタリング
-  const [filters, setFilters] = useState<Filters>({
-    clients: [],
-    assignees: [],
-    searchKeywords: null,
-  });
-
   const filteringInvoices = (invoices: Invoice[] | null) => {
     if (!invoices) return null;
 
     const sorted = (() => {
       const copy = [...invoices];
 
-      switch (sortState) {
+      switch (invoiceSortState) {
         case "byDate":
           return copy.sort((a, b) => new Date(a.finish_date).getTime() - new Date(b.finish_date).getTime());
 
@@ -313,11 +297,11 @@ export default function InvoicePage() {
   useEffect(() => {
     setFiteredInvoices(filteringInvoices(invoices));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortState, filters, invoices]);
+  }, [invoiceSortState, filters, invoices]);
 
   return (
     <div className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 relative overflow-x-hidden min-h-[80svh]">
-      <div className="flex justify-between mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+      <div className="flex justify-start gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
           <h2 className="flex justify-center items-end gap-1 text-white text-xl font-bold text-center">
             <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
@@ -342,75 +326,8 @@ export default function InvoicePage() {
             </Select>
             月度 請求一覧
           </h2>
-
-          <div className="flex justify-right gap-2 h-fit">
-            <Select value={sortState} onChange={(e) => setSortState(e.target.value as SortStates)} className="bg-white rounded-md px-2 pb-0.5 text-sm font-bold">
-              <option value="byDate">完了日順</option>
-              <option value="byClient">クライアント順(昇順)</option>
-              <option value="byClientRev">クライアント順(降順)</option>
-            </Select>
-            <MultiSelectPopover
-              options={[
-                { id: 1, label: "難波秘密倶楽部" },
-                { id: 2, label: "新大阪秘密倶楽部" },
-                { id: 3, label: "谷町秘密倶楽部" },
-                { id: 4, label: "谷町人妻ゴールデン" },
-                { id: 5, label: "梅田人妻秘密倶楽部" },
-                { id: 6, label: "梅田ゴールデン" },
-                { id: 7, label: "中州秘密倶楽部" },
-                { id: 8, label: "奥様クラブ" },
-                { id: 9, label: "快楽玉乱堂" },
-              ]}
-              selectedLabels={filters.clients}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
-                setFilters({
-                  ...filters,
-                  clients: e.target.checked
-                    ? [...filters.clients, label]
-                    : filters.clients.filter((c) => c !== label)
-                })
-              }
-              defaultText="クライアント"
-            />
-
-            <MultiSelectPopover
-              options={[
-                { id: 1, label: "浜口" },
-                { id: 2, label: "飯塚" },
-                { id: 3, label: "谷" },
-                { id: 4, label: "田口" },
-                { id: 6, label: "西谷" },
-              ]}
-              selectedLabels={filters.assignees}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
-                setFilters({
-                  ...filters,
-                  assignees: e.target.checked
-                    ? [...filters.assignees, label]
-                    : filters.assignees.filter((a) => a !== label)
-                })
-              }
-              defaultText="作業担当者"
-            />
-
-            <div className="relative">
-              <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
-              <Input
-                type="text"
-                className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
-                placeholder="No./タイトル/内容/依頼者"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value;
-
-                  setFilters({
-                    ...filters,
-                    searchKeywords: value.trim() === "" ? null : value,
-                  });
-                }}
-              />
-            </div>
-          </div>
         </div>
+
         <div className="flex gap-2">
           <Button
             disabled={invoiceDL}
@@ -447,10 +364,10 @@ export default function InvoicePage() {
 
         {user &&
           (filteredInvoices && filteredInvoices.length > 0 ? (
-            <InvoiceList setInvoices={setInvoices} invoices={filteredInvoices} sortState={sortState} user={user} />
+            <InvoiceList setInvoices={setInvoices} invoices={filteredInvoices} sortState={invoiceSortState} user={user} />
           ) : (
             <>
-              <InvoiceList setInvoices={setInvoices} invoices={filteredInvoices} sortState={sortState} user={user} />
+              <InvoiceList setInvoices={setInvoices} invoices={filteredInvoices} sortState={invoiceSortState} user={user} />
               <p className="text-white text-center my-5">請求するタスクがありません</p>
             </>
           ))}

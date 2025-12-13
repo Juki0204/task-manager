@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type TaskListStyle = "cardListStyle" | "rowListStyle";
 type TaskListSortType = "byDate" | "byManager";
+
 type Filters = {
   clients: string[]; //クライアント
   assignees: string[]; //担当者
@@ -15,12 +16,15 @@ type TaskListPreferencesContextType = {
   taskListStyle: TaskListStyle;
   setTaskListStyle: (style: TaskListStyle) => void;
   taskListSortType: TaskListSortType;
-  setTaskListSortType: (style: TaskListSortType) => void;
+  setTaskListSortType: (type: TaskListSortType) => void;
+  invoiceSortState: InvoiceSortStates;
+  setInvoiceSortState: (state: InvoiceSortStates) => void;
   filters: Filters;
   setFilters: (filters: Filters) => void;
   resetFilters: () => void;
 };
 
+type InvoiceSortStates = "byDate" | "byClient" | "byClientRev";
 
 const TaskListPreferencesContext = createContext<TaskListPreferencesContextType | undefined>(
   undefined
@@ -29,6 +33,7 @@ const TaskListPreferencesContext = createContext<TaskListPreferencesContextType 
 export function TaskListPreferencesProvider({ children }: { children: React.ReactNode }) {
   const [taskListStyle, setTaskListStyle] = useState<TaskListStyle>("rowListStyle");
   const [taskListSortType, setTaskListSortType] = useState<TaskListSortType>("byDate");
+  const [invoiceSortState, setInvoiceSortState] = useState<InvoiceSortStates>("byDate");
 
   //初回に localStorage から読み込み
   useEffect(() => {
@@ -40,6 +45,11 @@ export function TaskListPreferencesProvider({ children }: { children: React.Reac
     const savedSortType = localStorage.getItem("taskListSortType");
     if (savedSortType === "byDate" || savedSortType === "byManager") {
       setTaskListSortType(savedSortType);
+    }
+
+    const savedInvoiceSortStates = localStorage.getItem("invoiceSortState");
+    if (savedInvoiceSortStates === "byDate" || savedInvoiceSortStates === "byClient" || savedInvoiceSortStates === "byClientRev") {
+      setInvoiceSortState(savedInvoiceSortStates);
     }
   }, []);
 
@@ -56,6 +66,13 @@ export function TaskListPreferencesProvider({ children }: { children: React.Reac
       localStorage.setItem("taskListSortType", taskListSortType);
     }
   }, [taskListSortType]);
+
+  //invoiceSotyState
+  useEffect(() => {
+    if (invoiceSortState) {
+      localStorage.setItem("invoiceSortState", invoiceSortState);
+    }
+  }, [invoiceSortState]);
 
   //フィルタリング
   const [filters, setFilters] = useState<Filters>({
@@ -81,6 +98,8 @@ export function TaskListPreferencesProvider({ children }: { children: React.Reac
         setTaskListStyle,
         taskListSortType,
         setTaskListSortType,
+        invoiceSortState,
+        setInvoiceSortState,
         filters,
         setFilters,
         resetFilters,

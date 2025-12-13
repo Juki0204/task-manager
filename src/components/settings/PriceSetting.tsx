@@ -89,8 +89,9 @@ export default function PriceSetting() {
   };
 
   //追加
-  const addPrice = async (order: number, category: string, sub_category: string) => {
-    const target = newPrices[category][sub_category];
+  const addPrice = async (order: number, category: string, sub_category: string | null) => {
+    const uiSubKey = sub_category ?? "default";
+    const target = newPrices[category][uiSubKey];
 
     if (!target.work_name || !target.price) {
       alert("作業名・単価は入力必須です。");
@@ -117,7 +118,7 @@ export default function PriceSetting() {
       ...prev,
       [category]: {
         ...prev[category],
-        [sub_category]: {
+        [uiSubKey]: {
           work_name: "",
           price: "",
           work_description: "",
@@ -163,32 +164,47 @@ export default function PriceSetting() {
 
   // 並び替え処理
   const updateOrder = async (list: PriceItem[]) => {
-    const updates = list.map((p, index) =>
-      supabase.from("prices").update({ order: index }).eq("id", p.id)
+    const updates = list.map((p) =>
+      supabase
+        .from("prices")
+        .update({ order: p.order })
+        .eq("id", p.id)
     );
 
     const results = await Promise.all(updates);
     const errors = results.filter((r) => r.error);
 
-    if (errors.length > 0) console.error(errors);
+    if (errors.length > 0) throw errors;
   };
 
   //並び替え（ドラッグ操作）
-  const handleDragEnd = (event: DragEndEvent, category: string, sub_category: string) => {
+  const handleDragEnd = (event: DragEndEvent, category: string, sub_category: string | null) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const targetList = prices.filter((p) => p.category === category && p.sub_category === sub_category).sort((a, b) => a.order - b.order);
+    const targetList = [...prices]
+      .filter((p) => p.category === category && (p.sub_category ?? null) === sub_category)
+      .sort((a, b) => a.order - b.order);
 
     const oldIndex = targetList.findIndex((p) => p.id === active.id);
     const newIndex = targetList.findIndex((p) => p.id === over.id);
 
+    if (oldIndex === -1 || newIndex === -1) {
+      console.warn("DnD index mismatch", { active, over });
+      return;
+    }
+
     const newList = arrayMove(targetList, oldIndex, newIndex);
     const updated = newList.map((p, index) => ({ ...p, order: index }));
 
-    setPrices((prev) => [...prev.filter((p) => !(p.category === category && p.sub_category === sub_category)), ...updated,]);
+    setPrices((prev) => {
+      const rest = prev.filter(
+        (p) => !(p.category === category && (p.sub_category ?? null) === sub_category)
+      );
+      return [...rest, ...updated].sort((a, b) => a.order - b.order);
+    });
 
-    updateOrder(newList).catch((err) => {
+    updateOrder(updated).catch((err) => {
       console.error(err);
       alert("順番の保存に失敗しました。");
     });
@@ -227,7 +243,7 @@ export default function PriceSetting() {
                 {/* WEBの3つのsub_categoryを作成 */}
                 {isWeb
                   ? WEB_SUB_CATEGORIES.map((sub) => {
-                    const subList = categoryPrices
+                    const subList = [...categoryPrices]
                       .filter((p) => p.sub_category === sub)
                       .sort((a, b) => a.order - b.order);
 
@@ -369,7 +385,7 @@ export default function PriceSetting() {
                   /* WEB以外は従来通り */
                   : (() => {
                     const newPrice = newPrices[cat].default;
-                    const list = categoryPrices
+                    const list = [...categoryPrices]
                       .sort((a, b) => a.order - b.order);
 
                     return (
@@ -378,7 +394,7 @@ export default function PriceSetting() {
                           sensors={sensors}
                           collisionDetection={closestCenter}
                           onDragEnd={(e) =>
-                            handleDragEnd(e, cat, "default")
+                            handleDragEnd(e, cat, null)
                           }
                         >
                           <SortableContext
@@ -452,7 +468,7 @@ export default function PriceSetting() {
                             disabled={!newPrice.work_name || !newPrice.price}
                             onClick={() => {
                               const order = list.length;
-                              addPrice(order, cat, "default");
+                              addPrice(order, cat, null);
                             }}
                             className="col-span-1 text-sm !m-0 !p-1 rounded-md cursor-pointer hover:opacity-70 data-disabled:pointer-events-none"
                           >

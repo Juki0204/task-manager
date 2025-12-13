@@ -12,7 +12,7 @@ export interface Invoice {
   work_name?: string;
   amount?: number;
   category?: string;
-  device?: string;
+  media?: string;
   pieces?: number;
   degree?: number;
   work_time?: string;

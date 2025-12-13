@@ -20,7 +20,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   const [lockedByOther, setLockedByOther] = useState<boolean>(false);
   const [lockedUser, setLockedUser] = useState<string>("");
 
-  const calcAmountTarget: string[] = ["work_name", "device", "degree", "adjustment", "pieces"];
+  const calcAmountTarget: string[] = ["work_name", "media", "degree", "adjustment", "pieces"];
 
   useEffect(() => {
     const channel = supabase
@@ -73,7 +73,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
     return null;
   }
 
-  const deviceFactor = (device: string | null | undefined): number => device && device.includes("会員サイト") ? 1.5 : 1;
+  const mediaFactor = (media: string | null | undefined): number => media && media.includes("会員サイト") ? 1.5 : 1;
 
   const safeAmount = (num: number): number => (Number.isFinite(num) ? num : 0);
 
@@ -115,9 +115,9 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
       let nextAmount = formatNullValue(target.amount) ?? 0;
 
       //作業デバイス（計算用係数）
-      const nextDeviceFactor = field === "device"
-        ? deviceFactor(typeof formatNewValue === "string" ? formatNewValue : null)
-        : deviceFactor(target.device ?? null);
+      const nextMediaFactor = field === "media"
+        ? mediaFactor(typeof formatNewValue === "string" ? formatNewValue : null)
+        : mediaFactor(target.media ?? null);
 
       //修正度
       const nextDegree = field === "degree"
@@ -160,7 +160,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
         nextAmount = formatNullValue(priceRow.price) ?? 0;
 
-        const total = safeAmount(nextAmount) * nextPieces * nextDeviceFactor * (nextDegree * 0.01) + nextAdjustment;
+        const total = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01) + nextAdjustment;
 
         const { error } = await supabase
           .from(tableName)
@@ -179,7 +179,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
       // ---------------- work_name 以外の計算に関係する箇所の変更時 ----------------
       if (isCalcField) {
-        const total = safeAmount(nextAmount) * nextPieces * nextDeviceFactor * (nextDegree * 0.01) + nextAdjustment;
+        const total = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01) + nextAdjustment;
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updatePayload: Record<string, any> = {
@@ -188,8 +188,8 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
         if (field === "pieces" || field === "degree" || field === "adjustment") {
           updatePayload[field] = formatNullValue(formatNewValue);
-        } else if (field === "device") {
-          updatePayload.device = typeof formatNewValue === "string" && formatNewValue.trim() !== "" ? formatNewValue : null;
+        } else if (field === "media") {
+          updatePayload.media = typeof formatNewValue === "string" && formatNewValue.trim() !== "" ? formatNewValue : null;
         } else if (field === "amount") {
           updatePayload.amount = formatNullValue(formatNewValue);
         } else {

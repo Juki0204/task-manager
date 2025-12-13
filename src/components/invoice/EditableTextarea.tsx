@@ -206,7 +206,7 @@ export default function EditableTextarea({
           }}
         />
       ) : (
-        <>{value === "" ? (field === "remarks" ? "" : "") : value}</>
+        <>{value ?? ""}</>
       )}
     </div>
   );

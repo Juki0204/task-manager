@@ -168,7 +168,7 @@ export default function EditableCell({
           onClick={(e) => e.stopPropagation()}
         />
       ) : (
-        <>{value === "" ? (field === "remarks" ? "" : "") : value}</>
+        <>{value ?? ""}</>
       )}
     </div>
   );
