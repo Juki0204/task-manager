@@ -301,9 +301,9 @@ export default function InvoicePage() {
 
   return (
     <div className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 relative overflow-x-hidden min-h-[80svh]">
-      <div className="flex justify-start gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-end gap-1 text-white text-xl font-bold text-center">
+          <h2 className="flex justify-center items-center gap-1 text-white text-xl font-bold text-center">
             <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
               <option value="2024">2024</option>
               <option value="2025">2025</option>
@@ -334,7 +334,7 @@ export default function InvoicePage() {
             onClick={() => {
               handleDownload("invoice");
             }}
-            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${invoiceDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
+            className={`py-2 flex items-center gap-1 rounded pl-3.5 pr-4.5 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${invoiceDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
             <LuDownload />
             {invoiceDL ? (
@@ -348,7 +348,7 @@ export default function InvoicePage() {
             onClick={() => {
               handleDownload("processing");
             }}
-            className={`px-2 py-1 flex items-center gap-1 rounded pl-3.5 pr-4.5 p-2 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${processingDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
+            className={`py-2 flex items-center gap-1 rounded pl-3.5 pr-4.5 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${processingDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
             <LuDownload />
             {processingDL ? (

@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
+import { Popover, PopoverBackdrop, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
 
 interface MultiSelectPopoverProps {
@@ -30,6 +30,11 @@ export default function MultiSelectPopover({ options, selectedLabels, onChange, 
               />
             </PopoverButton>
 
+
+            <PopoverBackdrop
+              className="fixed w-full h-lvh inset-0 z-40"
+            />
+
             <Transition
               as={Fragment}
               enter="transition ease-out duration-200"
@@ -39,7 +44,7 @@ export default function MultiSelectPopover({ options, selectedLabels, onChange, 
               leaveFrom="opacity-100 transition-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <PopoverPanel className="absolute z-10 mt-2 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+              <PopoverPanel className="absolute z-50 mt-2 w-full rounded-md border border-gray-200 bg-white shadow-lg">
                 <div className="p-2 space-y-1">
                   {options.map((opt) => (
                     <label key={opt.id} className="flex cursor-pointer items-center rounded-md px-2 py-1 hover:bg-gray-100">

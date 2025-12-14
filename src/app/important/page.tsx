@@ -18,11 +18,7 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
 
-type taskListStyle = "rowListStyle" | "cardListStyle";
-
 export default function TrashTaskPage() {
-
-  const [taskListStyle, setTaskListStyle] = useState<taskListStyle | null>(null);
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -99,27 +95,24 @@ export default function TrashTaskPage() {
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem('taskListStyle');
-    if (saved === 'rowListStyle' || saved === 'cardListStyle') {
-      setTaskListStyle(saved);
-    } else {
-      setTaskListStyle('cardListStyle');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (taskListStyle) {
-      localStorage.setItem('taskListStyle', taskListStyle);
-    }
-  }, [taskListStyle]);
-
-  useEffect(() => {
     getTasks();
   }, [user])
 
 
   return (
     <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 m-auto max-w-[1920px] relative">
+      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+        <div className="flex justify-start items-end gap-4">
+          <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
+            重要タスク一覧
+          </h2>
+        </div>
+
+        {/* <div className="flex gap-2">
+          <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
+        </div> */}
+      </div>
+
       {user &&
         <TaskList
           user={user}
