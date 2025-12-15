@@ -41,7 +41,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   const [isAllEditableFromOpen, setIsAllEditableFromOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [priceList, setPriceList] = useState<string[] | null>(null);
-  const [allPriceList, setAllPriceList] = useState<{ id: number, category: string, work_name: string, price: number }[] | null>(null);
+  const [allPriceList, setAllPriceList] = useState<{ id: number, category: string, sub_category: string, work_name: string, price: number }[] | null>(null);
   const [activeCell, setActiveCell] = useState<{ recordId: string, field: string } | null>(null);
   const [activeRecord, setActiveRecord] = useState<{ currentId: string | null, prevId: string | null, nextId: string | null } | null>(null)
 
@@ -98,6 +98,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
       setAllPriceList(data.map((p) => ({
         id: p.id,
         category: p.category,
+        sub_category: p.sub_category,
         work_name: p.work_name,
         price: p.price,
       })));
@@ -202,6 +203,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
               className={`
                 grid place-content-center border border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-0 z-20 hover:bg-neutral-600
                 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}
+                ${activeRecord?.currentId === i.id ? "!bg-yellow-300 text-black" : ""}
               `}
             >
               <PiNotePencilBold className="text-lg" />
@@ -375,34 +377,36 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
       <Dialog
         open={isAllEditableFromOpen}
         onClose={() => {
-          setIsOpen(false);
+          setIsAllEditableFromOpen(false);
+          setActiveRecord(null);
         }}
         // transition
-        className="relative z-40 transition duration-300 ease-out data-closed:opacity-0"
+        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
         <DialogBackdrop
-          // onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }}
+          onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }}
           className="fixed inset-0 bg-black/30"
         />
 
-        <div className="w-1/4 min-w-120 h-[calc(100svh-6.5rem)] fixed left-auto top-26 right-0 flex items-center justify-center">
-
-          {activeRecord && (
-            <AllEditableForm
-              recordId={activeRecord.currentId}
-              prevId={activeRecord.prevId}
-              nextId={activeRecord.nextId}
-              priceList={allPriceList}
-              onClose={() => {
-                setIsAllEditableFromOpen(false);
-                setActiveRecord(null);
-              }}
-              onChangeRecord={(r: string) => {
-                const siblingIsd = getSiblingInvoices(r);
-                setActiveRecord({ currentId: r, prevId: siblingIsd.prev, nextId: siblingIsd.next });
-              }}
-            />
-          )}
+        <div className="fixed inset-0 w-screen flex items-center justify-center">
+          <DialogPanel className="relative h-[80svh] w-200 space-y-4 rounded-2xl bg-neutral-100 p-5 pt-6">
+            {activeRecord && (
+              <AllEditableForm
+                recordId={activeRecord.currentId}
+                prevId={activeRecord.prevId}
+                nextId={activeRecord.nextId}
+                priceList={allPriceList}
+                onClose={() => {
+                  setIsAllEditableFromOpen(false);
+                  setActiveRecord(null);
+                }}
+                onChangeRecord={(r: string) => {
+                  const siblingIsd = getSiblingInvoices(r);
+                  setActiveRecord({ currentId: r, prevId: siblingIsd.prev, nextId: siblingIsd.next });
+                }}
+              />
+            )}
+          </DialogPanel>
         </div>
       </Dialog>
     </div>

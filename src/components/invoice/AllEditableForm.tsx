@@ -21,7 +21,7 @@ interface AllEditableFormProps {
   recordId: string | null;
   prevId: string | null;
   nextId: string | null;
-  priceList: { id: number, category: string, work_name: string, price: number }[] | null;
+  priceList: { id: number, category: string, sub_category: string, work_name: string, price: number }[] | null;
   onClose: () => void;
   onChangeRecord: (recordId: string) => void;
 }
@@ -494,58 +494,27 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
   return (
 
     <div className="w-full h-full relative space-y-4 bg-neutral-100 px-2 pt-14 pb-26">
-      <h2 className="absolute top-0 left-0 w-full h-14 flex items-center justify-start gap-2 px-4 font-bold pr-10 bg-neutral-100 z-10">
+      <h2 className="absolute top-0 left-0 w-full h-14 flex items-center justify-start gap-2 pl-3 font-bold pr-10 bg-neutral-100 z-10">
         <span className="py-0.5 px-4 bg-neutral-200 rounded-md">No. {currentInvoice.serial}</span>
         <span>{tempInvoiceValue.client}：{tempInvoiceValue.requester}さん依頼</span>
-        <GrClose onClick={onClose} className="absolute top-5 right-3 cursor-pointer" />
+        <GrClose onClick={onClose} className="absolute top-4 right-2 cursor-pointer" />
       </h2>
       <div
         ref={scrollRef}
-        className="w-full h-full relative space-y-4 bg-neutral-100 p-4 pb-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
+        className="w-full h-full relative space-y-4 bg-neutral-100 p-1 pr-2 pb-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
       >
 
-        {/* 作業タイトル */}
-        <div>
-          <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdDriveFileRenameOutline />作業タイトル</h3>
-          <Input
-            tabIndex={-1}
-            type="text"
-            value={tempInvoiceValue.title}
-            onChange={(e) => setTempInvoiceValue({
-              ...tempInvoiceValue,
-              title: e.target.value
-            })}
-            className="w-full bg-neutral-200 py-1 px-2 rounded-md"
-          />
-        </div>
-
-        {/* 作業内容 */}
-        <div>
-          <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdOutlineStickyNote2 />作業内容</h3>
-          <Input
-            tabIndex={-1}
-            type="text"
-            value={tempInvoiceValue.description}
-            onChange={(e) => setTempInvoiceValue({
-              ...tempInvoiceValue,
-              description: e.target.value
-            })}
-            className="w-full bg-neutral-200 py-1 px-2 rounded-md"
-          />
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-
-          {/* 完了日 */}
-          <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><FaRegCheckCircle />完了日</h3>
+        <div className="grid grid-cols-4 gap-2">
+          {/* 作業タイトル */}
+          <div className="col-span-3">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdDriveFileRenameOutline />作業タイトル</h3>
             <Input
               tabIndex={-1}
-              type="date"
-              value={tempInvoiceValue.finish_date}
+              type="text"
+              value={tempInvoiceValue.title}
               onChange={(e) => setTempInvoiceValue({
                 ...tempInvoiceValue,
-                finish_date: e.target.value
+                title: e.target.value
               })}
               className="w-full bg-neutral-200 py-1 px-2 rounded-md"
             />
@@ -563,8 +532,46 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             />
           </div>
 
-          {/* 大カテゴリ */}
+        </div>
+
+        <div className="grid grid-cols-4 gap-2">
+          {/* 作業内容 */}
+          <div className="col-span-3">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdOutlineStickyNote2 />作業内容</h3>
+            <Input
+              tabIndex={-1}
+              type="text"
+              value={tempInvoiceValue.description}
+              onChange={(e) => setTempInvoiceValue({
+                ...tempInvoiceValue,
+                description: e.target.value
+              })}
+              className="w-full bg-neutral-200 py-1 px-2 rounded-md"
+            />
+          </div>
+
+          {/* 完了日 */}
           <div className="col-span-1">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><FaRegCheckCircle />完了日</h3>
+            <Input
+              tabIndex={-1}
+              type="date"
+              value={tempInvoiceValue.finish_date}
+              onChange={(e) => setTempInvoiceValue({
+                ...tempInvoiceValue,
+                finish_date: e.target.value
+              })}
+              className="w-full bg-neutral-200 py-1 px-2 rounded-md"
+            />
+          </div>
+
+        </div>
+
+        <hr className="text-neutral-300" />
+
+        <div className="grid grid-cols-12 gap-2">
+          {/* 大カテゴリ */}
+          <div className="col-span-3">
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCategoryAlt />大カテゴリ</h3>
             <Input
               tabIndex={-1}
@@ -574,48 +581,46 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
             />
           </div>
-        </div>
 
-        <hr className="text-neutral-300" />
+          {/* 中カテゴリ */}
+          <div className="flex gap-x-2 flex-wrap col-span-9 border-l border-neutral-200 pl-2">
+            <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdLaptopChromebook />中カテゴリ選択</h3>
 
-        {/* 中カテゴリ */}
-        <div className="flex gap-x-2 flex-wrap">
-          <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdLaptopChromebook />中カテゴリ選択</h3>
-
-          {mediaOptions.map((opt, index) => (
-            <div
-              key={opt.id}
-              tabIndex={0}
-              ref={(el) => { radioRefs.current[index] = el; }}
-              onKeyDown={handleMediaKey}
-              onClick={() => {
-                document.getElementById(opt.id)?.click();
-              }}
-              className={`relative ${opt.width} h-8 bg-neutral-200 text-neutral-700 rounded-sm overflow-hidden focus:outline-2 focus:outline-neutral-500`}
-            >
-              <input
-                type="radio"
-                name="MEDIA"
-                id={opt.id}
-                value={opt.label}
-                checked={opt.label === tempInvoiceValue.media}
-                onChange={(e) => {
-                  setTempInvoiceValue({
-                    ...tempInvoiceValue,
-                    media: e.target.value
-                  });
-                  calcAmount();
+            {mediaOptions.map((opt, index) => (
+              <div
+                key={opt.id}
+                tabIndex={0}
+                ref={(el) => { radioRefs.current[index] = el; }}
+                onKeyDown={handleMediaKey}
+                onClick={() => {
+                  document.getElementById(opt.id)?.click();
                 }}
-                className="w-full h-full hidden peer"
-              />
-              <label
-                htmlFor={opt.label}
-                className="absolute top-0 left-0 w-full h-full aspect-square text-center p-1 text-neutral-800 peer-checked:bg-blue-300/70 transition duration-300"
+                className={`relative ${opt.width} h-8 bg-neutral-200 text-neutral-700 rounded-sm overflow-hidden focus:outline-2 focus:outline-neutral-500`}
               >
-                {opt.label}
-              </label>
-            </div>
-          ))}
+                <input
+                  type="radio"
+                  name="MEDIA"
+                  id={opt.id}
+                  value={opt.label}
+                  checked={opt.label === tempInvoiceValue.media}
+                  onChange={(e) => {
+                    setTempInvoiceValue({
+                      ...tempInvoiceValue,
+                      media: e.target.value
+                    });
+                    calcAmount();
+                  }}
+                  className="w-full h-full hidden peer"
+                />
+                <label
+                  htmlFor={opt.label}
+                  className="absolute top-0 left-0 w-full h-full aspect-square text-center py-1.5 px-2 text-sm text-neutral-800 peer-checked:bg-blue-300/70 transition duration-300"
+                >
+                  {opt.label}
+                </label>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 小カテゴリ */}
@@ -647,7 +652,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1 px-2 rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -663,7 +668,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">WEB</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
-                    priceList.filter((price) => price.category === "WEB")
+                    priceList.filter((price) => price.category === "WEB" && price.sub_category !== "イベント関連")
                       .sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
                       .map((p) => (
                         <li
@@ -673,7 +678,33 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1 px-2 rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                        >
+                          {p.work_name}
+                        </li>
+                      ))
+                  )}
+                </ul>
+              </div>
+
+              <div
+                data-category="WEB"
+                ref={(el: HTMLDivElement) => { categoryRefs.current[1] = el; }}
+                className="p-2 bg-neutral-200 rounded-md w-50">
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">イベント</h3>
+                <ul className="flex flex-col gap-0.5">
+                  {priceList && (
+                    priceList.filter((price) => price.category === "WEB" && price.sub_category === "イベント関連")
+                      .sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
+                      .map((p) => (
+                        <li
+                          key={p.id}
+                          data-id={p.id}
+                          data-category={p.category}
+                          tabIndex={0}
+                          onKeyDown={handleSmallCategoryKey}
+                          onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -700,7 +731,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1 px-2 rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -727,7 +758,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1 px-2 rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -754,7 +785,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1 px-2 rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -771,7 +802,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
         <hr className="text-neutral-300" />
 
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-12 gap-2">
 
           {/* 作業点数 */}
           <div className="col-span-2">
@@ -779,7 +810,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             <Input
               tabIndex={0}
               ref={piecesRef}
-              type="tel"
+              type="number"
               value={tempInvoiceValue.pieces ?? ""}
               onChange={(e) => {
                 setTempInvoiceValue({
@@ -788,6 +819,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 });
                 calcAmount();
               }}
+              pattern="[0-9]*"
               onKeyDown={(e: React.KeyboardEvent) => {
                 if (e.key === "Tab") {
                   if (e.shiftKey && firstSmallCategoryRef.current) {
@@ -822,36 +854,40 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             </Select>
           </div>
 
-          {/* 修正金額 */}
-          <div className="col-span-2">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />修正金額</h3>
-            <Input
-              tabIndex={0}
-              type="tel"
-              value={tempInvoiceValue.adjustment ?? ""}
-              onChange={(e) => {
-                setTempInvoiceValue({
-                  ...tempInvoiceValue,
-                  adjustment: Number(e.target.value)
-                });
-                calcAmount();
-              }}
-              className={`
-                w-full bg-neutral-200 py-1 px-2 rounded-md text-right focus:outline-2 focus:outline-neutral-500
-                ${tempInvoiceValue.adjustment && tempInvoiceValue.adjustment < 0 ? "text-red-600" : ""}
-              `}
-            />
-          </div>
-
           {/* 仮請求額 */}
           <div className="col-span-3">
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />仮請求額</h3>
             <Input
               tabIndex={-1}
-              type="tel"
+              type="number"
               value={tempInvoiceValue.amount ?? 0}
               readOnly
+              pattern="[0-9]*"
               className="w-full bg-neutral-300 py-1 px-2 rounded-md text-right pointer-events-none"
+            />
+          </div>
+
+          {/* 修正金額 */}
+          <div className="col-span-2">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />修正金額</h3>
+            <Input
+              tabIndex={0}
+              type="number"
+              value={tempInvoiceValue.adjustment ?? ""}
+              onChange={(e) => {
+                if (e.target.value !== "-") {
+                  setTempInvoiceValue({
+                    ...tempInvoiceValue,
+                    adjustment: Number(e.target.value)
+                  });
+                  calcAmount();
+                }
+              }}
+              pattern="[0-9]*"
+              className={`
+                w-full bg-neutral-200 py-1 px-2 rounded-md text-right focus:outline-2 focus:outline-neutral-500
+                ${tempInvoiceValue.adjustment && tempInvoiceValue.adjustment < 0 ? "text-red-600" : ""}
+              `}
             />
           </div>
 
@@ -860,9 +896,10 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />本請求額</h3>
             <Input
               tabIndex={-1}
-              type="text"
+              type="number"
               value={tempInvoiceValue.total_amount ?? 0}
               readOnly
+              pattern="[0-9]*"
               className="w-full bg-neutral-300 py-1 px-2 rounded-md text-right pointer-events-none"
             />
           </div>
@@ -885,7 +922,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       </div>
 
       {/* 確定ボタンたち */}
-      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-2 gap-2 items-center justify-between p-4 bg-neutral-100">
+      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-2 gap-2 items-center justify-between p-3 bg-neutral-100">
         <button
           disabled={!isDirty || isSaving}
           onClick={() => {
