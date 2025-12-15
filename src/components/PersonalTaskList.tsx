@@ -37,7 +37,7 @@ export default function PersonalTaskList({
         <TaskColumn
           id="NotYetStarted"
           title="未担当タスク"
-          tasks={taskList.filter((task) => !task.manager)}
+          tasks={taskList.filter((task) => !task.manager && task.status === '未着手' || task.status === '詳細待ち' || task.status === '中止' || task.status === '保留')}
           user={user}
           unreadIds={unreadIds}
           onClick={onClick}
@@ -71,7 +71,7 @@ export default function PersonalTaskList({
         <TaskColumn
           id="Confirm"
           title="確認中タスク"
-          tasks={taskList.filter((task) => task.status === '確認中')}
+          tasks={taskList.filter((task) => task.manager && task.status === '確認中')}
           user={user}
           unreadIds={unreadIds}
           onClick={onClick}
@@ -89,6 +89,7 @@ export default function PersonalTaskList({
           id="Completed"
           title="完了済タスク（直近1週間）"
           tasks={taskList.filter((task) => {
+            if (!task.manager) return;
             if (task.status !== '完了') return false;
             if (!task.finish_date) return false;
 

@@ -66,35 +66,10 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const [remarks, setRemarks] = useState<string>(task.remarks ? task.remarks : ''); //備考欄
   const [method, setMethod] = useState<string>(task.method); //依頼手段
   const serial = task.serial; //識別番号
-  // const [currentTaskFile, setCurrentTaskFile] = useState<taskFileMeta[]>([]);
-
-  // const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
-  // const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
 
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
   const [isValid, setIsValid] = useState<boolean>(true);
   const { syncInvoiceWithTask } = useInvoiceSync();
-
-  //ファイル添付監視
-  // const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const newFile = e.target.files?.[0] || null;
-  //   if (!newFile) return;
-
-  //   //allowedExtensionsの拡張子以外は非対応
-  //   const fileType = newFile.name.split('.').pop()?.toLowerCase();
-  //   if (!fileType || !allowedExtensions.includes(fileType)) {
-  //     alert(`このファイル形式（.${fileType}）はアップロードできません。`);
-  //     e.target.value = '';
-  //     return;
-  //   }
-
-  //   //添付ファイルをuploadFilesに格納
-  //   setUploadedFiles(prev => {
-  //     const copy = [...prev];
-  //     copy[index] = newFile;
-  //     return copy;
-  //   });
-  // }
 
   const getData = async () => {
     if (user) {
@@ -148,24 +123,6 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
     }
   }
 
-  // const getTaskFiles = async () => {
-  //   const { data: fileMetadata } = await supabase
-  //     .from('task_files')
-  //     .select('*')
-  //     .eq("task_id", taskId);
-
-  //   if (fileMetadata && fileMetadata[0]) {
-  //     const taskFileArray = [];
-  //     // console.log(fileMetadata);
-  //     for (const file of fileMetadata[0].files) {
-  //       taskFileArray.push(file);
-  //     }
-
-  //     setCurrentTaskFile(taskFileArray);
-  //     // console.log(taskFileArray);
-  //   }
-  // }
-
   const updateTask = async () => {
     //変更前のタスク
     const { data: oldTaskData } = await supabase
@@ -202,6 +159,9 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
       return;
     }
 
+    //請求タスク判定
+    await syncInvoiceWithTask(taskId, status);
+
     //差分比較～変更ログ生成
     const diff = compareHistory(taskData, oldTaskData);
     if (diff.changedKeys.length === 0) return;
@@ -222,89 +182,11 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
     if (error) console.error(error);
 
-    //添付ファイルアップ、請求タスク判定、備考欄変更通知
-    // await uploadTaskFiles(taskId, uploadedFiles);
-    await syncInvoiceWithTask(taskId, status);
+    //備考欄変更通知
     if (remarks) await addUnreadTask(taskData);
 
   }
 
-  // async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
-  //   const bucket = 'shared-files';
-  //   const metadataArray = [];
-
-  //   for (let i = 0; i < files.length; i++) {
-  //     const file = files[i];
-
-  //     if (file) {
-  //       const ext = file.name.split('.').pop();
-  //       const safeFileName = `${uuidv4()}.${ext}`;
-  //       const filePath = `${taskId}/${safeFileName}`;
-
-  //       const { error } = await supabase.storage
-  //         .from(bucket)
-  //         .upload(filePath, file, { upsert: true });
-
-  //       if (error) {
-  //         alert('ファイルアップロードに失敗しました');
-  //         continue;
-  //       }
-
-  //       metadataArray.push({
-  //         original_name: file.name,
-  //         stored_name: safeFileName,
-  //         file_type: file.type,
-  //         file_path: filePath,
-  //         size: file.size,
-  //         ext: ext,
-  //       });
-  //     } else if (currentTaskFile[i]) {
-
-  //       metadataArray.push({
-  //         original_name: currentTaskFile[i].original_name,
-  //         stored_name: currentTaskFile[i].stored_name,
-  //         file_type: currentTaskFile[i].file_type,
-  //         file_path: currentTaskFile[i].file_path,
-  //         size: currentTaskFile[i].size,
-  //         ext: currentTaskFile[i].ext,
-  //       });
-  //     }
-  //   }
-
-  //   //ファイルも既存もない場合は何もしない
-  //   if (metadataArray.length === 0) return;
-
-
-  //   const { data: currentData } = await supabase
-  //     .from('task_files')
-  //     .select('*')
-  //     .eq('task_id', taskId)
-  //     .single();
-
-  //   if (currentData) {
-  //     const { error: updateError } = await supabase
-  //       .from('task_files')
-  //       .update({ files: metadataArray })
-  //       .eq('task_id', taskId);
-
-  //     if (updateError) {
-  //       alert('メタデータの更新に失敗しました');
-  //     }
-  //   } else {
-  //     if (files) {
-  //       const { error: insertError } = await supabase
-  //         .from('task_files')
-  //         .insert({ task_id: taskId, files: metadataArray });
-  //       if (insertError) {
-  //         alert('メタデータの登録に失敗しました');
-  //       }
-  //     }
-  //   }
-
-  //   // if (selectError) {
-  //   //   alert('メタデータの取得に失敗しました');
-  //   // }
-  // }
 
   //remarks変更時の他者への通知
   async function addUnreadTask(task: Task) {
@@ -387,7 +269,6 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
   useEffect(() => {
     getData();
-    // getTaskFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -505,25 +386,6 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
           <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
           <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
         </div>
-
-        {/* <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} /> */}
-
-        {/* 
-        <div className="col-span-2 grid grid-cols-3 gap-x-1">
-          <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
-          <Field>
-            <Label className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[0] && currentTaskFile[0].original_name ? currentTaskFile[0].original_name : '添付なし'}</Label>
-            <Input type="file" onChange={handleFileChange(0)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          </Field>
-          <Field>
-            <Label className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[1] && currentTaskFile[1].original_name ? currentTaskFile[1].original_name : '添付なし'}</Label>
-            <Input type="file" onChange={handleFileChange(1)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          </Field>
-          <Field>
-            <Label className="line-clamp-2 text-xs mb-1 h-8">{currentTaskFile[2] && currentTaskFile[2].original_name ? currentTaskFile[2].original_name : '添付なし'}</Label>
-            <Input type="file" onChange={handleFileChange(2)} className="w-full file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          </Field>
-        </div> */}
 
       </div>
 

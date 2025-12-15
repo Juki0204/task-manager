@@ -19,7 +19,8 @@ export default function FilterResetWatcher() {
       pathname.startsWith("/personal") ||
       pathname.startsWith("/complete") ||
       pathname.startsWith("/trash") ||
-      pathname.startsWith("/setting");
+      pathname.startsWith("/setting") ||
+      pathname.startsWith("/invoice");
 
     if (shouldReset) {
       resetFilters();

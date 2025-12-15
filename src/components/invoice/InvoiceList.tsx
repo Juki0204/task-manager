@@ -163,7 +163,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   }, [activeCell]);
 
   return (
-    <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2400px] box-border">
+    <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2520px] box-border">
       <div className="grid grid-cols-[40px_100px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-sm text-center text-neutral-950 font-bold">
         <div className="border border-neutral-600 p-1 bg-neutral-100 sticky left-0 z-20">一括</div>
         <div className="border border-l-0 border-neutral-600 p-1 bg-neutral-100 sticky left-10 z-20">No.(確認)</div>
@@ -214,6 +214,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 field="title"
                 value={i.title}
                 user={user}
+                className="whitespace-pre-wrap"
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
@@ -227,6 +228,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 field="description"
                 value={i.description}
                 user={user}
+                className="whitespace-pre-wrap"
                 setInvoices={setInvoices}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
