@@ -146,10 +146,10 @@ export default function RequesterSetting() {
   return (
     <div className="grid grid-cols-6 gap-2">
       <h2 className="col-span-6 text-white font-bold p-1 pt-0 text-center border-b border-white">依頼者一覧</h2>
-      {clients
+      {[...clients]
         .sort((a, b) => a.id - b.id)
         .map((client: Client) => {
-          const companyRequesters = requesters
+          const companyRequesters = [...requesters]
             .filter((r) => r.company === client.name)
             .sort((a, b) => a.order - b.order);
 
