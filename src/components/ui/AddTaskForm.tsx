@@ -7,6 +7,7 @@ interface AddTaskInputProps extends ComponentPropsWithoutRef<"input"> {
   type?: string;
   label: string;
   icon?: ReactNode;
+  className?: string;
 }
 
 interface AddTaskSelectProps extends ComponentPropsWithoutRef<"select"> {
@@ -27,11 +28,11 @@ interface AddTaskTextareaProps extends ComponentPropsWithoutRef<"textarea"> {
 }
 
 
-export function AddTaskInput({ col, name, type, icon, label, ...props }: AddTaskInputProps) {
+export function AddTaskInput({ col, name, type, icon, label, className, ...props }: AddTaskInputProps) {
   const colSpan = col ? `col-span-${col}` : "";
 
   return (
-    <Field className={`flex flex-col ${colSpan}`}>
+    <Field className={`flex flex-col ${colSpan} ${className ?? ""}`}>
       <Label className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold">{icon} {label}</Label>
       <Input name={name} type={type ? type : "text"} {...props} className="w-full py-1 px-2 bg-neutral-200 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
     </Field>

@@ -187,7 +187,7 @@ export default function AllTaskPage() {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="w-120 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
             {modalType === "add" && <AddTask onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} />}
             {modalType === "detail" && activeTask && user && (
               <TaskDetail

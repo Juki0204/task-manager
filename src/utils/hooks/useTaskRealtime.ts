@@ -14,6 +14,7 @@ type UserData = {
 
 export function useTaskRealtime(user: UserData) {
   const [taskList, setTaskList] = useState<Task[]>([]);
+  const [deadlineList, setDeadlineList] = useState<{ task_id: string, date: string }[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const getTasks = async () => {
@@ -31,6 +32,14 @@ export function useTaskRealtime(user: UserData) {
 
       setTaskList(tasks);
     }
+
+
+    const { data: deadline } = await supabase
+      .from("deadline")
+      .select("*");
+
+    if (!deadline) return;
+    setDeadlineList(deadline);
   }
 
 
@@ -145,5 +154,5 @@ export function useTaskRealtime(user: UserData) {
     }
   };
 
-  return { taskList, updateTaskStatus, sortTask, isReady };
+  return { taskList, updateTaskStatus, sortTask, deadlineList, isReady };
 }

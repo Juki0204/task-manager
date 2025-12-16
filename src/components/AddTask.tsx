@@ -9,7 +9,7 @@ import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
 import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
 import { RiCalendarScheduleLine } from "react-icons/ri";
-import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline } from "react-icons/md";
+import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline, MdAlarm } from "react-icons/md";
 import { IoPersonAddOutline } from "react-icons/io5";
 import { BsPersonCheck } from "react-icons/bs";
 import { TbClockExclamation } from "react-icons/tb";
@@ -45,39 +45,13 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const [remarks, setRemarks] = useState<string>(''); //備考欄
   const [method, setMethod] = useState<string>(''); //依頼手段
 
+  const [deadline, setDeadline] = useState<string>(''); //期日
+
   const [currentTaskInit, setCurrentTaskInit] = useState<string>('');
   const [currentTaskNum, setCurrentTaskNum] = useState<string>('');
 
-  // const [uploadedFiles, setUploadedFiles] = useState<(File | null)[]>([null, null, null]); //添付ファイル
-  // const allowedExtensions = ['eml', 'jpg', 'jpeg', 'png', 'gif', 'zip']; //添付ファイル識別用拡張子
-
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(true);
-
-
-  //ファイル添付監視
-  // const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const newFile = e.target.files?.[0] || null;
-  //   if (!newFile) return;
-
-  //   //allowedExtensionsの拡張子以外は非対応
-  //   const fileType = newFile.name.split('.').pop()?.toLowerCase();
-  //   if (!fileType || !allowedExtensions.includes(fileType)) {
-  //     alert(`このファイル形式（.${fileType}）はアップロードできません。`);
-  //     e.target.value = '';
-  //     return;
-  //   }
-
-  //   //添付ファイルをuploadFilesに格納
-  //   setUploadedFiles(prev => {
-  //     const copy = [...prev];
-  //     copy[index] = newFile;
-  //     // const filterd = prev.filter(file => file.name !== newFile.name);
-  //     // return [...filterd, newFile].slice(0, 3);
-  //     return copy;
-  //   });
-  //   // console.log(uploadedFiles);
-  // }
 
 
   const getData = async () => {
@@ -154,6 +128,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
+    //タスク追加
     const { data: taskData, error: addTaskError } = await supabase
       .from('tasks')
       .insert({
@@ -181,6 +156,23 @@ export default function AddTask({ onClose }: AddTaskProps) {
       return;
     }
 
+
+    //期限日の追加
+    if (deadline) {
+      const { error } = await supabase
+        .from("deadline")
+        .insert({
+          task_id: taskData.id,
+          date: deadline,
+        });
+
+      if (error) {
+        console.error("期日の設定に失敗しました:", error);
+      }
+    }
+
+
+    //シリアルナンバー更新
     const { error: addTaskNumError } = await supabase
       .from('clients')
       .update({
@@ -206,59 +198,12 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
     if (error) console.error(error);
 
-
-    // const taskId = taskData.id;
-    // await uploadTaskFiles(taskId, uploadedFiles);
-
     setTimeout(() => {
       onClose();
       toast.success(`${user?.name}さんが新しいタスクを追加しました。`);
     }, 500);
     setTimeout(() => setIsSubmitting(false), 1000);
   }
-
-  // async function uploadTaskFiles(taskId: string, files: (File | null)[]) {
-  //   const bucket = 'shared-files';
-  //   const metadataArray = [];
-
-  //   for (const file of files) {
-  //     if (file) {
-  //       const ext = file.name.split('.').pop();
-  //       const safeFileName = `${uuidv4()}.${ext}`;
-  //       const filePath = `${taskId}/${safeFileName}`;
-
-  //       const { error } = await supabase.storage
-  //         .from(bucket)
-  //         .upload(filePath, file, { upsert: true });
-
-  //       if (error) {
-  //         alert('ファイルアップロードに失敗しました');
-  //         continue;
-  //       }
-
-  //       metadataArray.push({
-  //         original_name: file.name,
-  //         stored_name: safeFileName,
-  //         file_type: file.type,
-  //         file_path: filePath,
-  //         size: file.size,
-  //         ext: ext,
-  //       });
-  //     }
-  //   }
-
-  //   const { error: insertError } = await supabase
-  //     .from('task_files').insert([
-  //       {
-  //         task_id: taskId,
-  //         files: metadataArray,
-  //       }
-  //     ]);
-
-  //   if (insertError) {
-  //     alert('メタデータの登録に失敗しました');
-  //   }
-  // }
 
 
   const handleContentCheck = (requester: string, taskTitle: string, taskDescription: string) => {
@@ -353,9 +298,13 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
         <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
 
-        <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+        <div className="col-span-2 flex gap-x-4">
+          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 
-        <AddTaskInput name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+
+          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+        </div>
 
         <div className="col-span-2 flex gap-x-4">
           <AddTaskSelect className="flex-1" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>

@@ -1,6 +1,6 @@
 import { FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
 import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
-import { MdMailOutline } from "react-icons/md";
+import { MdAlarm, MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import HighlightText from "./ui/HighlightText";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import { FaRegBuilding } from "react-icons/fa6";
+import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
+import { Tooltip } from "react-tooltip";
 
 interface CardPropd {
   task: Task;
@@ -63,6 +65,9 @@ export default function PersonalCard({
 
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
+
+  const { deadlineList } = useTaskRealtime(user || null);
+  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
 
   const clientList: Record<string, string> = {
     "難波秘密倶楽部": "難波",
@@ -241,7 +246,6 @@ export default function PersonalCard({
     }, DOUBLE_CLICK_GRACE);
   }
 
-
   return (
     <div
       ref={(el) => {
@@ -270,7 +274,13 @@ export default function PersonalCard({
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
           {user.important_task_id && user.important_task_id.includes(task.id) && (
-            <RiFlag2Fill className="text-red-500/80" />
+            <RiFlag2Fill className="text-red-500/80 text-lg" />
+          )}
+          {currentDeadline && (
+            <>
+              <MdAlarm className="text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+              <Tooltip id="deadline" place="top-end" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px", zIndex: 50 }} />
+            </>
           )}
         </div>
         <h3 className="font-bold truncate flex items-center gap-1">

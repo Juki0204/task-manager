@@ -8,7 +8,7 @@ import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
 import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
 import { RiCalendarScheduleLine } from "react-icons/ri";
-import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline } from "react-icons/md";
+import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline, MdAlarm } from "react-icons/md";
 import { IoPersonAddOutline, IoDocumentAttachOutline } from "react-icons/io5";
 import { BsPersonCheck } from "react-icons/bs";
 import { TbClockExclamation } from "react-icons/tb";
@@ -23,6 +23,7 @@ import { User } from "@/utils/types/user";
 import { compareHistory } from "@/utils/function/comparHistory";
 import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
+import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 
 interface task {
@@ -70,6 +71,9 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
   const [isValid, setIsValid] = useState<boolean>(true);
   const { syncInvoiceWithTask } = useInvoiceSync();
+  const { deadlineList } = useTaskRealtime(user);
+  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
+  const [deadline, setDeadline] = useState<string>("");
 
   const getData = async () => {
     if (user) {
@@ -157,6 +161,30 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
       alert('タスクの追加に失敗しました');
       console.error('タスクの追加に失敗しました:', updateTaskError);
       return;
+    }
+
+    //期日の更新
+    if (deadline) {
+      if (currentDeadline) { //編集時にすでに期日があった場合
+        await supabase
+          .from("deadline")
+          .update({ date: deadline })
+          .eq("task_id", task.id);
+      } else { //ない場合新規
+        await supabase
+          .from("deadline")
+          .insert({
+            task_id: task.id,
+            date: deadline
+          });
+      }
+    } else { //期日入力がない場合
+      if (currentDeadline) { //編集時にすでに期日があった場合 = 期日の削除
+        await supabase
+          .from("deadline")
+          .delete()
+          .eq("task_id", task.id);
+      }
     }
 
     //請求タスク判定
@@ -311,6 +339,12 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
     };
   }, []);
 
+  useEffect(() => {
+    if (currentDeadline) {
+      setDeadline(currentDeadline.date);
+    }
+  }, [deadlineList, currentDeadline]);
+
   return (
     <>
       <DialogTitle className="font-bold text-center col-span-2 sticky">タスク編集</DialogTitle>
@@ -351,9 +385,13 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
 
         <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
 
-        <AddTaskInput name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+        <div className="col-span-2 flex gap-x-4">
+          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 
-        <AddTaskInput name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+
+          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+        </div>
 
         <div className="col-span-2 flex gap-x-4">
           <AddTaskSelect className="flex-1" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>

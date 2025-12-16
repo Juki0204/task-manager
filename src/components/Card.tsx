@@ -1,6 +1,6 @@
 import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
 import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
-import { MdMailOutline } from "react-icons/md";
+import { MdAlarm, MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { BsPersonCheck } from "react-icons/bs";
 
@@ -12,6 +12,8 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 import { User } from "@/utils/types/user";
 import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
+import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
+import { Tooltip } from "react-tooltip";
 
 interface CardPropd {
   task: Task;
@@ -32,6 +34,9 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
 
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
+
+  const { deadlineList } = useTaskRealtime(user || null);
+  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
 
   const managerStyles: Record<string, { border: string; bg: string; }> = {
     "谷": { border: "taniBorder", bg: "taniBg" },
@@ -149,17 +154,23 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_ttl_dis_cli-mana_status_date'] items-center grid-cols-[110px_280px_600px_360px_120px_auto] py-2`}
+        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_ttl_dis_cli-mana_status_date'] items-center grid-cols-[120px_280px_600px_360px_120px_auto] py-2`}
         {...props}
       >
         {unreadIds && unreadIds.includes(task.id) && (
           <div className="absolute left-2 w-1 h-8 bg-[#ffff00]" />
         )}
         <div className="text-xs flex items-center gap-1.5">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
             {user.important_task_id && user.important_task_id.includes(task.id) && (
-              <RiFlag2Fill className="text-red-500/80 -ml-0.5 mt-0.5" />
+              <RiFlag2Fill className="text-red-500/80 text-lg ml-0.5 mt-0.5" />
+            )}
+            {currentDeadline && (
+              <>
+                <MdAlarm className="text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+                <Tooltip id="deadline" place="top-end" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px" }} />
+              </>
             )}
           </div>
         </div>

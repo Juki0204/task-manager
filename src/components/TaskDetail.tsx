@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { Button, DialogTitle } from "@headlessui/react";
 
-import { MdDriveFileRenameOutline, MdLaptopChromebook, MdMailOutline, MdOutlineStickyNote2 } from "react-icons/md";
+import { MdAlarm, MdDriveFileRenameOutline, MdLaptopChromebook, MdMailOutline, MdOutlineStickyNote2 } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
 import { GrClose } from "react-icons/gr";
@@ -20,6 +20,7 @@ import { User } from "@/utils/types/user";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
 import { TaskNote } from "@/utils/hooks/useTaskNotesRealtime";
 import { TbClockExclamation } from "react-icons/tb";
+import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 
 interface TaskDetailProps {
@@ -41,6 +42,9 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
 
   const [notes, setNotes] = useState<TaskNote[] | null>([]);
   const [notesOpen, setNotesOpen] = useState<boolean>(false);
+
+  const { deadlineList } = useTaskRealtime(user || null);
+  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
 
   const priorityStyles: Record<string, string> = {
     "急": "bg-red-300 text-red-800",
@@ -208,15 +212,6 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
         <DialogTitle className="w-[calc(100%-120px)] font-bold col-span-2 text-justify flex gap-1 items-center">
           <MdDriveFileRenameOutline /><span className="flex-1">{task.title}</span>
         </DialogTitle>
-        {/* <div className="w-fit flex gap-1 items-center">
-          {
-            task.priority ?
-              <span className={`py-1 px-2 h-fit rounded-md text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
-              :
-              <></>
-          }
-          <span className={`py-1 px-2 h-fit w-16.5 text-center rounded-md text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
-        </div> */}
       </div>
       <GrClose onClick={onClose} className="absolute top-8 right-6 cursor-pointer" />
 
@@ -254,14 +249,19 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
           <p className="bg-neutral-200 py-1 px-2 rounded-md">{task.description}</p>
         </li>
 
-        <li className="flex flex-col">
-          <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><RiCalendarScheduleLine /> 依頼日</h3>
-          <p className="bg-neutral-200 py-1 px-2 rounded-md">{task.request_date}</p>
-        </li>
-
-        <li className="flex flex-col">
-          <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><FaRegCheckCircle /> 完了日</h3>
-          <p className="bg-neutral-200 py-1 px-2 rounded-md">{task.finish_date ? task.finish_date : "-"}</p>
+        <li className="col-span-2 flex gap-4">
+          <div className="flex flex-col w-[calc((100%-1rem)/2)]">
+            <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><RiCalendarScheduleLine /> 依頼日</h3>
+            <p className="bg-neutral-200 py-1 px-2 rounded-md">{task.request_date}</p>
+          </div>
+          <div className="flex flex-col w-[calc((100%-1rem)/2)]">
+            <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><MdAlarm /> 期限日</h3>
+            <p className="bg-neutral-200 py-1 px-2 rounded-md text-red-600">{currentDeadline ? currentDeadline.date : "-"}</p>
+          </div>
+          <div className="flex flex-col w-[calc((100%-1rem)/2)]">
+            <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><FaRegCheckCircle /> 完了日</h3>
+            <p className="bg-neutral-200 py-1 px-2 rounded-md">{task.finish_date ? task.finish_date : "-"}</p>
+          </div>
         </li>
 
         <li className="col-span-2 flex gap-4">
