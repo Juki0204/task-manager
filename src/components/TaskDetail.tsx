@@ -29,10 +29,11 @@ interface TaskDetailProps {
   unreadIds?: string[];
   onClose: () => void;
   onEdit: () => void;
+  deadlineList: { task_id: string, date: string }[];
 }
 
 
-export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: TaskDetailProps) {
+export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, deadlineList }: TaskDetailProps) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
@@ -43,8 +44,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit }: T
   const [notes, setNotes] = useState<TaskNote[] | null>([]);
   const [notesOpen, setNotesOpen] = useState<boolean>(false);
 
-  const { deadlineList } = useTaskRealtime(user || null);
-  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
+  const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
 
   const priorityStyles: Record<string, string> = {
     "急": "bg-red-300 text-red-800",

@@ -31,6 +31,7 @@ interface CardPropd {
   index: number;
   flyAnimationRef: React.RefObject<((taskId: string) => void) | null>;
   lastDropRef: React.RefObject<{ x: number, y: number } | null>;
+  deadlineList: { task_id: string, date: string }[];
 }
 
 export default function PersonalCard({
@@ -48,6 +49,7 @@ export default function PersonalCard({
   index,
   flyAnimationRef,
   lastDropRef,
+  deadlineList,
   ...props
 }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false); //タスクステータスの監視
@@ -66,8 +68,7 @@ export default function PersonalCard({
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
 
-  const { deadlineList } = useTaskRealtime(user || null);
-  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
+  const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
 
   const clientList: Record<string, string> = {
     "難波秘密倶楽部": "難波",

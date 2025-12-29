@@ -32,6 +32,7 @@ interface task {
   onCancel: () => void;
   onComplete: () => void;
   onUnlock: () => void;
+  deadlineList: { task_id: string, date: string }[];
 }
 
 interface taskFileMeta {
@@ -45,7 +46,7 @@ interface taskFileMeta {
 
 
 
-export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock }: task) {
+export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock, deadlineList }: task) {
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
   const [currentUserId, setCurrentUserId] = useState<string>('');
@@ -71,8 +72,8 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock 
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
   const [isValid, setIsValid] = useState<boolean>(true);
   const { syncInvoiceWithTask } = useInvoiceSync();
-  const { deadlineList } = useTaskRealtime(user);
-  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
+
+  const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
   const [deadline, setDeadline] = useState<string>("");
 
   const getData = async () => {

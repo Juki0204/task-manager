@@ -40,7 +40,7 @@ export default function PersonalTaskPage() {
   const timerRef = useRef<NodeJS.Timeout>(null);
 
   const { user } = useAuth();
-  const { taskList, updateTaskStatus, sortTask, isReady } = useTaskRealtime(user ?? null);
+  const { taskList, updateTaskStatus, sortTask, isReady, deadlineList } = useTaskRealtime(user ?? null);
   const { filters, setFilters } = useTaskListPreferences();
   const [unreadIds, setUnreadIds] = useState<string[]>([]);
   const { syncInvoiceWithTask } = useInvoiceSync();
@@ -286,6 +286,7 @@ export default function PersonalTaskPage() {
             draggingTaskPrevIndex={draggingTaskPrevIndex}
             flyAnimationRef={flyAnimationRef}
             lastDropRef={lastDropRef}
+            deadlineList={deadlineList}
           />
         </DndContext>}
 
@@ -315,11 +316,19 @@ export default function PersonalTaskPage() {
                 unreadIds={unreadIds}
                 onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
                 onEdit={() => setModalType("edit")}
+                deadlineList={deadlineList}
               />
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
+              <UpdateTask
+                user={user}
+                task={activeTask}
+                onComplete={() => setModalType("detail")}
+                onCancel={() => setModalType("detail")}
+                onUnlock={unlockTaskHandler}
+                deadlineList={deadlineList}
+              />
             )}
             {modalType === "copy" && activeTask && user && (
               <CopyTask user={user} task={activeTask} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}></CopyTask>

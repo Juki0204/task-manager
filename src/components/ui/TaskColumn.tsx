@@ -20,6 +20,7 @@ interface TaskColumnProps {
   draggingTaskPrevIndex: number | null;
   flyAnimationRef: React.RefObject<((taskId: string) => void) | null>;
   lastDropRef: React.RefObject<{ x: number, y: number } | null>;
+  deadlineList: { task_id: string, date: string }[];
 }
 
 export function TaskColumn({
@@ -37,6 +38,7 @@ export function TaskColumn({
   draggingTaskPrevIndex,
   flyAnimationRef,
   lastDropRef,
+  deadlineList,
 }: TaskColumnProps) {
   const { setNodeRef } = useDroppable({ id });
 
@@ -63,6 +65,7 @@ export function TaskColumn({
           index={index}
           flyAnimationRef={flyAnimationRef}
           lastDropRef={lastDropRef}
+          deadlineList={deadlineList}
         />
       ))}
     </div>

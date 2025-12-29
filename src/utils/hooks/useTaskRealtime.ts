@@ -13,17 +13,37 @@ type UserData = {
 } | null;
 
 export function useTaskRealtime(user: UserData) {
+  console.log("useTaskRealtime init");
+
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [deadlineList, setDeadlineList] = useState<{ task_id: string, date: string }[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
-
   const getTasks = async () => {
-    const { data: tasks } = await supabase
-      .from('tasks')
-      .select('*')
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const y = oneWeekAgo.getFullYear();
+    const m = String(oneWeekAgo.getMonth() + 1).padStart(2, "0");
+    const d = String(oneWeekAgo.getDate()).padStart(2, "0");
+    const dateStr = `${y}-${m}-${d}`; // "YYYY-MM-DD"
+
+    // 進行中タスク
+    const { data: activeTasks } = await supabase
+      .from("tasks")
+      .select("*")
+      .neq("status", "完了")
+      .neq("status", "削除済");
+
+    // 直近1週間の完了タスク
+    const { data: recentCompleted } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("status", "完了")
+      .gte("finish_date", dateStr);
+
+    const tasks = [...(activeTasks ?? []), ...(recentCompleted ?? [])];
 
     if (tasks) {
-      // console.log(tasks);
       tasks.sort((a, b) => {
         const dataA = new Date(a.request_date).getTime();
         const dataB = new Date(b.request_date).getTime();
@@ -32,7 +52,6 @@ export function useTaskRealtime(user: UserData) {
 
       setTaskList(tasks);
     }
-
 
     const { data: deadline } = await supabase
       .from("deadline")
@@ -65,7 +84,7 @@ export function useTaskRealtime(user: UserData) {
 
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
     setIsReady(true);
     getTasks();
@@ -101,20 +120,20 @@ export function useTaskRealtime(user: UserData) {
       )
       .subscribe();
 
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        console.log("タブ復帰 → 再購読しました");
-        getTasks();
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
+    // const handleVisibility = () => {
+    //   if (document.visibilityState === "visible") {
+    //     console.log("タブ復帰 → 再購読しました");
+    //     getTasks();
+    //   }
+    // };
+    // document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       channel.unsubscribe();
       supabase.removeChannel(channel);
-      document.removeEventListener("visibilitychange", handleVisibility);
+      // document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [user]);
+  }, [user?.id]);
 
 
 
@@ -128,7 +147,14 @@ export function useTaskRealtime(user: UserData) {
 
     //DB更新
     if (newStatus === "完了" || newStatus === "確認中") {
-      const { error: finishError } = await supabase.from("tasks").update({ status: newStatus, finish_date: new Date().toLocaleDateString("sv-SE"), ...extraFields }).eq("id", taskId);
+      const { error: finishError } = await supabase
+        .from("tasks")
+        .update({
+          status: newStatus,
+          // finish_date: new Date().toLocaleDateString("sv-SE"),
+          ...extraFields
+        })
+        .eq("id", taskId);
 
       if (finishError) {
         console.error(finishError);

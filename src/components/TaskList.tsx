@@ -10,9 +10,10 @@ interface TaskListProps {
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   onEdit: (t: Task) => void;
+  deadlineList: { task_id: string, date: string }[];
 }
 
-export default function TaskList({ taskList, user, unreadIds, onClick, onContextMenu, onEdit }: TaskListProps) {
+export default function TaskList({ taskList, user, unreadIds, onClick, onContextMenu, onEdit, deadlineList }: TaskListProps) {
 
   return (
     <div className="pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500
@@ -26,6 +27,7 @@ export default function TaskList({ taskList, user, unreadIds, onClick, onContext
           onClick={onClick}
           onContextMenu={onContextMenu}
           onEdit={onEdit}
+          deadlineList={deadlineList}
         />
       ))}
     </div>

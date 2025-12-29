@@ -1,7 +1,7 @@
 "use client";
 
 // import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Task } from "@/utils/types/task";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
@@ -23,8 +23,9 @@ export default function TrashTaskPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
+  const [taskList, setTaskList] = useState<Task[]>([]);
   const { user } = useAuth();
-  const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
+  const { updateTaskStatus, deadlineList } = useTaskRealtime(user ?? null);
   const { filters } = useTaskListPreferences();
 
   //console.log(taskList.filter((t) => t.status === "削除済"));
@@ -66,25 +67,39 @@ export default function TrashTaskPage() {
   }
 
 
-  const filteredTaskList = taskList.filter((task) => {
-    if (task.status !== "削除済") return false;
+  const getTasks = async () => {
+    const { data } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("status", "削除済");
 
-    const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
-    const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
-      if (assignee === "未担当") return task.manager === "";
-      return task.manager === assignee;
+    if (!data) return false;
+    setTaskList(data);
+  }
+
+  const filteredTaskList = useMemo(() => {
+    return taskList.filter((task) => {
+      const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
+      const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
+        if (assignee === "未担当") return task.manager === "";
+        return task.manager === assignee;
+      });
+      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+
+      const searchMatch =
+        !filters.searchKeywords ||
+        task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+        task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+        task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+        task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+
+      return clientMatch && assigneeMatch && statusMatch && searchMatch;
     });
-    const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+  }, [taskList, filters]);
 
-    const searchMatch =
-      !filters.searchKeywords ||
-      task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
-
-    return clientMatch && assigneeMatch && statusMatch && searchMatch;
-  });
+  useEffect(() => {
+    getTasks();
+  }, []);
 
 
 
@@ -119,6 +134,7 @@ export default function TrashTaskPage() {
             setModalType("edit");
             setIsOpen(true);
           }}
+          deadlineList={deadlineList}
         />}
 
       {/* 共通モーダル */}
@@ -146,11 +162,19 @@ export default function TrashTaskPage() {
                 task={activeTask}
                 onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
                 onEdit={() => setModalType("edit")}
+                deadlineList={deadlineList}
               />
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
+              <UpdateTask
+                user={user}
+                task={activeTask}
+                onComplete={() => setModalType("detail")}
+                onCancel={() => setModalType("detail")}
+                onUnlock={unlockTaskHandler}
+                deadlineList={deadlineList}
+              />
             )}
           </DialogPanel>
         </div>

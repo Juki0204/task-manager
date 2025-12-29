@@ -18,6 +18,7 @@ import { MdPlace } from "react-icons/md";
 
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import MultiSelectPopover from "./ui/MultiSelectPopover";
+import HelpDrawer from "./HelpDrawer";
 
 // type TaskListStyle = "rowListStyle" | "cardListStyle";
 type TaskListSortType = "byDate" | "byManager";
@@ -129,6 +130,7 @@ export default function Header() {
               </div>
             </div>
             <div className="sm:flex gap-4 rounded-md items-center">
+              {/* <HelpDrawer /> */}
               <div className="flex gap-1 items-center py-2 pl-4 pr-6 text-sm tracking-wider rounded-md bg-black/20 text-white"><MdPlace />{pageIndex[pathname]}</div>
               <p className="text-white flex items-center gap-2"><FaUserCircle />{currentUserName} さん</p>
               {/* <p className="text-white">所属：{currentUserEmployee}</p>

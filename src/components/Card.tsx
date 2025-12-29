@@ -12,7 +12,6 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 import { User } from "@/utils/types/user";
 import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
-import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { Tooltip } from "react-tooltip";
 
 interface CardPropd {
@@ -22,10 +21,11 @@ interface CardPropd {
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   onEdit: (t: Task) => void;
+  deadlineList: { task_id: string, date: string }[];
 }
 
 
-export default function Card({ task, user, unreadIds, onClick, onContextMenu, onEdit, ...props }: CardPropd) {
+export default function Card({ task, user, unreadIds, onClick, onContextMenu, onEdit, deadlineList, ...props }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
 
@@ -35,8 +35,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
 
-  const { deadlineList } = useTaskRealtime(user || null);
-  const currentDeadline = deadlineList.filter(d => d.task_id === task.id)[0];
+  const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
 
   const managerStyles: Record<string, { border: string; bg: string; }> = {
     "谷": { border: "taniBorder", bg: "taniBg" },

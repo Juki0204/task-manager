@@ -15,6 +15,7 @@ interface PersonalTaskListProps {
   draggingTaskPrevIndex: number | null;
   flyAnimationRef: React.RefObject<((taskId: string) => void) | null>;
   lastDropRef: React.RefObject<{ x: number, y: number } | null>;
+  deadlineList: { task_id: string, date: string }[];
 }
 
 export default function PersonalTaskList({
@@ -30,6 +31,7 @@ export default function PersonalTaskList({
   draggingTaskPrevIndex,
   flyAnimationRef,
   lastDropRef,
+  deadlineList,
 }: PersonalTaskListProps) {
   return (
     <div className="pb-4 overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
@@ -49,6 +51,7 @@ export default function PersonalTaskList({
           draggingTaskPrevIndex={draggingTaskPrevIndex}
           flyAnimationRef={flyAnimationRef}
           lastDropRef={lastDropRef}
+          deadlineList={deadlineList}
         />
 
         <TaskColumn
@@ -66,6 +69,7 @@ export default function PersonalTaskList({
           draggingTaskPrevIndex={draggingTaskPrevIndex}
           flyAnimationRef={flyAnimationRef}
           lastDropRef={lastDropRef}
+          deadlineList={deadlineList}
         />
 
         <TaskColumn
@@ -83,6 +87,7 @@ export default function PersonalTaskList({
           draggingTaskPrevIndex={draggingTaskPrevIndex}
           flyAnimationRef={flyAnimationRef}
           lastDropRef={lastDropRef}
+          deadlineList={deadlineList}
         />
 
         <TaskColumn
@@ -120,6 +125,7 @@ export default function PersonalTaskList({
           draggingTaskPrevIndex={draggingTaskPrevIndex}
           flyAnimationRef={flyAnimationRef}
           lastDropRef={lastDropRef}
+          deadlineList={deadlineList}
         />
       </div>
     </div>

@@ -43,13 +43,7 @@ export default function AuthProvider({
   const [loading, setLoading] = useState<boolean>(true);
 
   const getCurrentSession = async () => {
-    const { data: sessionData, error } = await supabase.auth.getSession();
-
-    if (error) {
-      console.error("セッションの取得に失敗しました:", error);
-      // アクセストークンが完全に死んでる場合はリフレッシュ
-      await supabase.auth.refreshSession();
-    }
+    const { data: sessionData } = await supabase.auth.getSession();
 
     if (sessionData.session !== null) {
       const { data: { user } } = await supabase.auth.getUser();
@@ -93,20 +87,31 @@ export default function AuthProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  //ポーリング
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getCurrentSession();
-    }, 15000);
+  // //ポーリング ユーザーデータが更新される度に各所データに再リクエストが走るため一旦ストップ
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     getCurrentSession();
+  //   }, 15000);
 
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   return () => clearInterval(interval);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
-  //フォーカス時に再フェッチ
+  //フォーカス時にアクセストークン確認・必要ならリフレッシュ
   useEffect(() => {
-    const handleFocus = () => {
-      getCurrentSession();
+    const handleFocus = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("フォーカス時のセッション取得エラー:", error);
+        await supabase.auth.refreshSession();
+        return;
+      }
+
+      // セッション切れてた場合だけリフレッシュ試みる
+      if (!data.session) {
+        await supabase.auth.refreshSession();
+      }
     };
 
     window.addEventListener("focus", handleFocus);
@@ -123,7 +128,7 @@ export default function AuthProvider({
 
     document.addEventListener('contextmenu', prohibitedContextMenu);
 
-    return () => document.addEventListener('contextmenu', prohibitedContextMenu);
+    return () => document.removeEventListener('contextmenu', prohibitedContextMenu);
   }, []);
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 // import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Task } from "@/utils/types/task";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
@@ -18,6 +18,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "./AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
+// import HelpDrawer from "@/components/HelpDrawer";
 
 export default function AllTaskPage() {
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
@@ -25,7 +26,7 @@ export default function AllTaskPage() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
-  const { taskList, updateTaskStatus } = useTaskRealtime(user ?? null);
+  const { taskList, updateTaskStatus, deadlineList } = useTaskRealtime(user ?? null);
   const { taskListSortType, filters } = useTaskListPreferences();
   const [unreadIds, setUnreadIds] = useState<string[]>([]);
 
@@ -66,25 +67,27 @@ export default function AllTaskPage() {
     }
   }
 
-  const filteredTaskList = taskList.filter((task) => {
-    if (task.status === "完了" || task.status === "削除済") return false;
+  const filteredTaskList = useMemo(() => {
+    return taskList.filter((task) => {
+      if (task.status === "完了" || task.status === "削除済") return false;
 
-    const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
-    const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
-      if (assignee === "未担当") return task.manager === "";
-      return task.manager === assignee;
+      const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
+      const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
+        if (assignee === "未担当") return task.manager === "";
+        return task.manager === assignee;
+      });
+      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+
+      const searchMatch =
+        !filters.searchKeywords ||
+        task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+        task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+        task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
+        task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+
+      return clientMatch && assigneeMatch && statusMatch && searchMatch;
     });
-    const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
-
-    const searchMatch =
-      !filters.searchKeywords ||
-      task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
-
-    return clientMatch && assigneeMatch && statusMatch && searchMatch;
-  });
+  }, [taskList, filters]);
 
   const sortTask = (task: Task[]) => {
     const sortedTask = [...task].sort((a, b) => {
@@ -142,6 +145,7 @@ export default function AllTaskPage() {
         <div className="flex justify-start items-end gap-4">
           <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
             全体タスク一覧
+            {/* <HelpDrawer /> */}
           </h2>
         </div>
 
@@ -168,6 +172,7 @@ export default function AllTaskPage() {
             setModalType("edit");
             setIsOpen(true);
           }}
+          deadlineList={deadlineList}
         />}
 
       {/* 共通モーダル */}
@@ -196,11 +201,19 @@ export default function AllTaskPage() {
                 unreadIds={unreadIds}
                 onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
                 onEdit={() => setModalType("edit")}
+                deadlineList={deadlineList}
               />
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler}></UpdateTask>
+              <UpdateTask
+                user={user}
+                task={activeTask}
+                onComplete={() => setModalType("detail")}
+                onCancel={() => setModalType("detail")}
+                onUnlock={unlockTaskHandler}
+                deadlineList={deadlineList}
+              />
             )}
 
             {modalType === "copy" && activeTask && user && (
