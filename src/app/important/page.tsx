@@ -24,7 +24,7 @@ export default function TrashTaskPage() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
-  const { updateTaskStatus } = useTaskRealtime(user ?? null);
+  const { updateTaskStatus, deadlineList } = useTaskRealtime(user ?? null);
   const [taskList, setTaskList] = useState<Task[]>([]);
   const { filters } = useTaskListPreferences();
 
@@ -131,6 +131,7 @@ export default function TrashTaskPage() {
             setModalType("edit");
             setIsOpen(true);
           }}
+          deadlineList={deadlineList}
         />}
 
       {/* 共通モーダル */}
@@ -158,11 +159,19 @@ export default function TrashTaskPage() {
                 task={activeTask}
                 onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
                 onEdit={() => setModalType("edit")}
+                deadlineList={deadlineList}
               />
             )}
 
             {modalType === "edit" && activeTask && user && (
-              <UpdateTask user={user} task={activeTask} onComplete={() => setModalType("detail")} onCancel={() => setModalType("detail")} onUnlock={unlockTaskHandler} />
+              <UpdateTask
+                user={user}
+                task={activeTask}
+                onComplete={() => setModalType("detail")}
+                onCancel={() => setModalType("detail")}
+                onUnlock={unlockTaskHandler}
+                deadlineList={deadlineList}
+              />
             )}
           </DialogPanel>
         </div>
