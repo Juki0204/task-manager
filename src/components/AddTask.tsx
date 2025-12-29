@@ -299,11 +299,11 @@ export default function AddTask({ onClose }: AddTaskProps) {
         <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
 
         <div className="col-span-2 flex gap-x-4">
-          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 
-          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
 
-          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
         </div>
 
         <div className="col-span-2 flex gap-x-4">
@@ -319,7 +319,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
             <option value="作業中">作業中</option>
             <option value="作業途中">作業途中</option>
             <option value="確認中">確認中</option>
-            {/* <option value="完了">完了</option> */}
+            <option value="完了">完了</option>
             <option value="保留">保留</option>
             {/* <option value="中止">中止</option> */}
             <option value="詳細待ち">詳細待ち</option>

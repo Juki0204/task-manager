@@ -166,6 +166,7 @@ export default function EditableCell({
           onBlur={saveValue}
           onFocus={(e) => e.target.select()}
           onClick={(e) => e.stopPropagation()}
+          max={type === "date" ? "9999-12-31" : ""}
         />
       ) : (
         <>{value ?? ""}</>

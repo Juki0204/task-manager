@@ -387,11 +387,11 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
         <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
 
         <div className="col-span-2 flex gap-x-4">
-          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
 
-          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
 
-          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
         </div>
 
         <div className="col-span-2 flex gap-x-4">

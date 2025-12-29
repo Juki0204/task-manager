@@ -95,6 +95,14 @@ export default function CompletedTaskPage() {
     });
   }, [taskList, filters]);
 
+  const sortTask = (task: Task[]) => {
+    const sortedTask = [...task].sort((a, b) => {
+      return new Date(a.finish_date ?? "").getTime() - new Date(b.finish_date ?? "").getTime();
+    });
+
+    return sortedTask;
+  }
+
   useEffect(() => {
     getTasks();
   }, []);
@@ -117,7 +125,7 @@ export default function CompletedTaskPage() {
       {user &&
         <TaskList
           user={user}
-          taskList={filteredTaskList}
+          taskList={sortTask(filteredTaskList)}
           onClick={(t: Task) => {
             if (isOpen) return;
             if (menu.visible) return;

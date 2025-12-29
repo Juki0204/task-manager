@@ -556,6 +556,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             <Input
               tabIndex={-1}
               type="date"
+              max="9999-12-31"
               value={tempInvoiceValue.finish_date}
               onChange={(e) => setTempInvoiceValue({
                 ...tempInvoiceValue,

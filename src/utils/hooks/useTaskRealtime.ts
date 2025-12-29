@@ -146,12 +146,12 @@ export function useTaskRealtime(user: UserData) {
     );
 
     //DB更新
-    if (newStatus === "完了" || newStatus === "確認中") {
+    if (newStatus === "確認中") {
       const { error: finishError } = await supabase
         .from("tasks")
         .update({
           status: newStatus,
-          // finish_date: new Date().toLocaleDateString("sv-SE"),
+          finish_date: new Date().toLocaleDateString("sv-SE"),
           ...extraFields
         })
         .eq("id", taskId);
