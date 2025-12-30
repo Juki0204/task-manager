@@ -8,11 +8,13 @@ import { BsPersonCheck } from "react-icons/bs";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { GrClose, GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { MdDriveFileRenameOutline, MdLaptopChromebook, MdOutlineCategory, MdOutlineStickyNote2 } from "react-icons/md";
+import { FaCalculator } from "react-icons/fa6";
 import { PiPuzzlePiece } from "react-icons/pi";
 import { HiOutlineAdjustments } from "react-icons/hi";
 import { BiCalculator, BiCategoryAlt } from "react-icons/bi";
 import { LuNotebookPen } from "react-icons/lu";
 import { toast } from "sonner";
+import { OutlineBtn } from "../ui/Btn";
 
 
 
@@ -27,6 +29,15 @@ interface AllEditableFormProps {
   onCheckTask: () => void;
 }
 
+
+interface LPDataType {
+  rows: number, //縦
+  cols: number, //横
+  rate: number, //比率
+  alt_rate: number, //比率超過分
+  decimal: number, //小数点以下指数
+  total_amount: number, //請求金額
+}
 
 export default function AllEditableForm({ recordId, prevId, nextId, priceList, onClose, onChangeRecord, onCheckTask }: AllEditableFormProps) {
   const [invoiceData, setInvoiceData] = useState<Invoice | null>(null);
@@ -507,6 +518,39 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
     unitPrice
   ]);
 
+  const [LPCalcOpen, setLPCalcOpen] = useState<boolean>(false);
+  const [LPData, setLPData] = useState<LPDataType>({
+    rows: 0,
+    cols: 0,
+    rate: 0,
+    alt_rate: 0,
+    decimal: 0,
+    total_amount: 0,
+  });
+
+  const calcLPData = () => {
+    setLPData((prev) => {
+      if (!prev) return prev;
+      if (prev.rows === 0 || prev.cols === 0) return prev;
+
+      const rate = prev.cols / prev.rows;
+      const alt_rate = Math.trunc(rate - 3);
+      const decimal = rate - Math.trunc(rate) < 0.5 ? 0 : 1;
+
+      const total_amount = rate < 3
+        ? Number(priceList?.filter(price => price.work_name === "WEBポップ")[0].price) //比率3以下はWEBポップ金額
+        : 25000 + (alt_rate * 2500) + (decimal * 1000);
+
+      return {
+        ...prev,
+        rate,
+        alt_rate,
+        decimal,
+        total_amount,
+      }
+    });
+  }
+
   if (!currentInvoice || !tempInvoiceValue) return (<div className="w-full h-full grid place-content-center"><span className="loading loading-spinner loading-lg"></span></div>)
 
   return (
@@ -520,6 +564,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
           No. {currentInvoice.serial}
         </span>
         <span>{tempInvoiceValue.client}：{tempInvoiceValue.requester}さん依頼</span>
+        <FaCalculator onClick={() => setLPCalcOpen(true)} className="absolute top-4 right-10 cursor-pointer" />
         <GrClose onClick={onClose} className="absolute top-4 right-2 cursor-pointer" />
       </h2>
       <div
@@ -957,7 +1002,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       </div>
 
       {/* 確定ボタンたち */}
-      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-2 gap-2 items-center justify-between p-3 bg-neutral-100">
+      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-2 gap-2 items-center justify-between p-3 bg-neutral-100 mb-0">
         <button
           disabled={!isDirty || isSaving}
           onClick={() => {
@@ -996,6 +1041,107 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
           <span className="flex-1 text-center">次の請求</span>
           <GrFormNext />
         </button>
+      </div>
+
+      <div className={`
+        absolute top-0 p-4 rounded-xl bg-neutral-50 w-100 transition-all duration-300 -z-10
+        ${LPCalcOpen ? "left-[calc(100%+2rem)]" : "left-0"}
+      `}>
+        <h2 className="mb-2 font-bold text-center">縦長バナー料金計算機</h2>
+        <div className="text-sm flex flex-col gap-2 border-b border-neutral-300 text-justify pb-2">
+          <p>作成した画像の縦：横でサイズを入力して<br />
+            1:Xの縦の比率が3倍を超えた時点で縦長バナー用の請求金額を独自の計算式を基に組み立てます。</p>
+          <p>ベースを25,000円とし、縦の比率が1倍増える毎に+2,500円、比率の小数点以下が0.5以上の場合は切り上げや切り捨てではなく+1,000円とします。</p>
+          <p>比率が3倍を超えない場合はWEBポップと同等の金額になります。</p>
+        </div>
+        <div className="grid grid-cols-4 gap-4 py-1">
+          <div className="col-span-2">
+            <h3 className="text-sm px-0.5">縦 ( px )</h3>
+            <input
+              className="w-full py-1 px-2 rounded-md bg-neutral-200 text-right"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={LPData.rows}
+              onChange={(e) => {
+                setLPData((prev) => {
+                  return {
+                    ...prev,
+                    rows: Number(e.target.value),
+                  }
+                });
+                calcLPData();
+              }}
+            />
+          </div>
+          <div className="col-span-2">
+            <h3 className="text-sm px-0.5">横 ( px )</h3>
+            <input
+              className="w-full py-1 px-2 rounded-md bg-neutral-200 text-right"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={LPData.cols}
+              onChange={(e) => {
+                setLPData((prev) => {
+                  return {
+                    ...prev,
+                    cols: Number(e.target.value),
+                  }
+                });
+                calcLPData();
+              }}
+            />
+          </div>
+          <div className="col-span-1 relative after:content-['：'] after:absolute after:left-full after:bottom-0 after:block after:py-1 after:px-[1px]">
+            <h3 className="text-sm px-0.5">比率 ( 縦 )</h3>
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={1} readOnly />
+          </div>
+          <div className="col-span-3">
+            <h3 className="text-sm px-0.5">比率 ( 横 ) X</h3>
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.rate} readOnly />
+          </div>
+          <div className="col-span-2">
+            <h3 className="text-sm px-0.5">縦比率超過分 ( X - 3 )</h3>
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.alt_rate} readOnly />
+          </div>
+          <div className="col-span-2">
+            <h3 className="text-sm px-0.5">小数点以下指数</h3>
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.decimal} readOnly />
+          </div>
+          <div className="col-span-4">
+            <h3 className="text-sm px-0.5">請求金額</h3>
+            <input className="w-full py-1 px-2 rounded-md bg-blue-500/20 text-right" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.total_amount} readOnly />
+            {LPData.total_amount > 0 && LPData.total_amount !== 20000 && (
+              <p className="text-xs px-0.5 pt-1 text-right">内訳：25000 + ({LPData.alt_rate} * 2500) + ({LPData.decimal} * 1000) = {LPData.total_amount}</p>
+            )}
+          </div>
+          <div className="col-span-4 flex justify-end gap-2">
+            <button
+              className="px-4 py-2 text-sm bg-red-300 rounded-md cursor-pointer hover:opacity-90"
+              onClick={() => {
+                setLPData({
+                  rows: 0,
+                  cols: 0,
+                  rate: 0,
+                  alt_rate: 0,
+                  decimal: 0,
+                  total_amount: 0,
+                })
+              }}
+            >
+              リセット
+            </button>
+            <OutlineBtn
+              className="text-sm px-4 !w-fit cursor-pointer"
+              onClick={() => {
+                setLPCalcOpen(false)
+              }}
+            >
+              閉じる
+            </OutlineBtn>
+          </div>
+        </div>
       </div>
     </div>
   )
