@@ -33,6 +33,8 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
   const [tempInvoiceValue, setTempInvoiceValue] = useState<Invoice>();
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  const [unitPrice, setUnitPrice] = useState<number | null>(null); //計算用単価
+
   const [activeColumnIndex, setActiveColumnIndex] = useState<number>(0);
   const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
   const categoryRefs = useRef<HTMLDivElement[]>([]);
@@ -250,7 +252,9 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
     const workName = item.textContent ?? "";
     const category = item.getAttribute("data-category") ?? "";
-    const amount = priceList?.find(price => price.work_name === workName)?.price
+    const amount = priceList?.find(price => price.work_name === workName)?.price ?? 0;
+
+    setUnitPrice(amount);
 
     setTempInvoiceValue((prev) => {
       if (!prev) return prev;
@@ -258,14 +262,16 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
         ...prev,
         work_name: workName,
         category,
-        amount: amount
+        // amount: amount,
       };
     });
   };
 
   //クリック選択用
   const handleClickItem = (id: string, workName: string, category: string) => {
-    const amount = priceList?.find(price => price.work_name === workName)?.price
+    const amount = priceList?.find(price => price.work_name === workName)?.price ?? 0;
+
+    setUnitPrice(amount);
 
     setTempInvoiceValue((prev) => {
       if (!prev) return prev;
@@ -273,7 +279,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
         ...prev,
         work_name: workName,
         category,
-        amount: amount,
+        // amount: amount,
       };
     });
   };
@@ -306,42 +312,49 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const saveAllValue = async () => {
+    if (!tempInvoiceValue) return;
     setIsSaving(true);
 
-    const { data, error } = await supabase
-      .from("invoice")
-      .update(tempInvoiceValue)
-      .eq("id", recordId)
-      .select("*")
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from("invoice")
+        .update(tempInvoiceValue)
+        .eq("id", recordId)
+        .select("*")
+        .single();
 
-    if (error) {
-      toast.error("請求データの保存に失敗しました。");
-      throw error;
+      if (error) {
+        toast.error("請求データの保存に失敗しました。");
+        throw error;
+      }
+
+      if (!data) return;
+
+      toast.success("請求データの保存が完了しました。");
+      setCurrentInvoice(data);
+      setTempInvoiceValue(data);
+    } finally {
+      setIsSaving(false);
     }
-
-    if (!data) return;
-
-    toast.success("請求データの保存が完了しました。");
-    setIsSaving(false);
-    setCurrentInvoice(data);
-    setTempInvoiceValue(data);
   }
 
   //請求額計算
   const calcAmount = () => {
-    const mediaFactor = tempInvoiceValue?.media === "会員" ? 1.5 : 1;
-    const pieces = tempInvoiceValue?.pieces ?? 1;
-    const degree = tempInvoiceValue?.degree ?? 100;
-    const amount = tempInvoiceValue?.amount ?? 0;
-    const adjustment = tempInvoiceValue?.adjustment ?? 0;
-
-    const totalAmount = amount * pieces * mediaFactor * (degree * 0.01) + adjustment;
-
     setTempInvoiceValue((prev) => {
       if (!prev) return prev;
+      if (unitPrice == null) return prev;
+
+      const mediaFactor = prev.media === "会員" ? 1.5 : 1;
+      const pieces = prev.pieces ?? 1;
+      const degree = prev.degree ?? 100;
+      const adjustment = prev.adjustment ?? 0;
+
+      const temporaryAmount = unitPrice * pieces * mediaFactor * (degree * 0.01)
+      const totalAmount = temporaryAmount + adjustment;
+
       return {
         ...prev,
+        amount: temporaryAmount,
         total_amount: totalAmount,
       }
     });
@@ -466,6 +479,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       scrollItemToTop(itemEl);
     });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceList, currentInvoice?.work_name]);
 
 
@@ -481,12 +495,15 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
   useEffect(() => {
     if (!tempInvoiceValue) return;
     calcAmount();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     tempInvoiceValue?.media,
     tempInvoiceValue?.pieces,
     tempInvoiceValue?.degree,
-    tempInvoiceValue?.amount,
+    // tempInvoiceValue?.amount,
     tempInvoiceValue?.adjustment,
+    unitPrice
   ]);
 
   if (!currentInvoice || !tempInvoiceValue) return (<div className="w-full h-full grid place-content-center"><span className="loading loading-spinner loading-lg"></span></div>)
