@@ -690,7 +690,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
               <div
                 data-category="WEB"
-                ref={(el: HTMLDivElement) => { categoryRefs.current[1] = el; }}
+                ref={(el: HTMLDivElement) => { categoryRefs.current[2] = el; }}
                 className="p-2 bg-neutral-200 rounded-md w-50">
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">イベント</h3>
                 <ul className="flex flex-col gap-0.5">
@@ -716,7 +716,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
               <div
                 data-category="印刷"
-                ref={(el: HTMLDivElement) => { categoryRefs.current[2] = el; }}
+                ref={(el: HTMLDivElement) => { categoryRefs.current[3] = el; }}
                 className="p-2 bg-neutral-200 rounded-md w-50"
               >
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">印刷</h3>
@@ -743,7 +743,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
               <div
                 data-category="出力"
-                ref={(el: HTMLDivElement) => { categoryRefs.current[3] = el; }}
+                ref={(el: HTMLDivElement) => { categoryRefs.current[4] = el; }}
                 className="p-2 bg-neutral-200 rounded-md w-50"
               >
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">出力</h3>
@@ -770,7 +770,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
               <div
                 data-category="その他"
-                ref={(el: HTMLDivElement) => { categoryRefs.current[4] = el; }}
+                ref={(el: HTMLDivElement) => { categoryRefs.current[5] = el; }}
                 className="p-2 bg-neutral-200 rounded-md w-50"
               >
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">その他</h3>
