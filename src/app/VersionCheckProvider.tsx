@@ -137,11 +137,14 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
         className="fixed inset-0 z-50 flex items-center justify-center"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/60" aria-hidden="true" />
-        <DialogPanel className="relative w-150 rounded-2xl bg-white p-6 shadow-xl">
+        <DialogPanel className="relative w-150 max-h-[80svh] rounded-2xl bg-white p-6 shadow-xl">
           {CURRENT_APP_VERSION && (
             <>
               <DialogTitle className="text-lg font-bold text-center mb-3">リリースノート {CURRENT_APP_VERSION.replaceAll("_", ".")}</DialogTitle>
-              <div className="release-note-modal" dangerouslySetInnerHTML={{ __html: marked(releaseNote ?? "") }} />
+              <div
+                className="release-note-modal max-h-[60svh] mb-2 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
+                dangerouslySetInnerHTML={{ __html: marked(releaseNote ?? "") }}
+              />
               <p onClick={() => { router.push('/release-notes'); handleCloseReleaseNote(); }} className="text-sky-700 text-sm w-fit ml-auto mr-0 mb-4 cursor-pointer hover:opacity-70">過去の更新履歴を見る</p>
               <div className="flex justify-center">
                 <CorrectBtn onClick={() => handleCloseReleaseNote()} className="!m-0 !w-40 cursor-pointer hover:opacity-70">閉じる</CorrectBtn>
