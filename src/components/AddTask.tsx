@@ -18,6 +18,7 @@ import { LuNotebookPen } from "react-icons/lu";
 import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
+import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 
 
 interface AddTaskProps {
@@ -53,6 +54,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(true);
 
+  const { syncInvoiceWithTask } = useInvoiceSync();
 
   const getData = async () => {
     if (user) {
@@ -171,6 +173,8 @@ export default function AddTask({ onClose }: AddTaskProps) {
       }
     }
 
+    //請求タスク判定
+    await syncInvoiceWithTask(taskData.id, taskData.status);
 
     //シリアルナンバー更新
     const { error: addTaskNumError } = await supabase
