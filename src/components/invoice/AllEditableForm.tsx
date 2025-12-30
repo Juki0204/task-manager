@@ -1054,7 +1054,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
           <p>ベースを25,000円とし、縦の比率が1倍増える毎に+2,500円、比率の小数点以下が0.5以上の場合は切り上げや切り捨てではなく+1,000円とします。</p>
           <p>比率が3倍を超えない場合はWEBポップと同等の金額になります。</p>
         </div>
-        <div className="grid grid-cols-4 gap-4 py-1">
+        <div className="grid grid-cols-4 gap-4 pt-2 pb-1">
           <div className="col-span-2">
             <h3 className="text-sm px-0.5">縦 ( px )</h3>
             <input
@@ -1111,7 +1111,14 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
           </div>
           <div className="col-span-4">
             <h3 className="text-sm px-0.5">請求金額</h3>
-            <input className="w-full py-1 px-2 rounded-md bg-blue-500/20 text-right" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.total_amount} readOnly />
+            <input
+              className="w-full py-1 px-2 rounded-md bg-blue-500/20 text-right"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={LPData.total_amount}
+              readOnly
+            />
             {LPData.total_amount > 0 && LPData.total_amount !== 20000 && (
               <p className="text-xs px-0.5 pt-1 text-right">内訳：25000 + ({LPData.alt_rate} * 2500) + ({LPData.decimal} * 1000) = {LPData.total_amount}</p>
             )}
