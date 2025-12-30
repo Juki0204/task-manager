@@ -923,7 +923,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
           <Textarea
             tabIndex={0}
             rows={4}
-            value={currentInvoice.remarks ?? ""}
+            value={tempInvoiceValue.remarks ?? ""}
             onChange={(e) => setTempInvoiceValue({
               ...tempInvoiceValue,
               remarks: e.target.value
