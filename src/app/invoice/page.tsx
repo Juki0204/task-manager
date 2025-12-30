@@ -144,26 +144,29 @@ export default function InvoicePage() {
   const calcTotalInvoices = (invoices: Invoice[] | null) => {
     if (!invoices) return;
 
-    //console.log("invoicesの計算を開始します。");
+    const targetInvoices =
+      filters.assignees && filters.assignees.length > 0
+        ? invoices.filter(i => filters.assignees.includes(i.manager)) //担当者で絞り込み
+        : invoices; //フィルタなしなら全件
 
     let amo: number = 0;
     let adj: number = 0;
     let totalAmo: number = 0;
 
-    invoices.forEach(i => {
+    targetInvoices.forEach(i => {
       amo = amo + (i.amount ? i.amount : 0);
       adj = adj + (i.adjustment ? i.adjustment : 0);
       totalAmo = totalAmo + (i.total_amount ? i.total_amount : 0);
     });
 
     setTotalInvoices({
-      web: invoices.filter(i => i.category === "WEB").length,
-      dtp: invoices.filter(i => i.category === "印刷").length,
-      print: invoices.filter(i => i.category === "出力").length,
-      other: invoices.filter(i => i.category === "その他").length,
-      taskCount: invoices.length,
-      unclaimed: invoices.filter(i => i.total_amount === 0 || i.total_amount === null).length,
-      claimed: invoices.filter(i => i.total_amount !== 0 && i.total_amount !== null).length,
+      web: targetInvoices.filter(i => i.category === "WEB").length,
+      dtp: targetInvoices.filter(i => i.category === "印刷").length,
+      print: targetInvoices.filter(i => i.category === "出力").length,
+      other: targetInvoices.filter(i => i.category === "その他").length,
+      taskCount: targetInvoices.length,
+      unclaimed: targetInvoices.filter(i => i.total_amount === 0 || i.total_amount === null).length,
+      claimed: targetInvoices.filter(i => i.total_amount !== 0 && i.total_amount !== null).length,
       amount: amo,
       adjustment: adj,
       totalAmount: totalAmo,
@@ -173,16 +176,21 @@ export default function InvoicePage() {
   const calcInvoiceClients = (invoices: Invoice[] | null) => {
     if (!invoices) return;
 
+    const targetInvoices =
+      filters.assignees && filters.assignees.length > 0
+        ? invoices.filter(i => filters.assignees.includes(i.manager)) //担当者で絞り込み
+        : invoices; //フィルタなしなら全件
+
     setTotalClients({
-      nmb: invoices.filter(i => i.serial.includes("NMB")).length,
-      sno: invoices.filter(i => i.serial.includes("SNO")).length,
-      tnm: invoices.filter(i => i.serial.includes("TNM")).length,
-      tng: invoices.filter(i => i.serial.includes("TNG")).length,
-      umd: invoices.filter(i => i.serial.includes("UMD")).length,
-      umg: invoices.filter(i => i.serial.includes("UMG")).length,
-      nks: invoices.filter(i => i.serial.includes("NKS")).length,
-      tmr: invoices.filter(i => i.serial.includes("TMR")).length,
-      oks: invoices.filter(i => i.serial.includes("OKS")).length,
+      nmb: targetInvoices.filter(i => i.serial.includes("NMB")).length,
+      sno: targetInvoices.filter(i => i.serial.includes("SNO")).length,
+      tnm: targetInvoices.filter(i => i.serial.includes("TNM")).length,
+      tng: targetInvoices.filter(i => i.serial.includes("TNG")).length,
+      umd: targetInvoices.filter(i => i.serial.includes("UMD")).length,
+      umg: targetInvoices.filter(i => i.serial.includes("UMG")).length,
+      nks: targetInvoices.filter(i => i.serial.includes("NKS")).length,
+      tmr: targetInvoices.filter(i => i.serial.includes("TMR")).length,
+      oks: targetInvoices.filter(i => i.serial.includes("OKS")).length,
     })
   }
 
@@ -288,7 +296,8 @@ export default function InvoicePage() {
   useEffect(() => {
     calcTotalInvoices(invoices);
     calcInvoiceClients(invoices);
-  }, [invoices]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoices, filters.assignees]);
 
   useEffect(() => {
     getInvoice(currentYear, currentMonth);
