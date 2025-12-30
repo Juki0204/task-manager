@@ -814,11 +814,17 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               type="number"
               value={tempInvoiceValue.pieces ?? ""}
               onChange={(e) => {
-                setTempInvoiceValue({
-                  ...tempInvoiceValue,
-                  pieces: Number(e.target.value)
-                });
-                calcAmount();
+                const v = e.target.value;
+
+                if (v === "") {
+                  setTempInvoiceValue({ ...tempInvoiceValue, pieces: undefined });
+                  return;
+                }
+
+                if (/\d+$/.test(v)) {    // 数字のみ許可
+                  setTempInvoiceValue({ ...tempInvoiceValue, pieces: Number(v) });
+                  calcAmount();
+                }
               }}
               pattern="[0-9]*"
               onKeyDown={(e: React.KeyboardEvent) => {
@@ -848,7 +854,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               }}
               className="w-full bg-neutral-200 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
             >
-              <option value="100">-</option>
+              <option value="">-</option>
               <option value="50">50</option>
               <option value="80">80</option>
               <option value="120">120</option>
@@ -873,14 +879,19 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />修正金額</h3>
             <Input
               tabIndex={0}
-              type="number"
+              type="tel"
+              inputMode="numeric"
               value={tempInvoiceValue.adjustment ?? ""}
               onChange={(e) => {
-                if (e.target.value !== "-") {
-                  setTempInvoiceValue({
-                    ...tempInvoiceValue,
-                    adjustment: Number(e.target.value)
-                  });
+                const v = e.target.value;
+
+                if (v === "" || v === "-") {
+                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: undefined });
+                  return;
+                }
+
+                if (/^-?\d+$/.test(v)) {    // 数字 or -数字のみ許可
+                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: Number(v) });
                   calcAmount();
                 }
               }}
