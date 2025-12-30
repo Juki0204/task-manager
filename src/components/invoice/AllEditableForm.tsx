@@ -24,10 +24,11 @@ interface AllEditableFormProps {
   priceList: { id: number, category: string, sub_category: string, work_name: string, price: number }[] | null;
   onClose: () => void;
   onChangeRecord: (recordId: string) => void;
+  onCheckTask: () => void;
 }
 
 
-export default function AllEditableForm({ recordId, prevId, nextId, priceList, onClose, onChangeRecord }: AllEditableFormProps) {
+export default function AllEditableForm({ recordId, prevId, nextId, priceList, onClose, onChangeRecord, onCheckTask }: AllEditableFormProps) {
   const [invoiceData, setInvoiceData] = useState<Invoice | null>(null);
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [tempInvoiceValue, setTempInvoiceValue] = useState<Invoice>();
@@ -512,7 +513,12 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
     <div className="w-full h-full relative space-y-4 bg-neutral-100 px-2 pt-14 pb-26">
       <h2 className="absolute top-0 left-0 w-full h-14 flex items-center justify-start gap-2 pl-3 font-bold pr-10 bg-neutral-100 z-10">
-        <span className="py-0.5 px-4 bg-neutral-200 rounded-md">No. {currentInvoice.serial}</span>
+        <span
+          className="py-0.5 px-4 bg-neutral-200 rounded-md cursor-pointer"
+          onClick={onCheckTask}
+        >
+          No. {currentInvoice.serial}
+        </span>
         <span>{tempInvoiceValue.client}：{tempInvoiceValue.requester}さん依頼</span>
         <GrClose onClick={onClose} className="absolute top-4 right-2 cursor-pointer" />
       </h2>

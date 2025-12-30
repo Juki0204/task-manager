@@ -208,7 +208,16 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
             >
               <PiNotePencilBold className="text-lg" />
             </div>
-            <div className={`flex items-center justify-start border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-10 z-20 cursor-pointer ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`} onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}><MdTask />{i.serial}</div>
+            <div
+              className={`
+                flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-10 z-20 cursor-pointer
+                ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}
+              `}
+              onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}
+            >
+              {/* <MdTask /> */}
+              {i.serial}
+            </div>
             <div className={`flex items-center border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full p-2 sticky left-35 z-20 ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.client} 【{i.requester}】</div>
             <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-9 h-full sticky left-85 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
               <EditableCell
@@ -403,6 +412,11 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 onChangeRecord={(r: string) => {
                   const siblingIsd = getSiblingInvoices(r);
                   setActiveRecord({ currentId: r, prevId: siblingIsd.prev, nextId: siblingIsd.next });
+                }}
+                onCheckTask={() => {
+                  if (!activeRecord.currentId) return;
+                  handleActiveTask(activeRecord.currentId);
+                  setIsOpen(true);
                 }}
               />
             )}
