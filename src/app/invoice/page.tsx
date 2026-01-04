@@ -19,8 +19,10 @@ export default function InvoicePage() {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
   const { user } = useAuth();
 
-  const [currentYear, setCurrentYear] = useState<string>(String(new Date().getFullYear()));
-  const [currentMonth, setCurrentMonth] = useState<string>(String(new Date().getMonth()));
+  const baseDate = new Date();
+  baseDate.setMonth(baseDate.getMonth() - 1);
+  const [currentYear, setCurrentYear] = useState<string>(String(baseDate.getFullYear()));
+  const [currentMonth, setCurrentMonth] = useState<string>(String(baseDate.getMonth() + 1));
 
   const { invoiceSortState, setInvoiceSortState, filters, setFilters } = useTaskListPreferences();
   const [filteredInvoices, setFiteredInvoices] = useState<Invoice[] | null>(null);

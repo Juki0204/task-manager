@@ -364,6 +364,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       const temporaryAmount = unitPrice * pieces * mediaFactor * (degree * 0.01)
       const totalAmount = temporaryAmount + adjustment;
 
+      console.log(totalAmount);
       return {
         ...prev,
         amount: temporaryAmount,
@@ -514,9 +515,17 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
     tempInvoiceValue?.pieces,
     tempInvoiceValue?.degree,
     // tempInvoiceValue?.amount,
-    tempInvoiceValue?.adjustment,
+    // tempInvoiceValue?.adjustment,
     unitPrice
   ]);
+
+  useEffect(() => {
+    if (tempInvoiceValue?.work_name) {
+      setUnitPrice(
+        priceList?.find(p => p.work_name === tempInvoiceValue.work_name)?.price ?? 0
+      );
+    }
+  })
 
   const [LPCalcOpen, setLPCalcOpen] = useState<boolean>(false);
   const [LPData, setLPData] = useState<LPDataType>({
@@ -891,7 +900,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
                 if (/\d+$/.test(v)) {    // 数字のみ許可
                   setTempInvoiceValue({ ...tempInvoiceValue, pieces: Number(v) });
-                  calcAmount();
+                  // calcAmount();
                 }
               }}
               pattern="[0-9]*"
@@ -953,8 +962,14 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               onChange={(e) => {
                 const v = e.target.value;
 
-                if (v === "" || v === "-") {
+                if (v === "") {
                   setTempInvoiceValue({ ...tempInvoiceValue, adjustment: undefined });
+                  return;
+                }
+
+                //"-" 単体の入力も許可するならここでハンドリング
+                if (v === "-") {
+                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: "-" as unknown as number });
                   return;
                 }
 
