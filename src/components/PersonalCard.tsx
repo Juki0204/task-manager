@@ -211,23 +211,26 @@ export default function PersonalCard({
 
     if (!data?.length) {
       toast.error('他のユーザーが編集中です');
-      return;
+      return false;
     }
 
     console.log("locked task: taskId =", task.id);
+    return true;
   }
 
   // クリック判定(シングル・ダブル)
   const DOUBLE_CLICK_GRACE = 200;
   const timerRef = useRef<NodeJS.Timeout>(null);
-  const handleDoubleClick = () => {
+  const handleDoubleClick = async () => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
 
     //console.log("ダブルクリックです");
-    lockedTaskHandler();
+    const ok = await lockedTaskHandler();
+    if (!ok) return;
+
     if (!editingUser) {
       onEdit(task);
     }

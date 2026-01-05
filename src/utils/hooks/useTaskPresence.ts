@@ -21,6 +21,9 @@ export function useTaskPresence(
   const [editingUser, setEditingUser] = useState<PresenceUser | null>(null);
 
   useEffect(() => {
+    if (!taskId) return;
+    if (!currentUser?.id) return;
+
     const channel = supabase.channel('task-presence', {
       config: { presence: { key: currentUser.id } },
     });
