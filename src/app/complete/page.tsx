@@ -156,6 +156,7 @@ export default function CompletedTaskPage() {
             </Select>
             月度分
           </h2>
+          <span className="text-xs text-white tracking-wide pb-1">※このページではリアルタイム更新は行われません。最新の状態を確認するには、ページを再読み込みしてください。</span>
         </div>
 
         {/* <div className="flex gap-2">
