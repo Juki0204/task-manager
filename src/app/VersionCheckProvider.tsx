@@ -6,10 +6,12 @@ import { marked } from "marked";
 import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from "@headlessui/react";
 import { CorrectBtn } from "@/components/ui/Btn";
 import { usePathname, useRouter } from "next/navigation";
+import { User } from "@/utils/types/user";
+import { useAuth } from "./AuthProvider";
 
 export default function VersionCheckProvider({ children }: { children: React.ReactNode }) {
   const [CURRENT_APP_VERSION, setCurrentVersion] = useState<string>(""); //アップデートの度に手動で更新
-
+  const { user } = useAuth();
   const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
   const [releaseNote, setReleaseNote] = useState<string | null>(null);
   const router = useRouter();
@@ -37,6 +39,25 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     };
     fetchVersion();
   }, []);
+
+  const allUnlockedHandler = async (user: User) => {
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({
+        locked_by_id: null,
+        locked_by_name: null,
+        locked_by_at: null,
+      })
+      .eq("locked_by_id", user.id)
+      .select("id");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (!data || data.length === 0) return;
+  }
 
   const checkVersion = useCallback(() => {
     const lastVersion = localStorage.getItem("lastVersion");
@@ -75,6 +96,11 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     try {
       localStorage.setItem('pendingVersion', CURRENT_APP_VERSION);
       localStorage.setItem("lastVersion", CURRENT_APP_VERSION);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await allUnlockedHandler(user as unknown as User);
+      }
+
       await supabase.auth.signOut();
       router.push('/login');
       setShowUpdateModal(false);
