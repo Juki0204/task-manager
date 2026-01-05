@@ -156,9 +156,9 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_ttl_dis_cli-mana_status_date'] items-center grid-cols-[120px_280px_600px_360px_120px_auto] py-2`}
         {...props}
       >
-        {unreadIds && unreadIds.includes(task.id) && (
+        {/* {unreadIds && unreadIds.includes(task.id) && (
           <div className="absolute left-2 w-1 h-8 bg-[#ffff00]" />
-        )}
+        )} */}
         <div className="text-xs flex items-center gap-1.5">
           <div className="flex items-center gap-1">
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />

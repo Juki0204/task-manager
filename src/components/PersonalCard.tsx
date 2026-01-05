@@ -271,7 +271,7 @@ export default function PersonalCard({
         className={`${personalBg} w-full rounded-sm p-3 pl-4 text-white tracking-wide cursor-pointer relative`}
         {...props}
       >
-        {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)}
+        {/* {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)} */}
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
           {user.important_task_id && user.important_task_id.includes(task.id) && (
