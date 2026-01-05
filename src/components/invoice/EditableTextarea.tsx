@@ -55,7 +55,10 @@ export default function EditableTextarea({
 
   async function startEditing() {
     const ok = await handleEditStart();
-    if (ok) setEditing(true);
+    if (!ok) return;
+
+    setTempValue(value ?? "");
+    setEditing(true);
   }
 
   async function saveValue() {
@@ -137,6 +140,11 @@ export default function EditableTextarea({
     ref.style.height = ref.scrollHeight + "px";
   }
 
+
+  useEffect(() => {
+    if (editing) return;
+    setTempValue(value ?? "");
+  }, [value, editing]);
 
   return (
     <div
