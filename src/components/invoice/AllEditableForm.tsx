@@ -703,7 +703,20 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
         {/* 小カテゴリ */}
         <div className="flex flex-wrap">
-          <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><AiOutlinePicture />作業カテゴリ選択</h3>
+          <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500">
+            <AiOutlinePicture />
+            作業カテゴリ選択
+            <span
+              className={`pb-1 pt-0.5 px-2 text-black text-xs rounded-md cursor-pointer ${!tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+              onClick={() => {
+                setTempInvoiceValue({
+                  ...tempInvoiceValue,
+                  work_name: ""
+                });
+                setUnitPrice(0);
+              }
+              }>請求なし</span>
+          </h3>
 
           <div
             ref={(el: HTMLDivElement) => { scrollContainerRef.current = el; }}
