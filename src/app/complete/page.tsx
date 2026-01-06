@@ -130,7 +130,7 @@ export default function CompletedTaskPage() {
     <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 m-auto max-w-[1920px] relative">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 text-white text-xl font-bold text-center">
+          <h2 className="flex justify-center items-center gap-1 py-0.25 text-white text-xl font-bold text-center">
             <span className="inline-block mr-2">完了済タスク一覧</span>
             <Select onChange={(e) => setYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
               <option value="">-</option>

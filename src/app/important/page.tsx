@@ -106,6 +106,7 @@ export default function TrashTaskPage() {
           <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
             重要タスク一覧
           </h2>
+          <span className="text-xs text-white tracking-wide pb-1">※このページではリアルタイム更新は行われません。最新の状態を確認するには、ページを再読み込みしてください。</span>
         </div>
 
         {/* <div className="flex gap-2">
