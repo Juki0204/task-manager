@@ -87,7 +87,7 @@ body {
     margin: auto;
     z-index: -1;
     /* border-radius: 12px; */
-    background: #2d2d2d;
+    background: #303030;
   }
 
   &.inprogress {
@@ -213,20 +213,20 @@ body {
 .nishiBorder.inprogress {background:rgb(140,95,240)}
 .defaultBrder.inprogress {background:rgb(110,110,110)}
 
-.taniBg {background:conic-gradient(rgb(205,105,175)) no-repeat 0 50% / 5px 100%, rgba(205,105,175,.18)}
-.iiBg {background:conic-gradient(rgb(70,155,90)) no-repeat 0 50% / 5px 100%, rgba(70,155,90,.18)}
-.hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.18)}
-.taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.18)}
-.nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.18)}
-.defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.18)}
+.taniBg {background:conic-gradient(rgb(205,105,175)) no-repeat 0 50% / 5px 100%, rgba(205,105,175,.25)}
+.iiBg {background:conic-gradient(rgb(70,155,90)) no-repeat 0 50% / 5px 100%, rgba(70,155,90,.2)}
+.hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.25)}
+.taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.25)}
+.nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.25)}
+.defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.25)}
 
 .inprogress {
-  & .taniBg {background:conic-gradient(rgb(205,105,175)) no-repeat 0 50% / 5px 100%, rgba(205,105,175,.35)}
-  & .iiBg {background:conic-gradient(rgb(70,155,90)) no-repeat 0 50% / 5px 100%, rgba(70,155,90,.35)}
-  & .hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.35)}
-  & .taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.35)}
-  & .nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.35)}
-  & .defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.35)}
+  & .taniBg {background:conic-gradient(rgb(205,105,175)) no-repeat 0 50% / 5px 100%, rgba(205,105,175,.5)}
+  & .iiBg {background:conic-gradient(rgb(70,155,90)) no-repeat 0 50% / 5px 100%, rgba(70,155,90,.5)}
+  & .hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.45)}
+  & .taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.5)}
+  & .nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.45)}
+  & .defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.45)}
 }
 
 

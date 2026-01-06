@@ -39,12 +39,12 @@ export default function PersonalTaskList({
         <TaskColumn
           id="NotYetStarted"
           title="未担当タスク"
-          tasks={taskList.filter((task) => !task.manager && task.status === '未着手' || task.status === '詳細待ち' || task.status === '中止' || task.status === '保留')}
+          tasks={taskList.filter((task) => !task.manager && task.status === '未着手' || !task.manager && task.status === '詳細待ち' || !task.manager && task.status === '中止' || !task.manager && task.status === '保留')}
           user={user}
           unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-[#484850] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          className="bg-[#898989] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -62,7 +62,7 @@ export default function PersonalTaskList({
           unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-[#425066]/80 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          className="bg-[#6d7a8f] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -80,7 +80,7 @@ export default function PersonalTaskList({
           unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-[#354b4e]/90 p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          className="bg-[#658083] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -118,7 +118,7 @@ export default function PersonalTaskList({
           unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-[#4b4a3e] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          className="bg-[#817f6a] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
