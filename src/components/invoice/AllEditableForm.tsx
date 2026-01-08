@@ -751,7 +751,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               }
               }>請求なし
             </span>
-            <span className="ml-4 text-xs">※SHIFT + スクロールホイールで横方向にスクロール可能</span>
+            <span className="ml-4 text-xs tracking-wide">※項目は矢印キーで選択可能。また、選択領域はSHIFT + スクロールホイールで横方向にスクロール可能</span>
           </h3>
 
           <div
