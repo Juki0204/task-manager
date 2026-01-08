@@ -401,6 +401,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
           <DialogPanel className="relative h-[80svh] w-200 space-y-4 rounded-2xl bg-neutral-100 p-5 pt-6">
             {activeRecord && (
               <AllEditableForm
+                key={activeRecord.currentId}
                 recordId={activeRecord.currentId}
                 prevId={activeRecord.prevId}
                 nextId={activeRecord.nextId}

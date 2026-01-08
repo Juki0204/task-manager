@@ -507,6 +507,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
   useEffect(() => {
     if (!tempInvoiceValue) return;
+    if (!unitPrice) return;
     calcAmount();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -525,7 +526,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
         priceList?.find(p => p.work_name === tempInvoiceValue.work_name)?.price ?? 0
       );
     }
-  })
+  }, [tempInvoiceValue?.work_name]);
 
   const [LPCalcOpen, setLPCalcOpen] = useState<boolean>(false);
   const [LPData, setLPData] = useState<LPDataType>({
@@ -1051,7 +1052,6 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
           onClick={() => {
             if (!prevId) return;
             onChangeRecord(prevId);
-            setUnitPrice(null);
           }}
           className="flex gap-1 pl-2 pr-4 py-2 leading-none bg-sky-600 text-white rounded-md focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -1064,7 +1064,6 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
           onClick={() => {
             if (!nextId) return;
             onChangeRecord(nextId);
-            setUnitPrice(null);
           }}
           className="flex gap-1 pl-4 pr-2 py-2 leading-none bg-sky-600 text-white rounded-md focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
