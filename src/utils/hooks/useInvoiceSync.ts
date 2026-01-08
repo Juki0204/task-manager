@@ -27,6 +27,11 @@ export function useInvoiceSync() {
             const half = matchResult[1].replace(/[０-９]/g, (d) =>
               String.fromCharCode(d.charCodeAt(0) - 0xfee0)
             );
+
+            if (Number(half) <= 1) {
+              return null;
+            }
+
             return Number(half);
           }
 
