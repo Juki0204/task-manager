@@ -392,7 +392,7 @@ export default function InvoicePage() {
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">谷町G</div>
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">梅田</div>
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">梅田G</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">中州</div>
+          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">中洲</div>
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">玉乱堂</div>
           <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">奥様</div>
 

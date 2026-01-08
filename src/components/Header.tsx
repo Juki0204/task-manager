@@ -197,7 +197,7 @@ export default function Header() {
                     { id: 4, label: "谷町人妻ゴールデン" },
                     { id: 5, label: "梅田人妻秘密倶楽部" },
                     { id: 6, label: "梅田ゴールデン" },
-                    { id: 7, label: "中州秘密倶楽部" },
+                    { id: 7, label: "中洲秘密倶楽部" },
                     { id: 8, label: "奥様クラブ" },
                     { id: 9, label: "快楽玉乱堂" },
                   ]}
