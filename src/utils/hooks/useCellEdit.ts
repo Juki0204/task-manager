@@ -160,13 +160,14 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
         nextAmount = formatNullValue(priceRow.price) ?? 0;
 
-        const total = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01) + nextAdjustment;
+        const preAmount = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01)
+        const total = preAmount + nextAdjustment;
 
         const { error } = await supabase
           .from(tableName)
           .update({
             "work_name": formatNewValue,
-            "amount": safeAmount(nextAmount),
+            "amount": safeAmount(preAmount),
             "category": priceRow.category ?? null,
             "total_amount": safeAmount(total),
           })
@@ -179,10 +180,41 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
 
       // ---------------- work_name 以外の計算に関係する箇所の変更時 ----------------
       if (isCalcField) {
-        const total = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01) + nextAdjustment;
+
+        const { data: priceRow, error: priceErr } = await supabase
+          .from("prices")
+          .select("price, category")
+          .eq("work_name", target.work_name)
+          .maybeSingle();
+
+        if (priceErr) {
+          console.error("priceのフェッチに失敗しました:", priceErr);
+          return;
+        }
+
+        if (!priceRow) {
+          const { error } = await supabase
+            .from(tableName)
+            .update({
+              "work_name": null,
+              "amount": 0,
+              "category": null,
+              "total_amount": 0
+            })
+            .eq("id", recordId);
+
+          if (error) console.error("請求データの更新に失敗しました:", error);
+          return;
+        }
+
+        nextAmount = formatNullValue(priceRow.price) ?? 0;
+
+        const preAmount = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01);
+        const total = preAmount + nextAdjustment;
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updatePayload: Record<string, any> = {
+          amount: safeAmount(preAmount),
           total_amount: safeAmount(total),
         };
 
