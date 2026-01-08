@@ -402,7 +402,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
         />
 
         <div className="fixed inset-0 w-screen flex items-center justify-center">
-          <DialogPanel className="relative h-[80svh] w-200 space-y-4 rounded-2xl bg-neutral-100 p-5 pt-6">
+          <DialogPanel className="relative h-[85svh] w-300 space-y-4 rounded-2xl bg-neutral-100 p-5 pt-6">
             {activeRecord && (
               <AllEditableForm
                 key={activeRecord.currentId}

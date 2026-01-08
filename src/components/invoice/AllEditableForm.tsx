@@ -7,12 +7,13 @@ import { AiOutlinePicture } from "react-icons/ai";
 import { BsPersonCheck } from "react-icons/bs";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { GrClose, GrFormNext, GrFormPrevious } from "react-icons/gr";
-import { MdDriveFileRenameOutline, MdLaptopChromebook, MdOutlineCategory, MdOutlineStickyNote2 } from "react-icons/md";
+import { MdDriveFileRenameOutline, MdLaptopChromebook, MdOutlineCategory, MdTask, MdOutlineStickyNote2 } from "react-icons/md";
 import { FaCalculator } from "react-icons/fa6";
 import { PiPuzzlePiece } from "react-icons/pi";
 import { HiOutlineAdjustments } from "react-icons/hi";
 import { BiCalculator, BiCategoryAlt } from "react-icons/bi";
 import { LuNotebookPen } from "react-icons/lu";
+
 import { toast } from "sonner";
 import { OutlineBtn } from "../ui/Btn";
 
@@ -565,16 +566,13 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
   return (
 
-    <div className="w-full h-full relative space-y-4 bg-neutral-100 px-2 pt-14 pb-26">
+    <div className="w-full h-full relative space-y-4 bg-neutral-100 px-2 pt-14 pb-16">
       <h2 className="absolute top-0 left-0 w-full h-14 flex items-center justify-start gap-2 pl-3 font-bold pr-10 bg-neutral-100 z-10">
-        <span
-          className="py-0.5 px-4 bg-neutral-200 rounded-md cursor-pointer"
-          onClick={onCheckTask}
-        >
-          No. {currentInvoice.serial}
-        </span>
-        <span>{tempInvoiceValue.client}：{tempInvoiceValue.requester}さん依頼</span>
-        <FaCalculator onClick={() => setLPCalcOpen(true)} className="absolute top-4 right-10 cursor-pointer" />
+        請求データ一括入力
+        <span className="text-xs text-neutral-400">TABキー, TAB + SHIFTキー押下で項目移動可能</span>
+        <div onClick={() => setLPCalcOpen(true)} className="flex gap-1 items-center absolute top-3.5 right-10 cursor-pointer text-xs py-0.5 px-1.5 rounded-sm bg-neutral-300 text-neutral-800 hover:opacity-60">
+          <FaCalculator />LP計算機
+        </div>
         <GrClose onClick={onClose} className="absolute top-4 right-2 cursor-pointer" />
       </h2>
       <div
@@ -582,49 +580,51 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
         className="w-full h-full relative space-y-4 bg-neutral-100 p-1 pr-2 pb-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
       >
 
-        <div className="grid grid-cols-4 gap-2">
-          {/* 作業タイトル */}
-          <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdDriveFileRenameOutline />作業タイトル</h3>
+        <div className="grid grid-cols-5 gap-2">
+          {/* 作業担当者 */}
+          <div className="col-span-1">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />シリアルNo<span className="text-xs">（クリックで元タスク確認）</span></h3>
+            <div
+              className="flex gap-1 items-center py-1 px-2 bg-neutral-200 rounded-md cursor-pointer"
+              onClick={onCheckTask}
+            >
+              <MdTask />{currentInvoice.serial}
+            </div>
+          </div>
+
+          {/* 作業担当者 */}
+          <div className="col-span-1">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />店舗名</h3>
             <Input
               tabIndex={-1}
               type="text"
-              value={tempInvoiceValue.title}
-              onChange={(e) => setTempInvoiceValue({
-                ...tempInvoiceValue,
-                title: e.target.value
-              })}
-              className="w-full bg-neutral-200 py-1 px-2 rounded-md"
+              readOnly
+              value={tempInvoiceValue.client}
+              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
+            />
+          </div>
+
+          {/* 作業担当者 */}
+          <div className="col-span-1 pr-2 relative after:h-full after:w-[1px] after:bg-neutral-200 after:absolute after:-right-0 after:bottom-0">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />依頼者</h3>
+            <Input
+              tabIndex={-1}
+              type="text"
+              readOnly
+              value={tempInvoiceValue.requester}
+              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
             />
           </div>
 
           {/* 作業担当者 */}
           <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />担当者</h3>
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />作業担当者</h3>
             <Input
               tabIndex={-1}
               type="text"
               readOnly
               value={tempInvoiceValue.manager}
               className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
-            />
-          </div>
-
-        </div>
-
-        <div className="grid grid-cols-4 gap-2">
-          {/* 作業内容 */}
-          <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdOutlineStickyNote2 />作業内容</h3>
-            <Input
-              tabIndex={-1}
-              type="text"
-              value={tempInvoiceValue.description}
-              onChange={(e) => setTempInvoiceValue({
-                ...tempInvoiceValue,
-                description: e.target.value
-              })}
-              className="w-full bg-neutral-200 py-1 px-2 rounded-md"
             />
           </div>
 
@@ -639,6 +639,39 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               onChange={(e) => setTempInvoiceValue({
                 ...tempInvoiceValue,
                 finish_date: e.target.value
+              })}
+              className="w-full bg-neutral-200 py-1 px-2 rounded-md cursor-pointer"
+            />
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-4 gap-2">
+          {/* 作業タイトル */}
+          <div className="col-span-1">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdDriveFileRenameOutline />作業タイトル</h3>
+            <Input
+              tabIndex={-1}
+              type="text"
+              value={tempInvoiceValue.title}
+              onChange={(e) => setTempInvoiceValue({
+                ...tempInvoiceValue,
+                title: e.target.value
+              })}
+              className="w-full bg-neutral-200 py-1 px-2 rounded-md"
+            />
+          </div>
+
+          {/* 作業内容 */}
+          <div className="col-span-3">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdOutlineStickyNote2 />作業内容</h3>
+            <Input
+              tabIndex={-1}
+              type="text"
+              value={tempInvoiceValue.description}
+              onChange={(e) => setTempInvoiceValue({
+                ...tempInvoiceValue,
+                description: e.target.value
               })}
               className="w-full bg-neutral-200 py-1 px-2 rounded-md"
             />
@@ -693,7 +726,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 />
                 <label
                   htmlFor={opt.label}
-                  className="absolute top-0 left-0 w-full h-full aspect-square text-center py-1.5 px-2 text-sm text-neutral-800 peer-checked:bg-blue-300/70 transition duration-300"
+                  className="absolute top-0 left-0 w-full h-full aspect-square text-center py-1.5 px-2 text-sm text-neutral-800 peer-checked:bg-blue-300/70 transition duration-300 cursor-pointer"
                 >
                   {opt.label}
                 </label>
@@ -716,12 +749,14 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 });
                 setUnitPrice(0);
               }
-              }>請求なし</span>
+              }>請求なし
+            </span>
+            <span className="ml-4 text-xs">※SHIFT + スクロールホイールで横方向にスクロール可能</span>
           </h3>
 
           <div
             ref={(el: HTMLDivElement) => { scrollContainerRef.current = el; }}
-            className="h-94 overflow-auto pb-2 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
+            className="h-94 overflow-auto pb-2 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
           >
 
             <div className="w-fit flex gap-x-2">
@@ -729,7 +764,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="favorite"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[0] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-50"
+                className="p-2 bg-neutral-200 rounded-md w-48"
               >
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">よく使う項目</h3>
                 <ul className="flex flex-col gap-0.5">
@@ -756,7 +791,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="WEB"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[1] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-50">
+                className="p-2 bg-neutral-200 rounded-md w-48">
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">WEB</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
@@ -770,7 +805,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -782,7 +817,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="WEB"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[2] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-50">
+                className="p-2 bg-neutral-200 rounded-md w-48">
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">イベント</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
@@ -796,7 +831,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -808,7 +843,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="印刷"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[3] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-50"
+                className="p-2 bg-neutral-200 rounded-md w-48"
               >
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">印刷</h3>
                 <ul className="flex flex-col gap-0.5">
@@ -823,7 +858,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500  ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
                         >
                           {p.work_name}
                         </li>
@@ -835,7 +870,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="出力"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[4] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-50"
+                className="p-2 bg-neutral-200 rounded-md w-48"
               >
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">出力</h3>
                 <ul className="flex flex-col gap-0.5">
@@ -862,7 +897,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="その他"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[5] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-50"
+                className="p-2 bg-neutral-200 rounded-md w-48"
               >
                 <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">その他</h3>
                 <ul className="flex flex-col gap-0.5">
@@ -1032,32 +1067,32 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       </div>
 
       {/* 確定ボタンたち */}
-      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-2 gap-2 items-center justify-between p-3 bg-neutral-100 mb-0">
-        <button
-          disabled={!isDirty || isSaving}
-          onClick={() => {
-            console.log(tempInvoiceValue);
-            saveAllValue();
-          }}
-          className="w-full col-span-2 px-4 py-2 leading-none bg-sky-600 text-white rounded-md focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSaving ? (
-            <><span></span>保存中...</>
-          ) : (
-            <>変更を保存</>
-          )}
-        </button>
-
+      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-4 gap-2 items-center justify-between p-3 bg-neutral-100 mb-0">
         <button
           disabled={prevId ? false : true}
           onClick={() => {
             if (!prevId) return;
             onChangeRecord(prevId);
           }}
-          className="flex gap-1 pl-2 pr-4 py-2 leading-none bg-sky-600 text-white rounded-md focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex gap-1 pl-2 pr-4 py-2 leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <GrFormPrevious />
           <span className="flex-1 text-center">前の請求</span>
+        </button>
+
+        <button
+          disabled={!isDirty || isSaving}
+          onClick={() => {
+            console.log(tempInvoiceValue);
+            saveAllValue();
+          }}
+          className="w-full col-span-2 px-4 py-2 leading-none tracking-wider bg-sky-600 text-white rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSaving ? (
+            <><span></span>保存中...</>
+          ) : (
+            <>変更内容を保存</>
+          )}
         </button>
 
         <button
@@ -1066,7 +1101,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             if (!nextId) return;
             onChangeRecord(nextId);
           }}
-          className="flex gap-1 pl-4 pr-2 py-2 leading-none bg-sky-600 text-white rounded-md focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex gap-1 pl-4 pr-2 py-2 leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="flex-1 text-center">次の請求</span>
           <GrFormNext />
@@ -1074,19 +1109,19 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       </div>
 
       <div className={`
-        absolute top-0 p-4 rounded-xl bg-neutral-50 w-100 transition-all duration-300 -z-10
+        absolute top-0 p-4 rounded-xl bg-neutral-50 w-80 transition-all duration-300 -z-10
         ${LPCalcOpen ? "left-[calc(100%+2rem)]" : "left-0"}
       `}>
         <h2 className="mb-2 font-bold text-center">縦長バナー料金計算機</h2>
-        <div className="text-sm flex flex-col gap-2 border-b border-neutral-300 text-justify pb-2">
-          <p>作成した画像の縦：横でサイズを入力して<br />
+        <div className="text-[13px] flex flex-col gap-2 border-b border-neutral-300 text-justify pb-2">
+          <p>作成した画像の縦：横のサイズ(px)を入力して<br />
             1:Xの縦の比率が3倍を超えた時点で縦長バナー用の請求金額を独自の計算式を基に組み立てます。</p>
           <p>ベースを25,000円とし、縦の比率が1倍増える毎に+2,500円、比率の小数点以下が0.5以上の場合は切り上げや切り捨てではなく+1,000円とします。</p>
           <p>比率が3倍を超えない場合はWEBポップと同等の金額になります。</p>
         </div>
-        <div className="grid grid-cols-4 gap-4 pt-2 pb-1">
-          <div className="col-span-2">
-            <h3 className="text-sm px-0.5">縦 ( px )</h3>
+        <div className="grid grid-cols-8 gap-4 pt-2 pb-1">
+          <div className="col-span-4">
+            <h3 className="text-[13px] px-0.5">縦 ( px )</h3>
             <input
               className="w-full py-1 px-2 rounded-md bg-neutral-200 text-right"
               type="tel"
@@ -1104,8 +1139,8 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               }}
             />
           </div>
-          <div className="col-span-2">
-            <h3 className="text-sm px-0.5">横 ( px )</h3>
+          <div className="col-span-4">
+            <h3 className="text-[13px] px-0.5">横 ( px )</h3>
             <input
               className="w-full py-1 px-2 rounded-md bg-neutral-200 text-right"
               type="tel"
@@ -1123,24 +1158,24 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               }}
             />
           </div>
-          <div className="col-span-1 relative after:content-['：'] after:absolute after:left-full after:bottom-0 after:block after:py-1 after:px-[1px]">
-            <h3 className="text-sm px-0.5">比率 ( 縦 )</h3>
+          <div className="col-span-3 relative after:content-['：'] after:absolute after:left-full after:bottom-0 after:block after:py-1 after:px-[1px]">
+            <h3 className="text-[13px] px-0.5">比率(縦)</h3>
             <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={1} readOnly />
           </div>
-          <div className="col-span-3">
-            <h3 className="text-sm px-0.5">比率 ( 横 ) X</h3>
+          <div className="col-span-5">
+            <h3 className="text-[13px] px-0.5">比率(横) X</h3>
             <input className="w-full py-1 px-2 rounded-md bg-neutral-300 pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.rate} readOnly />
           </div>
-          <div className="col-span-2">
-            <h3 className="text-sm px-0.5">縦比率超過分 ( X - 3 )</h3>
+          <div className="col-span-4">
+            <h3 className="text-[13px] px-0.5">縦比率超過分(X - 3)</h3>
             <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.alt_rate} readOnly />
           </div>
-          <div className="col-span-2">
-            <h3 className="text-sm px-0.5">小数点以下指数</h3>
+          <div className="col-span-4">
+            <h3 className="text-[13px] px-0.5">小数点以下指数</h3>
             <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.decimal} readOnly />
           </div>
-          <div className="col-span-4">
-            <h3 className="text-sm px-0.5">請求金額</h3>
+          <div className="col-span-8">
+            <h3 className="text-[13px] px-0.5">請求金額</h3>
             <input
               className="w-full py-1 px-2 rounded-md bg-blue-500/20 text-right"
               type="tel"
@@ -1153,7 +1188,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <p className="text-xs px-0.5 pt-1 text-right">内訳：25000 + ({LPData.alt_rate} * 2500) + ({LPData.decimal} * 1000) = {LPData.total_amount}</p>
             )}
           </div>
-          <div className="col-span-4 flex justify-end gap-2">
+          <div className="col-span-8 flex justify-end gap-2">
             <button
               className="px-4 py-2 text-sm bg-red-300 rounded-md cursor-pointer hover:opacity-90"
               onClick={() => {
