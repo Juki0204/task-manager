@@ -14,7 +14,7 @@ import { IoFlag, IoPerson, IoReceipt } from "react-icons/io5";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 import { MdPlace } from "react-icons/md";
-
+import { TbMessageReport } from "react-icons/tb";
 
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import MultiSelectPopover from "./ui/MultiSelectPopover";
@@ -62,6 +62,14 @@ export default function Header() {
     }
   }
 
+  function handleReport() {
+    const report = confirm("報告用のスプレッドシートに移行します。");
+    if (report) {
+      const url = "https://docs.google.com/spreadsheets/d/1FdoMJdYkvDI0zE3LVSw4qlpvt1DHB7qJPHOmH691qeA/edit?usp=sharing";
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  }
+
   useEffect(() => {
     setCurrentUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +84,7 @@ export default function Header() {
     <>
       {!isExculedPath && (
         <header className="fixed top-0 w-full min-w-[1900px] py-2 px-4 z-50 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
-          <div className="w-full flex justify-end gap-8 items-center pb-2 border-b border-neutral-500">
+          <div className="w-full flex justify-end gap-2 items-center pb-2 border-b border-neutral-500">
             <div className="flex gap-2 flex-1">
               <Button
                 className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
@@ -132,10 +140,11 @@ export default function Header() {
             <div className="sm:flex gap-4 rounded-md items-center">
               {/* <HelpDrawer /> */}
               <div className="flex gap-1 items-center py-2 pl-4 pr-6 text-sm tracking-wider rounded-md bg-black/20 text-white"><MdPlace />{pageIndex[pathname]}</div>
-              <p className="text-white flex items-center gap-2"><FaUserCircle />{currentUserName} さん</p>
+              <p className="text-white flex items-center gap-2 mr-4"><FaUserCircle />{currentUserName} さん</p>
               {/* <p className="text-white">所属：{currentUserEmployee}</p>
             <p className="text-white">Email：{currentUserEmail}</p> */}
             </div>
+            <button className="flex gap-1 items-center py-2 px-3 bg-green-800 text-white rounded-md hover:opacity-60 cursor-pointer" onClick={handleReport}><TbMessageReport className="text-xl" /></button>
             <LogoutBtn />
           </div>
 
