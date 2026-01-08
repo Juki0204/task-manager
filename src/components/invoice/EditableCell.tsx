@@ -15,6 +15,8 @@ interface EditableCellProps {
   user: User;
   className?: string;
   type?: string;
+  pattern?: string;
+  inputMode?: "search" | "text" | "none" | "email" | "tel" | "url" | "numeric" | "decimal" | undefined;
   setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
   activeCell: { recordId: string; field: string } | null;
   setActiveCell: Dispatch<SetStateAction<{ recordId: string; field: string } | null>>;
@@ -29,6 +31,8 @@ export default function EditableCell({
   user,
   className,
   type,
+  pattern,
+  inputMode,
   setInvoices,
   activeCell,
   setActiveCell,
@@ -162,11 +166,22 @@ export default function EditableCell({
             }`}
           type={type ?? "text"}
           value={tempValue}
-          onChange={(e) => setTempValue(e.target.value)}
+          onChange={(e) => {
+            if (type === "tel" || type === "number") {
+              const v = e.target.value;
+              if (v === "" || /^-?\d*$/.test(v)) {
+                setTempValue(e.target.value);
+              }
+            } else {
+              setTempValue(e.target.value);
+            }
+          }}
           onBlur={saveValue}
           onFocus={(e) => e.target.select()}
           onClick={(e) => e.stopPropagation()}
           max={type === "date" ? "9999-12-31" : undefined}
+          pattern={pattern}
+          inputMode={inputMode}
         />
       ) : (
         <>{value ?? ""}</>

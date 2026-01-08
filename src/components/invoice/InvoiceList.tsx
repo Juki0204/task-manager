@@ -299,6 +299,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 recordId={i.id}
                 field="pieces"
                 type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={i.pieces ?? ""}
                 user={user}
                 setInvoices={setInvoices}
@@ -330,6 +332,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 recordId={i.id}
                 field="adjustment"
                 type="tel"
+                inputMode="numeric"
+                pattern="-?[0-9]*"
                 value={i.adjustment ?? 0}
                 user={user}
                 setInvoices={setInvoices}
