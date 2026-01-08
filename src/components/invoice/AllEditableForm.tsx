@@ -902,13 +902,14 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
             <Input
               tabIndex={0}
               ref={piecesRef}
-              type="number"
+              type="tel"
+              inputMode="numeric"
               value={tempInvoiceValue.pieces ?? ""}
               onChange={(e) => {
                 const v = e.target.value;
 
                 if (v === "") {
-                  setTempInvoiceValue({ ...tempInvoiceValue, pieces: undefined });
+                  setTempInvoiceValue({ ...tempInvoiceValue, pieces: null });
                   return;
                 }
 
@@ -939,7 +940,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               onChange={(e) => {
                 setTempInvoiceValue({
                   ...tempInvoiceValue,
-                  degree: Number(e.target.value)
+                  degree: e.target.value === "" ? null : Number(e.target.value),
                 });
                 calcAmount();
               }}
@@ -977,7 +978,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 const v = e.target.value;
 
                 if (v === "") {
-                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: undefined });
+                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: null });
                   return;
                 }
 
