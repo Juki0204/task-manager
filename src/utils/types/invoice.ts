@@ -7,6 +7,7 @@ export interface Invoice {
   finish_date: string;
   manager: string;
   serial: string;
+  checked: boolean;
 
   remarks?: string | null;
   work_name?: string | null;
