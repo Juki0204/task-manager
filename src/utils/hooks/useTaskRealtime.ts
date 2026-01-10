@@ -12,6 +12,11 @@ type UserData = {
   employee: string;
 } | null;
 
+interface deadline {
+  task_id: string;
+  date: string;
+}
+
 export function useTaskRealtime(user: UserData) {
   console.log("useTaskRealtime init");
 
@@ -82,6 +87,24 @@ export function useTaskRealtime(user: UserData) {
     return sortTaskData;
   };
 
+  const IGNORE_TOAST_FIELDS: (keyof Task)[] = [
+    "status",
+    "updated_at",
+    "locked_by_id",
+    "locked_by_name",
+    "locked_by_at",
+  ];
+
+  function hasMeaningfulChange<T extends object>(
+    oldRow: T,
+    newRow: T,
+    ignore: (keyof T)[]
+  ) {
+    return (Object.keys(newRow) as (keyof T)[]).some((key) => {
+      if (ignore.includes(key)) return false;
+      return oldRow[key] !== newRow[key];
+    });
+  };
 
   useEffect(() => {
     if (!user?.id) return;
@@ -98,18 +121,23 @@ export function useTaskRealtime(user: UserData) {
           // console.log('realtime:', payload);
 
           if (payload.eventType === "INSERT") {
-            // toast.success(`新しいタスクが追加されました。`);
             setTaskList((prev) => [...prev, payload.new as Task]);
+            toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を追加しました。`);
           }
 
           if (payload.eventType === "UPDATE") {
-            // toast.info('タスクが更新されました。');
+            const oldTask = payload.old as Task;
+            const newTask = payload.new as Task;
 
             setTaskList((prev) =>
               prev.map((t) =>
                 t.id === payload.new.id ? payload.new as Task : t
               )
             );
+
+            if (hasMeaningfulChange(oldTask, newTask, IGNORE_TOAST_FIELDS)) {
+              toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を更新しました。`);
+            }
           }
 
           if (payload.eventType === "DELETE") {
@@ -118,6 +146,26 @@ export function useTaskRealtime(user: UserData) {
           }
         }
       )
+      .subscribe();
+
+    //deadline の realtime
+    const deadlineChannel = supabase
+      .channel("deadline-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "deadline" }, (payload) => {
+        if (payload.eventType === "INSERT") {
+          setDeadlineList((prev) => [...prev, payload.new as deadline]);
+        }
+
+        if (payload.eventType === "UPDATE") {
+          setDeadlineList((prev) =>
+            prev.map((d) => (d.task_id === (payload.new as deadline).task_id ? (payload.new as deadline) : d))
+          );
+        }
+
+        if (payload.eventType === "DELETE") {
+          setDeadlineList((prev) => prev.filter((d) => d.task_id !== (payload.old as deadline).task_id));
+        }
+      })
       .subscribe();
 
     // const handleVisibility = () => {
@@ -132,6 +180,8 @@ export function useTaskRealtime(user: UserData) {
       channel.unsubscribe();
       supabase.removeChannel(channel);
       // document.removeEventListener("visibilitychange", handleVisibility);
+      deadlineChannel.unsubscribe();
+      supabase.removeChannel(deadlineChannel);
     };
   }, [user?.id]);
 

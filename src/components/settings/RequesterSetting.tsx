@@ -82,7 +82,7 @@ export default function RequesterSetting() {
     if (error) {
       alert("依頼者の登録に失敗しました");
     } else if (user) {
-      toast(`${user.name}さんが依頼者一覧を更新しました`);
+      toast(`依頼者一覧を更新しました`);
       setNewName((prev) => ({ ...prev, [client]: "" }));
       getClientsAndRequesters();
     }
@@ -94,7 +94,7 @@ export default function RequesterSetting() {
     if (error) {
       alert("依頼者の削除に失敗しました");
     } else if (user) {
-      toast(`${user.name}さんが依頼者一覧を更新しました`);
+      toast(`依頼者一覧を更新しました`);
       getClientsAndRequesters();
     }
   }

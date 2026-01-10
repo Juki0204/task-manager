@@ -112,7 +112,7 @@ export default function PriceSetting() {
       return;
     }
 
-    if (user) toast.success(`${user.name}さんが料金一覧を更新しました`);
+    if (user) toast.success(`料金一覧を更新しました`);
 
     setNewPrices((prev) => ({
       ...prev,
@@ -141,7 +141,7 @@ export default function PriceSetting() {
       return;
     }
 
-    if (user) toast(`${user.name}さんが料金一覧を更新しました`);
+    if (user) toast(`料金一覧を更新しました`);
     getPrices();
   };
 
@@ -157,7 +157,7 @@ export default function PriceSetting() {
       return;
     }
 
-    if (user) toast(`${user.name}さんが料金一覧を更新しました`);
+    if (user) toast(`料金一覧を更新しました`);
     getPrices();
   };
 

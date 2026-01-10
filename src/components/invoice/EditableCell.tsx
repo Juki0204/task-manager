@@ -92,9 +92,9 @@ export default function EditableCell({
     }
 
     if (field === "title" && tempValue !== value) {
-      toast.success(`${user.name}さんが${task.serial}の作業タイトルを変更しました`);
+      toast.success(`${task.serial}の作業タイトルを変更しました`);
     } else if (field === "description" && tempValue !== value) {
-      toast.success(`${user.name}さんが${task.serial}の作業内容を変更しました`);
+      toast.success(`${task.serial}の作業内容を変更しました`);
     }
   }
 
