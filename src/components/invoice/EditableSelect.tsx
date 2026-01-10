@@ -141,7 +141,7 @@ export default function EditableSelect({
         e.stopPropagation();
         setActiveCell({ recordId, field });
       }}
-      className={`relative border-neutral-700 min-h-9 outline-none
+      className={`relative border-neutral-700 min-h-8 outline-none
         ${className ?? ""}
         ${isActive ? "bg-blue-900/50 outline-2 -outline-offset-2 outline-blue-700" : ""}
         h-full flex items-center
@@ -163,7 +163,7 @@ export default function EditableSelect({
                 <PopoverButton
                   ref={buttonRef}
                   autoFocus
-                  className="w-full h-full text-left p-2 bg-blue-800/40 border border-blue-400 focus:outline-none"
+                  className="w-full h-full text-left py-1.5 px-2 bg-blue-800/40 border border-blue-400 focus:outline-none"
                 >
                   {options[selectedIndex] ?? (tempValue || "選択...")}
                 </PopoverButton>
