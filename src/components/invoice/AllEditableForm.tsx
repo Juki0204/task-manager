@@ -517,7 +517,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
     tempInvoiceValue?.pieces,
     tempInvoiceValue?.degree,
     // tempInvoiceValue?.amount,
-    // tempInvoiceValue?.adjustment,
+    tempInvoiceValue?.adjustment,
     unitPrice
   ]);
 
@@ -1025,7 +1025,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
                 if (/^-?\d+$/.test(v)) {    // 数字 or -数字のみ許可
                   setTempInvoiceValue({ ...tempInvoiceValue, adjustment: Number(v) });
-                  calcAmount();
+                  // calcAmount();
                 }
               }}
               pattern="[0-9]*"
