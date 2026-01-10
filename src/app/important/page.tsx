@@ -159,7 +159,11 @@ export default function TrashTaskPage() {
                 user={user}
                 task={activeTask}
                 onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
-                onEdit={() => setModalType("edit")}
+                onEdit={(t: Task) => {
+                  const latest = taskList.find(x => x.id === t.id) ?? t;
+                  setActiveTask(latest);
+                  setModalType("edit");
+                }}
                 deadlineList={deadlineList}
               />
             )}

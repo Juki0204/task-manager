@@ -315,7 +315,11 @@ export default function PersonalTaskPage() {
                 task={activeTask}
                 unreadIds={unreadIds}
                 onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
-                onEdit={() => setModalType("edit")}
+                onEdit={(t: Task) => {
+                  const latest = taskList.find(x => x.id === t.id) ?? t;
+                  setActiveTask(latest);
+                  setModalType("edit");
+                }}
                 deadlineList={deadlineList}
               />
             )}

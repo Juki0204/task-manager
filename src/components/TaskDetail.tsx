@@ -28,7 +28,7 @@ interface TaskDetailProps {
   user: User;
   unreadIds?: string[];
   onClose: () => void;
-  onEdit: () => void;
+  onEdit: (t: Task) => void;
   deadlineList: { task_id: string, date: string }[];
 }
 
@@ -102,7 +102,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
     }
 
     console.log("locked task: taskId =", task.id);
-    onEdit();
+    onEdit(task);
   }
 
   //変更履歴ログの取得
