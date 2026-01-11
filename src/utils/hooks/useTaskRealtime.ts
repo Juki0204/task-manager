@@ -100,8 +100,10 @@ export function useTaskRealtime(user: UserData) {
     newRow: T,
     ignore: (keyof T)[]
   ) {
+    console.log(oldRow, newRow);
     return (Object.keys(newRow) as (keyof T)[]).some((key) => {
       if (ignore.includes(key)) return false;
+      console.log(oldRow[key] !== newRow[key]);
       return oldRow[key] !== newRow[key];
     });
   };
@@ -126,8 +128,8 @@ export function useTaskRealtime(user: UserData) {
           }
 
           if (payload.eventType === "UPDATE") {
-            const oldTask = payload.old as Task;
-            const newTask = payload.new as Task;
+            // const oldTask = payload.old as Task;
+            // const newTask = payload.new as Task;
 
             setTaskList((prev) =>
               prev.map((t) =>
@@ -135,9 +137,9 @@ export function useTaskRealtime(user: UserData) {
               )
             );
 
-            if (hasMeaningfulChange(oldTask, newTask, IGNORE_TOAST_FIELDS)) {
-              toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を更新しました。`);
-            }
+            // if (hasMeaningfulChange(oldTask, newTask, IGNORE_TOAST_FIELDS)) {
+            //   toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を更新しました。`);
+            // }
           }
 
           if (payload.eventType === "DELETE") {
