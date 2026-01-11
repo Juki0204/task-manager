@@ -13,7 +13,8 @@ import { RiTeamFill } from "react-icons/ri";
 import { IoFlag, IoPerson, IoReceipt } from "react-icons/io5";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
-import { MdPlace } from "react-icons/md";
+import { MdPlace, MdSpaceDashboard } from "react-icons/md";
+
 import { TbMessageReport } from "react-icons/tb";
 
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
@@ -40,7 +41,8 @@ export default function Header() {
     "/trash": "削除済タスク一覧",
     "/setting": "各種設定",
     "/invoice": "請求データ一覧",
-    "/release-notes": "リリースノート一覧"
+    "/release-notes": "リリースノート一覧",
+    "/dashboard": "ダッシュボード"
   }
 
   const {
@@ -87,24 +89,31 @@ export default function Header() {
           <div className="w-full flex justify-end gap-2 items-center pb-2 border-b border-neutral-500">
             <div className="flex gap-2 flex-1">
               <Button
+                className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/dashboard" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
+                onClick={() => router.push('/dashboard')}
+              >
+                <MdSpaceDashboard />ダッシュボード
+              </Button>
+
+              <Button
                 className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
                 onClick={() => router.push('/')}
               >
-                <RiTeamFill />全体タスク
+                <RiTeamFill />全体
               </Button>
 
               <Button
                 className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/personal" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
                 onClick={() => router.push('/personal')}
               >
-                <IoPerson />個人タスク
+                <IoPerson />個人
               </Button>
 
               <Button
                 className={`flex items-center gap-1 rounded px-4 py-2 text-sm text-white font-bold data-hover:bg-blue-500/50 ${pathname === "/complete" ? "bg-blue-500/50" : "bg-slate-500 cursor-pointer"}`}
                 onClick={() => router.push('/complete')}
               >
-                <FaRegCalendarCheck />完了済タスク
+                <FaRegCalendarCheck />完了済
               </Button>
 
               <Button

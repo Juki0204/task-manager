@@ -43,7 +43,7 @@ export default function LoginPage() {
     if (error) {
       alert('入力内容に誤りがあります');
     } else {
-      router.push('/');
+      router.push('/dashboard');
     }
   }
 

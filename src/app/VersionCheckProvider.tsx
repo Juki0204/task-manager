@@ -11,9 +11,9 @@ import { useAuth } from "./AuthProvider";
 
 export default function VersionCheckProvider({ children }: { children: React.ReactNode }) {
   const [CURRENT_APP_VERSION, setCurrentVersion] = useState<string>(""); //アップデートの度に手動で更新
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
-  const [releaseNote, setReleaseNote] = useState<string | null>(null);
+  // const [releaseNote, setReleaseNote] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const excludedPaths = [
@@ -74,12 +74,12 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     if (excludedPaths.includes(pathname)) return;
 
     // 再ログイン後 ⇒ pendingVersion がある場合リリースノート表示
-    if (pendingVersion === CURRENT_APP_VERSION) {
-      fetch(`/release-notes/${CURRENT_APP_VERSION}.md`)
-        .then((res) => res.text())
-        .then((text) => setReleaseNote(text))
-        .catch(() => setReleaseNote("リリースノートの読み込みに失敗しました。"));
-    }
+    // if (pendingVersion === CURRENT_APP_VERSION) {
+    //   fetch(`/release-notes/${CURRENT_APP_VERSION}.md`)
+    //     .then((res) => res.text())
+    //     .then((text) => setReleaseNote(text))
+    //     .catch(() => setReleaseNote("リリースノートの読み込みに失敗しました。"));
+    // }
 
     // バージョン変更時 ⇒ 再ログインモーダル表示
     if (lastVersion !== CURRENT_APP_VERSION) {
@@ -110,11 +110,11 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
     }
   }
 
-  const handleCloseReleaseNote = () => {
-    setReleaseNote(null);
-    localStorage.setItem("lastVersion", CURRENT_APP_VERSION);
-    localStorage.removeItem("pendingVersion");
-  }
+  // const handleCloseReleaseNote = () => {
+  //   setReleaseNote(null);
+  //   localStorage.setItem("lastVersion", CURRENT_APP_VERSION);
+  //   localStorage.removeItem("pendingVersion");
+  // }
 
   // 初回・ページ遷移・タブ復帰時にチェック
   useEffect(() => {
@@ -157,7 +157,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
       </Dialog>
 
       {/* リリースノートモーダル */}
-      <Dialog
+      {/* <Dialog
         open={!!releaseNote}
         onClose={() => handleCloseReleaseNote()}
         className="fixed inset-0 z-50 flex items-center justify-center"
@@ -178,7 +178,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
             </>
           )}
         </DialogPanel>
-      </Dialog>
+      </Dialog> */}
     </>
   )
 }

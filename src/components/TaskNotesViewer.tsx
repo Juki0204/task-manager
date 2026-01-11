@@ -104,7 +104,7 @@ export default function TaskNotesViewer() {
   }, []);
 
   //ログイン前のページではレンダリングしない
-  const falsePathname = ['/login', '/reset', '/signup']
+  const falsePathname = ['/login', '/reset', '/signup', '/dashboard']
   const pathname = usePathname();
 
   const isExculedPath = falsePathname.some((path) => pathname.includes(path));
