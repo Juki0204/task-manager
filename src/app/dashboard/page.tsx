@@ -126,7 +126,7 @@ export default function DashboardPage() {
               )}
             </span>
             <span className={`flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider text-neutral-800`}>
-              本日の新規依頼数：{tasks.filter((t) => t.request_date === now.toLocaleDateString("sv-SE")).length}件
+              本日の新規依頼数：{tasks.filter((t) => new Date(t.created_at).toLocaleDateString("sv-SE") === now.toLocaleDateString("sv-SE")).length}件
             </span>
           </h2>
         </div>
@@ -306,7 +306,9 @@ export default function DashboardPage() {
               {[...notes].reverse().map(note => (
                 <div key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1.5 text-justify tracking-wider">
                   <span className="block text-neutral-400">{new Date(note.changed_at).toLocaleString("sv-SE")}</span>
-                  <p className="tracking-wider"><span className="font-bold">{note.changed_by}さん</span>が 【<span className="text-blue-600 underline cursor-pointer" onClick={() => { handleActiveTask(note.task_serial); setIsOpen(true); }}>{note.task_serial}</span>】 の{note.message.substring(10)}</p>
+                  <p className={`tracking-wider ${note.type === "added" ? "text-blue-800" : note.type === "changed" ? "text-green-800" : note.type === "delete" ? "text-red-700" : "text-black"}`}>
+                    <span className="font-bold">{note.changed_by}さん</span>が 【<span className="text-blue-600 underline cursor-pointer" onClick={() => { handleActiveTask(note.task_serial); setIsOpen(true); }}>{note.task_serial}</span>】 の{note.message.substring(10)}
+                  </p>
                 </div>
               ))}
             </div>
