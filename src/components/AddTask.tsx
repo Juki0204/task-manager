@@ -168,9 +168,21 @@ export default function AddTask({ onClose }: AddTaskProps) {
           date: deadline,
         });
 
-      if (error) {
-        console.error("期日の設定に失敗しました:", error);
-      }
+      if (error) console.error("期日の設定に失敗しました:", error);
+
+      //期限設定ログ生成
+      const { error: deadlineError } = await supabase.from("task_notes").insert({
+        task_serial: taskData.serial,
+        message: `【${taskData.serial}】タスク「${taskData.title}」の期限日を${deadline}に設定しました。`,
+        diff: {},
+        old_record: {},
+        new_record: {},
+        changed_by: currentUserName,
+        changed_at: new Date().toISOString(),
+        type: "deadline",
+      });
+
+      if (deadlineError) console.error(deadlineError);
     }
 
     //請求タスク判定

@@ -106,7 +106,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
       .select();
 
     if (!data?.length) {
-      toast.error('他のユーザーが編集中です');
+      toast.error('他のユーザーが編集中です', { position: "top-center" });
       return false;
     }
 

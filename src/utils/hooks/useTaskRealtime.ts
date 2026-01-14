@@ -87,26 +87,6 @@ export function useTaskRealtime(user: UserData) {
     return sortTaskData;
   };
 
-  const IGNORE_TOAST_FIELDS: (keyof Task)[] = [
-    "status",
-    "updated_at",
-    "locked_by_id",
-    "locked_by_name",
-    "locked_by_at",
-  ];
-
-  function hasMeaningfulChange<T extends object>(
-    oldRow: T,
-    newRow: T,
-    ignore: (keyof T)[]
-  ) {
-    console.log(oldRow, newRow);
-    return (Object.keys(newRow) as (keyof T)[]).some((key) => {
-      if (ignore.includes(key)) return false;
-      console.log(oldRow[key] !== newRow[key]);
-      return oldRow[key] !== newRow[key];
-    });
-  };
 
   useEffect(() => {
     if (!user?.id) return;
@@ -128,16 +108,17 @@ export function useTaskRealtime(user: UserData) {
           }
 
           if (payload.eventType === "UPDATE") {
-            // const oldTask = payload.old as Task;
-            // const newTask = payload.new as Task;
-
             setTaskList((prev) =>
               prev.map((t) =>
                 t.id === payload.new.id ? payload.new as Task : t
               )
             );
 
-            // if (hasMeaningfulChange(oldTask, newTask, IGNORE_TOAST_FIELDS)) {
+            if (payload.old.status !== "削除済" && payload.new.status === "削除済") { //削除されたとき
+              toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を削除しました。`);
+            }
+
+            // if (payload.new) {
             //   toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を更新しました。`);
             // }
           }
@@ -170,18 +151,19 @@ export function useTaskRealtime(user: UserData) {
       })
       .subscribe();
 
-    // const handleVisibility = () => {
-    //   if (document.visibilityState === "visible") {
-    //     console.log("タブ復帰 → 再購読しました");
-    //     getTasks();
-    //   }
-    // };
-    // document.addEventListener("visibilitychange", handleVisibility);
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        console.log("タブ復帰 → 再同期しました");
+        getTasks();
+        toast.success(`タスクの同期が完了しました。`);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       channel.unsubscribe();
       supabase.removeChannel(channel);
-      // document.removeEventListener("visibilitychange", handleVisibility);
+      document.removeEventListener("visibilitychange", handleVisibility);
       deadlineChannel.unsubscribe();
       supabase.removeChannel(deadlineChannel);
     };

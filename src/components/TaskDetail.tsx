@@ -97,7 +97,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
       .select();
 
     if (!data?.length) {
-      toast.error('他のユーザーが編集中です');
+      toast.error('他のユーザーが編集中です', { position: "top-center" });
       return;
     }
 

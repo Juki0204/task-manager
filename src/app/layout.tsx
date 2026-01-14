@@ -45,7 +45,7 @@ export default function RootLayout({
             </TaskListPreferencesProvider>
           </AuthProvider>
         </VersionCheckProvider>
-        <Toaster position="top-center" richColors closeButton />
+        <Toaster position="bottom-right" richColors closeButton />
       </body>
     </html>
   );
