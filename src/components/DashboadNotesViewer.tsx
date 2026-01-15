@@ -139,7 +139,7 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
                             className="w-full flex justify-between items-center gap-4 px-1 py-2 text-left transition"
                           >
                             <div className="flex justify-between items-center gap-4 w-full truncate">
-                              <dl className={`tracking-wider ${open ? "" : "truncate"} w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-yellow-300" : log.type === "delete" ? "text-red-400" : ""}`}>
+                              <dl className={`tracking-wider ${open ? "" : "truncate"} w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-cyan-300/80" : log.type === "delete" ? "text-red-400/90" : log.type === "deadline" ? "text-yellow-300/90" : ""}`}>
                                 <dt className="text-sm text-gray-400 whitespace-nowrap w-fit">{new Date(log.changed_at).toLocaleString("ja-JP")}</dt>
                                 <dd className={`w-full ${open ? "whitespace-normal" : "truncate"}`}>
                                   {log.changed_by}さんが

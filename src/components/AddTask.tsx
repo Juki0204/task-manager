@@ -27,7 +27,6 @@ export default function AddTask() {
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const [currentUserName, setCurrentUserName] = useState<string>('');
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
   const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
   const [userNameList, setUserNameList] = useState<string[]>([]); //作業担当者名一覧
@@ -54,11 +53,9 @@ export default function AddTask() {
 
   const { syncInvoiceWithTask } = useInvoiceSync();
 
-  const getData = async () => {
-    if (user) {
-      setCurrentUserName(user.name);
-    }
+  console.log(user);
 
+  const getData = async () => {
     //クライアント一覧取得
     const { data: clients } = await supabase
       .from('clients')
@@ -143,8 +140,8 @@ export default function AddTask() {
         priority: priority,
         remarks: remarks,
         method: method ? method : "other",
-        created_manager: currentUserName,
-        updated_manager: currentUserName,
+        created_manager: user?.name,
+        updated_manager: user?.name,
         serial: generateSerial(currentTaskNum),
       })
       .select()
@@ -175,7 +172,7 @@ export default function AddTask() {
         diff: {},
         old_record: {},
         new_record: {},
-        changed_by: currentUserName,
+        changed_by: user?.name,
         changed_at: new Date().toISOString(),
         type: "deadline",
       });
@@ -205,7 +202,7 @@ export default function AddTask() {
       diff: {},
       old_record: {},
       new_record: {},
-      changed_by: currentUserName,
+      changed_by: user?.name,
       changed_at: new Date().toISOString(),
       type: "added",
     });

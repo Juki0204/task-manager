@@ -90,7 +90,7 @@ export default function TaskNotesViewer() {
                   >
                     <div className="w-full flex justify-between items-center gap-4 px-1 pr-4 py-0.5 text-left transition">
                       <div className="flex justify-between items-center gap-4 w-full truncate">
-                        <dl className={`flex justify-start tracking-widest truncate w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-yellow-300" : log.type === "delete" ? "text-red-400" : ""}`}>
+                        <dl className={`flex justify-start tracking-widest truncate w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-cyan-300/80" : log.type === "delete" ? "text-red-400/90" : log.type === "deadline" ? "text-yellow-300/90" : ""}`}>
                           <dt className="w-fit">{log.changed_by}：</dt>
                           <dd className="w-full truncate">{log.message}</dd>
                         </dl>
