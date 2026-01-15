@@ -9,16 +9,17 @@ interface MultiSelectPopoverProps {
   selectedLabels: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>, label: string) => void;
   defaultText: string;
+  width?: number;
 }
 
-export default function MultiSelectPopover({ options, selectedLabels, onChange, defaultText }: MultiSelectPopoverProps) {
+export default function MultiSelectPopover({ options, selectedLabels, onChange, defaultText, width }: MultiSelectPopoverProps) {
 
   return (
-    <div className="w-46">
+    <div className="w-46" style={{ width: `${width}px` }}>
       <Popover className="relative z-30">
         {({ open }) => (
           <>
-            <PopoverButton className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white pl-3 pr-2 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none">
+            <PopoverButton className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white pl-3 pr-2 py-1 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none">
               <span className="truncate flex-1 text-left">
                 {selectedLabels.length > 0
                   ? selectedLabels.join(", ")

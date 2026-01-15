@@ -20,6 +20,8 @@ import { TbMessageReport } from "react-icons/tb";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import MultiSelectPopover from "./ui/MultiSelectPopover";
 import HelpDrawer from "./HelpDrawer";
+import AddTask from "./AddTask";
+import TaskNotesViewer from "./TaskNotesViewer";
 
 // type TaskListStyle = "rowListStyle" | "cardListStyle";
 type TaskListSortType = "byDate" | "byManager";
@@ -28,6 +30,8 @@ type InvoiceSortStates = "byDate" | "byClient" | "byClientRev";
 export default function Header() {
   const { user } = useAuth();
   const router = useRouter();
+
+  const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
   // const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
@@ -146,36 +150,34 @@ export default function Header() {
                 </Button>
               </div>
             </div>
-            <div className="sm:flex gap-4 rounded-md items-center">
+            <div className="sm:flex gap-2 rounded-md items-center">
+              {/* タスク追加ボタン */}
+              <div className="flex gap-2">
+                <AddTask />
+              </div>
+              {/* バグ報告ボタン */}
+              <button className="flex gap-1 items-center py-2 px-3 bg-green-800 text-white rounded-md hover:opacity-60 cursor-pointer" onClick={handleReport}><TbMessageReport className="text-xl" /></button>
               {/* <HelpDrawer /> */}
-              <div className="flex gap-1 items-center py-2 pl-4 pr-6 text-sm tracking-wider rounded-md bg-black/20 text-white"><MdPlace />{pageIndex[pathname]}</div>
-              <p className="text-white flex items-center gap-2 mr-4"><FaUserCircle />{currentUserName} さん</p>
-              {/* <p className="text-white">所属：{currentUserEmployee}</p>
-            <p className="text-white">Email：{currentUserEmail}</p> */}
+              {/* <div className="flex gap-1 items-center py-2 pl-4 pr-6 text-sm tracking-wider rounded-md bg-black/20 text-white"><MdPlace />{pageIndex[pathname]}</div> */}
+              <div onMouseEnter={() => setIsLogoutOpen(true)} onMouseLeave={() => setIsLogoutOpen(false)} className="relative text-white flex items-center justify-center gap-2 p-1.5 px-2 w-30 rounded-md transition-all duration-100 bg-neutral-600 cursor-pointer">
+                {!isLogoutOpen ? (
+                  <><FaUserCircle />{currentUserName} さん</>
+                ) : (
+                  <LogoutBtn />
+                )}
+              </div>
             </div>
-            <button className="flex gap-1 items-center py-2 px-3 bg-green-800 text-white rounded-md hover:opacity-60 cursor-pointer" onClick={handleReport}><TbMessageReport className="text-xl" /></button>
-            <LogoutBtn />
           </div>
 
-          <div className="flex gap-2 items-center relative pt-2 min-h-10.75">
-            {/* {pathname !== "/personal" && pathname !== "/invoice" && pathname !== "/setting" && pathname !== "/release-notes" && (
-              <select
-                value={taskListStyle}
-                onChange={(e) => setTaskListStyle(e.target.value as TaskListStyle)}
-                className="w-fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25">
-                <option value='cardListStyle'>カード型リスト</option>
-                <option value='rowListStyle'>列型リスト</option>
-              </select>
-            )} */}
-
+          <div className="flex gap-2 items-center relative pt-2 min-h-10">
             {pathname === "/" ? (
               <div className="pr-2 border-r border-neutral-500">
                 <select
                   value={taskListSortType}
                   onChange={(e) => setTaskListSortType(e.target.value as TaskListSortType)}
-                  className={`fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
-                  <option value='byDate'>日付順ソート</option>
-                  <option value='byManager'>担当者順ソート</option>
+                  className={`fit py-1 pl-2 pr-3 text-sm border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
+                  <option value='byDate'>日付順</option>
+                  <option value='byManager'>担当者順</option>
                 </select>
               </div>
             )
@@ -184,7 +186,7 @@ export default function Header() {
                   <select
                     value={invoiceSortState}
                     onChange={(e) => setInvoiceSortState(e.target.value as InvoiceSortStates)}
-                    className={`fit py-1.5 pl-2 pr-3 border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
+                    className={`fit py-1 pl-2 pr-3 text-sm border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
                     <option value="byDate">完了日順</option>
                     <option value="byClient">クライアント順(昇順)</option>
                     <option value="byClientRev">クライアント順(降順)</option>
@@ -196,7 +198,7 @@ export default function Header() {
             }
 
             {pathname !== "/setting" && pathname !== "/release-notes" && (
-              <div className={`flex items-center gap-2`}>
+              <div className={`flex items-center gap-2 text-sm`}>
                 <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
                 <MultiSelectPopover
                   options={[
@@ -241,6 +243,7 @@ export default function Header() {
                     })
                   }
                   defaultText="作業担当者"
+                  width={140}
                 />
 
                 {pathname !== "/invoice" && (
@@ -263,6 +266,7 @@ export default function Header() {
                       })
                     }
                     defaultText="作業状況"
+                    width={120}
                   />
                 )}
 
@@ -270,7 +274,7 @@ export default function Header() {
                   <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
                   <Input
                     type="text"
-                    className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1.5 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                    className="flex w-65 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
                     placeholder="No./タイトル/内容/依頼者"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const value = e.target.value;
@@ -282,11 +286,12 @@ export default function Header() {
                     }}
                   />
                 </div>
-
-                {/* <CorrectBtn className="!m-0 py-2 !w-30 text-sm rounded-md" onClick={handleApply}>フィルタリング</CorrectBtn> */}
-                {/* <CorrectBtn className="!m-0 py-2 !w-30 text-sm rounded-md bg-slate-500" onClick={resetFilters}>リセット</CorrectBtn> */}
               </div>
             )}
+
+            <div className="flex-1">
+              <TaskNotesViewer />
+            </div>
           </div>
         </header>
       )}

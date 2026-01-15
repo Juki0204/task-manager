@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-import { DialogTitle, Button, Field } from "@headlessui/react";
+import { DialogTitle, Button, Field, Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { GrClose } from "react-icons/gr";
 import { AddTaskInput, AddTaskSelect } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
@@ -19,17 +19,15 @@ import { useAuth } from "@/app/AuthProvider";
 import { toast } from "sonner";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
+import { FaPlus } from "react-icons/fa6";
 
 
-interface AddTaskProps {
-  onClose: () => void;
-}
-
-export default function AddTask({ onClose }: AddTaskProps) {
+export default function AddTask() {
   const { user } = useAuth();
 
-  const [currentUserName, setCurrentUserName] = useState<string>('');
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const [currentUserName, setCurrentUserName] = useState<string>('');
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
   const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
   const [userNameList, setUserNameList] = useState<string[]>([]); //作業担当者名一覧
@@ -215,7 +213,7 @@ export default function AddTask({ onClose }: AddTaskProps) {
     if (error) console.error(error);
 
     setTimeout(() => {
-      onClose();
+      setIsOpen(false);
       // toast.success(`${user?.name}さんが新しいタスクを追加しました。`);
     }, 500);
     setTimeout(() => setIsSubmitting(false), 1000);
@@ -274,111 +272,127 @@ export default function AddTask({ onClose }: AddTaskProps) {
 
   return (
     <>
-      <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
-      <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
+      <Button
+        onClick={() => setIsOpen(true)}
+        className={`py-2 pl-3.5 pr-4.5 flex items-center gap-1 rounded text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer whitespace-nowrap w-fit bg-sky-600 text-md data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer`}
+      >
+        <FaPlus /><span className="text-sm duration-300">新規タスク追加</span>
+      </Button>
 
-      <div
-        ref={contentRef}
-        className={`
+      <Dialog
+        open={isOpen}
+        onClose={() => {
+          setIsOpen(false);
+        }}
+        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+      >
+        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
+
+
+            <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
+            <GrClose onClick={() => setIsOpen(false)} className="absolute top-8 right-8 cursor-pointer" />
+
+            <div
+              ref={contentRef}
+              className={`
           ${hasScrollbar ? "pr-2" : ""}
           max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
         `}
-      >
+            >
 
-        <div className="col-span-2 flex gap-4">
-          <Field className="flex flex-col">
-            <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><MdMailOutline /> 依頼手段</h3>
-            <div className="flex gap-x-1">
-              <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-              <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-              <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+              <div className="col-span-2 flex gap-4">
+                <Field className="flex flex-col">
+                  <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><MdMailOutline /> 依頼手段</h3>
+                  <div className="flex gap-x-1">
+                    <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+                    <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+                    <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
+                  </div>
+                </Field>
+
+                <AddTaskSelect className="flex-2" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
+                  {clientList.map(client => (
+                    <option key={client} value={client}>{client}</option>
+                  ))}
+                </AddTaskSelect>
+
+                <AddTaskSelect className="flex-1" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
+                  <option disabled value="">-</option>
+                  {requesterList.map(requester => (
+                    <option key={requester} value={requester}>{requester}</option>
+                  ))}
+                  <option value="不明">不明</option>
+                </AddTaskSelect>
+              </div>
+
+              <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
+
+              <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
+
+              <div className="col-span-2 flex gap-x-4">
+                <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+
+                <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+
+                <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+              </div>
+
+              <div className="col-span-2 flex gap-x-4">
+                <AddTaskSelect className="flex-1" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
+                  {userNameList.map(name => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                  <option value=''>未決定</option>
+                </AddTaskSelect>
+
+                <AddTaskSelect className="flex-1" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
+                  <option value="未着手">未着手</option>
+                  <option value="作業中">作業中</option>
+                  <option value="作業途中">作業途中</option>
+                  <option value="確認中">確認中</option>
+                  <option value="完了">完了</option>
+                  <option value="保留">保留</option>
+                  {/* <option value="中止">中止</option> */}
+                  <option value="詳細待ち">詳細待ち</option>
+                </AddTaskSelect>
+
+                <AddTaskSelect className="flex-1" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
+                  <option value=""></option>
+                  <option value="急">至急</option>
+                  <option value="高">高</option>
+                  <option value="低">低</option>
+                </AddTaskSelect>
+              </div>
+
+              <div className="flex flex-col col-span-2">
+                <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
+                <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
+              </div>
+
             </div>
-          </Field>
 
-          <AddTaskSelect className="flex-2" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
-            {clientList.map(client => (
-              <option key={client} value={client}>{client}</option>
-            ))}
-          </AddTaskSelect>
+            <div className="flex gap-4 justify-end col-span-2 pr-3">
+              <Button
+                onClick={() => setIsOpen(false)}
+                className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
+              >
+                キャンセル
+              </Button>
+              <Button
+                onClick={() => addTask()}
+                disabled={isValid || isSubmitting}
+                className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
+              >
+                {isSubmitting ? "追加中..." : "新規追加"}
+              </Button>
+            </div>
 
-          <AddTaskSelect className="flex-1" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
-            <option disabled value="">-</option>
-            {requesterList.map(requester => (
-              <option key={requester} value={requester}>{requester}</option>
-            ))}
-            <option value="不明">不明</option>
-          </AddTaskSelect>
+          </DialogPanel>
         </div>
-
-        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
-
-        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
-
-        <div className="col-span-2 flex gap-x-4">
-          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
-
-          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-
-          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
-        </div>
-
-        <div className="col-span-2 flex gap-x-4">
-          <AddTaskSelect className="flex-1" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
-            {userNameList.map(name => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-            <option value=''>未決定</option>
-          </AddTaskSelect>
-
-          <AddTaskSelect className="flex-1" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="未着手">未着手</option>
-            <option value="作業中">作業中</option>
-            <option value="作業途中">作業途中</option>
-            <option value="確認中">確認中</option>
-            <option value="完了">完了</option>
-            <option value="保留">保留</option>
-            {/* <option value="中止">中止</option> */}
-            <option value="詳細待ち">詳細待ち</option>
-          </AddTaskSelect>
-
-          <AddTaskSelect className="flex-1" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
-            <option value=""></option>
-            <option value="急">至急</option>
-            <option value="高">高</option>
-            <option value="低">低</option>
-          </AddTaskSelect>
-        </div>
-
-        <div className="flex flex-col col-span-2">
-          <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
-          <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
-        </div>
-        {/* <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} /> */}
-
-        {/* <Field className="col-span-2 grid grid-cols-3 gap-x-1">
-          <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
-          <Input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          <Input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          <Input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-        </Field> */}
-
-      </div>
-
-      <div className="flex gap-4 justify-end col-span-2 pr-3">
-        <Button
-          onClick={onClose}
-          className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
-        >
-          キャンセル
-        </Button>
-        <Button
-          onClick={() => addTask()}
-          disabled={isValid || isSubmitting}
-          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
-        >
-          {isSubmitting ? "追加中..." : "新規追加"}
-        </Button>
-      </div>
+      </Dialog>
     </>
   );
 }

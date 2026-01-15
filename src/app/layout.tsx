@@ -41,7 +41,7 @@ export default function RootLayout({
               <FilterResetWatcher />
               <Header />
               {children}
-              <TaskNotesViewer />
+              {/* <TaskNotesViewer /> */}
             </TaskListPreferencesProvider>
           </AuthProvider>
         </VersionCheckProvider>

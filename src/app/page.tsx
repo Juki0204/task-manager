@@ -6,13 +6,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
-import AddTask from "@/components/AddTask";
 import TaskList from "@/components/TaskList";
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
 import CopyTask from "@/components/CopyTask";
 import ContextMenu from "@/components/ui/ContextMenu";
-import { AddTaskBtn } from "@/components/ui/Btn";
 
 import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "./AuthProvider";
@@ -149,9 +147,6 @@ export default function AllTaskPage() {
           </h2>
         </div>
 
-        <div className="flex gap-2">
-          <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
-        </div>
       </div>
       {user &&
         <TaskList
@@ -193,7 +188,6 @@ export default function AllTaskPage() {
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
-            {modalType === "add" && <AddTask onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} />}
             {modalType === "detail" && activeTask && user && (
               <TaskDetail
                 user={user}

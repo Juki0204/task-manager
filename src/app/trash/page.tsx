@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
-import AddTask from "@/components/AddTask";
 import TaskList from "@/components/TaskList";
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
@@ -113,9 +112,6 @@ export default function TrashTaskPage() {
           <span className="text-xs text-white tracking-wide pb-1">※このページではリアルタイム更新は行われません。最新の状態を確認するには、ページを再読み込みしてください。</span>
         </div>
 
-        {/* <div className="flex gap-2">
-                <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
-              </div> */}
       </div>
       {user &&
         <TaskList
@@ -156,7 +152,6 @@ export default function TrashTaskPage() {
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
-            {modalType === "add" && <AddTask onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} />}
             {modalType === "detail" && activeTask && user && (
               <TaskDetail
                 user={user}

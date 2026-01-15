@@ -2,7 +2,6 @@
 
 // import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import AddTask from "@/components/AddTask";
 
 import PersonalTaskList from "@/components/PersonalTaskList";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
@@ -13,7 +12,6 @@ import CopyTask from "@/components/CopyTask";
 import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "../AuthProvider";
 import ContextMenu from "@/components/ui/ContextMenu";
-import { AddTaskBtn } from "@/components/ui/Btn";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 import {
@@ -250,9 +248,6 @@ export default function PersonalTaskPage() {
           </h2>
         </div>
 
-        <div className="flex gap-2">
-          <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
-        </div>
       </div>
       {user &&
         <DndContext
@@ -308,7 +303,6 @@ export default function PersonalTaskPage() {
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
-            {modalType === "add" && <AddTask onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }} />}
             {modalType === "detail" && activeTask && user && (
               <TaskDetail
                 user={user}

@@ -12,6 +12,7 @@ import InvoiceTaskDetail from "@/components/invoice/InvoiceTaskDetail";
 
 import { FaTriangleExclamation } from "react-icons/fa6";
 import { RequestGraph } from "@/components/ui/RequestGraph";
+import DashboardNotesViewer from "@/components/DashboadNotesViewer";
 
 
 interface ReleaseNoteMeta {
@@ -28,7 +29,7 @@ export default function DashboardPage() {
   const [deadline, setDeadline] = useState<{ task_id: string, date: string }[]>([]);
   const todayDeadlineCount = deadline.filter((d) => d.date === now.toLocaleDateString("sv-SE")).length;
 
-  const { notes, isReady } = useTaskNotesRealtime();
+  // const { notes, isReady } = useTaskNotesRealtime();
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const [releaseNotes, setReleaseNotes] = useState<ReleaseNoteData[]>([]);
@@ -299,9 +300,9 @@ export default function DashboardPage() {
         </div>
 
         {/* 変更履歴ログ */}
-        <div className="w-160 h-full bg-neutral-100 p-6 pr-5 rounded-2xl">
-          <h3 className="font-bold text-sm text-center mb-2">変更履歴ログ</h3>
-          {notes && notes.length > 0 ? (
+        <div className="w-160 h-full bg-neutral-100 p-6 pr-5 rounded-2xl relative">
+          <h3 className="font-bold text-sm text-center mb-2">変更履歴ログ（直近50件）</h3>
+          {/* {notes && notes.length > 0 ? (
             <div className="h-[calc(100%-1.5rem)] pr-3 text-sm overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               {[...notes].reverse().map(note => (
                 <div key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1.5 text-justify tracking-wider">
@@ -314,7 +315,8 @@ export default function DashboardPage() {
             </div>
           ) : (
             <p className="text-black text-center p-4">読み込み中...</p>
-          )}
+          )} */}
+          <DashboardNotesViewer SerialClick={(serial: string) => { handleActiveTask(serial); setIsOpen(true); }} />
         </div>
       </div>
 

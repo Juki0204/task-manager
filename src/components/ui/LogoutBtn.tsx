@@ -44,6 +44,7 @@ export default function LogoutBtn() {
   };
 
   return (
-    <OutlineBtn className="flex items-center gap-1 outline-white text-white px-4 !w-30 h-fit text-sm cursor-pointer" onClick={handleLogout}><MdLogout /><span className="flex-1">ログアウト</span></OutlineBtn>
+    // <OutlineBtn className="flex items-center gap-1 outline-neutral-800 text-neutral-800 px-4 !w-30 h-fit text-sm cursor-pointer" onClick={handleLogout}><MdLogout /><span className="flex-1">ログアウト</span></OutlineBtn>
+    <button className="flex items-center gap-1 outline-white text-white py-[2px] px-4 h-fit text-sm cursor-pointer" onClick={handleLogout}><MdLogout /><span className="flex-1">ログアウト</span></button>
   );
 };
