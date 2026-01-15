@@ -104,7 +104,9 @@ export function useTaskRealtime(user: UserData) {
 
           if (payload.eventType === "INSERT") {
             setTaskList((prev) => [...prev, payload.new as Task]);
-            toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を追加しました。`);
+            setTimeout(() => {
+              toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を追加しました。`);
+            }, 500);
           }
 
           if (payload.eventType === "UPDATE") {
