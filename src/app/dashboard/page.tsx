@@ -300,7 +300,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 変更履歴ログ */}
-        <div className="w-160 h-full bg-neutral-100 p-6 pr-5 rounded-2xl relative">
+        <div className="w-160 h-full bg-neutral-100 p-6 rounded-2xl relative">
           <h3 className="font-bold text-sm text-center mb-2">変更履歴ログ（直近50件）</h3>
           {/* {notes && notes.length > 0 ? (
             <div className="h-[calc(100%-1.5rem)] pr-3 text-sm overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
