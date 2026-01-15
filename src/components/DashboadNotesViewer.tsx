@@ -92,7 +92,11 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
 
   const isExculedPath = falsePathname.some((path) => pathname.includes(path));
 
-  if (!isReady) return null;
+  // if (notes.length === 0) return (
+  //   <div className="flex justify-center my-4" aria-label="読み込み中">
+  //     <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+  //   </div>
+  // );
 
   return (
     <>
@@ -118,7 +122,7 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
               h-145 pr-2
             `}>
               <AnimatePresence>
-                {filteredNotes.map((log) => (
+                {filteredNotes.length > 0 ? filteredNotes.map((log) => (
                   <motion.div
                     key={log.id}
                     layout
@@ -175,7 +179,11 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
                       )}
                     </Disclosure>
                   </motion.div>
-                ))}
+                )) : (
+                  <div className="flex justify-center items-center my-4 h-full" aria-label="読み込み中">
+                    <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+                  </div>
+                )}
               </AnimatePresence>
             </div>
           </div>

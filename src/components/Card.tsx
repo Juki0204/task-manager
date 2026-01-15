@@ -156,7 +156,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_ttl_dis_cli-mana_status_date'] items-center grid-cols-[120px_280px_600px_360px_120px_auto] py-2`}
+        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_300px_600px_120px_120px_auto] py-2`}
         {...props}
       >
         {/* {unreadIds && unreadIds.includes(task.id) && (
@@ -176,6 +176,9 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
             )}
           </div>
         </div>
+
+        <div className="text-sm [grid-area:cli] flex gap-1 items-center"><FaRegBuilding />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+
         <h3 className="font-bold flex items-center gap-1 [grid-area:ttl] text-sm">
           {
             task.method === 'mail' ?
@@ -204,10 +207,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
           <HighlightText text={task.description} keyword={filters.searchKeywords} />
         </div>
 
-        <div className="grid text-sm grid-cols-6 [grid-area:cli-mana] gap-1">
-          <div className="col-span-4 flex gap-1 items-center"><FaRegBuilding />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
-          <div className="col-span-2 flex gap-1 items-center"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
-        </div>
+        <div className="text-sm [grid-area:mana] flex gap-1 items-center"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
 
         <div className="grid gap-2 text-sm grid-cols-6 [grid-area:date]">
           <div className="col-span-3 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>

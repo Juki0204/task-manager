@@ -114,9 +114,9 @@ export function useTaskRealtime(user: UserData) {
               )
             );
 
-            if (payload.old.status !== "削除済" && payload.new.status === "削除済") { //削除されたとき
-              toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を削除しました。`);
-            }
+            // if (payload.old.status !== "削除済" && payload.new.status === "削除済") { //削除されたとき
+            //   toast.success(`${payload.new.changed_by}さんがタスク【${payload.new.serial}】を削除しました。`);
+            // }
 
             // if (payload.new) {
             //   toast.success(`${payload.new.created_manager}さんがタスク【${payload.new.serial}】を更新しました。`);
