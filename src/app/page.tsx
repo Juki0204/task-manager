@@ -17,6 +17,8 @@ import { useAuth } from "./AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 // import HelpDrawer from "@/components/HelpDrawer";
+import { TbReload } from "react-icons/tb";
+
 
 export default function AllTaskPage() {
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
@@ -24,7 +26,12 @@ export default function AllTaskPage() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
-  const { taskList, updateTaskStatus, deadlineList } = useTaskRealtime(user ?? null);
+  const { taskList, updateTaskStatus, deadlineList, taskSubStatus, resubscribeAll } = useTaskRealtime(user ?? null);
+  const health =
+    taskSubStatus === "SUBSCRIBED" ? "green" :
+      taskSubStatus === "TIMED_OUT" ? "yellow" :
+        taskSubStatus === "UNKNOWN" ? "yellow" : "red";
+
   const { taskListSortType, filters } = useTaskListPreferences();
   const [unreadIds, setUnreadIds] = useState<string[]>([]);
 
@@ -144,11 +151,28 @@ export default function AllTaskPage() {
   return (
     <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-20 !pt-30 max-w-[1920px] m-auto">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4">
+        <div className="flex justify-start items-center gap-4">
           <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
             全体タスク一覧
             {/* <HelpDrawer /> */}
           </h2>
+          <div className="flex items-center gap-2">
+            <span
+              className={`h-2.5 w-2.5 rounded-full ${health === "green" ? "bg-emerald-400" : health === "yellow" ? "bg-amber-400" : "bg-rose-400"
+                }`}
+            />
+            <span className="text-xs text-white/70">{taskSubStatus}</span>
+
+            {taskSubStatus !== "SUBSCRIBED" && (
+              <button
+                onClick={resubscribeAll}
+                className="flex items-center gap-1 text-xs px-2 pr-3 py-0.5 rounded-full text-white bg-neutral-600 hover:opacity-80"
+              >
+                <TbReload />
+                再購読
+              </button>
+            )}
+          </div>
         </div>
 
       </div>
