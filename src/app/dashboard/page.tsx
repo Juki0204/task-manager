@@ -127,7 +127,7 @@ export default function DashboardPage() {
               )}
             </span>
             <span className={`flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider text-neutral-800`}>
-              本日の新規依頼数：{tasks.filter((t) => new Date(t.created_at).toLocaleDateString("sv-SE") === now.toLocaleDateString("sv-SE")).length}件
+              本日の新規依頼数：{tasks.filter((t) => new Date(t.created_at).toLocaleDateString("sv-SE") === now.toLocaleDateString("sv-SE") && t.status !== "削除済").length}件
             </span>
           </h2>
         </div>
