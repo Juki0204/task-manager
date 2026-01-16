@@ -199,7 +199,7 @@ export default function Header() {
 
             {pathname !== "/setting" && pathname !== "/release-notes" && (
               <div className={`flex items-center gap-2 text-sm`}>
-                <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" />フィルタリング：</h3>
+                <h3 className="flex gap-2 items-center text-white whitespace-nowrap"><FaFilter className="text-white" />フィルタ：</h3>
                 <MultiSelectPopover
                   options={[
                     { id: 1, label: "難波秘密倶楽部" },
