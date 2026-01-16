@@ -1,24 +1,13 @@
 "use client";
 
 import { useTaskNotesRealtime } from "@/utils/hooks/useTaskNotesRealtime";
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-import { AiOutlineFileAdd } from "react-icons/ai";
-import { FiEdit3 } from "react-icons/fi";
-import { FaRegTrashAlt } from "react-icons/fa";
 import { BiSolidRightArrow } from "react-icons/bi";
 
-import { RiFullscreenFill } from "react-icons/ri";
-import { MdOutlineNotes } from "react-icons/md";
-import { CgBorderStyleSolid } from "react-icons/cg";
-import { DiffResult } from "@/utils/function/comparHistory";
-import { Task } from "@/utils/types/task";
 import { usePathname } from "next/navigation";
 import { highlightDiff } from "@/utils/function/highlightDiff";
-
 
 
 export default function TaskNotesViewer() {
@@ -72,6 +61,7 @@ export default function TaskNotesViewer() {
           {/* ログ一覧 */}
           <div className="w-full bg-black/50 border border-neutral-700 backdrop-blur-md rounded-lg shadow-lg pl-3 pr-2 py-1 pointer-events-auto">
             <div
+              tabIndex={-1}
               ref={notesRef}
               className={`
               w-full overflow-y-auto text-[13px] tracking-wider transition-all duration-300

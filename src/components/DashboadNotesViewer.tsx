@@ -119,7 +119,7 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
               className={`
               w-full overflow-y-auto text-sm transition-all duration-300
               [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
-              h-140 pr-2
+              h-156 pr-2
             `}>
               <AnimatePresence>
                 {filteredNotes.length > 0 ? filteredNotes.map((log) => (

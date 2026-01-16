@@ -37,7 +37,7 @@ export default function SettingPage() {
   }, []);
 
   return (
-    <div className="cardListStyle group p-1 py-4 sm:p-4 sm:pb-2 !pt-30 max-w-[1920px] relative overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+    <div className="cardListStyle group p-1 py-4 sm:p-4 sm:pb-2 !pt-14 max-w-[1920px] relative overflow-x-hidden">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
           <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
@@ -50,9 +50,9 @@ export default function SettingPage() {
               </div> */}
       </div>
 
-      <div className="pb-4 grid grid-cols-5 gap-4 w-[1876px]">
+      <div className="pb-4 flex gap-4 w-full max-w-[1876px]">
 
-        <div className="bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-9.5rem)]">
+        <div className="w-90 bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-9.5rem)]">
           <div className="flex justify-between items-center py-2 px-3 rounded-md bg-slate-800">
             <p className="text-white">Last Update: {lastUpdate}</p>
             <div onClick={() => router.push('/release-notes')} className="flex gap-1 justify-center items-center py-1 px-2 w-fit rounded-sm bg-green-800 text-white hover:cursor-pointer hover:opacity-60">
@@ -71,7 +71,7 @@ export default function SettingPage() {
           </ul>
         </div>
 
-        <div className="bg-zinc-700 p-4 col-span-4 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)]">
+        <div className="flex-1 bg-zinc-700 p-4 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
           {activeMenu === "requester" && <RequesterSetting />}
           {activeMenu === "invoicePrice" && <PriceSetting />}
         </div>

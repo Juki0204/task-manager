@@ -113,7 +113,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="p-1 py-4 sm:p-4 !pt-30 max-w-[1920px] m-auto">
+    <div className="p-1 py-4 sm:p-4 !pt-14 max-w-[1920px] m-auto">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4 w-full">
           <h2 className="flex justify-center items-center gap-4 py-0.5 px-1 text-white text-xl font-bold text-center">
@@ -134,7 +134,7 @@ export default function DashboardPage() {
       </div>
 
 
-      <div className="flex gap-4 p-2 h-[714px]">
+      <div className="flex gap-4 p-2 h-[780px]">
 
         {/* 今月の依頼状況 */}
         <div className="w-100 h-full bg-neutral-100 p-6 rounded-2xl">
@@ -152,7 +152,7 @@ export default function DashboardPage() {
 
           <div className="flex justify-center">
             <RequestGraph
-              size={240}
+              size={280}
               thickness={42}
               title="総依頼件数"
               segments={[

@@ -270,8 +270,9 @@ export default function AddTask() {
   return (
     <>
       <Button
+        tabIndex={-1}
         onClick={() => setIsOpen(true)}
-        className={`py-2 pl-3.5 pr-4.5 flex items-center gap-1 rounded text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer whitespace-nowrap w-fit bg-sky-600 text-md data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer`}
+        className={`py-1.25 pl-3.5 pr-4.5 flex items-center gap-1 rounded text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer whitespace-nowrap w-fit bg-sky-600 text-md data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer`}
       >
         <FaPlus /><span className="text-sm duration-300">新規タスク追加</span>
       </Button>
