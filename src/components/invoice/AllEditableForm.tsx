@@ -583,7 +583,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
         <div className="grid grid-cols-5 gap-2">
           {/* 作業担当者 */}
           <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />タスクNo<span className="text-xs">（クリックで元タスク確認）</span></h3>
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />タスクNo<span className="text-xs">（クリックで確認）</span></h3>
             <div
               className="flex gap-1 items-center py-1 px-2 bg-neutral-200 rounded-md cursor-pointer"
               onClick={onCheckTask}
