@@ -27,10 +27,13 @@ interface ReleaseNoteData extends ReleaseNoteMeta {
 export default function DashboardPage() {
   const now = new Date();
   const [deadline, setDeadline] = useState<{ task_id: string, date: string }[]>([]);
-  const todayDeadlineCount = deadline.filter((d) => d.date === now.toLocaleDateString("sv-SE")).length;
+  const [todayDeadlineTasks, setTodayDeadlineTasks] = useState<Task[]>([]);
+  const [isDeadlinePop, setIsDeadlinePop] = useState<boolean>(false);
+  const [isNewTaskPop, setIsNewTaskPop] = useState<boolean>(false);
 
   // const { notes, isReady } = useTaskNotesRealtime();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const todayNewTasks = tasks.filter((t) => new Date(t.created_at).toLocaleDateString("sv-SE") === now.toLocaleDateString("sv-SE") && t.status !== "削除済");
 
   const [releaseNotes, setReleaseNotes] = useState<ReleaseNoteData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -97,6 +100,19 @@ export default function DashboardPage() {
     if (!deadline) return;
 
     setDeadline(deadline);
+
+    const todayDeadlineTaskIds = deadline.filter((d) => d.date === now.toLocaleDateString("sv-SE")).map(d => d.task_id);
+    console.log(todayDeadlineTaskIds);
+
+    const { data: deadlineTasks } = await supabase
+      .from('tasks')
+      .select('*')
+      .in("id", todayDeadlineTaskIds);
+
+    console.log(deadlineTasks);
+    if (!deadlineTasks) return;
+
+    setTodayDeadlineTasks(deadlineTasks);
   }
 
   useEffect(() => {
@@ -104,7 +120,7 @@ export default function DashboardPage() {
   }, []);
 
 
-  // タスク詳細モーダル開く
+  //タスク詳細モーダル開く
   const handleActiveTask = async (serial: string) => {
     const { data: task } = await supabase.from("tasks").select("*").eq("serial", serial).single();
     if (task) setActiveTask(task);
@@ -112,24 +128,64 @@ export default function DashboardPage() {
     setIsTaskLoaded(true);
   };
 
+  //タスク詳細モーダル開く(今日が期限日のタスク用)
+  const handleTodayTask = async (currentTask: Task) => {
+    if (!currentTask) return;
+
+    setActiveTask(currentTask);
+    setIsTaskLoaded(true);
+  };
+
   return (
     <div className="p-1 py-4 sm:p-4 !pt-14 max-w-[1920px] m-auto">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4 w-full">
+        <div className="flex justify-start items-center-safe gap-2 w-full">
           <h2 className="flex justify-center items-center gap-4 py-0.5 px-1 text-white text-xl font-bold text-center">
-            {/* ダッシュボード */}
             <span className="text-2xl">{now.getFullYear()}年 {now.getMonth() + 1}月 {now.getDate()}日</span>
-            <span className={`flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider ${todayDeadlineCount > 0 ? "text-red-700" : "text-neutral-800"}`}>
-              {deadline.length > 0 && todayDeadlineCount > 0 ? (
-                <><FaTriangleExclamation />本日が期限のタスクが {todayDeadlineCount}件 あります</>
+          </h2>
+
+          <div className="flex justify-center items-center gap-4 py-0.5 px-1 text-white text-xl font-bold text-center">
+            <div onMouseEnter={() => setIsDeadlinePop(true)} onMouseLeave={() => setIsDeadlinePop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider cursor-default ${todayDeadlineTasks.length > 0 ? "text-red-700" : "text-neutral-800"}`}>
+              {deadline.length > 0 && todayDeadlineTasks.length > 0 ? (
+                <><FaTriangleExclamation />本日が期限のタスクが {todayDeadlineTasks.length}件 あります</>
               ) : (
                 <>本日が期限のタスクはありません</>
               )}
-            </span>
-            <span className={`flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider text-neutral-800`}>
-              本日の新規依頼数：{tasks.filter((t) => new Date(t.created_at).toLocaleDateString("sv-SE") === now.toLocaleDateString("sv-SE") && t.status !== "削除済").length}件
-            </span>
-          </h2>
+              {todayDeadlineTasks.length > 0 && (
+                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 ${isDeadlinePop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-100 shadow-md`}>
+                    {todayDeadlineTasks.map(t => (
+                      <div
+                        key={t.id}
+                        onClick={() => { handleTodayTask(t); setIsOpen(true); }}
+                        className="rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300"
+                      >
+                        【{t.serial}】 {t.title}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider text-neutral-800 cursor-default`}>
+              本日の新規依頼数：{todayNewTasks.length}件
+              {todayNewTasks.length > 0 && (
+                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-100 shadow-md`}>
+                    {todayNewTasks.map(t => (
+                      <div
+                        key={t.id}
+                        onClick={() => { handleTodayTask(t); setIsOpen(true); }}
+                        className="rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300"
+                      >
+                        【{t.serial}】 {t.title}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
