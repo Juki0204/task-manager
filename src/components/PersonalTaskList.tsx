@@ -96,7 +96,7 @@ export default function PersonalTaskList({
           tasks={taskList.filter((task) => {
             if (!task.manager) return;
             if (task.status !== '完了') return false;
-            if (!task.finish_date) return false;
+            if (!task.finish_date) return true;
 
             // finishDateを常にローカル日付として解釈
             const finish = new Date(`${task.finish_date}T00:00:00`);
@@ -108,8 +108,8 @@ export default function PersonalTaskList({
 
             return finish.getTime() >= weekAgo && finish.getTime() < endOfToday;
           }).sort((a, b) => {
-            const finishA = a.finish_date ? new Date(`${a.finish_date}`).getTime() : 0;
-            const finishB = b.finish_date ? new Date(`${b.finish_date}`).getTime() : 0;
+            const finishA = a.finish_date ? new Date(`${a.finish_date}T00:00:00`).getTime() : -Infinity;
+            const finishB = b.finish_date ? new Date(`${b.finish_date}T00:00:00`).getTime() : -Infinity;
 
             //完了日順ソート
             return finishA - finishB;
