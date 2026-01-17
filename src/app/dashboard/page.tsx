@@ -170,13 +170,13 @@ export default function DashboardPage() {
             <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider text-neutral-800 cursor-default`}>
               本日の新規依頼数：{todayNewTasks.length}件
               {todayNewTasks.length > 0 && (
-                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
                   <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-100 shadow-md`}>
                     {todayNewTasks.map(t => (
                       <div
                         key={t.id}
                         onClick={() => { handleTodayTask(t); setIsOpen(true); }}
-                        className="rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300"
+                        className="rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
                       >
                         【{t.serial}】 {t.title}
                       </div>
