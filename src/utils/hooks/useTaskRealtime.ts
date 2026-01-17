@@ -289,6 +289,22 @@ export function useTaskRealtime(user: UserData) {
           prev.map((t) => (t.id === taskId ? { ...t, status: prevStatus } : t))
         );
       }
+    } else if (newStatus === "完了") {
+      const { error: finishError } = await supabase
+        .from("tasks")
+        .update({
+          status: newStatus,
+          finish_date: extraFields?.finish_date ?? new Date().toLocaleDateString("sv-SE"),
+          ...extraFields,
+        })
+        .eq("id", taskId);
+
+      if (finishError) {
+        console.error(finishError);
+        setTaskList((prev) =>
+          prev.map((t) => (t.id === taskId ? { ...t, status: prevStatus } : t))
+        );
+      }
     } else {
       const { error: updateError } = await supabase
         .from("tasks")
