@@ -215,20 +215,21 @@ function DiffItem({
   const hasDiff = oldValue && newValue && oldValue !== newValue;
 
   return (
-    <div className="flex gap-2 items-center border-l-2 border-blue-400 pl-2">
-      <h4 className="font-semibold text-gray-300 whitespace-nowrap">【{label}】</h4>
-      <div className={`text-gray-500 leading-relaxed ${!oldValue || oldValue === "" ? "" : "line-through"}`}>{formatValue(oldValue)}</div>
+    <div className="flex flex-wrap gap-y-1 gap-x-2 items-center border-l-2 border-blue-400 pl-2">
+      <h4 className="font-semibold text-neutral-300 whitespace-nowrap w-full">【{label}】</h4>
+      {/* <div className={`text-gray-500 leading-relaxed ${!oldValue || oldValue === "" ? "" : "line-through"}`}>{formatValue(oldValue)}</div> */}
+      <div className={`flex-1 text-neutral-400 bg-neutral-700 leading-relaxed py-0.5 px-1 rounded-sm h-[stretch]`}>{formatValue(oldValue)}</div>
       <BiSolidRightArrow className="font-sm" />
 
       {isLongField && hasDiff ? (
         <div
-          className="text-gray-300 leading-relaxed"
+          className="flex-1 text-neutral-100 leading-relaxed bg-neutral-700 py-0.5 px-1 rounded-sm"
           dangerouslySetInnerHTML={{
             __html: highlightDiff(oldValue ?? "", newValue ?? ""),
           }}
         />
       ) : (
-        <div className="text-gray-300">{formatValue(newValue)}</div>
+        <div className="flex-1 text-neutral-100 leading-relaxed bg-neutral-700 py-0.5 px-1 rounded-sm">{formatValue(newValue)}</div>
       )}
     </div>
   )
