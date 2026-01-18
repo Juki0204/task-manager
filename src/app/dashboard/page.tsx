@@ -213,7 +213,7 @@ export default function DashboardPage() {
               title="総依頼件数"
               segments={[
                 { key: "未着手", value: Number(`${tasks.filter(t => t.status === "未着手").length}`), color: "#777777" },
-                { key: "進行中", value: Number(`${tasks.filter(t => t.status !== "未着手" && t.status !== "完了").length}`), color: "#4c9759" },
+                { key: "進行中", value: Number(`${tasks.filter(t => t.status === "作業中" || t.status === "作業途中" || t.status === "確認中").length}`), color: "#4c9759" },
                 { key: "完了済", value: Number(`${tasks.filter(t => t.status === "完了").length}`), color: "#4668a5" },
                 { key: "その他", value: Number(`${tasks.filter(t => t.status === "保留" || t.status === "詳細待ち" || t.status === "中止" || t.status === "保留").length}`), color: "#84538d" },
               ]}

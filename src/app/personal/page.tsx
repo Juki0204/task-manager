@@ -20,7 +20,7 @@ import {
   DragStartEvent,
   useSensor,
   useSensors,
-  MouseSensor
+  MouseSensor,
 } from "@dnd-kit/core";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
