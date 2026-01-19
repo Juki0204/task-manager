@@ -28,7 +28,7 @@ export function ChangeInProgress({ taskId, onClick, updateTaskStatus }: Progress
   const { user } = useAuth();
 
   const handleInProgress = async () => {
-    await updateTaskStatus(taskId, "作業中", "", { manager: user?.name });
+    await updateTaskStatus(taskId, "作業中", "", { manager: user?.name, updated_manager: user?.name });
   }
 
   return (
@@ -53,8 +53,10 @@ type InterruptProps = {
 }
 
 export function ChangeInterrupt({ taskId, onClick, updateTaskStatus }: InterruptProps) {
+  const { user } = useAuth();
+
   const handleInterrupt = async () => {
-    await updateTaskStatus(taskId, "作業途中", "");
+    await updateTaskStatus(taskId, "作業途中", "", { updated_manager: user?.name });
   }
 
   return (
@@ -80,8 +82,9 @@ type ConfirmProps = {
 }
 
 export function ChangeConfirm({ taskId, onClick, updateTaskStatus }: ConfirmProps) {
+  const { user } = useAuth();
   const handleConfirm = async () => {
-    await updateTaskStatus(taskId, "確認中", "");
+    await updateTaskStatus(taskId, "確認中", "", { updated_manager: user?.name });
   }
 
   return (
@@ -111,7 +114,7 @@ export function ChangeNotYetStarted({ taskId, onClick, updateTaskStatus }: NotYe
   const { user } = useAuth();
 
   const handleNotYetStarted = async () => {
-    await updateTaskStatus(taskId, "未着手", "", { manager: user?.name });
+    await updateTaskStatus(taskId, "未着手", "", { manager: user?.name, updated_manager: user?.name });
   }
 
   return (
@@ -137,8 +140,9 @@ type RemoveProps = {
 }
 
 export function ChangeRemove({ taskId, onClick, updateTaskStatus }: RemoveProps) {
+  const { user } = useAuth();
   const handleNotYetStarted = async () => {
-    await updateTaskStatus(taskId, "未着手", "", { manager: null });
+    await updateTaskStatus(taskId, "未着手", "", { manager: null, updated_manager: user?.name });
   }
 
   return (
@@ -166,9 +170,10 @@ type CompleteProps = {
 
 export function ChangeComplete({ taskId, onClick, updateTaskStatus }: CompleteProps) {
   const { syncInvoiceWithTask } = useInvoiceSync();
+  const { user } = useAuth();
 
   const handleComplete = async () => {
-    await updateTaskStatus(taskId, "完了", "");
+    await updateTaskStatus(taskId, "完了", "", { updated_manager: user?.name });
     await syncInvoiceWithTask(taskId, "完了");
   }
 
@@ -244,7 +249,7 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
   const { user } = useAuth();
 
   const handleDelete = async () => {
-    await updateTaskStatus(taskId, "削除済", "");
+    await updateTaskStatus(taskId, "削除済", "", { updated_manager: user?.name });
 
     const { data: deleteTask } = await supabase
       .from("tasks")
