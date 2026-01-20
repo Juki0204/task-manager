@@ -25,6 +25,8 @@ import {
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import { TbReload } from "react-icons/tb";
+import { compareHistory } from "@/utils/function/comparHistory";
+import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 
 
 
@@ -125,6 +127,7 @@ export default function PersonalTaskPage() {
       const taskId = active.id as string;
       const newStatus = over.id as string;
       const prevStatus = active.data.current?.initStatus;
+      console.log(active, over);
 
       const startContainer = activeContainerId; //ドラッグ開始エリア検知
 
@@ -154,6 +157,33 @@ export default function PersonalTaskPage() {
 
       await updateTaskStatus(taskId, formatNewStatus, prevStatus, alt);
       await syncInvoiceWithTask(taskId, formatNewStatus);
+
+      const oldTaskData = active.data.current?.task;
+      const newTaskData = {
+        ...oldTaskData,
+        manager: newStatus === "NotYetStarted" ? "" : user.name,
+        status: formatNewStatus,
+      };
+
+      //差分比較～変更ログ生成
+      const diff = compareHistory(newTaskData, oldTaskData);
+      if (diff.changedKeys.length === 0) return;
+
+      const message = generateChangeMessage(diff, newTaskData);
+      if (!message) return;
+
+      const { error } = await supabase.from("task_notes").insert({
+        task_serial: oldTaskData.serial,
+        message,
+        diff,
+        old_record: oldTaskData,
+        new_record: newTaskData,
+        changed_by: user.name,
+        changed_at: new Date().toISOString(),
+        type: "changed",
+      });
+
+      if (error) console.error(error);
     }
   };
 
