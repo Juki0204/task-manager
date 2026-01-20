@@ -187,7 +187,7 @@ export default function AddTask() {
     const { error: addTaskNumError } = await supabase
       .from('clients')
       .update({
-        task_num: currentTaskNum + 1,
+        task_num: Number(currentTaskNum) + 1,
       })
       .eq('name', client);
 
@@ -239,6 +239,29 @@ export default function AddTask() {
   //   console.log(client, requester);
   // }, [requester]);
 
+  const resetForm = () => {
+    setClient("");
+    setRequester("");
+    setTaskTitle("");
+    setTaskDescription("");
+    setRequestDate(new Date().toLocaleDateString("sv-SE"));
+    setFinishDate("");
+    setManager("");
+    setStatus("未着手");
+    setPriority("");
+    setRemarks("");
+    setMethod("");
+    setDeadline("");
+    setIsValid(true);
+    setIsSubmitting(false);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    resetForm();
+  };
+
+
   //スクロールバーの有無を検知（padding調整用）
   const contentRef = useRef<HTMLDivElement>(null);
   const [hasScrollbar, setHasScrollbar] = useState(false);
@@ -279,9 +302,7 @@ export default function AddTask() {
 
       <Dialog
         open={isOpen}
-        onClose={() => {
-          setIsOpen(false);
-        }}
+        onClose={closeModal}
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
@@ -291,7 +312,7 @@ export default function AddTask() {
 
 
             <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
-            <GrClose onClick={() => setIsOpen(false)} className="absolute top-8 right-8 cursor-pointer" />
+            <GrClose onClick={closeModal} className="absolute top-8 right-8 cursor-pointer" />
 
             <div
               ref={contentRef}
@@ -374,7 +395,7 @@ export default function AddTask() {
 
             <div className="flex gap-4 justify-end col-span-2 pr-3">
               <Button
-                onClick={() => setIsOpen(false)}
+                onClick={closeModal}
                 className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
               >
                 キャンセル
