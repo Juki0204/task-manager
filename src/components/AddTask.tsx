@@ -121,6 +121,29 @@ export default function AddTask() {
     return `${currentTaskInit}-${serial}`;
   };
 
+  //ステートのリセット
+  const resetForm = () => {
+    setClient("");
+    setRequester("");
+    setTaskTitle("");
+    setTaskDescription("");
+    setRequestDate(new Date().toLocaleDateString("sv-SE"));
+    setFinishDate("");
+    setManager("");
+    setStatus("未着手");
+    setPriority("");
+    setRemarks("");
+    setMethod("");
+    setDeadline("");
+    setIsValid(true);
+    setIsSubmitting(false);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    resetForm();
+  };
+
   const addTask = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -210,7 +233,8 @@ export default function AddTask() {
     if (error) console.error(error);
 
     setTimeout(() => {
-      setIsOpen(false);
+      // setIsOpen(false);
+      closeModal();
       // toast.success(`${user?.name}さんが新しいタスクを追加しました。`);
     }, 500);
     setTimeout(() => setIsSubmitting(false), 1000);
@@ -238,28 +262,6 @@ export default function AddTask() {
   // useEffect(() => {
   //   console.log(client, requester);
   // }, [requester]);
-
-  const resetForm = () => {
-    setClient("");
-    setRequester("");
-    setTaskTitle("");
-    setTaskDescription("");
-    setRequestDate(new Date().toLocaleDateString("sv-SE"));
-    setFinishDate("");
-    setManager("");
-    setStatus("未着手");
-    setPriority("");
-    setRemarks("");
-    setMethod("");
-    setDeadline("");
-    setIsValid(true);
-    setIsSubmitting(false);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-    resetForm();
-  };
 
 
   //スクロールバーの有無を検知（padding調整用）
