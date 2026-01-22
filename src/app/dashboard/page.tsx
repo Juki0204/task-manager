@@ -197,7 +197,7 @@ export default function DashboardPage() {
           </h2>
 
           <div className="flex justify-center items-center gap-4 py-0.5 px-1 text-white text-xl font-bold text-center">
-            <div onMouseEnter={() => setIsDeadlinePop(true)} onMouseLeave={() => setIsDeadlinePop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider cursor-default ${todayDeadlineTasks.length > 0 ? "text-red-700" : "text-neutral-800"}`}>
+            <div onMouseEnter={() => setIsDeadlinePop(true)} onMouseLeave={() => setIsDeadlinePop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider cursor-default ${todayDeadlineTasks.length > 0 ? "text-red-700" : "text-neutral-800"}`}>
               {deadline.length > 0 && todayDeadlineTasks.length > 0 ? (
                 <><FaTriangleExclamation />本日が期限のタスクが {todayDeadlineTasks.length}件 あります</>
               ) : (
@@ -205,7 +205,7 @@ export default function DashboardPage() {
               )}
               {todayDeadlineTasks.length > 0 && (
                 <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 ${isDeadlinePop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-100 shadow-md`}>
+                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-200 shadow-md`}>
                     {todayDeadlineTasks.map(t => (
                       <div
                         key={t.id}
@@ -219,11 +219,11 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
-            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-100 rounded-md tracking-wider text-neutral-800 cursor-default`}>
+            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider text-neutral-800 cursor-default`}>
               本日の新規依頼数：{todayNewTasks.length}件
               {todayNewTasks.length > 0 && (
                 <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-100 shadow-md`}>
+                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-200 shadow-md`}>
                     {todayNewTasks.map(t => (
                       <div
                         key={t.id}
@@ -245,7 +245,7 @@ export default function DashboardPage() {
       <div className="flex gap-4 p-2 h-[780px]">
 
         {/* 今月の依頼状況 */}
-        <div className="w-100 h-full bg-neutral-100 p-6 rounded-2xl">
+        <div className="w-100 h-full bg-neutral-200 p-4 rounded-2xl">
           <h3 className="font-bold text-center mb-2">今月の依頼状況</h3>
           {/* <dl className="grid grid-cols-3">
             <dt className="col-span-2 p-2 bg-neutral-600 text-white font-bold text-center tracking-wider border border-neutral-800 rounded-tl-md">総依頼件数</dt>
@@ -258,9 +258,9 @@ export default function DashboardPage() {
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 border-t-0 text-right font-bold rounded-br-md">{tasks.filter(t => t.status === "完了").length}件</dd>
           </dl> */}
 
-          <div className="flex justify-center">
+          <div className="flex justify-center bg-neutral-100 rounded-xl p-4">
             <RequestGraph
-              size={280}
+              size={260}
               thickness={42}
               title="総依頼件数"
               segments={[
@@ -274,9 +274,9 @@ export default function DashboardPage() {
 
 
           <h3 className="font-bold text-center mt-5 mb-2">店舗別依頼数</h3>
-          <dl className="grid grid-cols-3">
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">難波秘密</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+          <dl className="grid grid-cols-[100px_1fr] bg-neutral-100 rounded-xl p-4">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">難波秘密</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "難波秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -286,8 +286,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "難波秘密倶楽部").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">新大阪秘密</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">新大阪秘密</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "新大阪秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -297,8 +297,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "新大阪秘密倶楽部").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">谷町秘密</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">谷町秘密</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -308,8 +308,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "谷町秘密倶楽部").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">谷町ゴールデン</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">谷町ゴールデン</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町人妻ゴールデン").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -319,8 +319,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "谷町人妻ゴールデン").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">梅田人妻</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">梅田人妻</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -330,8 +330,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">梅田ゴールデン</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">梅田ゴールデン</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田ゴールデン").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -341,8 +341,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "梅田ゴールデン").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">中洲秘密</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">中洲秘密</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "中洲秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -352,8 +352,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "中洲秘密倶楽部").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">玉乱堂</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">玉乱堂</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "快楽玉乱堂").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -363,8 +363,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "快楽玉乱堂").length}件
             </dd>
 
-            <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">奥様クラブ</dt>
-            <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">奥様クラブ</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "奥様クラブ").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -374,12 +374,12 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "奥様クラブ").length}件
             </dd>
           </dl>
-          <p className="text-xs p-0.5 mt-3 text-center">※社内案件数は度外視の為、あくまで目安の数値になります。</p>
+          <p className="text-xs p-0.5 mt-1 text-center">※社内案件数は度外視の為、あくまで目安の数値になります。</p>
         </div>
 
         <div className="flex flex-col flex-1 gap-4">
           {/* 最新のリリースノート */}
-          <div className="w-full bg-neutral-100 p-6 rounded-2xl">
+          <div className="w-full bg-neutral-200 p-6 rounded-2xl">
             {loading ? (
               <p className="text-center p-4">loading...</p>
             ) : (
@@ -402,9 +402,9 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="w-full h-full bg-neutral-100 p-6 rounded-2xl">
+          <div className="w-full h-full bg-neutral-200 p-6 rounded-2xl">
             <h3 className="font-bold tracking-widest px-1 pb-1 mb-1 border-b border-neutral-400">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
-            <p className="tracking-wider leading-normal text-xs p-1">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。</p>
+            <p className="tracking-wider leading-normal text-xs p-1 mb-1">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(ここではクリックしても詳細確認はできません)</p>
             <div className="w-200 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               <PriorityTasks />
             </div>
@@ -412,7 +412,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 変更履歴ログ */}
-        <div className="w-160 h-full bg-neutral-100 p-6 rounded-2xl relative">
+        <div className="w-160 h-full bg-neutral-200 p-6 rounded-2xl relative">
           <h3 className="font-bold text-center mb-2">変更履歴ログ（直近50件）</h3>
           {/* {notes && notes.length > 0 ? (
             <div className="h-[calc(100%-1.5rem)] pr-3 text-sm overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
@@ -452,7 +452,7 @@ export default function DashboardPage() {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-6.5">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-200 p-6 pt-6.5">
             {!isTaskLoaded && (
               <div className="flex justify-center my-4" aria-label="読み込み中">
                 <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
