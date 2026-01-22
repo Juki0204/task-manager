@@ -53,6 +53,11 @@ export function useTaskNotesRealtime() {
             const update = [...prev, newNote];
             return update.slice(-50);
           });
+
+          setReverseNotes((prev) => {
+            const update = [...prev, newNote];
+            return update.slice(-50).reverse();
+          });
         }
       )
       .subscribe();

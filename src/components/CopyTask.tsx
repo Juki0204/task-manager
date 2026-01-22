@@ -288,18 +288,33 @@ export default function UpdateTask({ task, user, onClose }: task) {
 
   return (
     <>
-      <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
-      <GrClose onClick={onClose} className="absolute top-8 right-8 cursor-pointer" />
+      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1">
+        <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
+        <GrClose onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
+
+        <div className="w-full flex gap-2">
+          <AddTaskInput className="flex-1 [&_input]:bg-neutral-50 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
+          <AddTaskInput className="w-36 [&_input]:bg-neutral-50 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+        </div>
+
+
+        <AddTaskInput className="w-full [&_input]:bg-neutral-50 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
+      </div>
 
       <div
         ref={contentRef}
         className={`
           ${hasScrollbar ? "pr-2" : ""}
-          max-h-[70svh] py-2 pr-2 grid grid-cols-2 gap-4 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+          max-h-[70svh] grid grid-cols-2 mb-0 gap-2 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
         `}
       >
 
-        <div className="col-span-2 flex gap-4">
+        <div className="col-span-2 flex flex-wrap gap-x-2">
+          <div className="w-full flex gap-1 mt-3 mb-1 items-center">
+            <span className="text-neutral-400/60 text-xs leading-none tracking-widest">META</span>
+            <span className="block h-[1px] bg-neutral-300 w-full" />
+          </div>
+
           <div className="flex flex-col">
             <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><MdMailOutline /> 依頼手段</h3>
             <div className="flex gap-x-1">
@@ -309,77 +324,71 @@ export default function UpdateTask({ task, user, onClose }: task) {
             </div>
           </div>
 
-          <AddTaskSelect className="flex-2" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
+          <AddTaskSelect className="flex-2 text-sm" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
             {clientList.map(client => (
               <option key={client} value={client}>{client}</option>
             ))}
           </AddTaskSelect>
 
-          <AddTaskSelect className="flex-1" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
+          <AddTaskSelect className="flex-1 text-sm" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
             {requesterList.map(requester => (
               <option key={requester} value={requester}>{requester}</option>
             ))}
             <option value="不明">不明</option>
           </AddTaskSelect>
-
         </div>
 
-        <AddTaskInput col={2} name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
+        <div className="col-span-2 flex flex-wrap gap-x-2">
+          <div className="w-full flex gap-1 items-center mt-2 mb-1">
+            <span className="text-neutral-400/60 text-xs leading-none tracking-widest">STATUS</span>
+            <span className="block h-[1px] bg-neutral-300 w-full" />
+          </div>
 
-        <AddTaskInput col={2} name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
+          <div className="flex flex-wrap gap-2 flex-1">
+            <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
+              {userNameList.map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+              <option value=''>未決定</option>
+            </AddTaskSelect>
 
-        <div className="col-span-2 flex gap-x-4">
-          <AddTaskInput className="flex-1" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+            <AddTaskSelect className="w-28 text-sm" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
+              <option value=""></option>
+              <option value="急">至急</option>
+              <option value="高">高</option>
+              <option value="低">低</option>
+            </AddTaskSelect>
 
-          <AddTaskInput className={`flex-1 ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+            <AddTaskSelect className="w-full text-sm" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="未着手">未着手</option>
+              <option value="作業中">作業中</option>
+              <option value="作業途中">作業途中</option>
+              <option value="確認中">確認中</option>
+              <option value="完了">完了</option>
+              <option value="保留">保留</option>
+              {/* <option value="中止">中止</option> */}
+              <option value="詳細待ち">詳細待ち</option>
+            </AddTaskSelect>
+          </div>
 
-          <AddTaskInput className="flex-1" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
-        </div>
-
-        <div className="col-span-2 flex gap-x-4">
-          <AddTaskSelect className="flex-1" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
-            {userNameList.map(name => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-            <option value=''>未決定</option>
-          </AddTaskSelect>
-
-          <AddTaskSelect className="flex-1" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="未着手">未着手</option>
-            <option value="作業中">作業中</option>
-            <option value="作業途中">作業途中</option>
-            <option value="確認中">確認中</option>
-            <option value="完了">完了</option>
-            <option value="保留">保留</option>
-            {/* <option value="中止">中止</option> */}
-            <option value="詳細待ち">詳細待ち</option>
-          </AddTaskSelect>
-
-          <AddTaskSelect className="flex-1" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
-            <option value=""></option>
-            <option value="急">至急</option>
-            <option value="高">高</option>
-            <option value="低">低</option>
-          </AddTaskSelect>
+          <div className="w-36 flex flex-wrap gap-2">
+            <AddTaskInput className={`w-full text-sm ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+            <AddTaskInput className="w-full text-sm" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+          </div>
         </div>
 
         <div className="flex flex-col col-span-2">
+          <div className="col-span-2 flex gap-1 items-center mt-2 mb-1">
+            <span className="text-neutral-400/60 text-xs leading-none tracking-widest">REMARKS</span>
+            <span className="block h-[1px] bg-neutral-300 w-full" />
+          </div>
+
           <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
           <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
         </div>
-
-        {/* <AddTaskTextarea col={2} rows={5} name="REMARKS" label="備考欄" icon={<LuNotebookPen />} value={remarks} onChange={(e) => setRemarks(e.target.value)} /> */}
-
-        {/* <Field className="col-span-2 grid grid-cols-3 gap-x-1">
-          <h3 className="col-span-3 w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center"><IoDocumentAttachOutline /> 関連ファイル</h3>
-          <Input type="file" onChange={handleFileChange(0)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          <Input type="file" onChange={handleFileChange(1)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-          <Input type="file" onChange={handleFileChange(2)} className="file:py-1 file:px-2 file:bg-neutral-300 file:rounded-md file:block focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25" />
-        </Field> */}
-
       </div>
 
-      <div className="flex gap-4 justify-end col-span-2 pr-3">
+      <div className="flex gap-4 justify-end col-span-2 pt-2">
         <Button
           onClick={onClose}
           className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"

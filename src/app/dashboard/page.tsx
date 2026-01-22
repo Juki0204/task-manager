@@ -13,6 +13,10 @@ import InvoiceTaskDetail from "@/components/invoice/InvoiceTaskDetail";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import { RequestGraph } from "@/components/ui/RequestGraph";
 import DashboardNotesViewer from "@/components/DashboadNotesViewer";
+import PriorityTasks from "@/components/PriorityTasks";
+import UpdateTask from "@/components/UpdateTask";
+import TaskDetail from "@/components/TaskDetail";
+import { useAuth } from "../AuthProvider";
 
 
 interface ReleaseNoteMeta {
@@ -25,6 +29,7 @@ interface ReleaseNoteData extends ReleaseNoteMeta {
 }
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const now = new Date();
   const [deadline, setDeadline] = useState<{ task_id: string, date: string }[]>([]);
   const [todayDeadlineTasks, setTodayDeadlineTasks] = useState<Task[]>([]);
@@ -41,6 +46,9 @@ export default function DashboardPage() {
   const [isTaskLoaded, setIsTaskLoaded] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+  const [modalType, setModalType] = useState<"detail" | "edit" | null>(null);
+  const [unreadIds, setUnreadIds] = useState<string[]>([]);
 
   const router = useRouter();
 
@@ -136,6 +144,50 @@ export default function DashboardPage() {
     setIsTaskLoaded(true);
   };
 
+
+  /* -------------- モーダル関連 -------------- */
+
+  //モーダルロック解除
+  const unlockTaskHandler = async () => {
+    if (!activeTask || !user) return;
+    const { error } = await supabase
+      .from('tasks')
+      .update({
+        locked_by_id: null,
+        locked_by_name: null,
+        locked_by_at: null,
+      })
+      .eq("id", activeTask.id)
+      .eq("locked_by_id", user.id);
+
+    if (error) {
+      console.log("unlock failed");
+    } else {
+      console.log("unlocked task: taskId =", activeTask.id);
+    }
+  }
+
+  // 既読処理関数
+  const markAsRead = async (taskId: string) => {
+    // フロント即時反映
+    setUnreadIds((prev) => prev.filter((id) => id !== taskId));
+
+    // Supabase更新
+    const updatedIds = unreadIds.filter((id) => id !== taskId);
+    await supabase
+      .from("users")
+      .update({ unread_task_id: updatedIds })
+      .eq("id", user?.id);
+  };
+
+  useEffect(() => {
+    if (user?.unread_task_id) {
+      setUnreadIds(user.unread_task_id);
+    }
+  }, [user]);
+
+  /* -------------- モーダル関連 -------------- */
+
   return (
     <div className="p-1 py-4 sm:p-4 !pt-14 max-w-[1920px] m-auto">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
@@ -194,7 +246,7 @@ export default function DashboardPage() {
 
         {/* 今月の依頼状況 */}
         <div className="w-100 h-full bg-neutral-100 p-6 rounded-2xl">
-          <h3 className="font-bold text-sm text-center mb-2">今月の依頼状況</h3>
+          <h3 className="font-bold text-center mb-2">今月の依頼状況</h3>
           {/* <dl className="grid grid-cols-3">
             <dt className="col-span-2 p-2 bg-neutral-600 text-white font-bold text-center tracking-wider border border-neutral-800 rounded-tl-md">総依頼件数</dt>
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 text-right font-bold rounded-tr-md">{tasks.length}件</dd>
@@ -221,7 +273,7 @@ export default function DashboardPage() {
           </div>
 
 
-          <h3 className="font-bold text-sm text-center mt-5 mb-2">店舗別依頼数</h3>
+          <h3 className="font-bold text-center mt-5 mb-2">店舗別依頼数</h3>
           <dl className="grid grid-cols-3">
             <dt className="col-span-1 p-1.75 font-bold text-sm text-center tracking-wider">難波秘密</dt>
             <dd className="col-span-2 p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
@@ -333,7 +385,7 @@ export default function DashboardPage() {
             ) : (
               <>
                 <hgroup className="flex gap-4 items-center justify-between w-full px-1 pb-1 mb-2 border-b border-neutral-400">
-                  <h3 className="flex gap-2 items-center font-bold text-lg tracking-widest">
+                  <h3 className="flex gap-2 items-center font-bold tracking-widest">
                     リリースノート {releaseNotes[0].version.replaceAll("_", ".")}
                     <span className="text-xs py-0.5 px-2 rounded-md bg-red-800 text-white">最新版</span>
                     <span className="text-sm">Released on {releaseNotes[0].date}</span>
@@ -350,14 +402,18 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="w-full h-full bg-neutral-100 p-6 pr-3 rounded-2xl">
-            <p className="w-full h-full grid place-content-center text-3xl tracking-widest">まだ未定</p>
+          <div className="w-full h-full bg-neutral-100 p-6 rounded-2xl">
+            <h3 className="font-bold tracking-widest px-1 pb-1 mb-1 border-b border-neutral-400">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
+            <p className="tracking-wider leading-normal text-xs p-1">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。</p>
+            <div className="w-200 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+              <PriorityTasks />
+            </div>
           </div>
         </div>
 
         {/* 変更履歴ログ */}
         <div className="w-160 h-full bg-neutral-100 p-6 rounded-2xl relative">
-          <h3 className="font-bold text-sm text-center mb-2">変更履歴ログ（直近50件）</h3>
+          <h3 className="font-bold text-center mb-2">変更履歴ログ（直近50件）</h3>
           {/* {notes && notes.length > 0 ? (
             <div className="h-[calc(100%-1.5rem)] pr-3 text-sm overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               {[...notes].reverse().map(note => (
@@ -372,16 +428,21 @@ export default function DashboardPage() {
           ) : (
             <p className="text-black text-center p-4">読み込み中...</p>
           )} */}
-          <DashboardNotesViewer SerialClick={(serial: string) => { handleActiveTask(serial); setIsOpen(true); }} />
+          <DashboardNotesViewer SerialClick={(serial: string) => { handleActiveTask(serial); setIsOpen(true); setModalType("detail"); }} />
         </div>
       </div>
 
+
+      {/* 共通モーダル */}
       <Dialog
         open={isOpen}
+
         onClose={() => {
+          if (modalType === "edit") unlockTaskHandler();
           setIsOpen(false);
           setTimeout(() => {
             setActiveTask(null);
+            setModalType(null);
             setIsTaskLoaded(false);
           }, 10);
         }}
@@ -391,17 +452,36 @@ export default function DashboardPage() {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative w-120 space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-6.5">
             {!isTaskLoaded && (
               <div className="flex justify-center my-4" aria-label="読み込み中">
                 <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
               </div>
             )}
-            {/* 確認のみの為invoice用のものを流用 */}
-            {activeTask && (
-              <InvoiceTaskDetail
+
+            {modalType === "detail" && activeTask && user && (
+              <TaskDetail
+                user={user}
                 task={activeTask}
-                onClose={() => { setIsOpen(false); setActiveTask(null); setIsTaskLoaded(false); }}
+                unreadIds={unreadIds}
+                onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setActiveTask(null); setIsTaskLoaded(false); setTimeout(() => setModalType(null), 500); }}
+                onEdit={(t: Task) => {
+                  const latest = tasks.find(x => x.id === t.id) ?? t;
+                  setActiveTask(latest);
+                  setModalType("edit");
+                }}
+                deadlineList={deadline}
+              />
+            )}
+
+            {modalType === "edit" && activeTask && user && (
+              <UpdateTask
+                user={user}
+                task={activeTask}
+                onComplete={() => setModalType("detail")}
+                onCancel={() => setModalType("detail")}
+                onUnlock={unlockTaskHandler}
+                deadlineList={deadline}
               />
             )}
           </DialogPanel>

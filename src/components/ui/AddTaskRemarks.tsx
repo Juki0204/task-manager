@@ -245,7 +245,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
 
       <EditorContent
         editor={editor}
-        className={`tiptap-base tiptap-editor`}
+        className={`tiptap-base tiptap-editor text-sm`}
       />
 
       <div className={`${hintOpen ? " left-[calc(100%+20px)] opacity-100" : "left-0 opacity-0"} w-70 absolute left-0 -z-10 bottom-0 shadow-md bg-neutral-100 rounded-2xl p-4 whitespace-nowrap transition-all duration-300`}>
