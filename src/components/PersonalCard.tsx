@@ -15,6 +15,8 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 import { FaRegBuilding } from "react-icons/fa6";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { Tooltip } from "react-tooltip";
+import { RemarksHoverMark } from "./ui/RemarksHoverMark";
+import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
 
 interface CardPropd {
   task: Task;
@@ -61,6 +63,9 @@ export default function PersonalCard({
   const draggableStyle = transform
     ? { transform: `translate(${transform.x}px, ${transform.y}px)` }
     : undefined;
+
+  const [hasRemarksInfo, setHasRemarksInfo] = useState<boolean>(false);
+  // const [isUnread, setIsUnread] = useState<boolean>(false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
@@ -188,10 +193,39 @@ export default function PersonalCard({
     setStatusStyle(style);
   }
 
+
+  //備考欄にメールID以外の情報が入力されているか判定
+  const remarksCheck = (remarks: string | null | undefined) => {
+    if (!remarks) return false;
+    const trimmed = remarks.trim();
+
+    //空白or空の場合
+    if (!trimmed) return false;
+
+    const host = `www\\.[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+`;
+    const digits = `\\d+`;
+
+    const plain = `\\[${host}\\s+${digits}\\]`;
+
+    const mdLink = `\\[\\[${host}\\]\\((?:https?:\\/\\/)${host}\\)\\s+${digits}\\]`;
+
+    const block = `(?:${plain}|${mdLink})`;
+
+    const onlyMailIds = new RegExp(`^${block}(?:\\s+${block})*$`);
+
+    //idのみの場合
+    if (onlyMailIds.test(trimmed)) return false;
+
+    return true;
+  }
+
+
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status);
     definePersonalColor(task.manager ? task.manager : "");
+
+    setHasRemarksInfo(remarksCheck(task.remarks));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
 
@@ -287,7 +321,7 @@ export default function PersonalCard({
             </>
           )}
         </div>
-        <h3 className="font-bold truncate flex items-center gap-1">
+        <h3 className="relative font-bold truncate flex items-center gap-1 pr-16">
           {
             task.method === 'mail' ?
               <MdMailOutline />
@@ -297,6 +331,12 @@ export default function PersonalCard({
                 <FaRegQuestionCircle />
           }
           <HighlightText text={task.title} keyword={filters.searchKeywords} />
+
+          {hasRemarksInfo && task.remarks && (
+            <RemarksHoverMark className="absolute inset-y-0 right-0">
+              <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
+            </RemarksHoverMark>
+          )}
         </h3>
 
         <div className="w-fit flex gap-1 items-center pl-1 absolute top-3 right-3">

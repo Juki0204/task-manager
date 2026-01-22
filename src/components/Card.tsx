@@ -13,6 +13,8 @@ import { User } from "@/utils/types/user";
 import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
 import { Tooltip } from "react-tooltip";
+import { RemarksHoverMark } from "./ui/RemarksHoverMark";
+import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
 
 interface CardPropd {
   task: Task;
@@ -28,6 +30,9 @@ interface CardPropd {
 export default function Card({ task, user, unreadIds, onClick, onContextMenu, onEdit, deadlineList, ...props }: CardPropd) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
+
+  const [hasRemarksInfo, setHasRemarksInfo] = useState<boolean>(false);
+  // const [isUnread, setIsUnread] = useState<boolean>(false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
@@ -84,10 +89,39 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
     setStatusStyle(style);
   }
 
+
+  //備考欄にメールID以外の情報が入力されているか判定
+  const remarksCheck = (remarks: string | null | undefined) => {
+    if (!remarks) return false;
+    const trimmed = remarks.trim();
+
+    //空白or空の場合
+    if (!trimmed) return false;
+
+    const host = `www\\.[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+`;
+    const digits = `\\d+`;
+
+    const plain = `\\[${host}\\s+${digits}\\]`;
+
+    const mdLink = `\\[\\[${host}\\]\\((?:https?:\\/\\/)${host}\\)\\s+${digits}\\]`;
+
+    const block = `(?:${plain}|${mdLink})`;
+
+    const onlyMailIds = new RegExp(`^${block}(?:\\s+${block})*$`);
+
+    //idのみの場合
+    if (onlyMailIds.test(trimmed)) return false;
+
+    return true;
+  }
+
+
   useEffect(() => {
     definePriorityStyle(task.priority);
     defineStatusStyle(task.status);
     definePersonalColor(task.manager ? task.manager : "");
+
+    setHasRemarksInfo(remarksCheck(task.remarks));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task]);
 
@@ -203,8 +237,13 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
           <span className={`py-1 px-2 h-fit w-16.5 text-center rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
-        <div className="line-clamp-2 w-full text-sm [grid-area:dis]">
+        <div className="relative line-clamp-2 w-full text-sm pr-18 truncate [grid-area:dis]">
           <HighlightText text={task.description} keyword={filters.searchKeywords} />
+          {hasRemarksInfo && task.remarks && (
+            <RemarksHoverMark className="absolute inset-y-0 right-4">
+              <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
+            </RemarksHoverMark>
+          )}
         </div>
 
         <div className="text-sm [grid-area:mana] flex gap-1 items-center"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
