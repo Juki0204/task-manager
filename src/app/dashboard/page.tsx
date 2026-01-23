@@ -209,7 +209,7 @@ export default function DashboardPage() {
                     {todayDeadlineTasks.map(t => (
                       <div
                         key={t.id}
-                        onClick={() => { handleTodayTask(t); setIsOpen(true); }}
+                        onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
                         className="rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300"
                       >
                         【{t.serial}】 {t.title}
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                     {todayNewTasks.map(t => (
                       <div
                         key={t.id}
-                        onClick={() => { handleTodayTask(t); setIsOpen(true); }}
+                        onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
                         className="rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
                       >
                         【{t.serial}】 {t.title}
