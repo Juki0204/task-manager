@@ -452,7 +452,7 @@ export default function DashboardPage() {
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-200 p-6 pt-6.5">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-6.5">
             {!isTaskLoaded && (
               <div className="flex justify-center my-4" aria-label="読み込み中">
                 <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>

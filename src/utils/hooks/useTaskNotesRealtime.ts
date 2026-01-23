@@ -18,7 +18,7 @@ export type TaskNote = {
 
 export function useTaskNotesRealtime() {
   const [notes, setNotes] = useState<TaskNote[]>([]);
-  const [reverseNotes, setReverseNotes] = useState<TaskNote[]>([]);
+  // const [reverseNotes, setReverseNotes] = useState<TaskNote[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const fetchNotes = async () => {
@@ -34,7 +34,6 @@ export function useTaskNotesRealtime() {
     }
 
     setNotes([...n]);
-    setReverseNotes([...n].reverse());
   }
 
   useEffect(() => {
@@ -54,10 +53,10 @@ export function useTaskNotesRealtime() {
             return update.slice(-50);
           });
 
-          setReverseNotes((prev) => {
-            const update = [...prev, newNote];
-            return update.slice(-50).reverse();
-          });
+          // setReverseNotes((prev) => {
+          //   const update = [...prev, newNote];
+          //   return update.slice(-50);
+          // });
         }
       )
       .subscribe();
@@ -77,5 +76,5 @@ export function useTaskNotesRealtime() {
     }
   }, []);
 
-  return { notes, reverseNotes, isReady };
+  return { notes, isReady };
 }

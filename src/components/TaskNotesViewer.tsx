@@ -2,16 +2,29 @@
 
 import { useTaskNotesRealtime } from "@/utils/hooks/useTaskNotesRealtime";
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { BiSolidRightArrow } from "react-icons/bi";
 
 import { usePathname } from "next/navigation";
 import { highlightDiff } from "@/utils/function/highlightDiff";
+import { Task } from "@/utils/types/task";
 
+export type TaskNote = {
+  id: string;
+  task_serial: string;
+  message: string;
+  diff: Partial<Record<keyof Task, string | null>>
+  old_record: Partial<Record<keyof Task, string | null>>;
+  new_record: Partial<Record<keyof Task, string | null>>;
+  changed_by: string | null;
+  changed_at: string;
+  type: string;
+}
 
 export default function TaskNotesViewer() {
-  const { reverseNotes, isReady } = useTaskNotesRealtime();
+  const { notes, isReady } = useTaskNotesRealtime();
+  const [formatNotes, setFormatNotes] = useState<TaskNote[]>([]);
 
   const notesRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -25,7 +38,8 @@ export default function TaskNotesViewer() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [reverseNotes.length]);
+    setFormatNotes(notes.reverse());
+  }, [notes.length]);
 
   useEffect(() => {
     const handleOutside = (e: MouseEvent | WheelEvent) => {
@@ -69,7 +83,7 @@ export default function TaskNotesViewer() {
               h-6
             `}>
               <AnimatePresence>
-                {reverseNotes.map((log) => (
+                {formatNotes.map((log) => (
                   <motion.div
                     key={log.id}
                     layout
