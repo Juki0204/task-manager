@@ -233,7 +233,7 @@ export default function DashboardPage() {
                         onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
                         className="flex gap-1 rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
                       >
-                        <span className="w-12 whitespace-nowrap text-neutral-500">{new Date(t.created_at).toTimeString().substring(0, 5)}</span>
+                        <span className="w-11 whitespace-nowrap text-neutral-500 font-normal">{new Date(t.created_at).toTimeString().substring(0, 5)}</span>
                         <span>【{t.serial}】 {t.title}</span>
                       </div>
                     ))}
