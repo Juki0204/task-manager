@@ -39,13 +39,15 @@ export function CursorHoverPopup({
   const ref = useRef<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
-  // open/anchorが変わったら、表示位置を「一回だけ」計算する
+  //表示位置計算（画面端を考慮して計算）
   useEffect(() => {
     if (!open || !anchor) {
       setPos(null);
+      setReady(false);
       return;
     }
     if (!ref.current) return;
@@ -69,23 +71,41 @@ export function CursorHoverPopup({
       top = clamp(top, margin, vh - rect.height - margin);
 
       setPos({ left, top });
+      setReady(true);
     });
 
     return () => cancelAnimationFrame(id);
   }, [open, anchor, offset.x, offset.y, margin, children]);
 
+  //ポップアップのポジション決定
   const style = useMemo<React.CSSProperties>(() => {
-    if (!pos) return { display: "none" };
-    return {
+    const base: React.CSSProperties = {
       position: "fixed",
-      left: pos.left,
-      top: pos.top,
       zIndex,
       maxWidth,
-      // maxHeight,
+      maxHeight,
       transform: "translate3d(0,0,0)",
+      willChange: "left, top, opacity",
     };
-  }, [pos, zIndex, maxWidth, maxHeight]);
+
+    if (!pos) {
+      return {
+        ...base,
+        left: 0,
+        top: 0,
+        opacity: 0,
+        pointerEvents: "none",
+      };
+    }
+
+    return {
+      ...base,
+      left: pos.left,
+      top: pos.top,
+      opacity: ready ? 1 : 0,
+      pointerEvents: ready ? "auto" : "none",
+    };
+  }, [pos, ready, zIndex, maxWidth, maxHeight]);
 
   if (!mounted || !open || !anchor) return null;
 

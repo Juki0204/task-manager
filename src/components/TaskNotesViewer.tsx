@@ -39,7 +39,11 @@ export default function TaskNotesViewer() {
   useEffect(() => {
     scrollToBottom();
     setFormatNotes(notes.reverse());
-  }, [notes.length]);
+  }, [notes, notes.length]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, []);
 
   useEffect(() => {
     const handleOutside = (e: MouseEvent | WheelEvent) => {
