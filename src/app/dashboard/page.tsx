@@ -385,7 +385,7 @@ export default function DashboardPage() {
           {/* 最新のリリースノート */}
           <div className="w-full bg-neutral-200 p-6 rounded-2xl">
             {loading ? (
-              <p className="text-center p-4">loading...</p>
+              <p className="h-99.25 grid place-content-center">loading...</p>
             ) : (
               <>
                 <hgroup className="flex gap-4 items-center justify-between w-full px-1 pb-1 mb-2 border-b border-neutral-400">
