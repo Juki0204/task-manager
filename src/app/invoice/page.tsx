@@ -19,10 +19,18 @@ export default function InvoicePage() {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
   const { user } = useAuth();
 
-  const baseDate = new Date();
-  baseDate.setMonth(baseDate.getMonth() - 1);
-  const [currentYear, setCurrentYear] = useState<string>(String(baseDate.getFullYear()));
-  const [currentMonth, setCurrentMonth] = useState<string>(String(baseDate.getMonth() + 1));
+  //10日までは前月を指定、11日以降は当月を指定
+  const [currentYear, setCurrentYear] = useState<string>(() => {
+    const today = new Date();
+    const base = new Date(today.getFullYear(), today.getMonth() - (today.getDate() <= 10 ? 1 : 0), 1);
+    return String(base.getFullYear());
+  });
+
+  const [currentMonth, setCurrentMonth] = useState<string>(() => {
+    const today = new Date();
+    const base = new Date(today.getFullYear(), today.getMonth() - (today.getDate() <= 10 ? 1 : 0), 1);
+    return String(base.getMonth() + 1).padStart(2, "0");
+  });
 
   const { invoiceSortState, setInvoiceSortState, filters, setFilters } = useTaskListPreferences();
   const [filteredInvoices, setFiteredInvoices] = useState<Invoice[] | null>(null);
