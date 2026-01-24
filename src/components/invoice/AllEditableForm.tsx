@@ -70,7 +70,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   //よく使う項目
-  const FAVORITE_IDS = [32, 23, 41, 45, 44, 7, 27, 28, 42, 43];
+  const FAVORITE_IDS = [32, 23, 41, 45, 44, 7, 27, 28, 56, 43];
   const favoriteList = priceList?.filter(p => FAVORITE_IDS.includes(p.id));
 
   //小カテゴリ左右移動時のスクロール制御用
@@ -566,71 +566,116 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
   return (
 
-    <div className="w-full h-full relative space-y-4 bg-neutral-100 px-2 pt-14 pb-16">
-      <h2 className="absolute top-0 left-0 w-full h-14 flex items-center justify-start gap-2 pl-3 font-bold pr-10 bg-neutral-100 z-10">
+    <div className="w-full h-full relative bg-neutral-100 px-2 pt-10 pb-16">
+      <h2 className="absolute top-0 left-0 w-full h-10 mb-0 flex items-center justify-start gap-2 pl-3 font-bold pr-10 bg-neutral-100 z-10">
         請求データ一括入力
         <span className="text-xs text-neutral-400">TABキー, TAB + SHIFTキー押下で項目移動可能</span>
-        <div onClick={() => setLPCalcOpen(true)} className="flex gap-1 items-center absolute top-3.5 right-10 cursor-pointer text-xs py-0.5 px-1.5 rounded-sm bg-neutral-300 text-neutral-800 hover:opacity-60">
+        <div onClick={() => setLPCalcOpen(true)} className="flex gap-1 items-center absolute top-1.5 right-10 cursor-pointer text-xs py-0.5 px-1.5 rounded-sm bg-neutral-300 text-neutral-800 hover:opacity-60">
           <FaCalculator />LP計算機
         </div>
-        <GrClose onClick={onClose} className="absolute top-4 right-2 cursor-pointer" />
+        <GrClose onClick={onClose} className="absolute top-2 right-2 cursor-pointer" />
       </h2>
-      <div
-        ref={scrollRef}
-        className="w-full h-full relative space-y-4 bg-neutral-100 p-1 pr-2 pb-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
-      >
 
-        <div className="grid grid-cols-5 gap-2">
-          {/* 作業担当者 */}
-          <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />タスクNo<span className="text-xs">（クリックで確認）</span></h3>
+      <div className="flex gap-2 mb-2">
+        <div className="flex flex-wrap flex-2 gap-2 items-center p-3 rounded-lg bg-slate-300/70">
+          {/* シリアル */}
+          <div className="w-32">
+            {/* <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500">
+                <BsPersonCheck />タスクNo
+              </h3> */}
             <div
-              className="flex gap-1 items-center py-1 px-2 bg-neutral-200 rounded-md cursor-pointer"
+              className="flex gap-1 items-center rounded-md cursor-pointer text-sm font-bold"
               onClick={onCheckTask}
             >
               <MdTask />{currentInvoice.serial}
             </div>
           </div>
 
-          {/* 作業担当者 */}
-          <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />店舗名</h3>
+          {/* 作業タイトル */}
+          <div className="w-full">
+            {/* <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500">
+                <MdDriveFileRenameOutline />作業タイトル
+              </h3> */}
+            <Input
+              tabIndex={-1}
+              type="text"
+              value={tempInvoiceValue.title}
+              onChange={(e) => setTempInvoiceValue({
+                ...tempInvoiceValue,
+                title: e.target.value
+              })}
+              className="w-full rounded-md leading-none text-lg font-bold focus:bg-neutral-50 focus:py-1 focus:px-2"
+            />
+          </div>
+
+          {/* 作業内容 */}
+          <div className="w-full">
+            {/* <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500">
+                <MdOutlineStickyNote2 />作業内容
+              </h3> */}
+            <Input
+              tabIndex={-1}
+              type="text"
+              value={tempInvoiceValue.description}
+              onChange={(e) => setTempInvoiceValue({
+                ...tempInvoiceValue,
+                description: e.target.value
+              })}
+              className="w-full bg-neutral-50 py-2 px-2 rounded-md text-sm"
+            />
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-7 flex-1 gap-2 bg-neutral-200 rounded-md p-2">
+
+          {/* クライアント */}
+          <div className="col-span-4">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+              <BsPersonCheck />店舗名
+            </h3>
             <Input
               tabIndex={-1}
               type="text"
               readOnly
               value={tempInvoiceValue.client}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
+              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 作業担当者 */}
-          <div className="col-span-1 pr-2 relative after:h-full after:w-[1px] after:bg-neutral-200 after:absolute after:-right-0 after:bottom-0">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />依頼者</h3>
+          <div className="col-span-3">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+              <BsPersonCheck />依頼者
+            </h3>
             <Input
               tabIndex={-1}
               type="text"
               readOnly
               value={tempInvoiceValue.requester}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
+              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 作業担当者 */}
-          <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BsPersonCheck />作業担当者</h3>
+          <div className="col-span-4">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+              <BsPersonCheck />作業担当者
+            </h3>
             <Input
               tabIndex={-1}
               type="text"
               readOnly
               value={tempInvoiceValue.manager}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
+              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 完了日 */}
-          <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><FaRegCheckCircle />完了日</h3>
+          <div className="col-span-3">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+              <FaRegCheckCircle />完了日
+            </h3>
             <Input
               tabIndex={-1}
               type="date"
@@ -640,63 +685,44 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 ...tempInvoiceValue,
                 finish_date: e.target.value
               })}
-              className="w-full bg-neutral-200 py-1 px-2 rounded-md cursor-pointer"
+              className="w-full bg-neutral-100 py-1 px-2 rounded-md cursor-pointer text-sm"
             />
           </div>
 
         </div>
 
-        <div className="grid grid-cols-4 gap-2">
-          {/* 作業タイトル */}
-          <div className="col-span-1">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdDriveFileRenameOutline />作業タイトル</h3>
-            <Input
-              tabIndex={-1}
-              type="text"
-              value={tempInvoiceValue.title}
-              onChange={(e) => setTempInvoiceValue({
-                ...tempInvoiceValue,
-                title: e.target.value
-              })}
-              className="w-full bg-neutral-200 py-1 px-2 rounded-md"
-            />
-          </div>
+      </div>
 
-          {/* 作業内容 */}
-          <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdOutlineStickyNote2 />作業内容</h3>
-            <Input
-              tabIndex={-1}
-              type="text"
-              value={tempInvoiceValue.description}
-              onChange={(e) => setTempInvoiceValue({
-                ...tempInvoiceValue,
-                description: e.target.value
-              })}
-              className="w-full bg-neutral-200 py-1 px-2 rounded-md"
-            />
-          </div>
+      <div
+        ref={scrollRef}
+        className="w-full h-[calc(100%-8rem)] relative bg-neutral-100 p-1 pr-2 pb-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
+      >
 
+        <div className="col-span-2 flex gap-1 mt-1 mb-1 items-center">
+          <span className="text-neutral-400/60 text-xs leading-none tracking-widest">CATEGORY</span>
+          <span className="block h-[1px] bg-neutral-300 w-full" />
         </div>
 
-        <hr className="text-neutral-300" />
-
-        <div className="grid grid-cols-12 gap-2">
+        <div className="grid grid-cols-12 gap-2 mb-4">
           {/* 大カテゴリ */}
-          <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCategoryAlt />大カテゴリ</h3>
+          <div className="col-span-2">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+              <BiCategoryAlt />大カテゴリ
+            </h3>
             <Input
               tabIndex={-1}
               type="text"
               readOnly
               value={tempInvoiceValue.category ?? "-"}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none"
+              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 中カテゴリ */}
           <div className="flex gap-x-2 flex-wrap col-span-9 border-l border-neutral-200 pl-2">
-            <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><MdLaptopChromebook />中カテゴリ選択</h3>
+            <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+              <MdLaptopChromebook />中カテゴリ選択
+            </h3>
 
             {mediaOptions.map((opt, index) => (
               <div
@@ -707,7 +733,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 onClick={() => {
                   document.getElementById(opt.id)?.click();
                 }}
-                className={`relative ${opt.width} h-8 bg-neutral-200 text-neutral-700 rounded-sm overflow-hidden focus:outline-2 focus:outline-neutral-500`}
+                className={`relative ${opt.width} h-7 bg-neutral-200 text-neutral-700 rounded-md overflow-hidden focus:outline-2 focus:outline-neutral-500`}
               >
                 <input
                   type="radio"
@@ -726,7 +752,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                 />
                 <label
                   htmlFor={opt.label}
-                  className="absolute top-0 left-0 w-full h-full aspect-square text-center py-1.5 px-2 text-sm text-neutral-800 peer-checked:bg-blue-300/70 transition duration-300 cursor-pointer"
+                  className="absolute top-0 left-0 w-full h-full aspect-square text-center py-1 px-2 text-sm text-neutral-800 peer-checked:bg-blue-300/70 transition duration-300 cursor-pointer"
                 >
                   {opt.label}
                 </label>
@@ -737,7 +763,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
         {/* 小カテゴリ */}
         <div className="flex flex-wrap">
-          <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500">
+          <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
             <AiOutlinePicture />
             作業カテゴリ選択
             <span
@@ -756,7 +782,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
           <div
             ref={(el: HTMLDivElement) => { scrollContainerRef.current = el; }}
-            className="h-94 overflow-auto pb-2 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
+            className="h-fit overflow-x-auto pb-2 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
           >
 
             <div className="w-fit flex gap-x-2">
@@ -764,9 +790,9 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="favorite"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[0] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-48"
+                className="p-2 bg-green-900/15 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">よく使う項目</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">よく使う項目</h3>
                 <ul className="flex flex-col gap-0.5">
                   {favoriteList && (
                     favoriteList.sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
@@ -779,7 +805,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
                         >
                           {p.work_name}
                         </li>
@@ -791,8 +817,8 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="WEB"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[1] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-48">
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">WEB</h3>
+                className="p-2 bg-slate-300/70 rounded-md w-48">
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">WEB</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "WEB" && price.sub_category !== "イベント関連")
@@ -805,7 +831,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
                         >
                           {p.work_name}
                         </li>
@@ -817,8 +843,8 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="WEB"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[2] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-48">
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">イベント</h3>
+                className="p-2 bg-slate-300/70 rounded-md w-48">
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">イベント</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "WEB" && price.sub_category === "イベント関連")
@@ -831,7 +857,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
                         >
                           {p.work_name}
                         </li>
@@ -843,9 +869,9 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="印刷"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[3] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-48"
+                className="p-2 bg-purple-900/15 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">印刷</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">印刷</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "印刷")
@@ -858,7 +884,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
                         >
                           {p.work_name}
                         </li>
@@ -870,9 +896,9 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="出力"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[4] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-48"
+                className="p-2 bg-purple-900/15 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">出力</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">出力</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "出力")
@@ -885,7 +911,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
                         >
                           {p.work_name}
                         </li>
@@ -897,9 +923,9 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
               <div
                 data-category="その他"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[5] = el; }}
-                className="p-2 bg-neutral-200 rounded-md w-48"
+                className="p-2 bg-neutral-300/70 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-500">その他</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">その他</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "その他")
@@ -912,7 +938,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
                         >
                           {p.work_name}
                         </li>
@@ -927,143 +953,150 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
         </div>
 
-        <hr className="text-neutral-300" />
+        <div className="col-span-2 flex gap-1 mt-3 mb-2 items-center">
+          <span className="text-neutral-400/60 text-xs leading-none tracking-widest">DETAILS</span>
+          <span className="block h-[1px] bg-neutral-300 w-full" />
+        </div>
 
-        <div className="grid grid-cols-12 gap-2">
+        <div className="flex gap-2">
 
-          {/* 作業点数 */}
-          <div className="col-span-2">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><PiPuzzlePiece />作業点数</h3>
-            <Input
-              tabIndex={0}
-              ref={piecesRef}
-              type="tel"
-              inputMode="numeric"
-              value={tempInvoiceValue.pieces ?? ""}
-              onChange={(e) => {
-                const v = e.target.value;
+          <div className="w-100 grid grid-cols-6 gap-2 bg-neutral-200 rounded-md p-2">
 
-                if (v === "") {
-                  setTempInvoiceValue({ ...tempInvoiceValue, pieces: null });
-                  return;
-                }
+            {/* 作業点数 */}
+            <div className="col-span-2">
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><PiPuzzlePiece />作業点数</h3>
+              <Input
+                tabIndex={0}
+                ref={piecesRef}
+                type="tel"
+                inputMode="numeric"
+                value={tempInvoiceValue.pieces ?? ""}
+                onChange={(e) => {
+                  const v = e.target.value;
 
-                if (/\d+$/.test(v)) {    // 数字のみ許可
-                  setTempInvoiceValue({ ...tempInvoiceValue, pieces: Number(v) });
-                  // calcAmount();
-                }
-              }}
-              pattern="[0-9]*"
-              onKeyDown={(e: React.KeyboardEvent) => {
-                if (e.key === "Tab") {
-                  if (e.shiftKey && firstSmallCategoryRef.current) {
-                    e.preventDefault();
-                    firstSmallCategoryRef.current.focus();
+                  if (v === "") {
+                    setTempInvoiceValue({ ...tempInvoiceValue, pieces: null });
+                    return;
                   }
-                }
-              }}
-              className="w-full bg-neutral-200 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
-            />
-          </div>
 
-          {/* 修正度 */}
-          <div className="col-span-2">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><HiOutlineAdjustments />修正度</h3>
-            <Select
-              tabIndex={0}
-              value={tempInvoiceValue.degree ?? "100"}
-              onChange={(e) => {
-                setTempInvoiceValue({
-                  ...tempInvoiceValue,
-                  degree: e.target.value === "" ? null : Number(e.target.value),
-                });
-                calcAmount();
-              }}
-              className="w-full bg-neutral-200 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
-            >
-              <option value="">-</option>
-              <option value="50">50</option>
-              <option value="80">80</option>
-              <option value="120">120</option>
-            </Select>
-          </div>
+                  if (/\d+$/.test(v)) {    // 数字のみ許可
+                    setTempInvoiceValue({ ...tempInvoiceValue, pieces: Number(v) });
+                    // calcAmount();
+                  }
+                }}
+                pattern="[0-9]*"
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === "Tab") {
+                    if (e.shiftKey && firstSmallCategoryRef.current) {
+                      e.preventDefault();
+                      firstSmallCategoryRef.current.focus();
+                    }
+                  }
+                }}
+                className="w-full bg-neutral-100 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
+              />
+            </div>
 
-          {/* 仮請求額 */}
-          <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />仮請求額</h3>
-            <Input
-              tabIndex={-1}
-              type="number"
-              value={tempInvoiceValue.amount ?? 0}
-              readOnly
-              pattern="[0-9]*"
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md text-right pointer-events-none"
-            />
-          </div>
+            {/* 修正度 */}
+            <div className="col-span-2">
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><HiOutlineAdjustments />修正度</h3>
+              <Select
+                tabIndex={0}
+                value={tempInvoiceValue.degree ?? "100"}
+                onChange={(e) => {
+                  setTempInvoiceValue({
+                    ...tempInvoiceValue,
+                    degree: e.target.value === "" ? null : Number(e.target.value),
+                  });
+                  calcAmount();
+                }}
+                className="w-full bg-neutral-100 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
+              >
+                <option value="">-</option>
+                <option value="50">50</option>
+                <option value="80">80</option>
+                <option value="120">120</option>
+              </Select>
+            </div>
 
-          {/* 修正金額 */}
-          <div className="col-span-2">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />修正金額</h3>
-            <Input
-              tabIndex={0}
-              type="tel"
-              inputMode="numeric"
-              value={tempInvoiceValue.adjustment ?? ""}
-              onChange={(e) => {
-                const v = e.target.value;
+            {/* 修正金額 */}
+            <div className="col-span-2">
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><BiCalculator />修正金額</h3>
+              <Input
+                tabIndex={0}
+                type="tel"
+                inputMode="numeric"
+                value={tempInvoiceValue.adjustment ?? ""}
+                onChange={(e) => {
+                  const v = e.target.value;
 
-                if (v === "") {
-                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: null });
-                  return;
-                }
+                  if (v === "") {
+                    setTempInvoiceValue({ ...tempInvoiceValue, adjustment: null });
+                    return;
+                  }
 
-                //"-" 単体の入力も許可するならここでハンドリング
-                if (v === "-") {
-                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: "-" as unknown as number });
-                  return;
-                }
+                  //"-" 単体の入力も許可するならここでハンドリング
+                  if (v === "-") {
+                    setTempInvoiceValue({ ...tempInvoiceValue, adjustment: "-" as unknown as number });
+                    return;
+                  }
 
-                if (/^-?\d+$/.test(v)) {    // 数字 or -数字のみ許可
-                  setTempInvoiceValue({ ...tempInvoiceValue, adjustment: Number(v) });
-                  // calcAmount();
-                }
-              }}
-              pattern="[0-9]*"
-              className={`
-                w-full bg-neutral-200 py-1 px-2 rounded-md text-right focus:outline-2 focus:outline-neutral-500
+                  if (/^-?\d+$/.test(v)) {    // 数字 or -数字のみ許可
+                    setTempInvoiceValue({ ...tempInvoiceValue, adjustment: Number(v) });
+                    // calcAmount();
+                  }
+                }}
+                pattern="[0-9]*"
+                className={`
+                w-full bg-neutral-100 py-1 px-2 rounded-md text-right focus:outline-2 focus:outline-neutral-500
                 ${tempInvoiceValue.adjustment && tempInvoiceValue.adjustment < 0 ? "text-red-600" : ""}
               `}
+              />
+            </div>
+
+            {/* 仮請求額 */}
+            <div className="col-span-3 pr-6 relative after:content-['▶'] after:text-neutral-400 after:absolute after:right-0 after:bottom-1">
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><BiCalculator />仮請求額</h3>
+              <Input
+                tabIndex={-1}
+                type="number"
+                value={tempInvoiceValue.amount ?? 0}
+                readOnly
+                pattern="[0-9]*"
+                className="w-full text-xl font-bold leading-none text-neutral-700 border-b pb-0.5 px-2 text-right pointer-events-none"
+              />
+            </div>
+
+            {/* 本請求額 */}
+            <div className="col-span-3">
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><BiCalculator />本請求額</h3>
+              <Input
+                tabIndex={-1}
+                type="number"
+                value={tempInvoiceValue.total_amount ?? 0}
+                readOnly
+                pattern="[0-9]*"
+                className="w-full text-xl font-bold leading-none text-neutral-700 border-b pb-0.5 px-2 text-right pointer-events-none"
+              />
+            </div>
+          </div>
+
+          {/* 備考欄 */}
+          <div className="flex-1 p-2 rounded-md bg-neutral-200">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><LuNotebookPen />備考欄</h3>
+            <Textarea
+              tabIndex={0}
+              value={tempInvoiceValue.remarks ?? ""}
+              onChange={(e) => setTempInvoiceValue({
+                ...tempInvoiceValue,
+                remarks: e.target.value
+              })}
+              className="block w-full h-24 bg-neutral-100 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
             />
           </div>
 
-          {/* 本請求額 */}
-          <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><BiCalculator />本請求額</h3>
-            <Input
-              tabIndex={-1}
-              type="number"
-              value={tempInvoiceValue.total_amount ?? 0}
-              readOnly
-              pattern="[0-9]*"
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md text-right pointer-events-none"
-            />
-          </div>
         </div>
 
-        {/* 備考欄 */}
-        <div>
-          <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500"><LuNotebookPen />備考欄</h3>
-          <Textarea
-            tabIndex={0}
-            rows={4}
-            value={tempInvoiceValue.remarks ?? ""}
-            onChange={(e) => setTempInvoiceValue({
-              ...tempInvoiceValue,
-              remarks: e.target.value
-            })}
-            className="w-full bg-neutral-200 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
-          />
-        </div>
       </div>
 
       {/* 確定ボタンたち */}
