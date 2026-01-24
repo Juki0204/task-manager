@@ -508,7 +508,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
   useEffect(() => {
     if (!tempInvoiceValue) return;
-    if (!unitPrice) return;
+    if (unitPrice === null || unitPrice === undefined) return;
     calcAmount();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
