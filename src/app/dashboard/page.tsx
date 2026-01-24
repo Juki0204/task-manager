@@ -264,7 +264,7 @@ export default function DashboardPage() {
 
           <div className="flex justify-center bg-neutral-100 rounded-xl p-4">
             <RequestGraph
-              size={260}
+              size={240}
               thickness={42}
               title="総依頼件数"
               segments={[
@@ -278,9 +278,9 @@ export default function DashboardPage() {
 
 
           <h3 className="font-bold text-center mt-5 mb-2">店舗別依頼数</h3>
-          <dl className="grid grid-cols-[100px_1fr] bg-neutral-100 rounded-xl p-4">
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">難波秘密</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+          <dl className="grid grid-cols-[80px_1fr] palt bg-neutral-100 rounded-xl p-4">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">難波</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "難波秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -290,8 +290,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "難波秘密倶楽部").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">新大阪秘密</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">新大阪</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "新大阪秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -301,8 +301,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "新大阪秘密倶楽部").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">谷町秘密</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">谷町</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -312,8 +312,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "谷町秘密倶楽部").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">谷町ゴールデン</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">谷町G</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町人妻ゴールデン").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -323,8 +323,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "谷町人妻ゴールデン").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">梅田人妻</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">梅田</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -334,8 +334,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">梅田ゴールデン</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">梅田G</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田ゴールデン").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -345,8 +345,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "梅田ゴールデン").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">中洲秘密</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">中洲</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "中洲秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -356,8 +356,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "中洲秘密倶楽部").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">玉乱堂</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">玉乱堂</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-l-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "快楽玉乱堂").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -367,8 +367,8 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "快楽玉乱堂").length}件
             </dd>
 
-            <dt className="p-1.75 font-bold text-[13px] text-center tracking-wider">奥様クラブ</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold rounded-tr-md">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify]">奥様</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "奥様クラブ").length) / tasks.length) * 200)}%` }}
                 className={`
@@ -397,7 +397,7 @@ export default function DashboardPage() {
                   <p className="text-blue-700 text-xs cursor-pointer hover:opacity-80" onClick={() => router.push("/release-notes")}>過去の更新履歴はこちら</p>
                 </hgroup>
                 <div
-                  className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 [&_p]:!text-black overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
+                  className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_p]:!text-black overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
                   dangerouslySetInnerHTML={{
                     __html: marked(releaseNotes[0].content ?? ""),
                   }}
@@ -408,7 +408,7 @@ export default function DashboardPage() {
 
           <div className="w-full h-full bg-neutral-200 p-6 rounded-2xl">
             <h3 className="font-bold tracking-widest px-1 pb-1 mb-1 border-b border-neutral-400">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
-            <p className="tracking-wider leading-normal text-xs p-1 mb-1">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(ここではクリックしても詳細確認はできません)</p>
+            <p className="tracking-wider leading-normal text-xs p-1 mb-1 palt">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(ここではクリックしても詳細確認はできません)</p>
             <div className="w-200 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               <PriorityTasks />
             </div>
