@@ -410,7 +410,7 @@ export default function DashboardPage() {
           <div className="w-full h-full bg-neutral-200 p-6 rounded-2xl">
             <h3 className="font-bold tracking-widest px-1 pb-1 mb-1 border-b border-neutral-400">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
             <p className="tracking-wider leading-normal text-xs p-1 mb-1 palt">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(ここではクリックしても詳細確認はできません)</p>
-            <div className="w-full h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+            <div className="w-200 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               <PriorityTasks />
             </div>
           </div>
