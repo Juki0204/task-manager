@@ -66,7 +66,7 @@ export default function PersonalTaskPage() {
 
   const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
     setMenu({ visible: true, x: e.pageX, y: e.pageY, taskId, taskSerial });
-    console.log(e);
+    // console.log(e);
   }
 
   const handleCloseContextMenu = () => {
@@ -88,10 +88,11 @@ export default function PersonalTaskPage() {
       .eq("locked_by_id", user.id);
 
     if (error) {
-      console.log("unlock failed");
-    } else {
-      console.log("unlocked task: taskId =", activeTask.id);
+      console.error("unlock failed");
     }
+    // else {
+    //   console.log("unlocked task: taskId =", activeTask.id);
+    // }
   }
 
   const mouseSensor = useSensor(MouseSensor, {
@@ -127,7 +128,7 @@ export default function PersonalTaskPage() {
       const taskId = active.id as string;
       const newStatus = over.id as string;
       const prevStatus = active.data.current?.initStatus;
-      console.log(active, over);
+      // console.log(active, over);
 
       const startContainer = activeContainerId; //ドラッグ開始エリア検知
 

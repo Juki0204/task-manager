@@ -101,7 +101,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
       return;
     }
 
-    console.log("locked task: taskId =", task.id);
+    // console.log("locked task: taskId =", task.id);
     onEdit(task);
   }
 
@@ -150,7 +150,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
     if (updateError) {
       console.error(`Failed to update important_task_id for user ${user.id}:`, updateError);
     } else {
-      console.log("important_task_id updated:", updatedIds);
+      // console.log("important_task_id updated:", updatedIds);
 
       if (currentIds.includes(taskId)) {
         // 削除モード
@@ -187,7 +187,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
     const check = () => {
       const sc = el.scrollHeight > el.clientHeight;
       setHasScrollbar(sc);
-      console.log(sc);
+      // console.log(sc);
     };
 
     check();

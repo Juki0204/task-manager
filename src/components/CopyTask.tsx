@@ -268,7 +268,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
     const check = () => {
       const sc = el.scrollHeight > el.clientHeight;
       setHasScrollbar(sc);
-      console.log(sc);
+      // console.log(sc);
     };
 
     check();

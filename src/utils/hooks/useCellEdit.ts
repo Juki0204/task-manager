@@ -274,9 +274,10 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
       }
     } catch (err) {
       console.error("handleSave関数の処理を完了できませんでした:", err);
-    } finally {
-      console.log("請求データの更新が完了しました。");
     }
+    // finally {
+    //   console.log("請求データの更新が完了しました。");
+    // }
 
     const { error: delErr } = await supabase
       .from("invoice_editing_state")

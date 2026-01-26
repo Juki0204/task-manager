@@ -77,13 +77,13 @@ export function useTaskLock(taskId: string, currentUser: { id: string; name: str
     // サブスク開始
     channel.subscribe((status) => {
       if (status === "SUBSCRIBED") {
-        console.log("Presence subscribed:", taskId);
+        // console.log("Presence subscribed:", taskId);
       }
     });
 
     // 離脱を検知
     channel.on("presence", { event: "leave" }, async ({ key }) => {
-      console.log("User left:", key);
+      // console.log("User left:", key);
 
       // DB側のロック解除
       const { error } = await supabase

@@ -53,7 +53,7 @@ export default function AddTask() {
 
   const { syncInvoiceWithTask } = useInvoiceSync();
 
-  console.log(user);
+  // console.log(user);
 
   const getData = async () => {
     //クライアント一覧取得
@@ -275,7 +275,7 @@ export default function AddTask() {
     const check = () => {
       const sc = el.scrollHeight > el.clientHeight;
       setHasScrollbar(sc);
-      console.log(sc);
+      // console.log(sc);
     };
 
     check();

@@ -63,10 +63,11 @@ export default function CompletedTaskPage() {
       .eq("locked_by_id", user.id);
 
     if (error) {
-      console.log("unlock failed");
-    } else {
-      console.log("unlocked task: taskId =", activeTask.id);
+      console.error("unlock failed");
     }
+    // else {
+    //   console.log("unlocked task: taskId =", activeTask.id);
+    // }
   }
 
   const getTasks = async (year: string, month: string) => {

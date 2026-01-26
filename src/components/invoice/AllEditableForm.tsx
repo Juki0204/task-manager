@@ -365,7 +365,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       const temporaryAmount = unitPrice * pieces * mediaFactor * (degree * 0.01)
       const totalAmount = temporaryAmount + adjustment;
 
-      console.log(totalAmount);
+      // console.log(totalAmount);
       return {
         ...prev,
         amount: temporaryAmount,
@@ -477,7 +477,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
       currentPrice.category
     );
 
-    console.log(result);
+    // console.log(result);
 
     if (!result) return;
 
@@ -1116,7 +1116,7 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
         <button
           disabled={!isDirty || isSaving}
           onClick={() => {
-            console.log(tempInvoiceValue);
+            // console.log(tempInvoiceValue);
             saveAllValue();
           }}
           className="w-full col-span-2 px-4 py-2 leading-none tracking-wider bg-sky-600 text-white rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"

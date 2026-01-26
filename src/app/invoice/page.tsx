@@ -310,7 +310,7 @@ export default function InvoicePage() {
   }, [invoices, filters.assignees]);
 
   useEffect(() => {
-    console.log(currentYear, currentMonth);
+    // console.log(currentYear, currentMonth);
     getInvoice(currentYear, currentMonth);
   }, [currentMonth, currentYear]);
 

@@ -247,7 +247,7 @@ export function useTaskRealtime(user: UserData) {
     //タブ復帰：同期だけ（取りこぼし補完）
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        console.log("タブ復帰 → 再同期しました");
+        // console.log("タブ復帰 → 再同期しました");
         getTasks();
         // toast.success("タスクの同期が完了しました。");
       }

@@ -24,7 +24,7 @@ export default function FilterResetWatcher() {
 
     if (shouldReset) {
       resetFilters();
-      console.log(`[FilterResetWatcher] reset triggered on: ${pathname}`);
+      // console.log(`[FilterResetWatcher] reset triggered on: ${pathname}`);
     }
   }, [pathname, resetFilters]);
 

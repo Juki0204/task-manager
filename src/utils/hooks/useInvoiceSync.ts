@@ -90,7 +90,7 @@ export function useInvoiceSync() {
           .eq("id", taskId);
 
         if (deleteError) console.error("invoice削除失敗:", deleteError);
-        else console.log("invoiceから削除しました");
+        // else console.log("invoiceから削除しました");
       }
     } catch (err) {
       console.error("同期エラー:", err);

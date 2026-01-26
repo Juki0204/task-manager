@@ -18,7 +18,7 @@ interface deadline {
 }
 
 export function useTaskRealtime(user: UserData) {
-  console.log("useTaskRealtime init");
+  // console.log("useTaskRealtime init");
 
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [deadlineList, setDeadlineList] = useState<{ task_id: string, date: string }[]>([]);
@@ -155,7 +155,7 @@ export function useTaskRealtime(user: UserData) {
 
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        console.log("タブ復帰 → 再同期しました");
+        // console.log("タブ復帰 → 再同期しました");
         getTasks();
         toast.success(`タスクの同期が完了しました。`);
       }

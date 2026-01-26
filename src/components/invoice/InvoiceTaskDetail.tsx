@@ -33,7 +33,7 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
     const check = () => {
       const sc = el.scrollHeight > el.clientHeight;
       setHasScrollbar(sc);
-      console.log(sc);
+      // console.log(sc);
     };
 
     check();

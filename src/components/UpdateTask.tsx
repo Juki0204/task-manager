@@ -243,7 +243,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
             : [];
           const updatedIds = Array.from(new Set([...currentIds, taskId]));
 
-          console.log(`Updating user ${user.id} with ${updatedIds.length} unread tasks`);
+          // console.log(`Updating user ${user.id} with ${updatedIds.length} unread tasks`);
 
           const { error: updateError } = await supabase
             .from("users")
@@ -323,7 +323,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
     const check = () => {
       const sc = el.scrollHeight > el.clientHeight;
       setHasScrollbar(sc);
-      console.log(sc);
+      // console.log(sc);
     };
 
     check();

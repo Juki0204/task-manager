@@ -92,7 +92,7 @@ export default function DashboardPage() {
     const fromDate = `${year}-${month}-01`;
     const toDate = `${year}-${month}-31`;
 
-    console.log(fromDate, toDate);
+    // console.log(fromDate, toDate);
 
     const { data } = await supabase
       .from('tasks')
@@ -113,14 +113,14 @@ export default function DashboardPage() {
     setDeadline(deadline);
 
     const todayDeadlineTaskIds = deadline.filter((d) => d.date === now.toLocaleDateString("sv-SE")).map(d => d.task_id);
-    console.log(todayDeadlineTaskIds);
+    // console.log(todayDeadlineTaskIds);
 
     const { data: deadlineTasks } = await supabase
       .from('tasks')
       .select('*')
       .in("id", todayDeadlineTaskIds);
 
-    console.log(deadlineTasks);
+    // console.log(deadlineTasks);
     if (!deadlineTasks) return;
 
     setTodayDeadlineTasks(deadlineTasks);
@@ -164,10 +164,11 @@ export default function DashboardPage() {
       .eq("locked_by_id", user.id);
 
     if (error) {
-      console.log("unlock failed");
-    } else {
-      console.log("unlocked task: taskId =", activeTask.id);
+      console.error("unlock failed");
     }
+    // else {
+    //   console.log("unlocked task: taskId =", activeTask.id);
+    // }
   }
 
   // 既読処理関数
@@ -249,7 +250,7 @@ export default function DashboardPage() {
       <div className="flex gap-4 p-2 h-[780px]">
 
         {/* 今月の依頼状況 */}
-        <div className="w-100 h-full bg-neutral-200 p-4 rounded-2xl">
+        <div className="w-88 h-full bg-neutral-200 p-4 rounded-2xl">
           <h3 className="font-bold text-center mb-2">今月の依頼状況</h3>
           {/* <dl className="grid grid-cols-3">
             <dt className="col-span-2 p-2 bg-neutral-600 text-white font-bold text-center tracking-wider border border-neutral-800 rounded-tl-md">総依頼件数</dt>
@@ -378,7 +379,7 @@ export default function DashboardPage() {
               {tasks.filter(t => t.client === "奥様クラブ").length}件
             </dd>
           </dl>
-          <p className="text-xs p-0.5 mt-1 text-center">※社内案件数は度外視の為、あくまで目安の数値になります。</p>
+          <p className="text-xs p-0.5 mt-1 text-center">※社内案件は度外視の為、数値はあくまで目安です。</p>
         </div>
 
         <div className="flex flex-col flex-1 gap-4">
@@ -409,7 +410,7 @@ export default function DashboardPage() {
           <div className="w-full h-full bg-neutral-200 p-6 rounded-2xl">
             <h3 className="font-bold tracking-widest px-1 pb-1 mb-1 border-b border-neutral-400">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
             <p className="tracking-wider leading-normal text-xs p-1 mb-1 palt">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(ここではクリックしても詳細確認はできません)</p>
-            <div className="w-200 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+            <div className="w-full h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               <PriorityTasks />
             </div>
           </div>

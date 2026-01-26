@@ -67,9 +67,10 @@ export default function AllTaskPage() {
 
     if (error) {
       console.log("unlock failed");
-    } else {
-      console.log("unlocked task: taskId =", activeTask.id);
     }
+    // else {
+    //   console.log("unlocked task: taskId =", activeTask.id);
+    // }
   }
 
   const filteredTaskList = useMemo(() => {
