@@ -161,9 +161,9 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
     const ok = await lockedTaskHandler();
     if (!ok) return;
 
-    if (!editingUser) {
+    // if (!) {
       onEdit(task);
-    }
+    // }
   }
 
   const handleSingleClick = () => {
@@ -257,3 +257,4 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
   )
 
 }
+
