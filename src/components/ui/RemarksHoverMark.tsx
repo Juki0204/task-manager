@@ -7,6 +7,7 @@ import { LuNotebookPen } from "react-icons/lu";
 type RemarksHoverProps = {
   // isUnread: boolean;
   children: React.ReactNode;
+  handleHover: (hover: boolean) => void;
   onMarkRead?: () => void;
   openDelayMs?: number;
   readAfterMs?: number;
@@ -17,6 +18,7 @@ export function RemarksHoverMark({
   // isUnread,
   children,
   onMarkRead,
+  handleHover,
   openDelayMs = 200,
   readAfterMs = 3000,
   className,
@@ -91,6 +93,7 @@ export function RemarksHoverMark({
           //現在カーソル位置（ビューポート座標）
           const point = { x: e.clientX, y: e.clientY };
           scheduleOpen(point);
+          handleHover(true);
         }}
         onMouseMove={(e) => {
           //開いてる間はカーソル追従させる
@@ -101,6 +104,7 @@ export function RemarksHoverMark({
           isHoveringTrigger.current = false;
           //すぐ閉じず、popup側に入った可能性があるので少し待ってから判定
           window.setTimeout(() => closeIfNotHovering(), 0);
+          handleHover(true);
         }}
         aria-label="備考を表示"
       >

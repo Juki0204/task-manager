@@ -3,7 +3,7 @@ import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
 import { MdAlarm, MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useDraggable } from "@dnd-kit/core";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
@@ -66,6 +66,7 @@ export default function PersonalCard({
 
   const [hasRemarksInfo, setHasRemarksInfo] = useState<boolean>(false);
   // const [isUnread, setIsUnread] = useState<boolean>(false);
+  const [hover, setHover] = useState<boolean>(false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
@@ -219,6 +220,14 @@ export default function PersonalCard({
     return true;
   }
 
+  const remarksHtml = useMemo(() => {
+    if (!hover) return null;
+    if (!task.remarks) return null;
+    if (!hasRemarksInfo) return null;
+
+    return tiptapMarkdownToHtml(task.remarks);
+  }, [hover, task.remarks, hasRemarksInfo]);
+
 
   useEffect(() => {
     definePriorityStyle(task.priority);
@@ -248,7 +257,7 @@ export default function PersonalCard({
       return false;
     }
 
-    console.log("locked task: taskId =", task.id);
+    // console.log("locked task: taskId =", task.id);
     return true;
   }
 
@@ -333,8 +342,10 @@ export default function PersonalCard({
           <HighlightText text={task.title} keyword={filters.searchKeywords} />
 
           {hasRemarksInfo && task.remarks && (
-            <RemarksHoverMark className="absolute inset-y-0 right-0">
-              <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
+            <RemarksHoverMark handleHover={setHover} className="absolute inset-y-0 right-0">
+              {hover && remarksHtml && (
+                <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
+              )}
             </RemarksHoverMark>
           )}
         </h3>

@@ -4,7 +4,7 @@ import { MdAlarm, MdMailOutline } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { BsPersonCheck } from "react-icons/bs";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import HighlightText from "./ui/HighlightText";
@@ -33,6 +33,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
 
   const [hasRemarksInfo, setHasRemarksInfo] = useState<boolean>(false);
   // const [isUnread, setIsUnread] = useState<boolean>(false);
+  const [hover, setHover] = useState<boolean>(false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
@@ -115,6 +116,14 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
     return true;
   }
 
+  const remarksHtml = useMemo(() => {
+    if (!hover) return null;
+    if (!task.remarks) return null;
+    if (!hasRemarksInfo) return null;
+
+    return tiptapMarkdownToHtml(task.remarks);
+  }, [hover, task.remarks, hasRemarksInfo]);
+
 
   useEffect(() => {
     definePriorityStyle(task.priority);
@@ -144,7 +153,7 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
       return false;
     }
 
-    console.log("locked task: taskId =", task.id);
+    // console.log("locked task: taskId =", task.id);
     return true;
   }
 
@@ -240,14 +249,10 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         <div className="relative line-clamp-2 w-full text-sm pr-18 truncate [grid-area:dis]">
           <HighlightText text={task.description} keyword={filters.searchKeywords} />
           {hasRemarksInfo && task.remarks && (
-            <RemarksHoverMark className="absolute inset-y-0 right-4">
-              {/* <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} /> */}
-              <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} >
-                markdown変換処理停止中、現在閲覧不可。<br />
-                該当処理が著しくページの閲覧パフォーマンスを下げているのが判明した為、一旦処理自体を停止しています。<br />
-                近日中に修正するので、それまでは一旦この機能は無効化しています。<br />
-                ご不便をおかけしますが、復旧まで今しばらくお待ちください。
-              </div>
+            <RemarksHoverMark handleHover={setHover} className="absolute inset-y-0 right-4">
+              {hover && remarksHtml && (
+                <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
+              )}
             </RemarksHoverMark>
           )}
         </div>
