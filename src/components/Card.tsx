@@ -28,7 +28,7 @@ interface CardPropd {
 
 
 export default function Card({ task, user, unreadIds, onClick, onContextMenu, onEdit, deadlineList, ...props }: CardPropd) {
-  const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
+  // const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
 
   const [hasRemarksInfo, setHasRemarksInfo] = useState<boolean>(false);
@@ -255,4 +255,5 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
       </div>
     </div>
   )
+
 }
