@@ -241,7 +241,8 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
           <HighlightText text={task.description} keyword={filters.searchKeywords} />
           {hasRemarksInfo && task.remarks && (
             <RemarksHoverMark className="absolute inset-y-0 right-4">
-              <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
+              {/* <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} /> */}
+              <div>テスト中です。現在閲覧不可</div>
             </RemarksHoverMark>
           )}
         </div>
@@ -257,4 +258,5 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
   )
 
 }
+
 
