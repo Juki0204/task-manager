@@ -161,9 +161,9 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
     const ok = await lockedTaskHandler();
     if (!ok) return;
 
-    // if (!) {
+    if (!task.locked_by_id) {
       onEdit(task);
-    // }
+    }
   }
 
   const handleSingleClick = () => {
@@ -242,7 +242,12 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
           {hasRemarksInfo && task.remarks && (
             <RemarksHoverMark className="absolute inset-y-0 right-4">
               {/* <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} /> */}
-              <div>テスト中です。現在閲覧不可</div>
+              <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} >
+                markdown変換処理停止中、現在閲覧不可。<br />
+                該当処理が著しくページの閲覧パフォーマンスを下げているのが判明した為、一旦処理自体を停止しています。<br />
+                近日中に修正するので、それまでは一旦この機能は無効化しています。<br />
+                ご不便をおかけしますが、復旧まで今しばらくお待ちください。
+              </div>
             </RemarksHoverMark>
           )}
         </div>
@@ -258,5 +263,6 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
   )
 
 }
+
 
 
