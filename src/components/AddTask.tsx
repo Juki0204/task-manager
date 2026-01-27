@@ -123,8 +123,8 @@ export default function AddTask() {
 
   //ステートのリセット
   const resetForm = () => {
-    setClient("");
-    setRequester("");
+    setClient(clientNameList[0]);
+    //setRequester("");
     setTaskTitle("");
     setTaskDescription("");
     setRequestDate(new Date().toLocaleDateString("sv-SE"));
@@ -433,3 +433,4 @@ export default function AddTask() {
     </>
   );
 }
+
