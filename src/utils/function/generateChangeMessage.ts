@@ -7,7 +7,7 @@ export function generateChangeMessage(diff: DiffResult, task: Task): string | nu
 
   const templates: Record<string, (o: string | null | undefined, n: string | null | undefined) => string | null> = {
     client: (o, n) => `クライアントを「${o}」から「${n}」に変更`,
-    require: (o, n) => `依頼者を「${o}」から「${n}」に変更`,
+    requester: (o, n) => `依頼者を「${o}」から「${n}」に変更`,
     title: (o, n) => `作業タイトルを「${o}」から「${n}」に変更`,
     description: (o, n) => `作業内容を「${o}」から「${n}」に変更`,
     request_date: (o, n) => `依頼日を「${o}」から「${n}」に変更`,
@@ -30,4 +30,5 @@ export function generateChangeMessage(diff: DiffResult, task: Task): string | nu
   const combined = fragments.map((frag, index) => index === fragments.length - 1 ? `${frag}しました。` : `${frag}し、`).join("");
 
   return `【${serial}】${combined}`;
+
 }
