@@ -234,6 +234,7 @@ body {
   & .hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.45)}
   & .taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.5)}
   & .nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.45)}
+  & .okaBg {background:conic-gradient(rgb(39, 125, 165)) no-repeat 0 50% / 5px 100%, rgba(39, 125, 165, .45)}
   & .defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.45)}
 }
 
