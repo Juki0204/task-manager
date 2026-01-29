@@ -274,7 +274,8 @@ export default function Header() {
                     { id: 3, label: "谷" },
                     { id: 4, label: "田口" },
                     { id: 5, label: "西谷" },
-                    { id: 6, label: "未担当" },
+                    { id: 6, label: "岡本" },
+                    { id: 7, label: "未担当" },
                   ]}
                   selectedLabels={filters.assignees}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
@@ -337,4 +338,5 @@ export default function Header() {
       )}
     </>
   )
+
 }
