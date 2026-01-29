@@ -153,6 +153,7 @@ export default function PersonalCard({
     "浜口": { border: "hamaBorder", bg: "hamaBg" },
     "田口": { border: "taguBorder", bg: "taguBg" },
     "西谷": { border: "nishiBorder", bg: "nishiBg" },
+    "岡本": { border: "okaBorder", bg: "okaBg" },
   } as const;
 
   function definePersonalColor(manager: string) {
@@ -382,3 +383,4 @@ export default function PersonalCard({
     </div>
   )
 }
+
