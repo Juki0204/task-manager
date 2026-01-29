@@ -225,7 +225,7 @@ body {
 .hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.25)}
 .taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.25)}
 .nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.25)}
-.okaBg {background:conic-gradient(rgb(33, 167, 231)) 0 / 5px 100% no-repeat, rgb(33, 167, 231,.3)}
+.okaBg {background:conic-gradient(rgb(33, 167, 231)) 0 / 5px 100% no-repeat, rgb(33, 167, 231,.25)}
 .defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.25)}
 
 .inprogress {
@@ -234,7 +234,7 @@ body {
   & .hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.45)}
   & .taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.5)}
   & .nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.45)}
-  & .okaBg {background:conic-gradient(rgb(33, 167, 231)) no-repeat 0 50% / 5px 100%, rgb(33, 167, 231,.55)}
+  & .okaBg {background:conic-gradient(rgb(33, 167, 231)) no-repeat 0 50% / 5px 100%, rgb(33, 167, 231,.5)}
   & .defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.45)}
 }
 
