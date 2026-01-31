@@ -214,9 +214,10 @@ export default function DashboardPage() {
                       <div
                         key={t.id}
                         onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
-                        className="rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
+                        className="flex gap-4 justify-between rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
                       >
-                        【{t.serial}】 {t.title}
+                        <span>【{t.serial}】 {t.title}</span>
+                        <span className="grid place-content-center w-15 whitespace-nowrap text-neutral-200 bg-neutral-400 text-xs rounded-md text-center">{t.status}</span>
                       </div>
                     ))}
                   </div>
