@@ -251,10 +251,10 @@ export default function DashboardPage() {
       <div className="flex gap-4 p-2 h-[780px]">
 
         {/* 今月の依頼状況 */}
-        <div className="w-88 h-full bg-neutral-600 p-4 rounded-xl">
+        <div className="w-88 h-full bg-neutral-500/70 p-4 rounded-xl">
           <h3 className="font-bold text-center mb-2 text-neutral-100">今月の依頼状況</h3>
           {/* <dl className="grid grid-cols-3">
-            <dt className="col-span-2 p-2 bg-neutral-600 text-white font-bold text-center tracking-wider border border-neutral-800 rounded-tl-md">総依頼件数</dt>
+            <dt className="col-span-2 p-2 bg-neutral-500/70 text-white font-bold text-center tracking-wider border border-neutral-800 rounded-tl-md">総依頼件数</dt>
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 text-right font-bold rounded-tr-md">{tasks.length}件</dd>
             <dt className="col-span-2 p-2 bg-slate-600 text-white font-bold text-center tracking-wider border border-neutral-800 border-t-0">未着手</dt>
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 border-t-0 text-right font-bold">{tasks.filter(t => t.status === "未着手").length}件</dd>
@@ -385,7 +385,7 @@ export default function DashboardPage() {
 
         <div className="flex flex-col flex-1 gap-4">
           {/* 最新のリリースノート */}
-          <div className="w-full p-4 rounded-xl bg-neutral-600">
+          <div className="w-full p-4 rounded-xl bg-neutral-500/70">
             {loading ? (
               <p className="h-99.25 grid place-content-center">loading...</p>
             ) : (
@@ -410,7 +410,7 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="w-full h-full bg-neutral-600 p-4 rounded-xl">
+          <div className="w-full h-full bg-neutral-500/70 p-4 rounded-xl">
             <h3 className="font-bold tracking-widest px-1 pb-2 text-neutral-100">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
             <div className="w-full h-[calc(100%-2rem)] p-3 bg-black/40 rounded-lg">
               <p className="tracking-wider leading-normal text-xs mb-2 palt text-neutral-100">「優先度が<span className="text-red-300 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-300 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-300 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-300 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(クリックで詳細を確認)</p>
@@ -422,7 +422,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 変更履歴ログ */}
-        <div className="w-160 h-full bg-neutral-600 p-4 rounded-xl relative">
+        <div className="w-160 h-full bg-neutral-500/70 p-4 rounded-xl relative">
           <h3 className="font-bold text-center mb-2 text-neutral-100">変更履歴ログ（直近50件）</h3>
           {/* {notes && notes.length > 0 ? (
             <div className="h-[calc(100%-1.5rem)] pr-3 text-sm overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
