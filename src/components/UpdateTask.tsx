@@ -104,6 +104,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
     if (users) {
       const nameList: string[] = [];
       users.forEach(user => {
+        if (user.name === "Administrator") return;
         nameList.push(user.name);
       });
       setUserNameList(nameList);

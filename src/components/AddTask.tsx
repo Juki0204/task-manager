@@ -79,6 +79,7 @@ export default function AddTask() {
     if (users) {
       const nameList: string[] = [];
       users.forEach(user => {
+        if (user.name === "Administrator") return;
         nameList.push(user.name);
       });
       setUserNameList(nameList);
