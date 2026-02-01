@@ -10,7 +10,7 @@ import { FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
 import { FaRegBuilding } from "react-icons/fa6";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 
-export default function PriorityTasks() {
+export default function PriorityTasks({ onClick }: { onClick: (t: Task) => void; }) {
   const { user } = useAuth();
   const { taskList, deadlineList } = useTaskRealtime(user ?? null);
   const [priorityTasks, setPriorityTasks] = useState<Task[]>([]);
@@ -116,13 +116,13 @@ export default function PriorityTasks() {
   );
 
   if (isReady && priorityTasks.length === 0) return (
-    <p className="text-center h-full grid place-content-center tracking-widest">現時点で優先すべきタスクはありません。各々のタスクを進行しましょう。</p>
+    <p className="text-center h-full grid place-content-center tracking-widest text-neutral-100">現時点で優先すべきタスクはありません。各々のタスクを進行しましょう。</p>
   );
 
   return (
     <div className="flex gap-2">
       {priorityTasks.length > 0 && priorityTasks.map(pt => (
-        <PriorityTaskCard key={pt.id} task={pt} annotation={createAnnotation(pt)} deadline={deadlineList.filter(d => d.task_id === pt.id)[0]?.date ?? null} />
+        <PriorityTaskCard key={pt.id} task={pt} onClick={(pt) => onClick(pt)} annotation={createAnnotation(pt)} deadline={deadlineList.filter(d => d.task_id === pt.id)[0]?.date ?? null} />
       ))}
     </div>
   )
@@ -130,7 +130,7 @@ export default function PriorityTasks() {
 
 
 
-function PriorityTaskCard({ task, deadline, annotation }: { task: Task, deadline: string | null, annotation: string | null }) {
+function PriorityTaskCard({ task, deadline, annotation, onClick }: { task: Task, deadline: string | null, annotation: string | null, onClick: (t: Task) => void; }) {
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
@@ -187,7 +187,8 @@ function PriorityTaskCard({ task, deadline, annotation }: { task: Task, deadline
   return (
     <div
       // onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className="bg-neutral-800 rounded-lg min-w-90 drop-shadow-md drop-shadow-gray-950/30">
+      onClick={() => onClick(task)}
+      className="bg-black/40 rounded-lg min-w-90 drop-shadow-md drop-shadow-gray-950/30 cursor-pointer hover:bg-neutral-800/50">
 
       {/* カード（概要） */}
       <div
@@ -230,7 +231,7 @@ function PriorityTaskCard({ task, deadline, annotation }: { task: Task, deadline
           {task.description}
         </div>
 
-        <div className="p-2 rounded-md overflow-hidden relative before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
+        <div className="p-2 rounded-md overflow-hidden relative before:bg-white/20 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
           <div className="grid gap-2 text-sm grid-cols-6">
             <div className="col-span-3 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 【{task.requester}】</div>
             <div className="col-span-3 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>

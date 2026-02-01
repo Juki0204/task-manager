@@ -251,8 +251,8 @@ export default function DashboardPage() {
       <div className="flex gap-4 p-2 h-[780px]">
 
         {/* 今月の依頼状況 */}
-        <div className="w-88 h-full bg-neutral-200 p-4 rounded-2xl">
-          <h3 className="font-bold text-center mb-2">今月の依頼状況</h3>
+        <div className="w-88 h-full bg-neutral-600 p-4 rounded-xl">
+          <h3 className="font-bold text-center mb-2 text-neutral-100">今月の依頼状況</h3>
           {/* <dl className="grid grid-cols-3">
             <dt className="col-span-2 p-2 bg-neutral-600 text-white font-bold text-center tracking-wider border border-neutral-800 rounded-tl-md">総依頼件数</dt>
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 text-right font-bold rounded-tr-md">{tasks.length}件</dd>
@@ -264,7 +264,7 @@ export default function DashboardPage() {
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 border-t-0 text-right font-bold rounded-br-md">{tasks.filter(t => t.status === "完了").length}件</dd>
           </dl> */}
 
-          <div className="flex justify-center bg-neutral-100 rounded-xl p-4">
+          <div className="flex justify-center bg-black/40 text-neutral-100 rounded-xl p-4">
             <RequestGraph
               size={240}
               thickness={42}
@@ -279,147 +279,151 @@ export default function DashboardPage() {
           </div>
 
 
-          <h3 className="font-bold text-center mt-5 mb-2">店舗別依頼数</h3>
-          <dl className="grid grid-cols-[80px_1fr] palt bg-neutral-100 rounded-xl p-4">
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">難波</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+          <h3 className="font-bold text-center mt-5 mb-2 text-neutral-100">店舗別依頼数</h3>
+          <dl className="grid grid-cols-[80px_1fr] palt bg-black/40 rounded-xl p-4 text-neutral-100">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">難波</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "難波秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "難波秘密倶楽部").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "難波秘密倶楽部").length}件</span>
             </dd>
 
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">新大阪</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">新大阪</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "新大阪秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "新大阪秘密倶楽部").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "新大阪秘密倶楽部").length}件</span>
             </dd>
 
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">谷町</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">谷町</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "谷町秘密倶楽部").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "谷町秘密倶楽部").length}件</span>
             </dd>
 
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">谷町G</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">谷町G</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町人妻ゴールデン").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "谷町人妻ゴールデン").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "谷町人妻ゴールデン").length}件</span>
             </dd>
 
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">梅田</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">梅田</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length}件</span>
             </dd>
 
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">梅田G</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">梅田G</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田ゴールデン").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "梅田ゴールデン").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "梅田ゴールデン").length}件</span>
             </dd>
 
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">中洲</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">中洲</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "中洲秘密倶楽部").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "中洲秘密倶楽部").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "中洲秘密倶楽部").length}件</span>
             </dd>
 
-            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-200">玉乱堂</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-l-neutral-800 border-l text-right font-bold border-b border-b-neutral-200">
+            <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">玉乱堂</dt>
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "快楽玉乱堂").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "快楽玉乱堂").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "快楽玉乱堂").length}件</span>
             </dd>
 
             <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify]">奥様</dt>
-            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-800 border-l text-right font-bold">
+            <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold">
               <div
                 style={{ width: `${Math.round(((tasks.filter(t => t.client === "奥様クラブ").length) / tasks.length) * 200)}%` }}
                 className={`
-                bg-green-800
+                bg-[#4c9759]
                 `}
               />
-              {tasks.filter(t => t.client === "奥様クラブ").length}件
+              <span className="w-18">{tasks.filter(t => t.client === "奥様クラブ").length}件</span>
             </dd>
           </dl>
-          <p className="text-xs p-0.5 mt-1 text-center">※社内案件は度外視の為、数値はあくまで目安です。</p>
+          <p className="text-xs p-0.5 mt-1 text-center text-neutral-100">※社内案件は度外視の為、数値はあくまで目安です。</p>
         </div>
 
         <div className="flex flex-col flex-1 gap-4">
           {/* 最新のリリースノート */}
-          <div className="w-full bg-neutral-200 p-6 rounded-2xl">
+          <div className="w-full p-4 rounded-xl bg-neutral-600">
             {loading ? (
               <p className="h-99.25 grid place-content-center">loading...</p>
             ) : (
               <>
-                <hgroup className="flex gap-4 items-center justify-between w-full px-1 pb-1 mb-2 border-b border-neutral-400">
-                  <h3 className="flex gap-2 items-center font-bold tracking-widest">
+                <hgroup className="flex gap-4 items-center justify-between w-full px-1 pb-2">
+                  <h3 className="flex gap-2 items-center font-bold tracking-widest text-neutral-100">
                     リリースノート {releaseNotes[0].version.replaceAll("_", ".")}
                     <span className="text-xs py-0.5 px-2 rounded-md bg-red-800 text-white">最新版</span>
                     <span className="text-sm">Released on {releaseNotes[0].date}</span>
                   </h3>
-                  <p className="text-blue-700 text-xs cursor-pointer hover:opacity-80" onClick={() => router.push("/release-notes")}>過去の更新履歴はこちら</p>
+                  <p className="text-blue-300 text-xs cursor-pointer hover:opacity-80" onClick={() => router.push("/release-notes")}>過去の更新履歴はこちら</p>
                 </hgroup>
-                <div
-                  className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_p]:!text-black overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
-                  dangerouslySetInnerHTML={{
-                    __html: marked(releaseNotes[0].content ?? ""),
-                  }}
-                />
+                <div className="w-full h-[calc(100%-2rem)] p-3 bg-black/40 rounded-lg">
+                  <div
+                    className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_h2]:!text-neutral-100 [&_p]:!text-neutral-300 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
+                    dangerouslySetInnerHTML={{
+                      __html: marked(releaseNotes[0].content ?? ""),
+                    }}
+                  />
+                </div>
               </>
             )}
           </div>
 
-          <div className="w-full h-full bg-neutral-200 p-6 rounded-2xl">
-            <h3 className="font-bold tracking-widest px-1 pb-1 mb-1 border-b border-neutral-400">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
-            <p className="tracking-wider leading-normal text-xs p-1 mb-1 palt">「優先度が<span className="text-red-600 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-600 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-600 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-600 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(ここではクリックしても詳細確認はできません)</p>
-            <div className="w-200 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
-              <PriorityTasks />
+          <div className="w-full h-full bg-neutral-600 p-4 rounded-xl">
+            <h3 className="font-bold tracking-widest px-1 pb-2 text-neutral-100">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
+            <div className="w-full h-[calc(100%-2rem)] p-3 bg-black/40 rounded-lg">
+              <p className="tracking-wider leading-normal text-xs mb-2 palt text-neutral-100">「優先度が<span className="text-red-300 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-300 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-300 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-300 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(クリックで詳細を確認)</p>
+              <div className="w-194 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+                <PriorityTasks onClick={(t: Task) => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }} />
+              </div>
             </div>
           </div>
         </div>
 
         {/* 変更履歴ログ */}
-        <div className="w-160 h-full bg-neutral-200 p-6 rounded-2xl relative">
-          <h3 className="font-bold text-center mb-2">変更履歴ログ（直近50件）</h3>
+        <div className="w-160 h-full bg-neutral-600 p-4 rounded-xl relative">
+          <h3 className="font-bold text-center mb-2 text-neutral-100">変更履歴ログ（直近50件）</h3>
           {/* {notes && notes.length > 0 ? (
             <div className="h-[calc(100%-1.5rem)] pr-3 text-sm overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               {[...notes].reverse().map(note => (

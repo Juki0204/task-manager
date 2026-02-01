@@ -105,21 +105,21 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
           {/* ログ一覧表切り替えボタン */}
           <div className="flex gap-4 pr-2 pointer-events-auto">
             <ul className="flex gap-0.5 items-center z-50">
-              <li onClick={() => setViewerType("all")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/70 rounded-tl-md rounded-tr-md text-white text-sm cursor-pointer hover:opacity-100 ${viewerType === "all" ? "opacity-100 pointer-events-none" : "opacity-40"}`}>ALL</li>
-              <li onClick={() => setViewerType("added")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/70 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><AiOutlineFileAdd /><span className="text-sm">追加</span></li>
-              <li onClick={() => setViewerType("changed")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/70 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "changed" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FiEdit3 /><span className="text-sm">編集</span></li>
-              <li onClick={() => setViewerType("delete")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/70 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "delete" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FaRegTrashAlt /><span className="text-sm">削除</span></li>
+              <li onClick={() => setViewerType("all")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-sm cursor-pointer hover:opacity-100 ${viewerType === "all" ? "opacity-100 pointer-events-none" : "opacity-40"}`}>ALL</li>
+              <li onClick={() => setViewerType("added")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><AiOutlineFileAdd /><span className="text-sm">追加</span></li>
+              <li onClick={() => setViewerType("changed")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "changed" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FiEdit3 /><span className="text-sm">編集</span></li>
+              <li onClick={() => setViewerType("delete")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "delete" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FaRegTrashAlt /><span className="text-sm">削除</span></li>
             </ul>
           </div>
 
           {/* ログ一覧 */}
-          <div className="w-full bg-black/70 rounded-lg pl-3 pr-3 py-4 pointer-events-auto">
+          <div className="w-full bg-black/40 rounded-lg pl-3 pr-3 py-4 pointer-events-auto">
             <div
               ref={notesRef}
               className={`
               w-full overflow-y-auto text-sm transition-all duration-300
               [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
-              h-156 pr-2
+              h-160 pr-2
             `}>
               <AnimatePresence>
                 {filteredNotes.length > 0 ? filteredNotes.map((log) => (
