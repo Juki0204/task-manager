@@ -400,7 +400,7 @@ export default function DashboardPage() {
                 </hgroup>
                 <div className="w-full h-[calc(100%-2rem)] p-3 bg-black/40 rounded-lg">
                   <div
-                    className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_h2]:!text-neutral-100 [&_p]:!text-neutral-300 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
+                    className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_h2]:!text-neutral-100 [&_p]:!text-neutral-300 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
                     dangerouslySetInnerHTML={{
                       __html: marked(releaseNotes[0].content ?? ""),
                     }}
@@ -412,9 +412,9 @@ export default function DashboardPage() {
 
           <div className="w-full h-full bg-neutral-500/70 p-4 rounded-xl">
             <h3 className="font-bold tracking-widest px-1 pb-2 text-neutral-100">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
-            <div className="w-full h-[calc(100%-2rem)] p-3 bg-black/40 rounded-lg">
+            <div className="w-full h-[calc(100%-2rem)] p-3 pt-2 bg-black/40 rounded-lg">
               <p className="tracking-wider leading-normal text-xs mb-2 palt text-neutral-100">「優先度が<span className="text-red-300 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-300 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-300 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-300 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(クリックで詳細を確認)</p>
-              <div className="w-194 h-[calc(100%-4.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+              <div className="w-198 h-[calc(100%-2.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
                 <PriorityTasks onClick={(t: Task) => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }} />
               </div>
             </div>
