@@ -13,6 +13,7 @@ import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 import { FaSearch } from "react-icons/fa";
 import { LuDownload } from "react-icons/lu";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
+import NextCheckMessage from "@/components/ui/NextCheckMessage";
 
 
 export default function InvoicePage() {
@@ -346,6 +347,9 @@ export default function InvoicePage() {
             </Select>
             月度 請求一覧
           </h2>
+          <div className="pb-0.75">
+            <NextCheckMessage />
+          </div>
         </div>
 
         <div className="flex gap-2">

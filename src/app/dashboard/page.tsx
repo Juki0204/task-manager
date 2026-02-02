@@ -17,6 +17,7 @@ import PriorityTasks from "@/components/PriorityTasks";
 import UpdateTask from "@/components/UpdateTask";
 import TaskDetail from "@/components/TaskDetail";
 import { useAuth } from "../AuthProvider";
+import NextCheckMessage from "@/components/ui/NextCheckMessage";
 
 
 interface ReleaseNoteMeta {
@@ -201,7 +202,7 @@ export default function DashboardPage() {
           </h2>
 
           <div className="flex justify-center items-center gap-4 py-0.5 px-1 text-white text-xl font-bold text-center">
-            <div onMouseEnter={() => setIsDeadlinePop(true)} onMouseLeave={() => setIsDeadlinePop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider cursor-default ${todayDeadlineTasks.length > 0 ? "text-red-700" : "text-neutral-800"}`}>
+            {/* <div onMouseEnter={() => setIsDeadlinePop(true)} onMouseLeave={() => setIsDeadlinePop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider cursor-default ${todayDeadlineTasks.length > 0 ? "text-red-700" : "text-neutral-800"}`}>
               {deadline.length > 0 && todayDeadlineTasks.length > 0 ? (
                 <><FaTriangleExclamation />本日が期限のタスクが {todayDeadlineTasks.length}件 あります</>
               ) : (
@@ -223,26 +224,8 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )}
-            </div>
-            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider text-neutral-800 cursor-default`}>
-              本日の新規依頼数：{todayNewTasks.length}件
-              {todayNewTasks && todayNewTasks.length > 0 && (
-                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-200 shadow-md`}>
-                    {todayNewTasks.map(t => (
-                      <div
-                        key={t.id}
-                        onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
-                        className="flex gap-1 rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
-                      >
-                        <span className="w-11 whitespace-nowrap text-neutral-500 font-normal">{new Date(t.created_at).toTimeString().substring(0, 5)}</span>
-                        <span>【{t.serial}】 {t.title}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            </div> */}
+            <NextCheckMessage />
           </div>
         </div>
       </div>
@@ -264,9 +247,9 @@ export default function DashboardPage() {
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 border-t-0 text-right font-bold rounded-br-md">{tasks.filter(t => t.status === "完了").length}件</dd>
           </dl> */}
 
-          <div className="flex justify-center bg-black/40 text-neutral-100 rounded-xl p-4">
+          <div className="flex flex-col items-center gap-2 justify-center bg-black/40 text-neutral-100 rounded-xl p-4">
             <RequestGraph
-              size={240}
+              size={220}
               thickness={42}
               title="総依頼件数"
               segments={[
@@ -276,11 +259,31 @@ export default function DashboardPage() {
                 { key: "その他", value: Number(`${tasks.filter(t => t.status === "保留" || t.status === "詳細待ち" || t.status === "中止" || t.status === "保留").length}`), color: "#84538d" },
               ]}
             />
+
+            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`font-bold relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider text-neutral-800 cursor-default`}>
+              本日の新規依頼数：{todayNewTasks.length}件
+              {todayNewTasks && todayNewTasks.length > 0 && (
+                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-200 shadow-md`}>
+                    {todayNewTasks.map(t => (
+                      <div
+                        key={t.id}
+                        onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
+                        className="flex gap-1 rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
+                      >
+                        <span className="w-11 whitespace-nowrap text-neutral-500 font-normal">{new Date(t.created_at).toTimeString().substring(0, 5)}</span>
+                        <span>【{t.serial}】 {t.title}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
 
           <h3 className="font-bold text-center mt-5 mb-2 text-neutral-100">店舗別依頼数</h3>
-          <dl className="grid grid-cols-[80px_1fr] palt bg-black/40 rounded-xl p-4 text-neutral-100">
+          <dl className="grid grid-cols-[80px_1fr] palt bg-black/40 rounded-xl p-4 pb-1.5 text-neutral-100">
             <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">難波</dt>
             <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
@@ -379,8 +382,9 @@ export default function DashboardPage() {
               />
               <span className="w-18">{tasks.filter(t => t.client === "奥様クラブ").length}件</span>
             </dd>
+
+            <div className="col-span-2 text-xs p-0.5 mt-1 text-center text-neutral-100">※社内案件は度外視の為、数値はあくまで目安です。</div>
           </dl>
-          <p className="text-xs p-0.5 mt-1 text-center text-neutral-100">※社内案件は度外視の為、数値はあくまで目安です。</p>
         </div>
 
         <div className="flex flex-col flex-1 gap-4">
