@@ -82,7 +82,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
     oldValue: string | number,
     tableName: string = "invoice"
   ) {
-    console.log(newValue, oldBalue, tableName);
+    console.log(newValue, oldValue, tableName);
     if (newValue === oldValue) return;
 
     try {
@@ -298,3 +298,4 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   };
 
 }
+
