@@ -193,7 +193,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
           return;
         }
 
-        nextAmount = formatNullValue(priceRow.price) ?? 0;
+        nextAmount = formatNullValue(priceRow?.price) ?? 0;
 
         const preAmount = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01);
         const total = preAmount + nextAdjustment;
@@ -299,5 +299,6 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   };
 
 }
+
 
 
