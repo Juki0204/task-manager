@@ -222,7 +222,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
         if (error) console.error("請求データの更新に失敗しました:", error);
 
         //請求単価が取得できなかった（work_name入力無し等）場合や、対象がなかった場合
-        if (!priceRow) {
+        if (priceRow === null || priceRow === undefined) {
           const { error } = await supabase
             .from(tableName)
             .update({
@@ -299,6 +299,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   };
 
 }
+
 
 
 
