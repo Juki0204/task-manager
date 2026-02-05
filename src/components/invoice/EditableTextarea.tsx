@@ -162,7 +162,7 @@ export default function EditableTextarea({
         ${isActive ? "bg-blue-900/50 outline -outline-offset-1 outline-blue-700" : ""}
         ${editing ? "!bg-blue-800/40 !outline-blue-400" : ""}
         ${typeof value === "number" && value < 0 ? "text-red-400" : ""}
-        w-full h-auto whitespace-pre-wrap
+        w-full h-full whitespace-pre-wrap
       `}
     >
       {lockedByOther && (
