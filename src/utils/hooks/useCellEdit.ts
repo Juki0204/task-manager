@@ -82,6 +82,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
     oldValue: string | number,
     tableName: string = "invoice"
   ) {
+    console.log(newValue, oldValue, tableName);
     if (newValue === oldValue) return;
 
     try {
@@ -192,22 +193,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
           return;
         }
 
-        if (!priceRow) {
-          const { error } = await supabase
-            .from(tableName)
-            .update({
-              "work_name": null,
-              "amount": 0,
-              "category": null,
-              "total_amount": 0
-            })
-            .eq("id", recordId);
-
-          if (error) console.error("請求データの更新に失敗しました:", error);
-          return;
-        }
-
-        nextAmount = formatNullValue(priceRow.price) ?? 0;
+        nextAmount = formatNullValue(priceRow?.price) ?? 0;
 
         const preAmount = safeAmount(nextAmount) * nextPieces * nextMediaFactor * (nextDegree * 0.01);
         const total = preAmount + nextAdjustment;
@@ -234,6 +220,22 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
           .eq("id", recordId);
 
         if (error) console.error("請求データの更新に失敗しました:", error);
+
+        //請求単価が取得できなかった（work_name入力無し等）場合や、対象がなかった場合
+        if (priceRow === null || priceRow === undefined) {
+          const { error } = await supabase
+            .from(tableName)
+            .update({
+              "work_name": null,
+              "amount": 0,
+              "category": null,
+              "total_amount": 0
+            })
+            .eq("id", recordId);
+
+          if (error) console.error("請求データの更新に失敗しました:", error);
+          return;
+        }
       } else {
 
         // ---------------- 上記以外の計算に関係しない箇所の変更時 ----------------
@@ -295,4 +297,9 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
     handleEditStart,
     handleSave,
   };
+
 }
+
+
+
+
