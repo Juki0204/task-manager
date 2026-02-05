@@ -56,7 +56,8 @@ export async function POST(req: Request) {
   if (mode === "invoice") {
     sheet.cell("A1").value(`${invoiceYear}年${invoiceMonth}月度日報【デザイン班】`);
 
-    invoices.forEach((invoice: Invoice, index: number) => {
+    invoices.filter((i: Invoice) => i.total_amount).forEach((invoice: Invoice, index: number) => { //請求なしは除外
+
       const row = 3 + index;
 
       sheet.cell(`A${row}`).value(invoice.client);
@@ -102,7 +103,7 @@ export async function POST(req: Request) {
   const fileSuffix =
     mode === "processing" ? "_請求書加工用.xlsx" : "_design.xlsx";
 
-  const fileName = `${invoiceYear}${invoiceMonth}${fileSuffix}`;
+  const fileName = `${invoiceYear}${String(invoiceMonth).padStart(2, "0")}${fileSuffix}`;
 
   return new NextResponse(outBuffer, {
     headers: {
