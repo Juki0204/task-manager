@@ -7,7 +7,7 @@ import { AiOutlinePicture } from "react-icons/ai";
 import { BsPersonCheck } from "react-icons/bs";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { GrClose, GrFormNext, GrFormPrevious } from "react-icons/gr";
-import { MdDriveFileRenameOutline, MdLaptopChromebook, MdOutlineCategory, MdTask, MdOutlineStickyNote2 } from "react-icons/md";
+import { MdDriveFileRenameOutline, MdLaptopChromebook, MdOutlineCategory, MdTask, MdOutlineStickyNote2, MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 import { FaCalculator } from "react-icons/fa6";
 import { PiPuzzlePiece } from "react-icons/pi";
 import { HiOutlineAdjustments } from "react-icons/hi";
@@ -21,6 +21,7 @@ import { OutlineBtn } from "../ui/Btn";
 
 
 interface AllEditableFormProps {
+  index: number;
   recordId: string | null;
   prevId: string | null;
   nextId: string | null;
@@ -28,6 +29,7 @@ interface AllEditableFormProps {
   onClose: () => void;
   onChangeRecord: (recordId: string) => void;
   onCheckTask: () => void;
+  onToggle: (id: string, next: boolean) => void;
 }
 
 
@@ -40,7 +42,7 @@ interface LPDataType {
   total_amount: number, //請求金額
 }
 
-export default function AllEditableForm({ recordId, prevId, nextId, priceList, onClose, onChangeRecord, onCheckTask }: AllEditableFormProps) {
+export default function AllEditableForm({ index, recordId, prevId, nextId, priceList, onClose, onChangeRecord, onCheckTask, onToggle }: AllEditableFormProps) {
   const [invoiceData, setInvoiceData] = useState<Invoice | null>(null);
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [tempInvoiceValue, setTempInvoiceValue] = useState<Invoice>();
@@ -578,6 +580,27 @@ export default function AllEditableForm({ recordId, prevId, nextId, priceList, o
 
       <div className="flex gap-2 mb-2">
         <div className="flex flex-wrap flex-2 gap-2 items-center p-3 rounded-lg bg-slate-300/70">
+          {/* チェックボックス */}
+          <div
+            className={`w-fit h-fit flex items-center gap-2 px-1 rounded-md cursor-pointer ${tempInvoiceValue.checked ? "bg-[#ffff00]" : "bg-neutral-100"}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle(tempInvoiceValue.id, !tempInvoiceValue.checked);
+              setTempInvoiceValue({
+                ...tempInvoiceValue,
+                checked: !tempInvoiceValue.checked
+              })
+            }}
+          >
+            {/* 行番号 */}
+            <div className="font-bold">#{index}</div>
+
+            {tempInvoiceValue.checked ? (
+              <MdCheckBox className="text-green-500 text-xl" />
+            ) : (
+              <MdCheckBoxOutlineBlank className="text-black text-xl" />
+            )}
+          </div>
           {/* シリアル */}
           <div className="w-32">
             {/* <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500">

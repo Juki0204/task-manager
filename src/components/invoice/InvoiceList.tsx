@@ -48,6 +48,16 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   const [activeCell, setActiveCell] = useState<{ recordId: string, field: string } | null>(null);
   const [activeRecord, setActiveRecord] = useState<{ currentId: string | null, prevId: string | null, nextId: string | null } | null>(null)
 
+  const recordRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  const setRecordRef = (id: string, el: HTMLDivElement | null) => {
+    if (el) {
+      recordRefs.current.set(id, el);
+    } else {
+      recordRefs.current.delete(id);
+    }
+  };
+
   const handleActiveRecord = (recordId: string | null) => {
     if (!recordId) return;
 
@@ -186,6 +196,37 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
     }
   };
 
+  //当該請求の行が画面外に行った際に自動追従でスクロール位置を調整する
+  useEffect(() => {
+    if (activeRecord?.currentId) {
+      const el = recordRefs.current.get(activeRecord.currentId);
+      if (!el) return;
+
+      const currentRecordRect = el.getBoundingClientRect();
+      const offset = 150;
+      const winH = window.outerHeight;
+      const bottomPoint = winH - offset;
+      console.log(el, currentRecordRect.bottom, bottomPoint);
+
+      if (currentRecordRect.bottom > bottomPoint) {
+        const overDistance = currentRecordRect.bottom - bottomPoint;
+        window.scrollTo({
+          top: window.scrollY + overDistance,
+          behavior: "auto",
+        })
+      }
+
+      if (currentRecordRect.top < 100) {
+        const overDistance = 100 - currentRecordRect.top;
+        window.scrollTo({
+          top: window.scrollY - overDistance,
+          behavior: "auto",
+        })
+      }
+
+    }
+  }, [activeRecord]);
+
   return (
     <InvoiceEditingProvider>
       <div onClick={() => setActiveCell(null)} className="relative text-white whitespace-nowrap w-[2520px] box-border">
@@ -216,7 +257,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
         </div>
         {invoices &&
           invoices.map((i, index) => (
-            <div key={i.id} className="grid grid-cols-[40px_40px_40px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-600 text-[13px]">
+            <div ref={(el) => setRecordRef(i.id, el)} key={i.id} className="grid grid-cols-[40px_40px_40px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-600 text-[13px]">
               <div
                 className={`
                 flex items-center justify-center border border-t-0 border-neutral-600 min-h-8 h-full sticky left-0 z-20
@@ -444,6 +485,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
             <DialogPanel className="relative h-[85svh] w-300 space-y-4 rounded-2xl bg-neutral-100 p-5 pt-6">
               {activeRecord && (
                 <AllEditableForm
+                  index={!invoices ? 0 : invoices.findIndex(i => i.id === activeRecord.currentId) + 1}
+                  onToggle={toggleChecked}
                   key={activeRecord.currentId}
                   recordId={activeRecord.currentId}
                   prevId={activeRecord.prevId}
