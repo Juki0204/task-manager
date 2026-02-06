@@ -54,7 +54,7 @@ export default function EditableSelect({
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
 
-  const { lockedByOther, lockedUser, handleEditStart, handleSave } = useCellEdit({
+  const { lockedByOther, lockedUser, handleEditStart, handleSave, handleCancel } = useCellEdit({
     recordId,
     field,
     userId,
@@ -197,6 +197,7 @@ export default function EditableSelect({
                           e.preventDefault();
                           const selectedValue = options[selectedIndex] ?? tempValue;
                           setEditing(false);
+                          handleCancel();
                           close();
                           requestAnimationFrame(() => {
                             saveValue(selectedValue);
@@ -206,6 +207,7 @@ export default function EditableSelect({
                           e.preventDefault();
                           const selectedValue = options[selectedIndex] ?? tempValue;
                           setEditing(false);
+                          handleCancel();
                           close();
                           requestAnimationFrame(() => {
                             saveValue(selectedValue);
@@ -215,9 +217,11 @@ export default function EditableSelect({
                           e.preventDefault();
                           saveValue("");
                           setEditing(false);
+                          handleCancel();
                         } else if (e.key === "Escape") {
                           e.preventDefault();
                           setEditing(false);
+                          handleCancel();
                           close();
                         }
                       }}
@@ -232,6 +236,7 @@ export default function EditableSelect({
                           onMouseEnter={() => setSelectedIndex(index)}
                           onClick={() => {
                             setEditing(false);
+                            handleCancel();
                             close();
                             requestAnimationFrame(() => saveValue(opt));
                           }}

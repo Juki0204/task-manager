@@ -57,7 +57,7 @@ export default function EditableCombobox({
   const listRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { lockedByOther, lockedUser, handleEditStart, handleSave } = useCellEdit({
+  const { lockedByOther, lockedUser, handleEditStart, handleSave, handleCancel } = useCellEdit({
     recordId,
     field,
     userId,
@@ -76,8 +76,7 @@ export default function EditableCombobox({
 
   async function startEditing() {
     const ok = await handleEditStart();
-    if (!ok) return;
-    setEditing(true);
+    if (ok) setEditing(true);
     requestAnimationFrame(() => {
       inputRef.current?.focus();
       setTimeout(() => inputRef.current?.focus(), 10);
@@ -219,6 +218,7 @@ export default function EditableCombobox({
                   return;
                 }
                 saveValue(inputValue);
+                handleCancel();
 
                 if (e.key === "Enter") {
                   handleKeyNavigation(e.shiftKey ? "up" : "down");
@@ -229,10 +229,12 @@ export default function EditableCombobox({
                 e.preventDefault();
                 setEditing(false);
                 saveValue("");
+                handleCancel();
                 setActiveCell({ recordId, field }); //アクティブセルがリセットされるのを防ぐ
               } else if (e.key === "Escape") {
                 e.preventDefault();
                 setEditing(false);
+                handleCancel();
                 setTempValue(String(value));
                 setActiveCell({ recordId, field }); //アクティブセルがリセットされるのを防ぐ
               }

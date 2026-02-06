@@ -43,7 +43,7 @@ export default function EditableCell({
   const [editing, setEditing] = useState(false);
   const [tempValue, setTempValue] = useState<string | number>(value);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { lockedByOther, lockedUser, handleEditStart, handleSave } = useCellEdit({
+  const { lockedByOther, lockedUser, handleEditStart, handleSave, handleCancel } = useCellEdit({
     recordId,
     field,
     userId,
@@ -107,12 +107,18 @@ export default function EditableCell({
         e.preventDefault();
         setEditing(false);
         saveValue();
+        handleCancel();
         handleKeyNavigation(e.shiftKey ? "up" : "down");
       } else if (e.key === "Tab") {
         e.preventDefault();
         setEditing(false);
         saveValue();
+        handleCancel();
         handleKeyNavigation(e.shiftKey ? "left" : "right");
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        setEditing(false);
+        handleCancel();
       }
     } else {
       if (e.key === "Enter") {
@@ -138,13 +144,13 @@ export default function EditableCell({
       data-field={field}
       ref={containerRef}
       tabIndex={isActive ? 0 : -1} // ロービング tabindex
-      onDoubleClick={startEditing}
+      onDoubleClick={() => startEditing()}
       onClick={(e) => {
         e.stopPropagation();
         setActiveCell({ recordId, field });
       }}
       onKeyDown={handleKeyDown}
-      className={`border-neutral-700 py-1.5 px-2 min-h-8 ${className ?? ""}
+      className={`relative border-neutral-700 py-1.5 px-2 min-h-8 ${className ?? ""}
         ${isActive ? "bg-blue-900/50 outline -outline-offset-1 outline-blue-700" : ""}
         ${editing ? "!bg-blue-800/40 !outline-blue-400" : ""}
         ${typeof value === "number" && value < 0 ? "text-red-400" : ""}

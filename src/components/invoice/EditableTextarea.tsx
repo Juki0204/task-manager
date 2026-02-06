@@ -37,7 +37,7 @@ export default function EditableTextarea({
   const [editing, setEditing] = useState(false);
   const [tempValue, setTempValue] = useState<string>(value);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { lockedByOther, lockedUser, handleEditStart, handleSave } = useCellEdit({
+  const { lockedByOther, lockedUser, handleEditStart, handleSave, handleCancel } = useCellEdit({
     recordId,
     field,
     userId,
@@ -105,11 +105,13 @@ export default function EditableTextarea({
       if (e.key === "Enter") {
         e.preventDefault();
         setEditing(false);
+        handleCancel();
         saveValue();
         handleKeyNavigation(e.shiftKey ? "up" : "down");
       } else if (e.key === "Tab") {
         e.preventDefault();
         setEditing(false);
+        handleCancel();
         saveValue();
         handleKeyNavigation(e.shiftKey ? "left" : "right");
       }
@@ -158,7 +160,7 @@ export default function EditableTextarea({
         setActiveCell({ recordId, field });
       }}
       onKeyDown={handleKeyDown}
-      className={`border-neutral-700 py-1.5 px-2 min-h-8 ${className ?? ""}
+      className={`relative border-neutral-700 py-1.5 px-2 min-h-8 ${className ?? ""}
         ${isActive ? "bg-blue-900/50 outline -outline-offset-1 outline-blue-700" : ""}
         ${editing ? "!bg-blue-800/40 !outline-blue-400" : ""}
         ${typeof value === "number" && value < 0 ? "text-red-400" : ""}
