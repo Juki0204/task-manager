@@ -17,13 +17,11 @@ type SubscribeStatus = "idle" | "subscribing" | "subscribed" | "closed" | "timed
 
 type Ctx = {
   status: SubscribeStatus;
-  getLocker: (recordId: string, field: string) => string | null;
+  getLockerId: (recordId: string, field: string) => string | null;
+  getLockerName: (recordId: string, field: string) => string | null;
   isLockedByOther: (recordId: string, field: string, myUserId: string) => boolean;
-
   lock: (recordId: string, field: string, myUserId: string) => Promise<void>;
   unlock: (recordId: string, field: string, myUserId: string) => Promise<void>;
-
-  // 任意：手動再購読（ボタン用）
   resubscribe: () => void;
 };
 
@@ -122,21 +120,29 @@ export function InvoiceEditingProvider({
 
   //ロック状態を管理するcontext作成
   const ctx = useMemo<Ctx>(() => {
+    const makeKey = (recordId: string, field: string) =>
+      `${recordId}::${field}` as LockKey;
+
     return {
       status,
-      getLocker(recordId, field) {
-        const key = `${recordId}::${field}` as LockKey;
-        const userId = lockMap.get(key);
-        if (!userId) return null;
 
+      getLockerId(recordId: string, field: string) {
+        const key = makeKey(recordId, field);
+        return lockMap.get(key) ?? null;
+      },
+
+      getLockerName(recordId: string, field: string) {
+        const userId = this.getLockerId(recordId, field);
+        if (!userId) return null;
         return userMap.get(userId) ?? userId;
       },
+
       isLockedByOther(recordId, field, myUserId) {
-        const locker = this.getLocker(recordId, field);
-        return locker !== null && locker !== myUserId;
+        const lockerId = this.getLockerId(recordId, field);
+        return lockerId !== null && lockerId !== myUserId;
       },
+
       async lock(recordId, field, myUserId) {
-        // DBが正。ローカルはRealtimeで追従します
         const { error } = await supabase.from("invoice_editing_state").upsert({
           record_id: recordId,
           field_name: field,
@@ -144,6 +150,7 @@ export function InvoiceEditingProvider({
         });
         if (error) throw error;
       },
+
       async unlock(recordId, field, myUserId) {
         const { error } = await supabase
           .from("invoice_editing_state")
@@ -154,11 +161,13 @@ export function InvoiceEditingProvider({
 
         if (error) throw error;
       },
+
       resubscribe() {
         subscribe();
       },
     };
-  }, [lockMap, status]);
+  }, [lockMap, status, userMap]);
+
 
   return <InvoiceEditingContext.Provider value={ctx}>{children}</InvoiceEditingContext.Provider>;
 }

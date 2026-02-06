@@ -15,9 +15,9 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   const editing = useInvoiceEditing();
   const [saving, setSaving] = useState(false);
 
-  const locker = editing.getLocker(recordId, field);
-  const lockedByOther = locker !== null && locker !== userId;
-  const lockedUser = locker ?? "";
+  const lockerId = editing.getLockerId(recordId, field);
+  const lockedByOther = lockerId !== null && lockerId !== userId;
+  const lockedUser = editing.getLockerName(recordId, field) ?? "";
 
   const calcAmountTarget: string[] = ["work_name", "media", "degree", "adjustment", "pieces"];
 
@@ -32,11 +32,11 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   //ロック解除
   const handleCancel = useCallback(async () => {
     //自分がロックしてる場合のみ解除
-    if (locker === userId) {
+    if (lockerId === userId) {
       await editing.unlock(recordId, field, userId);
     }
     console.log("ロックが解除されます｜record:", recordId, "field:", field, "userId:", userId);
-  }, [editing, field, locker, recordId, userId]);
+  }, [editing, field, lockerId, recordId, userId]);
 
 
   const formatNullValue = (value: unknown): number | null => {
@@ -252,12 +252,12 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
         }
       } finally {
         setSaving(false);
-        if (locker === userId) {
+        if (lockerId === userId) {
           await editing.unlock(recordId, field, userId);
         }
       }
     },
-    [editing, field, locker, recordId, userId]
+    [editing, field, lockerId, recordId, userId]
   );
 
 
