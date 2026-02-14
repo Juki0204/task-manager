@@ -32,6 +32,7 @@
     "@types/mailparser": "^3.4.6",
     "diff-match-patch": "^1.0.5",
     "diff-match-patch-typescript": "^1.1.2",
+    "encoding-japanese": "^2.2.0",
     "html-react-parser": "^5.2.6",
     "lucide-react": "^0.544.0",
     "mailparser": "^3.7.4",

@@ -22,6 +22,9 @@ import { TaskNote } from "@/utils/hooks/useTaskNotesRealtime";
 import { TbClockExclamation } from "react-icons/tb";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
+import { extractMailRefs } from "@/utils/function/extractMailRefs";
+import MailConverter from "./MailConverter";
+
 
 interface TaskDetailProps {
   task: Task;
@@ -204,9 +207,24 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
     };
   }, []);
 
+  //備考欄のメールチェック
+  const [mailOpen, setMailOpen] = useState<boolean>(false);
+  const mailRefs = extractMailRefs(task.remarks);
+  const [activeMail, setActiveMail] = useState<{ domain: string, prefixNo: number } | null>(null);
+
+  function initActiveMail() {
+    if (mailRefs.length === 0) return;
+    if (activeMail) return;
+    setActiveMail(mailRefs[0]);
+  }
+  useEffect(() => {
+    console.log(mailRefs);
+    initActiveMail();
+  }, [mailRefs]);
+
   return (
     <>
-      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1">
+      <div className={`${mailOpen ? "mailOpen" : ""} relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1`}>
         <div className="flex items-center gap-2 w-full text-sm text-left leading-none">
           <p>{task.serial}</p>
           <p className={`py-0.5 px-2 rounded-full text-xs ${task.method === "mail" ? "bg-orange-200" : task.method === "tel" ? "bg-green-300/60" : "bg-blue-200"}`}>
@@ -295,8 +313,17 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
           <span className="block h-[1px] bg-neutral-300 w-full" />
         </div>
 
-        <div className="flex flex-col col-span-2 bg-neutral-200 rounded-md pb-1.5 px-1.5">
-          <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
+        <div className="relative flex flex-col col-span-2 bg-neutral-200 rounded-md pb-1.5 px-1.5">
+
+          {mailRefs.length > 0 && (
+            <div
+              onClick={() => { setNotesOpen(false); setMailOpen(!mailOpen) }}
+              className="absolute top-1.25 right-1.5 w-fit flex gap-1 items-center px-2.5 py-0.25 font-normal rounded-md text-xs tracking-wider text-white bg-slate-600 cursor-pointer transition-all hover:bg-slate-500"
+            >
+              <MdMailOutline className="text-base" />依頼に関連するメール {mailRefs.length}件
+            </div>
+          )}
+          <h3 className="w-full whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
             <LuNotebookPen /> 備考欄
             {/* {user && unreadIds?.includes(task.id) && (<div className="left-1.5 w-2 h-2 bg-yellow-300 rounded-full" />)} */}
           </h3>
@@ -338,7 +365,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
           )}
           <Button
             disabled={notes && notes.length > 0 ? false : true}
-            onClick={() => setNotesOpen(!notesOpen)}
+            onClick={() => { setMailOpen(false); setNotesOpen(!notesOpen); }}
             className="bg-green-900/80 text-white rounded px-4 py-2 text-sm data-hover:bg-green-800 cursor-pointer disabled:grayscale-100 disabled:opacity-50"
           >
             変更履歴
@@ -353,7 +380,8 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
       </div>
 
       {notes && notes.length > 0 && (
-        <div className={`w-80 h-120 bg-white p-4 pr-3 rounded-2xl absolute bottom-0 -z-10 transition-all duration-200 ${notesOpen ? "left-[calc(100%+1rem)]" : "left-0"}`}>
+        <div className={`w-80 h-120 bg-white p-4 pr-3 mb-0 rounded-2xl absolute bottom-0 -z-10 transition-all duration-200 ${notesOpen ? "left-[calc(100%+1rem)]" : "left-0"}`}>
+          <GrClose onClick={() => setNotesOpen(false)} className="absolute top-4.5 right-4.5 cursor-pointer" />
           <h3 className="font-bold text-sm text-center">変更履歴ログ</h3>
           <div className="h-[calc(100%-1.25rem)] pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
             {notes?.map(note => (
@@ -363,6 +391,28 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
               </p>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* メールドロワー */}
+      {mailRefs && mailRefs.length > 0 && (
+        <div className={`min-h-120 flex flex-col h-full bg-white p-4 rounded-2xl absolute bottom-0 -z-10 transition-all duration-300 ${mailOpen ? "left-[calc(100%+1rem)] w-180" : "left-0 w-10"}`}>
+          <GrClose onClick={() => setMailOpen(false)} className="absolute top-5 right-5 cursor-pointer" />
+          <div className="grid grid-cols-3 gap-2 mb-4 pr-8">
+            {mailRefs.map(m => (
+              <div
+                key={m.prefixNo}
+                onClick={() => {
+                  setActiveMail({ domain: m.domain, prefixNo: m.prefixNo });
+                }}
+                className={`col-span-1 text-center bg-slate-600 text-white rounded-full p-0.5 text-sm cursor-pointer ${activeMail?.prefixNo === m.prefixNo ? "opacity-100" : "opacity-60"}`}
+              >
+                No.{m.prefixNo}
+              </div>
+            ))}
+          </div>
+
+          {activeMail && mailOpen && <MailConverter domain={activeMail.domain} prefixNo={activeMail.prefixNo} />}
         </div>
       )}
     </>

@@ -464,6 +464,17 @@ body {
   }
 }
 
+/* メール閲覧用 */
+.mail-base{
+  & > a{
+    color: #2563eb;
+    text-underline-offset: 2px;
+    cursor: pointer;
+    line-break: anywhere;
+    text-decoration: underline;
+  }
+}
+
 
 @layer base {
   input[type='number']::-webkit-outer-spin-button,
