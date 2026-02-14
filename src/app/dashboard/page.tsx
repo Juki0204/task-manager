@@ -465,7 +465,7 @@ export default function DashboardPage() {
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
           <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-6.5">
             {!isTaskLoaded && (
               <div className="flex justify-center my-4" aria-label="読み込み中">
