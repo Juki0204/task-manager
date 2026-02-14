@@ -206,7 +206,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
       const offset = 150;
       const winH = window.outerHeight;
       const bottomPoint = winH - offset;
-      console.log(el, currentRecordRect.bottom, bottomPoint);
+      // console.log(el, currentRecordRect.bottom, bottomPoint);
 
       if (currentRecordRect.bottom > bottomPoint) {
         const overDistance = currentRecordRect.bottom - bottomPoint;

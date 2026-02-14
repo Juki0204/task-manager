@@ -331,16 +331,18 @@ export default function PersonalCard({
             </>
           )}
         </div>
-        <h3 className="relative font-bold truncate flex items-center gap-1 pr-16">
+        <h3 className="relative text-base font-bold flex items-center gap-1 pr-16">
           {
             task.method === 'mail' ?
-              <MdMailOutline />
+              <MdMailOutline className="w-4 h-4" />
               : task.method === 'tel' ?
-                <FiPhone />
+                <FiPhone className="w-4 h-4" />
                 :
-                <FaRegQuestionCircle />
+                <FaRegQuestionCircle className="w-4 h-4" />
           }
-          <HighlightText text={task.title} keyword={filters.searchKeywords} />
+          <span className="truncate flex-1">
+            <HighlightText text={task.title} keyword={filters.searchKeywords} />
+          </span>
 
           {hasRemarksInfo && task.remarks && (
             <RemarksHoverMark handleHover={setHover} className="absolute inset-y-0 right-0">

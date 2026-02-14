@@ -226,11 +226,11 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         <h3 className="font-bold flex items-center gap-1 [grid-area:ttl] text-sm">
           {
             task.method === 'mail' ?
-              <MdMailOutline />
+              <MdMailOutline className="w-4 h-4" />
               : task.method === 'tel' ?
-                <FiPhone />
+                <FiPhone className="w-4 h-4" />
                 :
-                <FaRegQuestionCircle />
+                <FaRegQuestionCircle className="w-4 h-4" />
           }
           <span className="truncate flex-1 pr-3">
             <HighlightText text={task.title} keyword={filters.searchKeywords} />
@@ -248,7 +248,9 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         </div>
 
         <div className="relative line-clamp-2 w-full text-sm pr-18 truncate [grid-area:dis]">
-          <HighlightText text={task.description} keyword={filters.searchKeywords} />
+          <span className="truncate">
+            <HighlightText text={task.description} keyword={filters.searchKeywords} />
+          </span>
           {hasRemarksInfo && task.remarks && (
             <RemarksHoverMark handleHover={setHover} className="absolute inset-y-0 right-4">
               {hover && remarksHtml && (
