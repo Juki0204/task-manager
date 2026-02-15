@@ -12,6 +12,17 @@ export function splitBodyAndFooter(input: string): { main: string; footer: strin
   };
 }
 
+function looksLikeIso2022Jp(text: string): boolean {
+  //JISモード開始
+  return text.includes("\u001b$B") || text.includes("\u001b$@");
+}
+
+function decodeJisWhole(text: string): string {
+  //ISO-2022-JP（JIS）として全文をUNOCODEへ
+  //looksLikeIso2022Jp のときだけ呼ぶ
+  return decodeJisBytesLike(text);
+}
+
 function decodeJisBytesLike(s: string): string {
   const bytes = Uint8Array.from(s, (c) => c.charCodeAt(0) & 0xff);
   const unicode = Encoding.convert(bytes, { from: "JIS", to: "UNICODE", type: "array" }) as number[];
@@ -96,15 +107,18 @@ function stripStrayNumberBeforeLt(text: string): string {
   return text.replace(/、\s*\d+(?=<)/g, "、");
 }
 
-function stripListinfoUrls(text: string): string {
-  //URLは「空白 or < or > or " or '」で区切られる前提で止める
-  const url = /https?:\/\/[^\s<>"']*\/mailman\/listinfo\/[^\s<>"']*/gi;
-  return text.replace(url, "");
-}
+function stripListinfoAnchorsKeepText(text: string): string {
+  //壊れた形: A HREF=".../mailman/listinfo/...">TEXT</A> → TEXT
+  const broken = text.replace(
+    /A\s+HREF\s*=\s*"(https?:\/\/[^"]*\/mailman\/listinfo\/[^"]*)"\s*>\s*([\s\S]*?)<\/A>/gi,
+    "$2"
+  );
 
-function stripStrayNumberAfterComma(text: string): string {
-  // "関して、2 添付" みたいなやつだけを "関して、 添付" にする
-  return text.replace(/、\s*\d+\s+(?=\S)/g, "、 ");
+  //正常なHTML: <a href=".../mailman/listinfo/...">TEXT</a> → TEXT
+  return broken.replace(
+    /<a\s+[^>]*href\s*=\s*"(https?:\/\/[^"]*\/mailman\/listinfo\/[^"]*)"[^>]*>\s*([\s\S]*?)<\/a>/gi,
+    "$2"
+  );
 }
 
 //Mailmanが挿入した <A HREF="...">...</A> を URL文字列に置換
@@ -187,8 +201,8 @@ export function formatMailmanBodyToHtml(rawBody: string): string {
 
   let mainText = main;
 
+  mainText = stripListinfoAnchorsKeepText(mainText);
   mainText = replaceMailmanAnchorsToUrl(mainText);
-  mainText = stripListinfoUrls(mainText);
   mainText = stripStrayNumberBeforeLt(mainText);
   mainText = decodeBareJisAfterLt(mainText);
 
@@ -196,6 +210,5 @@ export function formatMailmanBodyToHtml(rawBody: string): string {
 
   const normalizedFooter = normalizeAngleUrl(footerAnchors);
 
-  // return textToHtml(mainNorm + footerNorm);
   return textToHtml(mainText + normalizedFooter);
 }

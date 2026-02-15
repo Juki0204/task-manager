@@ -396,7 +396,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
 
       {/* メールドロワー */}
       {mailRefs && mailRefs.length > 0 && (
-        <div className={`min-h-120 flex flex-col h-full bg-white p-4 rounded-2xl absolute bottom-0 -z-10 transition-all duration-300 ${mailOpen ? "left-[calc(100%+1rem)] w-180" : "left-0 w-10"}`}>
+        <div className={`min-h-120 flex flex-col h-full bg-white p-4 pb-3 rounded-2xl absolute bottom-0 -z-10 transition-all duration-300 ${mailOpen ? "left-[calc(100%+1rem)] w-180" : "left-0 w-10"}`}>
           <GrClose onClick={() => setMailOpen(false)} className="absolute top-5 right-5 cursor-pointer" />
           <div className="grid grid-cols-3 gap-2 mb-4 pr-8">
             {mailRefs.map(m => (
@@ -413,6 +413,7 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
           </div>
 
           {activeMail && mailOpen && <MailConverter domain={activeMail.domain} prefixNo={activeMail.prefixNo} />}
+          <p className="text-xs text-red-700 text-center pt-2">※梅田・中洲は特に文字コードが複雑で変換が不安定の為、内容に違和感がある場合は元のメールを確認してください。</p>
         </div>
       )}
     </>

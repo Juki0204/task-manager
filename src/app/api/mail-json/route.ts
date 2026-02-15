@@ -96,6 +96,7 @@ export async function GET(req: Request) {
       data: {
         ...upstreamJson.data,
         body: bodyHtml,
+        // body: bodyRaw,
       },
     };
 
@@ -105,3 +106,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
