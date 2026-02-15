@@ -261,7 +261,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
               <div
                 className={`
                 flex items-center justify-center border border-t-0 border-neutral-600 min-h-8 h-full sticky left-0 z-20
-                ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}
+                ${index % 2 === 1 ? "bg-[#2b3748]" : "bg-[#3c4a5f]"}
               `}
               >
                 <ToggleRowNumber item={i} index={index} onToggle={toggleChecked} />
@@ -276,7 +276,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 }}
                 className={`
                 grid place-content-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-10 z-20 hover:bg-neutral-600
-                ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}
+                ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}
                 ${activeRecord?.currentId === i.id ? "!bg-yellow-300 text-black" : ""}
               `}
               >
@@ -285,15 +285,15 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
               <div
                 className={`
                 flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-20 z-20 cursor-pointer
-                ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}
+                ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}
               `}
                 onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}
               >
                 <MdTask className="text-lg" />
                 {/* {i.serial} */}
               </div>
-              <div className={`flex items-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-30 z-20 ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.client} 【{i.requester}】</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full sticky left-80 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`flex items-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-30 z-20 ${index % 2 === 1 ? "bg-[#2b3748]" : "bg-[#3c4a5f]"}`}>{i.client} 【{i.requester}】</div>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full sticky left-80 z-20 ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableCell
                   recordId={i.id}
                   field="title"
@@ -307,7 +307,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full sticky left-140 z-20 ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full sticky left-140 z-20 ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableCell
                   recordId={i.id}
                   field="description"
@@ -321,7 +321,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableCell
                   recordId={i.id}
                   field="finish_date"
@@ -336,9 +336,9 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.manager}</div>
-              <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.category ?? "-"}</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-[#2b3748]" : "bg-[#3c4a5f]"}`}>{i.manager}</div>
+              <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-[#2b3748]" : "bg-[#3c4a5f]"}`}>{i.category ?? "-"}</div>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableSelect
                   recordId={i.id}
                   field="media"
@@ -353,7 +353,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableCombobox
                   recordId={i.id}
                   field="work_name"
@@ -367,7 +367,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableCell
                   className="justify-center"
                   recordId={i.id}
@@ -384,7 +384,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableSelect
                   recordId={i.id}
                   field="degree"
@@ -399,8 +399,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.amount ?? "0"}</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-[#2b3748]" : "bg-[#3c4a5f]"}`}>{i.amount ?? "0"}</div>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableCell
                   className="justify-end"
                   recordId={i.id}
@@ -417,8 +417,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   registerCellRef={registerCellRef}
                 />
               </div>
-              <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-slate-800" : "bg-[#2e3b4d]"}`}>{i.total_amount ?? "0"}</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-neutral-800" : "bg-[#3a3a3a]"}`}>
+              <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-[#2b3748]" : "bg-[#3c4a5f]"}`}>{i.total_amount ?? "0"}</div>
+              <div className={`border border-l-0 border-t-0 border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#333333]" : "bg-[#444444]"}`}>
                 <EditableTextarea
                   recordId={i.id}
                   field="remarks"
