@@ -413,9 +413,10 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
           </div>
 
           {activeMail && mailOpen && <MailConverter domain={activeMail.domain} prefixNo={activeMail.prefixNo} />}
-          <p className="text-xs text-red-700 text-center pt-2">※梅田・中洲は特に文字コードが複雑で変換が不安定の為、内容に違和感がある場合は元のメールを確認してください。</p>
+          {activeMail && mailOpen && <p className="text-xs text-red-700 text-center pt-2">※梅田・中洲は特に文字コードが複雑で変換が不安定の為、内容に違和感がある場合は元のメールを確認してください。</p>}
         </div>
       )}
     </>
   )
+
 }
