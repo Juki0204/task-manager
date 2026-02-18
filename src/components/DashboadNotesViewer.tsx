@@ -142,7 +142,6 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
                               <dl className={`tracking-wider ${open ? "" : "truncate"} w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-cyan-300/80" : log.type === "delete" ? "text-red-400/90" : log.type === "deadline" ? "text-yellow-300/90" : log.type === "system" ? "text-green-300/90" : ""}`}>
                                 <dt className="text-sm text-gray-400 whitespace-nowrap w-fit">{new Date(log.changed_at).toLocaleString("ja-JP")}</dt>
                                 {log.type !== "system" ? (
-                                  {/* 通常ログ */}
                                   <dd className={`w-full ${open ? "whitespace-normal" : "truncate"}`}>
                                     {log.changed_by}さんが
                                     【<span
@@ -156,8 +155,7 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
                                     </span>】 の
                                     {log.message.substring(10)}
                                   </dd>
-                                ) : (
-                                  {/* システム通知 */}
+                                ) : (                                  
                                   <dd className={`w-full ${open ? "whitespace-normal" : "truncate"}`}>
                                     システム通知：{log.message}
                                   </dd>
@@ -244,3 +242,4 @@ function DiffItem({
   )
 
 }
+
