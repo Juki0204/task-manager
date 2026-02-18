@@ -98,10 +98,19 @@ export default function TaskNotesViewer() {
                   >
                     <div className="w-full flex justify-between items-center gap-4 px-1 pr-4 py-0.5 text-left transition">
                       <div className="flex justify-between items-center gap-4 w-full truncate">
-                        <dl className={`flex justify-start tracking-widest truncate w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-cyan-300/80" : log.type === "delete" ? "text-red-400/90" : log.type === "deadline" ? "text-yellow-300/90" : ""}`}>
-                          <dt className="w-fit">{log.changed_by}：</dt>
-                          <dd className="w-full truncate">{log.message}</dd>
-                        </dl>
+                        {log.type !== "system" ? (
+                          {/* 通常ログ */}
+                          <dl className={`flex justify-start tracking-widest truncate w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-cyan-300/80" : log.type === "delete" ? "text-red-400/90" : log.type === "deadline" ? "text-yellow-300/90" : ""}`}>
+                            <dt className="w-fit">{log.changed_by}：</dt>
+                            <dd className="w-full truncate">{log.message}</dd>
+                          </dl>
+                        ) : (
+                          {/* システム通知 */}
+                          <dl className={`flex justify-start tracking-widest truncate w-full ${log.type === "system" ? "text-green-300/90" : ""}`}>
+                            <dt className="w-fit">システム通知：</dt>
+                            <dd className="w-full truncate">{log.message}</dd>
+                          </dl>
+                        )}
                         <p className="text-sm text-gray-400 whitespace-nowrap w-fit">{new Date(log.changed_at).toLocaleString("ja-JP")}</p>
                       </div>
                     </div>
@@ -155,4 +164,5 @@ function DiffItem({
       )}
     </div>
   )
+
 }
