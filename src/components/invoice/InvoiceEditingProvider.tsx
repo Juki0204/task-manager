@@ -78,6 +78,8 @@ export function InvoiceEditingProvider({
         "postgres_changes",
         { event: "*", schema: "public", table: "invoice_editing_state" },
         (payload: RealtimePostgresChangesPayload<EditingRow>) => {
+          console.log("[realtime]", payload.eventType, { old: payload.old, new: payload.new });
+          
           const row = (payload.new ?? payload.old) as EditingRow | null;
           if (!row) return;
 
@@ -192,4 +194,5 @@ export function useInvoiceEditing() {
   return ctx;
 
 }
+
 
