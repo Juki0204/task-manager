@@ -32,10 +32,15 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
   //ロック解除
   const handleCancel = useCallback(async () => {
     //自分がロックしてる場合のみ解除
-    if (lockerId === userId) {
-      await editing.unlock(recordId, field, userId);
+    const canUnlock = lockerId === userId;
+    console.log("[cancel] canUnlock?", { recordId, field, lockerId, userId, canUnlock });
+    
+    if (canUnlock) {
+      const res = await editing.unlock(recordId, field, userId);
+      console.log("[cancel] unlock called", res);
+    } else {
+      console.log("[cancel] skipped unlock (not owner)");
     }
-    console.log("ロックが解除されます｜record:", recordId, "field:", field, "userId:", userId);
   }, [editing, field, lockerId, recordId, userId]);
 
 
@@ -272,6 +277,7 @@ export function useCellEdit({ recordId, field, userId }: UseCellEditProps) {
     resubscribe: editing.resubscribe,
   }), [editing, handleCancel, handleEditStart, handleSave, lockedByOther, lockedUser, saving]);
 }
+
 
 
 
