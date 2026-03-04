@@ -151,15 +151,30 @@ export function InvoiceEditingProvider({
         if (error) throw error;
       },
 
+      // async unlock(recordId, field, myUserId) {
+      //   const { error } = await supabase
+      //     .from("invoice_editing_state")
+      //     .delete()
+      //     .eq("record_id", recordId)
+      //     .eq("field_name", field)
+      //     .eq("user_id", myUserId);
+
+      //   if (error) throw error;
+      // },
+
       async unlock(recordId, field, myUserId) {
-        const { error } = await supabase
+        const { data, error, count } = await supabase
           .from("invoice_editing_state")
-          .delete()
+          .delete({ count: "exact" })
           .eq("record_id", recordId)
           .eq("field_name", field)
-          .eq("user_id", myUserId);
-
+          .eq("user_id", myUserId)
+          .select("record_id, field_name, user_id");
+      
+        console.log("[unlock query]", { recordId, field, myUserId, count, data, error });
+      
         if (error) throw error;
+        return { count, data };
       },
 
       resubscribe() {
@@ -176,4 +191,5 @@ export function useInvoiceEditing() {
   const ctx = useContext(InvoiceEditingContext);
   if (!ctx) throw new Error("useInvoiceEditing must be used within InvoiceEditingProvider");
   return ctx;
+
 }
