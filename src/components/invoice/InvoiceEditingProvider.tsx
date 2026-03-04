@@ -174,7 +174,6 @@ export function InvoiceEditingProvider({
         console.log("[unlock query]", { recordId, field, myUserId, count, data, error });
       
         if (error) throw error;
-        return { count, data };
       },
 
       resubscribe() {
@@ -193,3 +192,4 @@ export function useInvoiceEditing() {
   return ctx;
 
 }
+
