@@ -66,53 +66,122 @@ export function InvoiceEditingProvider({
   };
 
   //リアルタイム購読
+  // const subscribe = () => {
+  //   cleanup();
+  //   if (!enabledRef.current) return;
+
+  //   setStatus("subscribing");
+
+  //   const ch = supabase
+  //     .channel("invoice_editing_state:global")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "invoice_editing_state" },
+  //       (payload: RealtimePostgresChangesPayload<EditingRow>) => {
+  //         // console.log("[realtime]", payload.eventType, { old: payload.old, new: payload.new });
+          
+  //         const row = (payload.new ?? payload.old) as EditingRow | null;
+  //         if (!row) return;
+
+  //         const key = `${row.record_id}::${row.field_name}` as LockKey;
+
+  //         setLockMap((prev) => {
+  //           const next = new Map(prev);
+
+  //           // upsertがINSERT/UPDATEどっちもあり得るので両方ロック扱い
+  //           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+  //             next.set(key, row.user_id);
+  //             return next;
+  //           }
+
+  //           if (payload.eventType === "DELETE") {
+  //             next.delete(key);
+  //             return next;
+  //           }
+
+  //           return next;
+  //         });
+  //       }
+  //     )
+  //     .subscribe((s) => {
+  //       if (s === "SUBSCRIBED") setStatus("subscribed");
+  //       else if (s === "CLOSED") setStatus("closed");
+  //       else if (s === "TIMED_OUT") setStatus("timed_out");
+  //       else setStatus("error");
+  //     });
+
+  //   channelRef.current = ch;
+  // };
+
+
   const subscribe = () => {
     cleanup();
     if (!enabledRef.current) return;
-
+  
     setStatus("subscribing");
-
+  
     const ch = supabase
       .channel("invoice_editing_state:global")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "invoice_editing_state" },
         (payload: RealtimePostgresChangesPayload<EditingRow>) => {
-          // console.log("[realtime]", payload.eventType, { old: payload.old, new: payload.new });
-          
-          // const row = (payload.new ?? payload.old) as EditingRow | null;
-          // if (!row) return;
-
-          // const key = `${row.record_id}::${row.field_name}` as LockKey;
-
-          // setLockMap((prev) => {
-          //   const next = new Map(prev);
-
-          //   // upsertがINSERT/UPDATEどっちもあり得るので両方ロック扱い
-          //   if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-          //     next.set(key, row.user_id);
-          //     return next;
-          //   }
-
-          //   if (payload.eventType === "DELETE") {
-          //     next.delete(key);
-          //     return next;
-          //   }
-
-          //   return next;
-          // });
-
-          const row = payload.eventType === "DELETE" ? payload.old : payload.new;
-
+          // ★イベント別に row を確実に取る
+          const row =
+            payload.eventType === "DELETE"
+              ? (payload.old as EditingRow | null)
+              : (payload.new as EditingRow | null);
+  
+          if (!row) {
+            console.warn("[realtime] missing row", payload.eventType, payload);
+            return;
+          }
+  
+          if (!row.record_id || !row.field_name) {
+            console.warn("[realtime] missing key parts", payload.eventType, row);
+            return;
+          }
+  
           const key = `${row.record_id}::${row.field_name}` as LockKey;
-          console.log("[realtime key]", payload.eventType, { key, row });
-          
-          setLockMap(prev => {
-            console.log("[lockMap before]", payload.eventType, { has: prev.has(key), size: prev.size });
+  
+          // ★ここでイベント＆キーを確認（特に DELETE）
+          console.log("[realtime]", payload.eventType, {
+            key,
+            record_id: row.record_id,
+            field_name: row.field_name,
+            user_id: row.user_id, // DELETE だと undefined の可能性あり
+          });
+  
+          setLockMap((prev) => {
+            const had = prev.has(key);
+            const prevVal = prev.get(key);
+            const prevSize = prev.size;
+  
             const next = new Map(prev);
-            if (payload.eventType === "DELETE") next.delete(key);
-            else next.set(key, row);
-            console.log("[lockMap after]", payload.eventType, { has: next.has(key), size: next.size });
+  
+            // upsertがINSERT/UPDATEどっちもあり得るので両方ロック扱い
+            if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+              next.set(key, row.user_id);
+            } else if (payload.eventType === "DELETE") {
+              next.delete(key);
+            }
+  
+            const hasNow = next.has(key);
+            const nextVal = next.get(key);
+            const nextSize = next.size;
+  
+            // ★DELETEで “had が false” ならキー不一致が濃厚
+            // ★DELETEで “had true -> hasNow false” なのにUIが変わらないなら、UI側の参照/依存関係が濃厚
+            console.log("[lockMap delta]", payload.eventType, {
+              key,
+              had,
+              prevVal,
+              prevSize,
+              hasNow,
+              nextVal,
+              nextSize,
+            });
+  
             return next;
           });
         }
@@ -123,9 +192,10 @@ export function InvoiceEditingProvider({
         else if (s === "TIMED_OUT") setStatus("timed_out");
         else setStatus("error");
       });
-
+  
     channelRef.current = ch;
   };
+  
 
   useEffect(() => {
     subscribe();
@@ -208,6 +278,7 @@ export function useInvoiceEditing() {
   return ctx;
 
 }
+
 
 
 
