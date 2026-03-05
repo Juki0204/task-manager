@@ -104,7 +104,7 @@ export function InvoiceEditingProvider({
 
           const row = payload.eventType === "DELETE" ? payload.old : payload.new;
 
-          const key = `${row.record_id}::${row.field_name}`;
+          const key = `${row.record_id}::${row.field_name}` as LockKey;
           console.log("[realtime key]", payload.eventType, { key, row });
           
           setLockMap(prev => {
@@ -208,6 +208,7 @@ export function useInvoiceEditing() {
   return ctx;
 
 }
+
 
 
 
