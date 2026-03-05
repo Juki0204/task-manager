@@ -78,27 +78,41 @@ export function InvoiceEditingProvider({
         "postgres_changes",
         { event: "*", schema: "public", table: "invoice_editing_state" },
         (payload: RealtimePostgresChangesPayload<EditingRow>) => {
-          console.log("[realtime]", payload.eventType, { old: payload.old, new: payload.new });
+          // console.log("[realtime]", payload.eventType, { old: payload.old, new: payload.new });
           
-          const row = (payload.new ?? payload.old) as EditingRow | null;
-          if (!row) return;
+          // const row = (payload.new ?? payload.old) as EditingRow | null;
+          // if (!row) return;
 
-          const key = `${row.record_id}::${row.field_name}` as LockKey;
+          // const key = `${row.record_id}::${row.field_name}` as LockKey;
 
-          setLockMap((prev) => {
+          // setLockMap((prev) => {
+          //   const next = new Map(prev);
+
+          //   // upsertがINSERT/UPDATEどっちもあり得るので両方ロック扱い
+          //   if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
+          //     next.set(key, row.user_id);
+          //     return next;
+          //   }
+
+          //   if (payload.eventType === "DELETE") {
+          //     next.delete(key);
+          //     return next;
+          //   }
+
+          //   return next;
+          // });
+
+          const row = payload.eventType === "DELETE" ? payload.old : payload.new;
+
+          const key = `${row.record_id}::${row.field_name}`;
+          console.log("[realtime key]", payload.eventType, { key, row });
+          
+          setLockMap(prev => {
+            console.log("[lockMap before]", payload.eventType, { has: prev.has(key), size: prev.size });
             const next = new Map(prev);
-
-            // upsertがINSERT/UPDATEどっちもあり得るので両方ロック扱い
-            if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-              next.set(key, row.user_id);
-              return next;
-            }
-
-            if (payload.eventType === "DELETE") {
-              next.delete(key);
-              return next;
-            }
-
+            if (payload.eventType === "DELETE") next.delete(key);
+            else next.set(key, row);
+            console.log("[lockMap after]", payload.eventType, { has: next.has(key), size: next.size });
             return next;
           });
         }
@@ -194,5 +208,6 @@ export function useInvoiceEditing() {
   return ctx;
 
 }
+
 
 
