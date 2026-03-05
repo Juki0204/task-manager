@@ -99,21 +99,21 @@ export default function EditableCell({
   }
 
   // キー操作
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = async (e: React.KeyboardEvent) => {
     if (e.nativeEvent.isComposing) return; //変換中は処理しない
 
     if (editing) {
       if (e.key === "Enter") {
         e.preventDefault();
         setEditing(false);
-        saveValue();
-        handleCancel();
+        await saveValue();
+        await handleCancel();
         handleKeyNavigation(e.shiftKey ? "up" : "down");
       } else if (e.key === "Tab") {
         e.preventDefault();
         setEditing(false);
-        saveValue();
-        handleCancel();
+        await saveValue();
+        await handleCancel();
         handleKeyNavigation(e.shiftKey ? "left" : "right");
       } else if (e.key === "Escape") {
         e.preventDefault();
@@ -182,7 +182,10 @@ export default function EditableCell({
               setTempValue(e.target.value);
             }
           }}
-          onBlur={saveValue}
+          onBlur={async () => {
+            await saveValue();
+            await handleCancel();
+          }}
           onFocus={(e) => e.target.select()}
           onClick={(e) => e.stopPropagation()}
           max={type === "date" ? "9999-12-31" : undefined}
@@ -195,3 +198,4 @@ export default function EditableCell({
     </div>
   );
 }
+
