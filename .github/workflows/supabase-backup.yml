@@ -3,8 +3,7 @@ name: Supabase Backup
 on:
   workflow_dispatch:
   schedule:
-    # GitHub Actions の cron は UTC
-    # 18:00 UTC = 翌 03:00 JST
+    # UTC 18:00 = JST 03:00
     - cron: "0 18 * * *"
 
 jobs:
@@ -16,12 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install PostgreSQL 17 client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client-17
-
-      - name: Dump database and gzip
+      - name: Dump database with PostgreSQL 17 client in Docker
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
@@ -30,11 +24,12 @@ jobs:
           DATE_JST=$(TZ=Asia/Tokyo date +%F)
           FILE_NAME="backup-${DATE_JST}.sql.gz"
 
-          pg_dump "$SUPABASE_DB_URL" \
-            --no-owner \
-            --no-acl \
-            --format=plain \
-            | gzip -9 > "$FILE_NAME"
+          docker run --rm \
+            -e SUPABASE_DB_URL="$SUPABASE_DB_URL" \
+            -v "$PWD:/work" \
+            -w /work \
+            postgres:17 \
+            bash -lc 'pg_dump "$SUPABASE_DB_URL" --no-owner --no-acl --format=plain | gzip -9 > "'"$FILE_NAME"'"'
 
           echo "FILE_NAME=$FILE_NAME" >> "$GITHUB_ENV"
 
@@ -62,15 +57,8 @@ jobs:
           const prefix = 'supabase-backups/';
           const pathname = `${prefix}${fileName}`;
 
-          if (!token) {
-            throw new Error('BLOB_READ_WRITE_TOKEN is not set');
-          }
-          if (!fileName || !fs.existsSync(fileName)) {
-            throw new Error(`Backup file not found: ${fileName}`);
-          }
-
-          // 1) 今日のバックアップをアップロード
           const body = fs.readFileSync(fileName);
+
           await put(pathname, body, {
             access: 'private',
             allowOverwrite: true,
@@ -78,7 +66,6 @@ jobs:
           });
           console.log(`Uploaded: ${pathname}`);
 
-          // 2) 7日を超えた古いバックアップを削除
           const cutoff = new Date();
           cutoff.setUTCDate(cutoff.getUTCDate() - 7);
 
