@@ -1,0 +1,108 @@
+name: Supabase Backup
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub Actions の cron は UTC
+    # 18:00 UTC = 翌 03:00 JST
+    - cron: "0 18 * * *"
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Dump database and gzip
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+
+          DATE_JST=$(TZ=Asia/Tokyo date +%F)
+          FILE_NAME="backup-${DATE_JST}.sql.gz"
+
+          pg_dump "$SUPABASE_DB_URL" \
+            --no-owner \
+            --no-acl \
+            --format=plain \
+            | gzip -9 > "$FILE_NAME"
+
+          echo "FILE_NAME=$FILE_NAME" >> "$GITHUB_ENV"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Vercel Blob SDK
+        run: npm install @vercel/blob
+
+      - name: Upload to Vercel Blob and delete backups older than 7 days
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          FILE_NAME: ${{ env.FILE_NAME }}
+        run: |
+          set -euo pipefail
+
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { put, list, del } from '@vercel/blob';
+
+          const token = process.env.BLOB_READ_WRITE_TOKEN;
+          const fileName = process.env.FILE_NAME;
+          const prefix = 'supabase-backups/';
+          const pathname = `${prefix}${fileName}`;
+
+          if (!token) {
+            throw new Error('BLOB_READ_WRITE_TOKEN is not set');
+          }
+          if (!fileName || !fs.existsSync(fileName)) {
+            throw new Error(`Backup file not found: ${fileName}`);
+          }
+
+          // 1) 今日のバックアップをアップロード
+          const body = fs.readFileSync(fileName);
+          await put(pathname, body, {
+            access: 'private',
+            allowOverwrite: true,
+            token,
+          });
+          console.log(`Uploaded: ${pathname}`);
+
+          // 2) 7日を超えた古いバックアップを削除
+          const cutoff = new Date();
+          cutoff.setUTCDate(cutoff.getUTCDate() - 7);
+
+          let cursor = undefined;
+          let hasMore = true;
+
+          while (hasMore) {
+            const result = await list({
+              token,
+              prefix,
+              cursor,
+              limit: 1000,
+            });
+
+            const oldPaths = result.blobs
+              .filter((blob) => new Date(blob.uploadedAt) < cutoff)
+              .map((blob) => blob.pathname);
+
+            if (oldPaths.length > 0) {
+              await del(oldPaths, { token });
+              console.log(`Deleted old backups: ${oldPaths.join(', ')}`);
+            }
+
+            hasMore = result.hasMore;
+            cursor = result.cursor;
+          }
+          NODE
