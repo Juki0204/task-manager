@@ -84,7 +84,7 @@ export async function POST(req: Request) {
 
   //加工用
   if (mode === "processing") {
-    invoices.forEach((invoice: Invoice, index: number) => {
+    invoices.filter((i: Invoice) => i.total_amount).forEach((invoice: Invoice, index: number) => { //請求なしは除外
       const row = 8 + index;
 
       sheet.cell(`A${row}`).value(invoice.client);
@@ -115,3 +115,4 @@ export async function POST(req: Request) {
     },
   });
 }
+
