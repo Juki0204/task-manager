@@ -33,6 +33,18 @@ export default function RuleDetail({ rule, acknowledgements, users, onClick }: R
     return a;
   }, [currentAcknowledgements]);
 
+
+  const convertDate = (date: string): string => {
+    const baseDate = new Date(date);
+    const localeDate = baseDate.toLocaleDateString();
+    const localeTime = baseDate.toLocaleTimeString("sv-SE");
+    const dateArr = localeDate.split("/");
+    const jpDate = `${dateArr[0]}年${dateArr[1]}月${dateArr[2]}日`;
+
+    // return `${localeDate} ${localeTime}`;
+    return jpDate;
+  }
+
   useEffect(() => {
     const filteredAcknowledgements = acknowledgements?.filter(r => r.rule_id === rule.id);
     if (filteredAcknowledgements) {
@@ -62,12 +74,12 @@ export default function RuleDetail({ rule, acknowledgements, users, onClick }: R
 
         <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
           <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider"><FaPenToSquare />作成</h3>
-          <p className="text-[13px] text-neutral-500 tracking-wider">田中 2026-03-13</p>
+          <p className="text-[13px] text-neutral-500 tracking-wider">{rule.created_by} {convertDate(rule.created_at)}</p>
         </div>
 
         <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
           <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider"><FaRepeat />更新</h3>
-          <p className="text-[13px] text-neutral-500 tracking-wider">田中 2026-03-17</p>
+          <p className="text-[13px] text-neutral-500 tracking-wider">{rule.updated_by} {convertDate(rule.updated_at)}</p>
         </div>
 
         <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
