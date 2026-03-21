@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { GrClose } from "react-icons/gr";
 import { MdDriveFileRenameOutline } from "react-icons/md";
-import { Input, Select } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel, Input, Select } from "@headlessui/react";
 import AddRuleEditor from "./AddRuleEditor";
 import { FaPenToSquare, FaRegPenToSquare } from "react-icons/fa6";
 import { MdNotificationImportant, MdOutlineCategory } from "react-icons/md";
@@ -16,7 +16,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { FiPlusCircle } from "react-icons/fi";
 import { LuNewspaper } from "react-icons/lu";
 import { User } from "@/utils/types/user";
-import { Rule } from "@/utils/types/rule";
+import { Rule, RuleHistory } from "@/utils/types/rule";
 
 interface RuleDetailProps {
   rule: Rule;
@@ -35,12 +35,13 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
   const [type, setType] = useState<string>(rule.type);
   const [importance, setImportance] = useState<string>(rule.importance);
   const [creator, setCreator] = useState<string>(rule.created_by);
-  const [date, setDate] = useState<string>(() => {
-    const now = new Date().toLocaleDateString("sv-SE");
-    return now;
-  });
+  // const [date, setDate] = useState<string>(() => {
+  //   const now = new Date().toLocaleDateString("sv-SE");
+  //   return now;
+  // });
 
   const [isSend, setIsSend] = useState<boolean>(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
 
   const getClient = async () => {
     const { data: clients } = await supabase
@@ -53,49 +54,59 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
     }
   }
 
-  const updateRule = async () => {
+  const updateRule = async (updatedType: "major" | "minor") => {
     setIsSend(true);
+
+    const updatePayload: Partial<Rule> = {
+      title: title,
+      content: content,
+      target: target,
+      type: type,
+      importance: importance,
+      updated_by: user?.name,
+      updated_at: new Date(),
+    };
+
+    if (updatedType === "major") {
+      updatePayload.confirmation_required_at = new Date();
+    }
 
     const { data: ruleData, error: addErr } = await supabase
       .from("rules")
-      .update({
-        title: title,
-        content: content,
-        target: target,
-        type: type,
-        importance: importance,
-        created_by: creator,
-        updated_by: creator,
-      })
+      .update(updatePayload)
       .eq("id", rule.id)
       .select()
       .single();
 
     if (addErr) console.error("新規ルールの追加に失敗しました。");
 
+    const updateHistoryPayload: Partial<RuleHistory> = {
+      rule_id: ruleData.id,
+      acted_by: user?.name,
+      acted_at: new Date(),
+    };
+
+    if (updatedType === "major") {
+      updateHistoryPayload.action_type = "updated_major";
+    } else if (updatedType === "minor") {
+      updateHistoryPayload.action_type = "updated_minor";
+    }
+
     const { error: historyErr } = await supabase
       .from("rules_histories")
-      .insert({
-        rule_id: ruleData.id,
-        action_type: "updated_major",
-        acted_by: user?.name,
-        acted_at: new Date(),
-      });
+      .upsert(updateHistoryPayload);
 
     if (historyErr) console.error("ルール追加履歴の記録に失敗しました。");
 
     setTimeout(() => {
-      onClose();
+      onCancel();
       setIsSend(false);
     }, 500);
   }
 
-  // useEffect(() => {
-  //   if (user) {
-  //     setCreator(user.name);
-  //   }
-  //   getClient();
-  // }, [user]);
+  useEffect(() => {
+    getClient();
+  }, [user]);
 
   return (
     <div className="relative grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100">
@@ -150,10 +161,10 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
           </Select>
         </div>
 
-        <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 rounded-lg">
+        {/* <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 rounded-lg">
           <h4 className="whitespace-nowrap flex gap-1 items-center font-bold text-[13px] text-neutral-600"><FaPenToSquare className="text-sm" />作成日時</h4>
           <Input className="bg-neutral-100 p-1 rounded-md text-[13px] tracking-wider" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-        </div>
+        </div> */}
 
         <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 rounded-lg">
           <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px] text-neutral-600"><BsPersonCheck className="text-base" />記入者</h4>
@@ -166,14 +177,14 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
         <div className="col-span-4 grid grid-cols-5 gap-2 mt-auto mb-0">
           <button
             onClick={onCancel}
-            disabled={!content || !title || !creator || !target || !type || !importance || isSend}
+            disabled={!content || !title || !creator || !target || !type || !importance}
             className="col-span-2 outline-1 outline-neutral-700 rounded-md text-center text-neutral-700 font-bold text-sm py-2 tracking-wider hover:cursor-pointer hover:opacity-60"
           >
             キャンセル
           </button>
           <button
-            onClick={updateRule}
-            disabled={!content || !title || !creator || !target || !type || !importance || isSend}
+            onClick={() => setIsConfirmModalOpen(true)}
+            disabled={!content || !title || !creator || !target || !type || !importance}
             className="col-span-3 flex justify-center items-center gap-1 rounded-md bg-sky-600 text-center text-white font-bold text-sm py-2 tracking-wider hover:cursor-pointer hover:opacity-60 disabled:grayscale disabled:opacity-70"
           >
             {isSend ? "変更中..." : <><FaRegPenToSquare />変更する</>}
@@ -182,6 +193,31 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
 
       </div>
 
-    </div>
+
+      <Dialog open={isConfirmModalOpen} onClose={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
+        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
+            <p className="text-center text-lg font-bold py-4 tracking-wider">更新を全体に通知しますか？</p>
+            <p className="text-sm text-neutral-600 tracking-wider">誤字・脱字の修正や軽微な修正の場合は通知しなくてもOKです。<br />
+              内容自体に変更が加わった・追加された場合などは基本的に通知するようにして下さい。</p>
+            <p className="text-sm text-neutral-600 tracking-wider">全体に通知した場合は、当該投稿の全員の確認状態がリセットされます。</p>
+
+            {isSend ? (
+              <div className="flex gap-2">
+                <button disabled onClick={() => updateRule("minor")} className="flex-1 p-2 rounded-md bg-red-600/60 text-white disabled:grayscale disabled:opacity-70">更新中...</button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <button onClick={() => updateRule("minor")} className="flex-1 p-2 rounded-md bg-red-600/60 text-white cursor-pointer hover:opacity-70">通知しない</button>
+                <button onClick={() => updateRule("major")} className="flex-1 p-2 rounded-md bg-sky-600/80 text-white cursor-pointer hover:opacity-70">通知する</button>
+              </div>
+            )}
+            <p onClick={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="-mt-1 -mb-2 w-fit text-sm m-auto tracking-wider text-neutral-600 cursor-pointer hover:opacity-70">キャンセル</p>
+          </DialogPanel>
+        </div>
+      </Dialog >
+    </div >
   )
 }

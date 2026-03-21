@@ -23,18 +23,24 @@ export default function RuleDetail({ rule, acknowledgements, users, onClick }: R
 
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
-    const a = currentAcknowledgements?.some(
-      (a) =>
-        a.user_id === user?.id &&
-        a.acknowledged_at >= rule.confirmation_required_at
-    ) ?? false;
+    const ack = currentAcknowledgements?.find(
+      (a) => a.user_id === user?.id
+    );
 
-    console.log(a);
-    return a;
-  }, [currentAcknowledgements]);
+    let status: "new" | "updated" | "read";
+
+    if (!ack) {
+      status = "new";
+    } else if (ack.acknowledged_at < rule.confirmation_required_at) {
+      status = "updated";
+    } else {
+      status = "read";
+    }
+    return status;
+  }, [currentAcknowledgements, user, rule]);
 
 
-  const convertDate = (date: string): string => {
+  const convertDate = (date: string | Date): string => {
     const baseDate = new Date(date);
     const localeDate = baseDate.toLocaleDateString();
     const localeTime = baseDate.toLocaleTimeString("sv-SE");
@@ -54,20 +60,20 @@ export default function RuleDetail({ rule, acknowledgements, users, onClick }: R
 
   return (
     <div onClick={() => onClick(rule)} className="flex w-375 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
-      <div className="flex flex-col w-[calc(100%-(320px+8px))] gap-2 rounded-md bg-green-600/10 p-2">
+      <div className="flex flex-col w-[calc(100%-(320px+8px))] gap-2 rounded-md bg-neutral-300 p-2">
         <div className="flex justify-between">
           <h3 className="flex gap-1 items-center font-bold truncate text-neutral-800 tracking-wider">
             <LuNewspaper />
             <span>{rule.title}</span>
           </h3>
           <div className="flex gap-1">
-            <p className="w-44 bg-neutral-100 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider">{rule.target}</p>
-            <p className="w-26 bg-neutral-100 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider">{rule.type}</p>
-            <p className={`w-18 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider ${rule.importance === "重要" ? "bg-yellow-200" : "bg-green-200"}`}>{rule.importance}</p>
+            <p className="w-44 bg-neutral-100 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold">{rule.target}</p>
+            <p className="w-26 bg-neutral-100 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold">{rule.type}</p>
+            <p className={`w-18 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold brightness-105 ${rule.importance === "重要" ? "bg-yellow-300/80" : "bg-green-400/70"}`}>{rule.importance}</p>
           </div>
         </div>
         <p className="truncate rounded-md bg-neutral-100 px-1 py-0.5 text-[13px] tracking-wider">{rule.content}</p>
-        <div className={`h-1 rounded-full ${isAcknowledged ? "bg-neutral-400" : "bg-green-400"} `}></div>
+        <div className={`h-1 rounded-full ${isAcknowledged === "new" ? "bg-blue-400" : isAcknowledged === "updated" ? "bg-red-400" : isAcknowledged === "read" ? "bg-neutral-400" : ""} `}></div>
       </div>
 
       <div className="flex flex-col w-80 gap-1">

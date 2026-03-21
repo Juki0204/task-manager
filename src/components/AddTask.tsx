@@ -424,7 +424,7 @@ export default function AddTask() {
                 disabled={isValid || isSubmitting}
                 className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
               >
-                {isSubmitting ? "追加中..." : "新規追加"}
+                {isSubmitting ? "" : "新規追加"}
               </Button>
             </div>
 

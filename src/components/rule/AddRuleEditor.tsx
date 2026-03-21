@@ -245,7 +245,7 @@ export default function AddRuleEditor({ value, onChange }: { value: string, onCh
 
       <EditorContent
         editor={editor}
-        className={`tiptap-base tiptap-editor text-sm min-h-98`}
+        className={`tiptap-base tiptap-editor text-sm min-h-98 [&>div]:!min-h-97`}
       />
 
       <div className={`${hintOpen ? " left-[calc(100%+40px)] opacity-100" : "left-0 opacity-0"} w-70 absolute left-0 -z-10 -top-7 shadow-md bg-neutral-100 rounded-2xl p-4 whitespace-nowrap transition-all duration-300`}>

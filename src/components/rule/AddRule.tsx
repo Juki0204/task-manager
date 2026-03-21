@@ -30,10 +30,10 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
   const [type, setType] = useState<string>("");
   const [importance, setImportance] = useState<string>("通常");
   const [creator, setCreator] = useState<string>("");
-  const [date, setDate] = useState<string>(() => {
-    const now = new Date().toLocaleDateString("sv-SE");
-    return now;
-  });
+  // const [date, setDate] = useState<string>(() => {
+  //   const now = new Date().toLocaleDateString("sv-SE");
+  //   return now;
+  // });
 
   const [isSend, setIsSend] = useState<boolean>(false);
 
@@ -144,10 +144,10 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
           </Select>
         </div>
 
-        <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 rounded-lg">
+        {/* <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 rounded-lg">
           <h4 className="whitespace-nowrap flex gap-1 items-center font-bold text-[13px] text-neutral-600"><FaPenToSquare className="text-sm" />作成日時</h4>
           <Input className="bg-neutral-100 p-1 rounded-md text-[13px] tracking-wider" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-        </div>
+        </div> */}
 
         <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 rounded-lg">
           <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px] text-neutral-600"><BsPersonCheck className="text-base" />記入者</h4>
