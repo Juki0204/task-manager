@@ -22,7 +22,7 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
   //const [currentAcknowledgements, setCurrentAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
   const currentAcknowledgements = useMemo(() => {
     return acknowledgements?.filter((a) => a.rule_id === rule.id) ?? [];
-  },[acknowlegdements, rule.id]);
+  },[acknowledgements, rule.id]);
 
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
@@ -54,12 +54,12 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
     return jpDate;
   }
 
-  useEffect(() => {
-    const filteredAcknowledgements = acknowledgements?.filter(r => r.rule_id === rule.id);
-    if (filteredAcknowledgements) {
-      setCurrentAcknowledgements(filteredAcknowledgements);
-    }
-  }, [acknowledgements]);
+  // useEffect(() => {
+  //   const filteredAcknowledgements = acknowledgements?.filter(r => r.rule_id === rule.id);
+  //   if (filteredAcknowledgements) {
+  //     setCurrentAcknowledgements(filteredAcknowledgements);
+  //   }
+  // }, [acknowledgements]);
 
   return (
     <div onClick={() => onClick(rule)} className="flex w-375 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
