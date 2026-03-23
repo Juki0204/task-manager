@@ -24,6 +24,12 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
     return acknowledgements?.filter((a) => a.rule_id === rule.id) ?? [];
   },[acknowledgements, rule.id]);
 
+  const validAcknowledgements = useMemo(() => {
+    return currentAcknowledgements.filter(
+      (a) => a.acknowledged_at >= rule.confirmation_required_at
+    );
+  }, [currentAcknowledgements, rule.confirmation_required_at]);
+
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
     const ack = currentAcknowledgements?.find(
@@ -93,7 +99,7 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
 
         <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
           <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider"><FaRegSmile />確認</h3>
-          <p className="text-[13px] text-neutral-500 tracking-wider">{currentAcknowledgements?.length} / {users.length}</p>
+          <p className="text-[13px] text-neutral-500 tracking-wider">{validAcknowledgements?.length} / {users.length}</p>
         </div>
       </div>
     </div>
