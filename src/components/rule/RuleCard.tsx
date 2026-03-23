@@ -17,7 +17,7 @@ interface RuleDetailProps {
   onClick: (r: Rule) => void;
 }
 
-export default function RuleDetail({ rule, acknowledgements, users, onClick }: RuleDetailProps) {
+export default function RuleCard({ rule, acknowledgements, users, onClick }: RuleDetailProps) {
   const { user } = useAuth();
   const [currentAcknowledgements, setCurrentAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
 
