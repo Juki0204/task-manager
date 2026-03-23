@@ -10,16 +10,19 @@ import { LuNewspaper } from "react-icons/lu";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 
-interface RuleDetailProps {
+interface RuleCardProps {
   rule: Rule;
   acknowledgements: RuleAcknowledgement[] | null;
   users: User[];
   onClick: (r: Rule) => void;
 }
 
-export default function RuleCard({ rule, acknowledgements, users, onClick }: RuleDetailProps) {
+export default function RuleCard({ rule, acknowledgements, users, onClick }: RuleCardProps) {
   const { user } = useAuth();
-  const [currentAcknowledgements, setCurrentAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
+  //const [currentAcknowledgements, setCurrentAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
+  const currentAcknowledgements = useMemo(() => {
+    return acknowledgements?.filter((a) => a.rule_id === rule.id) ?? [];
+  },[acknowlegdements, rule.id]);
 
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
