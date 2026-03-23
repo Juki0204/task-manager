@@ -374,9 +374,9 @@ export default function RulePage() {
         <div className="w-[calc(100%-360px)] overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
           <div className="grid gap-2 mx-auto min-w-200">
             {
-              filteredRules && users && filteredRules.map((rule, index) => (
+              filteredRules && users && filteredRules.map((rule) => (
                 <RuleCard
-                  key={index}
+                  key={rule.id}
                   rule={rule}
                   acknowledgements={ruleAcknowledgements}
                   users={users}
