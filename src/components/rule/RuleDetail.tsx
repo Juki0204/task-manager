@@ -48,6 +48,7 @@ export default function RuleDetail({ rule, acknowledgements, users, onClose, onE
 
     return { readUsers: read, unreadUsers: unread };
   }, [users, validAcknowledgedUserIds]);
+
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
     if (!user?.id) return false;
@@ -83,7 +84,6 @@ export default function RuleDetail({ rule, acknowledgements, users, onClose, onE
     setIsConfirming(false);
   }
 
-  console.log(readUsers, user);
 
   return (
     <div className="grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100">

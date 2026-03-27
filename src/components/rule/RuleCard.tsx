@@ -21,6 +21,21 @@ export default function RuleDetail({ rule, acknowledgements, users, onClick }: R
   const { user } = useAuth();
   const [currentAcknowledgements, setCurrentAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
 
+  //既読ユーザー一覧・未読ユーザー一覧振り分け
+  const validAcknowledgedUserIds = useMemo(() => {
+    return new Set(
+      (currentAcknowledgements ?? [])
+        .filter((a) =>
+          a.rule_id === rule.id &&
+          a.acknowledged_at >= rule.confirmation_required_at)
+        .map((a) => a.user_id)
+    );
+  }, [currentAcknowledgements, rule.id, rule.confirmation_required_at]);
+
+  const readUsers = useMemo(() => {
+    return users.filter((u) => validAcknowledgedUserIds.has(u.id));
+  }, [users, validAcknowledgedUserIds]);
+
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
     const ack = currentAcknowledgements?.find(
@@ -58,6 +73,7 @@ export default function RuleDetail({ rule, acknowledgements, users, onClick }: R
     }
   }, [acknowledgements]);
 
+
   return (
     <div onClick={() => onClick(rule)} className="flex w-375 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
       <div className="flex flex-col w-[calc(100%-(320px+8px))] gap-2 rounded-md bg-neutral-300 p-2">
@@ -90,7 +106,7 @@ export default function RuleDetail({ rule, acknowledgements, users, onClick }: R
 
         <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
           <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider"><FaRegSmile />確認</h3>
-          <p className="text-[13px] text-neutral-500 tracking-wider">{currentAcknowledgements?.length} / {users.length}</p>
+          <p className="text-[13px] text-neutral-500 tracking-wider">{readUsers.length} / {users.length}</p>
         </div>
       </div>
     </div>
