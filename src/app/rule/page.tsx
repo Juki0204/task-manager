@@ -4,6 +4,7 @@ import AddRule from "@/components/rule/AddRule";
 import EditRule from "@/components/rule/EditRule";
 import RuleCard from "@/components/rule/RuleCard";
 import RuleDetail from "@/components/rule/RuleDetail";
+import { useRuleContext } from "@/components/rule/RuleProvider";
 import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 import { supabase } from "@/utils/supabase/supabase";
 import { Rule, RuleAcknowledgement } from "@/utils/types/rule";
@@ -22,10 +23,9 @@ type Filters = {
 }
 
 export default function RulePage() {
+  const { rules, ruleAcknowledgements, isRulesLoading } = useRuleContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeRule, setActiveRule] = useState<Rule | null>(null);
-  const [rules, setRules] = useState<Rule[] | null>(null);
-  const [ruleAcknowledgements, setRuleAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
   const [activeRuleAcknowledgements, setActiveRuleAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
   const [modalMode, setModalMode] = useState<"detail" | "add" | "edit" | null>(null);
 
@@ -61,19 +61,6 @@ export default function RulePage() {
       const nameList = users.filter(u => u.name !== "Administrator");
       setUsers(nameList);
     }
-
-    const { data: ruleList } = await supabase
-      .from("rules")
-      .select("*");
-
-    if (!ruleList) return;
-    setRules(sortRulesByUpdatedAtDesc(ruleList));
-
-    const { data: ruleAcknowledgements } = await supabase
-      .from("rules_acknowledgements")
-      .select("*");
-
-    setRuleAcknowledgements(ruleAcknowledgements);
   }
 
   //ルール一覧ソート用ヘルパー
@@ -130,108 +117,13 @@ export default function RulePage() {
   //アクティブルールに対しての既読判定用フラグデータ振り分け
   useEffect(() => {
     if (!activeRule) {
-      setActiveRuleAcknowledgements(null);
+      setActiveRuleAcknowledgements([]);
       return;
     }
 
-    const filteredAcknowledgements = ruleAcknowledgements?.filter(r => r.rule_id === activeRule?.id) ?? [];
+    const filteredAcknowledgements = ruleAcknowledgements.filter(r => r.rule_id === activeRule.id);
     setActiveRuleAcknowledgements(filteredAcknowledgements);
   }, [activeRule, ruleAcknowledgements]);
-
-  //ルールのリアルタイム購読
-  useEffect(() => {
-    const rulesChannel = supabase
-      .channel("rules-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "rules" },
-        (payload) => {
-          const eventType = payload.eventType;
-
-          if (eventType === "INSERT") {
-            const newRule = payload.new as Rule;
-            setRules((prev) => {
-              if (!prev) return [newRule];
-              return sortRulesByUpdatedAtDesc([newRule, ...prev]);
-            });
-            return;
-          }
-
-          if (eventType === "UPDATE") {
-            const updatedRule = payload.new as Rule;
-
-            setRules((prev) => {
-              if (!prev) return [updatedRule];
-              return sortRulesByUpdatedAtDesc(
-                prev.map((rule) => (rule.id === updatedRule.id ? updatedRule : rule))
-              );
-            });
-
-            setActiveRule((prev) =>
-              prev?.id === updatedRule.id ? updatedRule : prev
-            );
-            return;
-          }
-
-          if (eventType === "DELETE") {
-            const deletedRule = payload.old as Rule;
-
-            setRules((prev) =>
-              prev ? prev.filter((rule) => rule.id !== deletedRule.id) : []
-            );
-
-            setActiveRule((prev) =>
-              prev?.id === deletedRule.id ? null : prev
-            );
-          }
-        }
-      )
-      .subscribe();
-
-    //ルールの既読判定フラグのリアルタイム購読
-    const acknowledgementsChannel = supabase
-      .channel("rules-acknowledgements-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "rules_acknowledgements" },
-        (payload) => {
-          const eventType = payload.eventType;
-
-          if (eventType === "INSERT") {
-            const newAck = payload.new as RuleAcknowledgement;
-            setRuleAcknowledgements((prev) => {
-              if (!prev) return [newAck];
-              return [...prev, newAck];
-            });
-            return;
-          }
-
-          if (eventType === "UPDATE") {
-            const updatedAck = payload.new as RuleAcknowledgement;
-            setRuleAcknowledgements((prev) => {
-              if (!prev) return [updatedAck];
-              return prev.map((ack) =>
-                ack.id === updatedAck.id ? updatedAck : ack
-              );
-            });
-            return;
-          }
-
-          if (eventType === "DELETE") {
-            const deletedAck = payload.old as RuleAcknowledgement;
-            setRuleAcknowledgements((prev) =>
-              prev ? prev.filter((ack) => ack.id !== deletedAck.id) : []
-            );
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(rulesChannel);
-      supabase.removeChannel(acknowledgementsChannel);
-    };
-  }, []);
 
   return (
     <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 m-auto max-w-[1920px] relative overflow-x-hidden">
@@ -374,9 +266,9 @@ export default function RulePage() {
         <div className="w-[calc(100%-360px)] overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
           <div className="grid gap-2 mx-auto min-w-200">
             {
-              filteredRules && users && filteredRules.map((rule, index) => (
+              filteredRules && users && filteredRules.map((rule) => (
                 <RuleCard
-                  key={index}
+                  key={rule.id}
                   rule={rule}
                   acknowledgements={ruleAcknowledgements}
                   users={users}
