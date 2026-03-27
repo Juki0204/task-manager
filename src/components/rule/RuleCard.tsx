@@ -36,6 +36,7 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
     return users.filter((u) => validAcknowledgedUserIds.has(u.id));
   }, [users, validAcknowledgedUserIds]);
 
+
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
     const ack = currentAcknowledgements?.find(
@@ -72,7 +73,6 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
       setCurrentAcknowledgements(filteredAcknowledgements);
     }
   }, [acknowledgements]);
-
 
   return (
     <div onClick={() => onClick(rule)} className="flex w-375 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
