@@ -154,14 +154,6 @@ export default function Header() {
                 <FaRegCalendarCheck className="text-base" /><span className="hidden min-[1700px]:block">完了済</span>
               </Button>
 
-              {/* <Button
-                tabIndex={-1}
-                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm text-white font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/rule" ? "bg-blue-500/50" : "cursor-pointer"}`}
-                onClick={() => router.push('/rule')}
-              >
-                <FaClipboardList className="text-base" /><span className="hidden min-[1700px]:block">掲示板</span>
-              </Button> */}
-
               <RuleBoardLinkBtn onClick={() => router.push('/rule')} pathname={pathname} />
 
               <Button
