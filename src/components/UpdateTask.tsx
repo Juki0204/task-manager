@@ -212,6 +212,17 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
 
     if (error) console.error(error);
 
+    //備考欄更新時の未読フラグ生成
+    if (diff.changedKeys.includes("remarks")) {
+      await supabase
+        .from("tasks_status")
+        .upsert({
+          task_id: task.id,
+          updated_by: user.name,
+          updated_at: new Date(),
+        }, { onConflict: 'task_id' });
+    }
+
   }
 
   //簡易validate
