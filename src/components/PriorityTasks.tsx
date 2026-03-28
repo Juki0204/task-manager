@@ -195,7 +195,6 @@ function PriorityTaskCard({ task, deadline, annotation, onClick }: { task: Task,
         id={task.id}
         className={`w-full rounded-sm p-3 text-white tracking-wide relative`}
       >
-        {/* {unreadIds && unreadIds.includes(task.id) && (<div className="absolute top-3 left-1.75 w-0.75 h-39.5 bg-[#ffff00] rounded-full" />)} */}
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           {task.serial}
           {deadline && (

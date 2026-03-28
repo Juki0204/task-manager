@@ -3,6 +3,5 @@ export interface User {
   name: string;
   email: string;
   employee: string;
-  unread_task_id: string[];
   important_task_id: string[];
 }

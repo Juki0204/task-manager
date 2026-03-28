@@ -52,7 +52,6 @@ export default function DashboardPage() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const [modalType, setModalType] = useState<"detail" | "edit" | null>(null);
-  const [unreadIds, setUnreadIds] = useState<string[]>([]);
 
   const router = useRouter();
 
@@ -167,29 +166,7 @@ export default function DashboardPage() {
     if (error) {
       console.error("unlock failed");
     }
-    // else {
-    //   console.log("unlocked task: taskId =", activeTask.id);
-    // }
   }
-
-  // 既読処理関数
-  const markAsRead = async (taskId: string) => {
-    // フロント即時反映
-    setUnreadIds((prev) => prev.filter((id) => id !== taskId));
-
-    // Supabase更新
-    const updatedIds = unreadIds.filter((id) => id !== taskId);
-    await supabase
-      .from("users")
-      .update({ unread_task_id: updatedIds })
-      .eq("id", user?.id);
-  };
-
-  useEffect(() => {
-    if (user?.unread_task_id) {
-      setUnreadIds(user.unread_task_id);
-    }
-  }, [user]);
 
   /* -------------- モーダル関連 -------------- */
 
@@ -477,8 +454,7 @@ export default function DashboardPage() {
               <TaskDetail
                 user={user}
                 task={activeTask}
-                unreadIds={unreadIds}
-                onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setActiveTask(null); setIsTaskLoaded(false); setTimeout(() => setModalType(null), 500); }}
+                onClose={() => { setIsOpen(false); setActiveTask(null); setIsTaskLoaded(false); setTimeout(() => setModalType(null), 500); }}
                 onEdit={(t: Task) => {
                   const latest = tasks.find(x => x.id === t.id) ?? t;
                   setActiveTask(latest);

@@ -5,7 +5,6 @@ import { User } from "@/utils/types/user";
 interface PersonalTaskListProps {
   taskList: Task[];
   user: User;
-  unreadIds: string[];
   sortTask: (taskList: Task[]) => Task[];
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
@@ -21,7 +20,6 @@ interface PersonalTaskListProps {
 export default function PersonalTaskList({
   taskList,
   user,
-  unreadIds,
   sortTask,
   onClick,
   onContextMenu,
@@ -41,7 +39,6 @@ export default function PersonalTaskList({
           title="未担当タスク"
           tasks={taskList.filter((task) => !task.manager && task.status === '未着手' || !task.manager && task.status === '詳細待ち' || !task.manager && task.status === '中止' || !task.manager && task.status === '保留')}
           user={user}
-          unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
           className="bg-[#898989] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
@@ -59,7 +56,6 @@ export default function PersonalTaskList({
           title="未着手・作業中タスク"
           tasks={sortTask(taskList).filter((task) => task.manager && task.status !== '確認中' && task.status !== '完了')}
           user={user}
-          unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
           className="bg-[#6d7a8f] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
@@ -77,7 +73,6 @@ export default function PersonalTaskList({
           title="確認中タスク"
           tasks={taskList.filter((task) => task.manager && task.status === '確認中')}
           user={user}
-          unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
           className="bg-[#658083] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
@@ -115,7 +110,6 @@ export default function PersonalTaskList({
             return finishA - finishB;
           })}
           user={user}
-          unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
           className="bg-[#817f6a] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"

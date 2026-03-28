@@ -33,7 +33,6 @@ export default function AllTaskPage() {
         taskSubStatus === "UNKNOWN" ? "yellow" : "red";
 
   const { taskListSortType, filters } = useTaskListPreferences();
-  const [unreadIds, setUnreadIds] = useState<string[]>([]);
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -68,9 +67,6 @@ export default function AllTaskPage() {
     if (error) {
       console.log("unlock failed");
     }
-    // else {
-    //   console.log("unlocked task: taskId =", activeTask.id);
-    // }
   }
 
   const filteredTaskList = useMemo(() => {
@@ -122,19 +118,6 @@ export default function AllTaskPage() {
     return sortedTask;
   }
 
-  // 既読処理関数
-  const markAsRead = async (taskId: string) => {
-    // フロント即時反映
-    setUnreadIds((prev) => prev.filter((id) => id !== taskId));
-
-    // Supabase更新
-    const updatedIds = unreadIds.filter((id) => id !== taskId);
-    await supabase
-      .from("users")
-      .update({ unread_task_id: updatedIds })
-      .eq("id", user?.id);
-  };
-
   useEffect(() => {
     if (activeTask) {
       const updated = taskList.find((t) => t.id === activeTask.id);
@@ -142,12 +125,6 @@ export default function AllTaskPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList]);
-
-  useEffect(() => {
-    if (user?.unread_task_id) {
-      setUnreadIds(user.unread_task_id);
-    }
-  }, [user]);
 
   return (
     <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 max-w-[1920px] m-auto overflow-x-hidden">
@@ -181,7 +158,6 @@ export default function AllTaskPage() {
         <TaskList
           user={user}
           taskList={sortTask(filteredTaskList)}
-          unreadIds={unreadIds}
           onClick={(t: Task) => {
             if (isOpen) return;
             if (menu.visible) return;
@@ -221,8 +197,7 @@ export default function AllTaskPage() {
               <TaskDetail
                 user={user}
                 task={activeTask}
-                unreadIds={unreadIds}
-                onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
+                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
                 onEdit={(t: Task) => {
                   const latest = taskList.find(x => x.id === t.id) ?? t;
                   setActiveTask(latest);

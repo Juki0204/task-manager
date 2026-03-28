@@ -145,7 +145,6 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
         <div className="flex flex-col col-span-2 bg-neutral-200 rounded-md pb-1.5 px-1.5">
           <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
             <LuNotebookPen /> 備考欄
-            {/* {user && unreadIds?.includes(task.id) && (<div className="left-1.5 w-2 h-2 bg-yellow-300 rounded-full" />)} */}
           </h3>
           {task.remarks ? (
             <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />

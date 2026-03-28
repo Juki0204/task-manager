@@ -29,14 +29,13 @@ import MailConverter from "./MailConverter";
 interface TaskDetailProps {
   task: Task;
   user: User;
-  unreadIds?: string[];
   onClose: () => void;
   onEdit: (t: Task) => void;
   deadlineList: { task_id: string, date: string }[];
 }
 
 
-export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, deadlineList }: TaskDetailProps) {
+export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }: TaskDetailProps) {
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
 
   const [priorityStyle, setPriorityStyle] = useState<string>('');
@@ -325,7 +324,6 @@ export default function TaskDetail({ task, user, unreadIds, onClose, onEdit, dea
           )}
           <h3 className="w-full whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
             <LuNotebookPen /> 備考欄
-            {/* {user && unreadIds?.includes(task.id) && (<div className="left-1.5 w-2 h-2 bg-yellow-300 rounded-full" />)} */}
           </h3>
           {task.remarks ? (
             <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />

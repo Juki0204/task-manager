@@ -10,7 +10,6 @@ interface TaskColumnProps {
   title: string;
   tasks: Task[];
   user: User;
-  unreadIds: string[];
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   className: string;
@@ -28,7 +27,6 @@ export function TaskColumn({
   title,
   tasks,
   user,
-  unreadIds,
   onClick,
   onContextMenu,
   className,
@@ -52,7 +50,6 @@ export function TaskColumn({
           key={task.id}
           data={{ containerId: id }}
           task={task}
-          unreadIds={unreadIds}
           onClick={onClick}
           onContextMenu={onContextMenu}
           currentClickTask={currentClickTask}

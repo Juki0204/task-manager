@@ -61,7 +61,6 @@ export default function AuthProvider({
             name: data.name,
             email: data.email,
             employee: data.employee,
-            unread_task_id: data.unread_task_id,
             important_task_id: data.important_task_id,
           });
         }

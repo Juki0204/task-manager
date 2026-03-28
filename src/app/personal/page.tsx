@@ -48,7 +48,6 @@ export default function PersonalTaskPage() {
         taskSubStatus === "UNKNOWN" ? "yellow" : "red";
 
   const { filters, setFilters } = useTaskListPreferences();
-  const [unreadIds, setUnreadIds] = useState<string[]>([]);
   const { syncInvoiceWithTask } = useInvoiceSync();
 
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
@@ -188,20 +187,6 @@ export default function PersonalTaskPage() {
     }
   };
 
-  // 既読処理関数
-  const markAsRead = async (taskId: string) => {
-    // フロント即時反映
-    setUnreadIds((prev) => prev.filter((id) => id !== taskId));
-
-    // Supabase更新
-    const updatedIds = unreadIds.filter((id) => id !== taskId);
-    await supabase
-      .from("users")
-      .update({ unread_task_id: updatedIds })
-      .eq("id", user?.id);
-  };
-
-
   const filteredTaskList = taskList.filter((task) => {
     if (task.status === "削除済") return false;
 
@@ -235,10 +220,6 @@ export default function PersonalTaskPage() {
   useEffect(() => {
     if (!user) return;
     if (initializedRef.current) return;
-
-    if (user.unread_task_id) {
-      setUnreadIds(user.unread_task_id);
-    }
 
     setFilters({
       clients: [],
@@ -313,7 +294,6 @@ export default function PersonalTaskPage() {
           <PersonalTaskList
             user={user}
             taskList={sortTask(filteredTaskList)}
-            unreadIds={unreadIds}
             onClick={(t: Task) => {
               if (isOpen) return;
               if (menu.visible) return;
@@ -362,8 +342,7 @@ export default function PersonalTaskPage() {
               <TaskDetail
                 user={user}
                 task={activeTask}
-                unreadIds={unreadIds}
-                onClose={() => { setIsOpen(false); markAsRead(activeTask.id); setTimeout(() => setModalType(null), 500); }}
+                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
                 onEdit={(t: Task) => {
                   const latest = taskList.find(x => x.id === t.id) ?? t;
                   setActiveTask(latest);

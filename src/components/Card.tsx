@@ -19,7 +19,6 @@ import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
 interface CardPropd {
   task: Task;
   user: User;
-  unreadIds?: string[];
   onClick: (task: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
   onEdit: (t: Task) => void;
@@ -27,7 +26,7 @@ interface CardPropd {
 }
 
 
-export default function Card({ task, user, unreadIds, onClick, onContextMenu, onEdit, deadlineList, ...props }: CardPropd) {
+export default function Card({ task, user, onClick, onContextMenu, onEdit, deadlineList, ...props }: CardPropd) {
   // const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, false);
   const { filters } = useTaskListPreferences();
 
@@ -203,9 +202,6 @@ export default function Card({ task, user, unreadIds, onClick, onContextMenu, on
         className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_300px_600px_120px_120px_auto] py-2`}
         {...props}
       >
-        {/* {unreadIds && unreadIds.includes(task.id) && (
-          <div className="absolute left-2 w-1 h-8 bg-[#ffff00]" />
-        )} */}
         <div className="text-xs flex items-center gap-1.5">
           <div className="flex items-center gap-1">
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
