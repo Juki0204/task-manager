@@ -3,9 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CursorHoverPopup } from "./CursorHoverPopup";
 import { LuNotebookPen } from "react-icons/lu";
+import { Task } from "@/utils/types/task";
+import { useAuth } from "@/app/AuthProvider";
+import { supabase } from "@/utils/supabase/supabase";
+import { useTaskUnread } from "../TaskUnreadProvider";
 
 type RemarksHoverProps = {
-  // isUnread: boolean;
+  task: Task;
   children: React.ReactNode;
   handleHover: (hover: boolean) => void;
   onMarkRead?: () => void;
@@ -15,7 +19,7 @@ type RemarksHoverProps = {
 };
 
 export function RemarksHoverMark({
-  // isUnread,
+  task,
   children,
   onMarkRead,
   handleHover,
@@ -23,6 +27,7 @@ export function RemarksHoverMark({
   readAfterMs = 3000,
   className,
 }: RemarksHoverProps) {
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
   const [hoveringPopup, setHoveringPopup] = useState(false);
@@ -31,6 +36,9 @@ export function RemarksHoverMark({
   const readTimer = useRef<number | null>(null);
   const isHoveringTrigger = useRef(false);
   const hasMarkedRead = useRef(false);
+
+  const { isTaskUnread } = useTaskUnread();
+  const unread = isTaskUnread({ id: task.id, manager: task.manager }, user?.name ?? "");
 
   //cleanup
   useEffect(() => {
@@ -80,13 +88,50 @@ export function RemarksHoverMark({
     clearTimers();
   };
 
+
+  //備考欄既読判定
+  const remarksAcknowredged = async (task: Task) => {
+    const isUnassigned = !task.manager;
+    const isMyTask = task.manager === user?.name;
+
+    if (!isUnassigned && !isMyTask) return; //他人のタスクはスキップ
+
+    const ackData = {
+      task_id: task.id,
+      acknowledged_by: user?.name,
+      acknowledged_at: new Date(),
+    }
+    // console.log(ackData);
+    const { error } = await supabase
+      .from("tasks_acknowledgements")
+      .upsert(ackData, {
+        onConflict: "task_id,acknowledged_by"
+      });
+
+    if (error) console.error("確認フラグの登録に失敗しました。", error);
+  }
+
+  useEffect(() => {
+    if (!isHoveringTrigger.current) return;
+
+    const timer = setTimeout(() => {
+      console.log("備考欄を表示しました。");
+      remarksAcknowredged(task);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    }
+  }, [isHoveringTrigger.current]);
+
   return (
     <>
       {/* ここが「備考」カプセル */}
       <button
         type="button"
         className={`
-          ${className} grid place-content-center py-1 px-3 rounded-full text-xs transition-colors duration-200 bg-neutral-500/60 text-neutral-50",
+          ${className} grid place-content-center py-1 px-3 rounded-full text-xs transition-colors duration-200
+          ${unread ? "bg-yellow-300/80 text-neutral-800 -outline-offset-2 outline-2 outline-yellow-300 font-bold" : "bg-neutral-500/60 text-neutral-50"}
         `}
         onMouseEnter={(e) => {
           isHoveringTrigger.current = true;

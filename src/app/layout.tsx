@@ -10,6 +10,7 @@ import FilterResetWatcher from "@/components/FilterResetWatcher";
 import VersionCheckProvider from "./VersionCheckProvider";
 import TaskNotesViewer from "@/components/TaskNotesViewer";
 import { RuleProvider } from "@/components/rule/RuleProvider";
+import { TaskUnreadProvider } from "@/components/TaskUnreadProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,10 +41,12 @@ export default function RootLayout({
           <AuthProvider>{/* ユーザーデータ */}
             <TaskListPreferencesProvider>{/* タスクリスト全般 */}
               <RuleProvider>{/* 掲示板 */}
-                <FilterResetWatcher />
-                <Header />
-                {children}
-                {/* <TaskNotesViewer /> */}
+                <TaskUnreadProvider>
+                  <FilterResetWatcher />
+                  <Header />
+                  {children}
+                  {/* <TaskNotesViewer /> */}
+                </TaskUnreadProvider>
               </RuleProvider>
             </TaskListPreferencesProvider>
           </AuthProvider>

@@ -21,3 +21,15 @@ export interface Task {
   locked_by_name: string | null;
   locked_by_at: string | null;
 }
+
+export interface TaskStatus {
+  task_id: string;
+  updated_by: string;
+  updated_at: Date | string;
+}
+
+export interface TaskAcknowledgement {
+  task_id: string;
+  acknowledged_by: string;
+  acknowledged_at: Date | string;
+}

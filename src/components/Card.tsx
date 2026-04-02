@@ -248,7 +248,7 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
             <HighlightText text={task.description} keyword={filters.searchKeywords} />
           </span>
           {hasRemarksInfo && task.remarks && (
-            <RemarksHoverMark handleHover={setHover} className="absolute inset-y-0 right-4">
+            <RemarksHoverMark handleHover={setHover} task={task} className="absolute inset-y-0 right-4">
               {hover && remarksHtml && (
                 <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
               )}

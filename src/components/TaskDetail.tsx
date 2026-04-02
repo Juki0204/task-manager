@@ -24,6 +24,7 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 import { extractMailRefs } from "@/utils/function/extractMailRefs";
 import MailConverter from "./MailConverter";
+import { useTaskUnread } from "./TaskUnreadProvider";
 
 
 interface TaskDetailProps {
@@ -47,6 +48,11 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
   const [notesOpen, setNotesOpen] = useState<boolean>(false);
 
   const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
+
+  const isRemarksTrigger = useRef(false);
+  const { isTaskUnread } = useTaskUnread();
+  const unread = isTaskUnread({ id: task.id, manager: task.manager }, user?.name ?? "");
+
 
   const priorityStyles: Record<string, string> = {
     "急": "bg-red-300 text-red-800",
@@ -217,9 +223,53 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
     setActiveMail(mailRefs[0]);
   }
   useEffect(() => {
-    console.log(mailRefs);
+    // console.log(mailRefs);
     initActiveMail();
   }, [mailRefs]);
+
+  // useEffect(() => {
+  //   const judgeTimer = setTimeout(() => {
+  //     console.log("読みました。");
+  //   }, 3000);
+
+  //   return () => {
+  //     clearTimeout(judgeTimer);
+  //   }
+  // }, []);
+
+
+  //備考欄既読判定
+  const remarksAcknowredged = async (task: Task) => {
+    const isUnassigned = !task.manager;
+    const isMyTask = task.manager === user?.name;
+
+    if (!isUnassigned && !isMyTask) return; //他人のタスクはスキップ
+
+    const ackData = {
+      task_id: task.id,
+      acknowledged_by: user?.name,
+      acknowledged_at: new Date(),
+    }
+    // console.log(ackData);
+    const { error } = await supabase
+      .from("tasks_acknowledgements")
+      .upsert(ackData, {
+        onConflict: "task_id,acknowledged_by"
+      });
+
+    if (error) console.error("確認フラグの登録に失敗しました。", error);
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("備考欄を表示しました。");
+      remarksAcknowredged(task);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    }
+  }, []);
 
   return (
     <>
@@ -312,7 +362,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
           <span className="block h-[1px] bg-neutral-300 w-full" />
         </div>
 
-        <div className="relative flex flex-col col-span-2 bg-neutral-200 rounded-md pb-1.5 px-1.5">
+        <div className={`relative flex flex-col col-span-2 rounded-md pb-1.5 px-1.5 bg-neutral-200`}>
 
           {mailRefs.length > 0 && (
             <div
@@ -324,6 +374,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
           )}
           <h3 className="w-full whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
             <LuNotebookPen /> 備考欄
+            {unread && <span className="px-4 py-0.25 bg-yellow-200 text-xs rounded-full">更新あり</span>}
           </h3>
           {task.remarks ? (
             <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
