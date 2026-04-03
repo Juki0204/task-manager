@@ -342,7 +342,7 @@ export default function PersonalCard({
           </span>
 
           {hasRemarksInfo && task.remarks && (
-            <RemarksHoverMark handleHover={setHover} className="absolute inset-y-0 right-0">
+            <RemarksHoverMark handleHover={setHover} task={task} className="absolute inset-y-0 right-0">
               {hover && remarksHtml && (
                 <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
               )}
