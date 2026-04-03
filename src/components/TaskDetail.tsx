@@ -50,7 +50,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
   const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
 
   const isRemarksTrigger = useRef(false);
-  const { isTaskUnread } = useTaskUnread();
+  const { isTaskUnread, upsertTaskAcknowledgement } = useTaskUnread();
   const unread = isTaskUnread({ id: task.id, manager: task.manager }, user?.name ?? "");
 
 
@@ -245,9 +245,11 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
     if (!isUnassigned && !isMyTask) return; //他人のタスクはスキップ
 
+    if (!user) return;
+
     const ackData = {
       task_id: task.id,
-      acknowledged_by: user?.name,
+      acknowledged_by: user.name,
       acknowledged_at: new Date(),
     }
     // console.log(ackData);
@@ -258,6 +260,12 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
       });
 
     if (error) console.error("確認フラグの登録に失敗しました。", error);
+
+    upsertTaskAcknowledgement({
+      task_id: task.id,
+      acknowledged_by: user.name,
+      acknowledged_at: new Date(),
+    });
   }
 
   useEffect(() => {

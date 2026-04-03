@@ -12,19 +12,15 @@ type RemarksHoverProps = {
   task: Task;
   children: React.ReactNode;
   handleHover: (hover: boolean) => void;
-  onMarkRead?: () => void;
   openDelayMs?: number;
-  readAfterMs?: number;
   className?: string;
 };
 
 export function RemarksHoverMark({
   task,
   children,
-  onMarkRead,
   handleHover,
   openDelayMs = 200,
-  readAfterMs = 3000,
   className,
 }: RemarksHoverProps) {
   const { user } = useAuth();
@@ -35,9 +31,8 @@ export function RemarksHoverMark({
   const openTimer = useRef<number | null>(null);
   const readTimer = useRef<number | null>(null);
   const isHoveringTrigger = useRef(false);
-  const hasMarkedRead = useRef(false);
 
-  const { isTaskUnread } = useTaskUnread();
+  const { isTaskUnread, upsertTaskAcknowledgement } = useTaskUnread();
   const unread = isTaskUnread({ id: task.id, manager: task.manager }, user?.name ?? "");
 
   //cleanup
@@ -66,17 +61,6 @@ export function RemarksHoverMark({
       if (!isHoveringTrigger.current) return;
       setAnchor(point);
       setOpen(true);
-
-      //未読なら、表示継続で既読化タイマーを開始
-      // if (isUnread && !hasMarkedRead.current && onMarkRead) {
-      //   readTimer.current = window.setTimeout(() => {
-      //     // 「表示されていて」かつ「トリガー or popupのどちらかにhover中」なら既読化
-      //     const stillHovering = isHoveringTrigger.current || hoveringPopup;
-      //     if (!stillHovering) return;
-      //     hasMarkedRead.current = true;
-      //     onMarkRead();
-      //   }, readAfterMs);
-      // }
     }, openDelayMs);
   };
 
@@ -96,6 +80,8 @@ export function RemarksHoverMark({
 
     if (!isUnassigned && !isMyTask) return; //他人のタスクはスキップ
 
+    if (!user) return;
+
     const ackData = {
       task_id: task.id,
       acknowledged_by: user?.name,
@@ -109,6 +95,12 @@ export function RemarksHoverMark({
       });
 
     if (error) console.error("確認フラグの登録に失敗しました。", error);
+
+    upsertTaskAcknowledgement({
+      task_id: task.id,
+      acknowledged_by: user.name,
+      acknowledged_at: new Date(),
+    });
   }
 
   useEffect(() => {

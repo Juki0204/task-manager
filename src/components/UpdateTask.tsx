@@ -1,20 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-import { DialogTitle, Button, Label, Input, Field } from "@headlessui/react";
-import { AddTaskInput, AddTaskSelect, AddTaskTextarea } from "./ui/AddTaskForm";
+import { DialogTitle, Button } from "@headlessui/react";
+import { AddTaskInput, AddTaskSelect } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
 import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
 import { RiCalendarScheduleLine } from "react-icons/ri";
 import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline, MdAlarm } from "react-icons/md";
-import { IoPersonAddOutline, IoDocumentAttachOutline } from "react-icons/io5";
+import { IoPersonAddOutline } from "react-icons/io5";
 import { BsPersonCheck } from "react-icons/bs";
 import { TbClockExclamation } from "react-icons/tb";
 import { LuNotebookPen } from "react-icons/lu";
 
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
@@ -23,7 +23,7 @@ import { User } from "@/utils/types/user";
 import { compareHistory } from "@/utils/function/comparHistory";
 import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
-import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
+import { useTaskUnread } from "./TaskUnreadProvider";
 
 
 interface task {
@@ -34,17 +34,6 @@ interface task {
   onUnlock: () => void;
   deadlineList: { task_id: string, date: string }[];
 }
-
-interface taskFileMeta {
-  original_name: string,
-  stored_name: string,
-  file_type: string,
-  file_path: string,
-  size: string,
-  ext: string,
-}
-
-
 
 export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock, deadlineList }: task) {
 
@@ -72,6 +61,8 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
   const editingUser = useTaskPresence(task.id, { id: user.id, name: user.name }, true);
   const [isValid, setIsValid] = useState<boolean>(true);
   const { syncInvoiceWithTask } = useInvoiceSync();
+
+  const { upsertTaskStatus } = useTaskUnread();
 
   const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
   const [deadline, setDeadline] = useState<string>("");
@@ -222,6 +213,12 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
           updated_at: new Date(),
         }, { onConflict: 'task_id' });
     }
+
+    upsertTaskStatus({
+      task_id: task.id,
+      updated_by: user.name,
+      updated_at: new Date(),
+    });
 
   }
 
