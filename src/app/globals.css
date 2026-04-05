@@ -447,9 +447,25 @@ body {
 
   & > div {
     min-height: 126px;
+    max-height: 440px;
     height: auto;
+    overflow-y: auto;
     outline: none;
     padding: 2px;
+
+    &::-webkit-scrollbar {
+      width: calc(var(--spacing) * 1) /* 0.25rem = 4px */;
+    }
+
+    &::-webkit-scrollbar-track {
+      border-radius: calc(infinity * 1px);
+      background-color: var(--color-gray-300) /* oklch(44.6% 0.03 256.802) = #4a5565 */;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: calc(infinity * 1px);
+      background-color: var(--color-gray-400) /* oklch(87.2% 0.01 258.338) = #d1d5dc */;
+    }
   }
 }
 

@@ -192,7 +192,7 @@ export default function Header() {
             </div>
 
             <div className="flex-1 min-w-0">
-              <TaskNotesViewer />
+              {/* <TaskNotesViewer /> */}
             </div>
 
             <div className="sm:flex gap-2 rounded-md items-center">
