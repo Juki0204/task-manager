@@ -6,7 +6,7 @@ import { OutlineBtn } from "@/components/ui/Btn";
 import { MdLogout } from "react-icons/md";
 import { User } from "@/utils/types/user";
 
-export default function LogoutBtn() {
+export default function LogoutBtn({ className }: { className?: string }) {
   const router = useRouter();
 
   const allUnlockedHandler = async (user: User) => {
@@ -45,6 +45,6 @@ export default function LogoutBtn() {
 
   return (
     // <OutlineBtn className="flex items-center gap-1 outline-neutral-800 text-neutral-800 px-4 !w-30 h-fit text-sm cursor-pointer" onClick={handleLogout}><MdLogout /><span className="flex-1">ログアウト</span></OutlineBtn>
-    <button className="flex items-center gap-1 outline-white text-white py-[2px] px-4 h-fit text-sm cursor-pointer" onClick={handleLogout}><MdLogout /><span className="flex-1">ログアウト</span></button>
+    <button className={`flex items-center gap-1 outline-white text-white py-[2px] px-4 h-fit text-sm cursor-pointer ${className}`} onClick={handleLogout}><MdLogout /><span>ログアウト</span></button>
   );
 };

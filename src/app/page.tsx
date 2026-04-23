@@ -127,24 +127,24 @@ export default function AllTaskPage() {
   }, [taskList]);
 
   return (
-    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 max-w-[1920px] m-auto overflow-x-hidden">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 max-w-[1920px] m-auto overflow-x-hidden text-neutral-700 dark:text-neutral-100">
+      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
         <div className="flex justify-start items-center gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
+          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
             全体タスク一覧
             {/* <HelpDrawer /> */}
           </h2>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 py-0.75 px-1.75 rounded-full bg-neutral-200 dark:bg-neutral-500">
             <span
               className={`h-2.5 w-2.5 rounded-full ${health === "green" ? "bg-emerald-400" : health === "yellow" ? "bg-amber-400" : "bg-rose-400"
                 }`}
             />
-            <span className="text-xs text-white/70">{taskSubStatus}</span>
+            <span className="text-xs mr-1">{taskSubStatus}</span>
 
             {taskSubStatus !== "SUBSCRIBED" && (
               <button
                 onClick={resubscribeAll}
-                className="flex items-center gap-1 text-xs px-2 pr-3 py-0.5 rounded-full text-white bg-neutral-600 hover:opacity-80"
+                className="flex items-center gap-1 text-xs px-2 pr-3 py-0.25 rounded-full text-white bg-neutral-400 dark:bg-neutral-600 hover:opacity-80"
               >
                 <TbReload />
                 再購読

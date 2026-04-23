@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *));
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -29,6 +29,71 @@ body {
   .palt {
     font-feature-settings: "palt";
   }
+}
+
+
+:root {
+  --card-base: 245 245 245;
+
+  --tani-color: 205 105 175;
+  --tani-bg-opacity: .35;
+  --tani-bg-opacity--pg: .65;
+
+  --ii-color: 70 155 90;
+  --ii-bg-opacity: .3;
+  --ii-bg-opacity--pg: .6;
+
+  --hama-color: 200 155 40;
+  --hama-bg-opacity: .35;
+  --hama-bg-opacity--pg: .65;
+  
+  --tagu-color: 200 65 65;
+  --tagu-bg-opacity: .3;
+  --tagu-bg-opacity--pg: .6;
+
+  --nishi-color: 140 95 240;
+  --nishi-bg-opacity: .3;
+  --nishi-bg-opacity--pg: .6;
+
+  --oka-color: 33 167 231;
+  --oka-bg-opacity: .3;
+  --oka-bg-opacity--pg: .6;
+
+  --default-color: 110 110 110;
+  --default-bg-opacity: .3;
+  --default-bg-opacity--pg: .6;
+}
+
+.dark {
+  --card-base: 48 48 48;
+
+  --tani-color: 205 105 175;
+  --tani-bg-opacity: 0.25;
+  --tani-bg-opacity--pg: .5;
+
+  --ii-color: 70 155 90;
+  --ii-bg-opacity: 0.2;
+  --ii-bg-opacity--pg: .5;
+
+  --hama-color: 200 155 40;
+  --hama-bg-opacity: 0.25;
+  --hama-bg-opacity--pg: .45;
+
+  --tagu-color: 200 65 65;
+  --tagu-bg-opacity: 0.25;
+  --tagu-bg-opacity--pg: .5;
+
+  --nishi-color: 140 95 240;
+  --nishi-bg-opacity: 0.25;
+  --nishi-bg-opacity--pg: .45;
+
+  --oka-color: 33 167 231;
+  --oka-bg-opacity: 0.25;
+  --oka-bg-opacity--pg: .5;
+
+  --default-color: 110 110 110;
+  --default-bg-opacity: 0.25;
+  --default-bg-opacity--pg: .45;
 }
 
 
@@ -93,7 +158,7 @@ body {
     margin: auto;
     z-index: -1;
     /* border-radius: 12px; */
-    background: #303030;
+    background: rgb(var(--card-base));
   }
 
   &.inprogress {
@@ -212,30 +277,100 @@ body {
 } */
 
 
-.taniBorder.inprogress {background:rgb(205,105,175)}
-.iiBorder.inprogress {background:rgb(70,155,90)}
-.hamaBorder.inprogress {background:rgb(200,155,40)}
-.taguBorder.inprogress {background:rgb(200,65,65)}
-.nishiBorder.inprogress {background:rgb(140,95,240)}
-.okaBorder.inprogress {background:rgb(33, 167, 231)}
-.defaultBrder.inprogress {background:rgb(110,110,110)}
+.taniBorder.inprogress {background: rgb(var(--tani-color))}
+.iiBorder.inprogress {background: rgb(var(--ii-color))}
+.hamaBorder.inprogress {background: rgb(var(--hama-color))}
+.taguBorder.inprogress {background: rgb(var(--tagu-color))}
+.nishiBorder.inprogress {background: rgb(var(--nishi-color))}
+.okaBorder.inprogress {background: rgb(var(--oka-color))}
+.defaultBrder.inprogress {background: rgb(var(--default-color))}
 
-.taniBg {background:conic-gradient(rgb(205,105,175)) no-repeat 0 50% / 5px 100%, rgba(205,105,175,.25)}
-.iiBg {background:conic-gradient(rgb(70,155,90)) no-repeat 0 50% / 5px 100%, rgba(70,155,90,.2)}
-.hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.25)}
-.taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.25)}
-.nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.25)}
-.okaBg {background:conic-gradient(rgb(33, 167, 231)) 0 / 5px 100% no-repeat, rgb(33, 167, 231,.25)}
-.defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.25)}
+.taniBg {
+  background:conic-gradient(rgb(var(--tani-color))) no-repeat 0 50% / 5px 100%, rgb(var(--tani-color) / var(--tani-bg-opacity));
+  &:hover {
+    --tani-bg-opacity: 0.275;
+  }
+}
+.iiBg {
+  background:conic-gradient(rgb(var(--ii-color))) no-repeat 0 50% / 5px 100%, rgb(var(--ii-color) / var(--ii-bg-opacity));
+  &:hover {
+    --ii-bg-opacity: 0.25;
+  }
+}
+.hamaBg {
+  background:conic-gradient(rgb(var(--hama-color))) no-repeat 0 50% / 5px 100%, rgb(var(--hama-color) / var(--hama-bg-opacity));
+  &:hover {
+    --hama-bg-opacity: 0.275;
+  }
+}
+.taguBg {
+  background:conic-gradient(rgb(var(--tagu-color))) no-repeat 0 50% / 5px 100%, rgb(var(--tagu-color) / var(--tagu-bg-opacity));
+  &:hover {
+    --tagu-bg-opacity: 0.225;
+  }
+}
+.nishiBg {
+  background:conic-gradient(rgb(var(--nishi-color))) no-repeat 0 50% / 5px 100%, rgb(var(--nishi-color) / var(--nishi-bg-opacity));
+  &:hover {
+    --nishi-bg-opacity: 0.25;
+  }
+}
+.okaBg {
+  background:conic-gradient(rgb(var(--oka-color))) 0 / 5px 100% no-repeat, rgb(var(--oka-color) / var(--oka-bg-opacity));
+  &:hover {
+    --oka-bg-opacity: 0.25;
+  }
+}
+.defaultBg {
+  background:conic-gradient(rgb(var(--default-color))) no-repeat 0 50% / 5px 100%, rgb(var(--default-color) / var(--default-bg-opacity));
+  &:hover {
+    --default-bg-opacity: 0.25;
+  }
+}
 
 .inprogress {
-  & .taniBg {background:conic-gradient(rgb(205,105,175)) no-repeat 0 50% / 5px 100%, rgba(205,105,175,.5)}
-  & .iiBg {background:conic-gradient(rgb(70,155,90)) no-repeat 0 50% / 5px 100%, rgba(70,155,90,.5)}
-  & .hamaBg {background:conic-gradient(rgb(200,155,40)) no-repeat 0 50% / 5px 100%, rgba(200,155,40,.45)}
-  & .taguBg {background:conic-gradient(rgb(200,65,65)) no-repeat 0 50% / 5px 100%, rgba(200,65,65,.5)}
-  & .nishiBg {background:conic-gradient(rgb(140,95,240)) no-repeat 0 50% / 5px 100%, rgba(140,95,240,.45)}
-  & .okaBg {background:conic-gradient(rgb(33, 167, 231)) no-repeat 0 50% / 5px 100%, rgb(33, 167, 231,.5)}
-  & .defaultBg {background:conic-gradient(rgb(110,110,110)) no-repeat 0 50% / 5px 100%, rgba(110,110,110,.45)}
+  & .taniBg {
+    background:conic-gradient(rgb(var(--tani-color))) no-repeat 0 50% / 5px 100%, rgb(var(--tani-color) / var(--tani-bg-opacity--pg));
+    &:hover {
+      --tani-bg-opacity--pg: 0.5;
+    }
+  }
+  & .iiBg {
+    background:conic-gradient(rgb(var(--ii-color))) no-repeat 0 50% / 5px 100%, rgb(var(--ii-color) / var(--ii-bg-opacity--pg));
+    &:hover {
+      --ii-bg-opacity--pg: 0.5;
+    }
+  }
+  & .hamaBg {
+    background:conic-gradient(rgb(var(--hama-color))) no-repeat 0 50% / 5px 100%, rgb(var(--hama-color) / var(--hama-bg-opacity--pg));
+    &:hover {
+      --hama-bg-opacity--pg: 0.5;
+    }
+  }
+  & .taguBg {
+    background:conic-gradient(rgb(var(--tagu-color))) no-repeat 0 50% / 5px 100%, rgb(var(--tagu-color) / var(--tagu-bg-opacity--pg));
+    &:hover {
+      --tagu-bg-opacity--pg: 0.5;
+    }
+  }
+  & .nishiBg {
+    background:conic-gradient(rgb(var(--nishi-color))) no-repeat 0 50% / 5px 100%, rgb(var(--nishi-color) / var(--nishi-bg-opacity--pg));
+    &:hover {
+      --nishi-bg-opacity--pg: 0.5;
+    }
+  }
+  & .okaBg {
+    background:conic-gradient(rgb(var(--oka-color))) no-repeat 0 50% / 5px 100%, rgb(var(--oka-color) / var(--oka-bg-opacity--pg));
+    &:hover {
+      --oka-bg-opacity--pg: 0.5;
+    }
+  }
+  & .defaultBg {
+    background:conic-gradient(rgb(var(--default-color))) no-repeat 0 50% / 5px 100%, rgb(var(--default-color) / var(--default-bg-opacity--pg));
+    &:hover {
+      --default-bg-opacity--pg: 0.5;
+    }
+  }
 }
 
 
@@ -498,5 +633,90 @@ body {
   input[type='number'] {
     -webkit-appearance: none;
     -moz-appearance: textfield !important;
+  }
+}
+
+
+/* MenuBtn Animation */
+
+@layer components {
+  .menu-btn {
+    @apply relative flex flex-col gap-1.5 w-8 cursor-pointer;
+  }
+
+  .menu-btn .bar {
+    @apply w-full h-0.5 rounded-full bg-neutral-500 dark:bg-neutral-100;
+  }
+
+  .menu-btn .bar1 {
+    animation: menu-btn-bar01 0.5s ease-out forwards;
+  }
+
+  .menu-btn .bar2 {
+    @apply opacity-100 transition-all duration-[250ms] delay-[250ms];
+  }
+
+  .menu-btn .bar3 {
+    animation: menu-btn-bar03 0.5s ease-out forwards;
+  }
+
+  .menu-btn.active .bar1 {
+    animation: active-menu-btn-bar01 0.5s ease-out forwards;
+  }
+
+  .menu-btn.active .bar2 {
+    @apply opacity-0;
+  }
+
+  .menu-btn.active .bar3 {
+    animation: active-menu-btn-bar03 0.5s ease-out forwards;
+  }
+}
+
+@keyframes menu-btn-bar01 {
+  0% {
+    transform: translateY(8px) rotate(45deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(0);
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes menu-btn-bar03 {
+  0% {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0);
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes active-menu-btn-bar01 {
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(8px) rotate(0);
+  }
+  100% {
+    transform: translateY(8px) rotate(45deg);
+  }
+}
+
+@keyframes active-menu-btn-bar03 {
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0);
+  }
+  100% {
+    transform: translateY(-8px) rotate(-45deg);
   }
 }

@@ -25,6 +25,7 @@ import HelpDrawer from "./HelpDrawer";
 import AddTask from "./AddTask";
 import TaskNotesViewer from "./TaskNotesViewer";
 import RuleBoardLinkBtn from "./ui/RuleBoardLinkBtn";
+import MenuBtn from "./MenuBtn";
 
 type TaskListSortType = "byDate" | "byManager";
 type InvoiceSortStates = "byDate" | "byClient" | "byClientRev";
@@ -118,13 +119,13 @@ export default function Header() {
   return (
     <>
       {!isExculedPath && (
-        <header className="fixed top-0 w-full min-w-[1200px] py-2 px-4 z-50 bg-neutral-600/70 backdrop-blur-md shadow-lg border-b border-neutral-600">
-          <div className={`w-full flex justify-end gap-2 items-center pb-2 border-b border-neutral-500 transition-all ease-out duration-200
+        <header className="fixed top-0 w-full min-w-[1200px] py-2 px-4 z-50 text-neutral-700 dark:text-neutral-100 bg-neutral-100/70 dark:bg-neutral-600/70 backdrop-blur-md shadow-lg dark:border-b border-neutral-600">
+          <div className={`w-full flex justify-end gap-2 items-center pb-2 border-b border-neutral-300 dark:border-neutral-500 transition-all ease-out duration-200
             ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" ? "" : "!pb-0 !border-0"}`}>
             <div className="flex gap-1">
               <Button
                 tabIndex={-1}
-                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm text-white font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/dashboard" ? "bg-blue-500/50" : "cursor-pointer"}`}
+                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/dashboard" ? "bg-blue-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/dashboard')}
               >
                 <MdSpaceDashboard className="text-base" /><span className="hidden min-[1700px]:block">ダッシュボード</span>
@@ -132,7 +133,7 @@ export default function Header() {
 
               <Button
                 tabIndex={-1}
-                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm text-white font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/" ? "bg-blue-500/50" : "cursor-pointer"}`}
+                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/" ? "bg-blue-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/')}
               >
                 <RiTeamFill className="text-base" /><span className="hidden min-[1700px]:block">全体</span>
@@ -140,7 +141,7 @@ export default function Header() {
 
               <Button
                 tabIndex={-1}
-                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm text-white font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/personal" ? "bg-blue-500/50" : "cursor-pointer"}`}
+                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/personal" ? "bg-blue-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/personal')}
               >
                 <IoPerson className="text-base" /><span className="hidden min-[1700px]:block">個人</span>
@@ -148,7 +149,7 @@ export default function Header() {
 
               <Button
                 tabIndex={-1}
-                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm text-white font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/complete" ? "bg-blue-500/50" : "cursor-pointer"}`}
+                className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/complete" ? "bg-blue-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/complete')}
               >
                 <FaRegCalendarCheck className="text-base" /><span className="hidden min-[1700px]:block">完了済</span>
@@ -158,7 +159,7 @@ export default function Header() {
 
               <Button
                 tabIndex={-1}
-                className={`rounded w-10 grid place-content-center p-1.25 text-sm text-white font-bold data-hover:bg-red-500/50 transition-all duration-100 ${pathname === "/important" ? "bg-red-500/50" : "cursor-pointer"}`}
+                className={`rounded w-10 grid place-content-center p-1.25 text-sm font-bold data-hover:bg-red-500/50 transition-all duration-100 ${pathname === "/important" ? "bg-red-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/important')}
               >
                 <IoFlag className="text-base" />
@@ -166,7 +167,7 @@ export default function Header() {
 
               <Button
                 tabIndex={-1}
-                className={`rounded w-10 grid place-content-center p-1.25 text-sm text-white font-bold data-hover:bg-red-500/50 transition-all duration-100 ${pathname === "/trash" ? "bg-red-500/50" : "cursor-pointer"}`}
+                className={`rounded w-10 grid place-content-center p-1.25 text-sm font-bold data-hover:bg-red-500/50 transition-all duration-100 ${pathname === "/trash" ? "bg-red-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/trash')}
               >
                 <FaRegTrashAlt className="text-base" />
@@ -174,7 +175,7 @@ export default function Header() {
 
               <Button
                 tabIndex={-1}
-                className={`rounded w-10 grid place-content-center p-1.25 text-sm text-white font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/setting" ? "bg-blue-500/50" : "cursor-pointer"}`}
+                className={`rounded w-10 grid place-content-center p-1.25 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/setting" ? "bg-blue-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/setting')}
               >
                 <FaGear className="text-base" />
@@ -183,7 +184,7 @@ export default function Header() {
               <div className="border-l border-neutral-500 px-1 flex">
                 <Button
                   tabIndex={-1}
-                  className={`flex items-center gap-1 rounded pl-3 pr-3.5 min-[1700px]:pl-3.5 min-[1700px]:pr-4.5 p-1 text-sm text-white font-bold data-hover:bg-purple-500/50 transition-all duration-100 ${pathname === "/invoice" ? "bg-purple-500/50" : "cursor-pointer"}`}
+                  className={`flex items-center gap-1 rounded pl-3 pr-3.5 min-[1700px]:pl-3.5 min-[1700px]:pr-4.5 p-1 text-sm font-bold data-hover:bg-purple-500/50 transition-all duration-100 ${pathname === "/invoice" ? "bg-purple-500/50" : "cursor-pointer"}`}
                   onClick={() => router.push('/invoice')}
                 >
                   <IoReceipt className="text-base" /><span className="hidden min-[1700px]:block">請求一覧</span>
@@ -201,28 +202,29 @@ export default function Header() {
                 <AddTask />
               </div>
               {/* バグ報告ボタン */}
-              <button tabIndex={-1} className="flex gap-1 items-center py-1.25 px-3 bg-green-800 text-white rounded-md hover:opacity-60 cursor-pointer" onClick={handleReport}><TbMessageReport className="text-xl" /></button>
+              <button tabIndex={-1} className="flex gap-1 items-center py-1.25 px-3 mr-2.5 bg-green-700/80 dark:bg-green-800 text-neutral-100 rounded-md hover:opacity-60 cursor-pointer" onClick={handleReport}><TbMessageReport className="text-xl" /></button>
               {/* <HelpDrawer /> */}
-              {/* <div className="flex gap-1 items-center py-2 pl-4 pr-6 text-sm tracking-wider rounded-md bg-black/20 text-white"><MdPlace />{pageIndex[pathname]}</div> */}
-              <div onMouseEnter={() => setIsLogoutOpen(true)} onMouseLeave={() => setIsLogoutOpen(false)} className="relative text-white flex items-center justify-center gap-2 p-0.75 px-2 w-30 rounded-md whitespace-nowrap transition-all duration-100 bg-neutral-600 cursor-pointer hover:bg-neutral-500">
+              {/* <div className="flex gap-1 items-center py-2 pl-4 pr-6 text-sm tracking-wider rounded-md bg-black/20"><MdPlace />{pageIndex[pathname]}</div> */}
+              {/* <div onMouseEnter={() => setIsLogoutOpen(true)} onMouseLeave={() => setIsLogoutOpen(false)} className="relative flex items-center justify-center gap-2 p-0.75 px-2 w-30 rounded-md whitespace-nowrap transition-all duration-100 bg-neutral-600 cursor-pointer hover:bg-neutral-500">
                 {!isLogoutOpen ? (
                   <><FaUserCircle />{currentUserName} さん</>
                 ) : (
                   <LogoutBtn />
                 )}
-              </div>
+              </div> */}
+              <MenuBtn />
             </div>
           </div>
 
-          <div className={`flex gap-2 items-center relative pt-2 transition-all ease-out duration-200 -z-10
+          <div className={`flex gap-2 items-center relative pt-2 transition-all ease-out dark:text-neutral-700 duration-200 -z-10
             ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" ? "h-10" : "!h-0 !pt-0 opacity-0 overflow-hidden"}`}>
             {pathname === "/" ? (
-              <div className="pr-2 border-r border-neutral-500">
+              <div className="pr-2 border-r border-neutral-300 dark:border-neutral-500">
                 <select
                   tabIndex={-1}
                   value={taskListSortType}
                   onChange={(e) => setTaskListSortType(e.target.value as TaskListSortType)}
-                  className={`fit py-1 pl-2 pr-3 text-sm border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
+                  className={`fit py-1 pl-2 pr-3 text-sm outline dark:outline-0 outline-neutral-400 bg-neutral-100 rounded-md dark:focus:not-data-focus:outline-none dark:data-focus:outline-2 dark:data-focus:-outline-offset-2 dark:data-focus:outline-black/25`}>
                   <option value='byDate'>日付順</option>
                   <option value='byManager'>担当者順</option>
                 </select>
@@ -234,7 +236,7 @@ export default function Header() {
                     tabIndex={-1}
                     value={invoiceSortState}
                     onChange={(e) => setInvoiceSortState(e.target.value as InvoiceSortStates)}
-                    className={`fit py-1 pl-2 pr-3 text-sm border-gray-300 bg-white rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
+                    className={`fit py-1 pl-2 pr-3 text-sm bg-neutral-300 dark:bg-neutral-100 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25`}>
                     <option value="byDate">完了日順</option>
                     <option value="byClient">クライアント順(昇順)</option>
                     <option value="byClientRev">クライアント順(降順)</option>
@@ -247,7 +249,7 @@ export default function Header() {
 
             {pathname !== "/setting" && pathname !== "/release-notes" && (
               <div className={`flex items-center gap-2 text-sm`}>
-                <h3 className="flex gap-2 items-center text-white"><FaFilter className="text-white" /><span className="block whitespace-nowrap">フィルタ：</span></h3>
+                <h3 className="flex gap-2 items-center"><FaFilter className="text-neutral-500 dark:text-neutral-100" /><span className="block whitespace-nowrap dark:text-neutral-100">フィルタ：</span></h3>
                 <MultiSelectPopover
                   options={[
                     { id: 1, label: "難波秘密倶楽部" },
@@ -324,7 +326,7 @@ export default function Header() {
                   <Input
                     tabIndex={-1}
                     type="text"
-                    className="flex w-60 items-center justify-between rounded-md border border-gray-300 bg-white px-4 pl-8 py-1 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                    className="flex w-60 items-center justify-between rounded-md border border-gray-400 dark:border-gray-300 bg-neutral-100 px-4 pl-8 py-1 text-sm font-medium dark:shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
                     placeholder="No./タイトル/内容/依頼者"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const value = e.target.value;

@@ -31,7 +31,7 @@ export default function RuleBoardLinkBtn({ className, pathname, onClick }: RuleB
     <div className="relative">
       <Button
         tabIndex={-1}
-        className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm text-white font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/rule" ? "bg-blue-500/50" : "cursor-pointer"}`}
+        className={`flex items-center gap-1 rounded px-3 py-1.25 min-[1700px]:px-4 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/rule" ? "bg-blue-500/50" : "cursor-pointer"}`}
         onClick={onClick}
       >
         {unconfirmedRuleCount > 0 ? (

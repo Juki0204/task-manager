@@ -104,7 +104,7 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
         <div ref={wrapperRef} className="w-full flex flex-col items-end z-30 pointer-events-none">
           {/* ログ一覧表切り替えボタン */}
           <div className="flex gap-4 pr-2 pointer-events-auto">
-            <ul className="flex gap-0.5 items-center z-50">
+            <ul className="flex gap-0.5 items-center z-10">
               <li onClick={() => setViewerType("all")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-sm cursor-pointer hover:opacity-100 ${viewerType === "all" ? "opacity-100 pointer-events-none" : "opacity-40"}`}>ALL</li>
               <li onClick={() => setViewerType("added")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><AiOutlineFileAdd /><span className="text-sm">追加</span></li>
               <li onClick={() => setViewerType("changed")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "changed" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FiEdit3 /><span className="text-sm">編集</span></li>
@@ -155,7 +155,7 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
                                     </span>】 の
                                     {log.message.substring(10)}
                                   </dd>
-                                ) : (                                  
+                                ) : (
                                   <dd className={`w-full ${open ? "whitespace-normal" : "truncate"}`}>
                                     システム通知：{log.message}
                                   </dd>

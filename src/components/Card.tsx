@@ -37,26 +37,29 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
   const [priorityStyle, setPriorityStyle] = useState<string>('');
   const [statusStyle, setStatusStyle] = useState<string>('');
 
+  const [personalUnique, setPersonalUnique] = useState<string>('');
   const [personalBorder, setPersonalBorder] = useState<string>('');
   const [personalBg, setPersonalBg] = useState<string>('');
 
   const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
 
-  const managerStyles: Record<string, { border: string; bg: string; }> = {
-    "谷": { border: "taniBorder", bg: "taniBg" },
-    "飯塚": { border: "iiBorder", bg: "iiBg" },
-    "浜口": { border: "hamaBorder", bg: "hamaBg" },
-    "田口": { border: "taguBorder", bg: "taguBg" },
-    "西谷": { border: "nishiBorder", bg: "nishiBg" },
-    "岡本": { border: "okaBorder", bg: "okaBg" },
+  const managerStyles: Record<string, { unique: string, border: string; bg: string; }> = {
+    "谷": { unique: "tani", border: "taniBorder", bg: "taniBg" },
+    "飯塚": { unique: "ii", border: "iiBorder", bg: "iiBg" },
+    "浜口": { unique: "hama", border: "hamaBorder", bg: "hamaBg" },
+    "田口": { unique: "tagu", border: "taguBorder", bg: "taguBg" },
+    "西谷": { unique: "nishi", border: "nishiBorder", bg: "nishiBg" },
+    "岡本": { unique: "oka", border: "okaBorder", bg: "okaBg" },
   } as const;
 
   function definePersonalColor(manager: string) {
     const style = managerStyles[manager] ?? {
+      unique: "default",
       border: "defaultBorder",
       bg: "defaultBg",
     };
 
+    setPersonalUnique(style.unique);
     setPersonalBorder(style.border);
     setPersonalBg(style.bg);
   }
@@ -189,17 +192,19 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
     }, DOUBLE_CLICK_GRACE);
   }
 
+  const hoverColor = `hover:[--${personalUnique}-bg-opacity:0.2]`;
+
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} min-w-[1868px] shadow-xs shadow-black/30 hover:brightness-125`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} min-w-[1860px] shadow-xs shadow-black/30 text-neutral-700 dark:text-neutral-100 ${hoverColor} dark:hover:brightness-125`}>
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 text-white tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_300px_600px_120px_120px_auto] py-2`}
+        className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_300px_600px_120px_120px_auto] py-2`}
         {...props}
       >
         <div className="text-xs flex items-center gap-1.5">
@@ -244,7 +249,7 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
         </div>
 
         <div className="relative line-clamp-2 w-full text-sm pr-18 truncate [grid-area:dis]">
-          <span className="truncate">
+          <span className="truncate font-bold">
             <HighlightText text={task.description} keyword={filters.searchKeywords} />
           </span>
           {hasRemarksInfo && task.remarks && (

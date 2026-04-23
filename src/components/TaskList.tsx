@@ -15,7 +15,7 @@ interface TaskListProps {
 export default function TaskList({ taskList, user, onClick, onContextMenu, onEdit, deadlineList }: TaskListProps) {
 
   return (
-    <div className="pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500
+    <div className="pb-4 px-1 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500
       flex gap-0.5 flex-col overflow-x-auto">
       {taskList.map(task => (
         <Card

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 
 import AuthProvider from "@/app/AuthProvider"
 import Header from "@/components/Header";
@@ -8,9 +8,9 @@ import { Toaster } from "sonner";
 import { TaskListPreferencesProvider } from "@/utils/hooks/TaskListPreferencesContext";
 import FilterResetWatcher from "@/components/FilterResetWatcher";
 import VersionCheckProvider from "./VersionCheckProvider";
-import TaskNotesViewer from "@/components/TaskNotesViewer";
 import { RuleProvider } from "@/components/rule/RuleProvider";
 import { TaskUnreadProvider } from "@/components/TaskUnreadProvider";
+import ThemeProvider from "@/app/ThemeProvider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,25 +33,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#222222] m-0 w-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased m-0 w-full bg-neutral-100 text-neutral-700 dark:bg-[#222222] dark:text-neutral-100`}
       >
-        <VersionCheckProvider>{/* バージョンチェック */}
-          <AuthProvider>{/* ユーザーデータ */}
-            <TaskListPreferencesProvider>{/* タスクリスト全般 */}
-              <RuleProvider>{/* 掲示板 */}
-                <TaskUnreadProvider>
-                  <FilterResetWatcher />
-                  <Header />
-                  {children}
-                  {/* <TaskNotesViewer /> */}
-                </TaskUnreadProvider>
-              </RuleProvider>
-            </TaskListPreferencesProvider>
-          </AuthProvider>
-        </VersionCheckProvider>
-        <Toaster position="bottom-right" richColors closeButton />
+        <ThemeProvider>
+          <VersionCheckProvider>{/* バージョンチェック */}
+            <AuthProvider>{/* ユーザーデータ */}
+              <TaskListPreferencesProvider>{/* タスクリスト全般 */}
+                <RuleProvider>{/* 掲示板 */}
+                  <TaskUnreadProvider>
+                    <FilterResetWatcher />
+                    <Header />
+                    {children}
+                    {/* <TaskNotesViewer /> */}
+                  </TaskUnreadProvider>
+                </RuleProvider>
+              </TaskListPreferencesProvider>
+            </AuthProvider>
+          </VersionCheckProvider>
+          <Toaster position="bottom-right" richColors closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

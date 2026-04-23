@@ -21,7 +21,7 @@ export default function MultiSelectPopover({ options, selectedLabels, onChange, 
           <>
             <PopoverButton
               tabIndex={-1}
-              className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white pl-3 pr-2 py-1 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none">
+              className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-neutral-200 dark:bg-neutral-100 pl-3 pr-2 py-1 text-sm font-medium dark:shadow-sm dark:hover:bg-gray-50 focus:outline-none">
               <span className="truncate flex-1 text-left">
                 {selectedLabels.length > 0
                   ? selectedLabels.join(", ")

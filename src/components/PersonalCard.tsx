@@ -302,7 +302,7 @@ export default function PersonalCard({
       {...attributes}
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border after:rounded-md before:rounded-md" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} rounded-md min-w-90 drop-shadow-md drop-shadow-gray-950/30 hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
+      className={`${task.locked_by_id ? "rolling-border after:rounded-md before:rounded-md" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} text-neutral-700 dark:text-neutral-100 rounded-md min-w-90 drop-shadow-md drop-shadow-gray-950/30 dark:hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
 
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
 
@@ -313,7 +313,7 @@ export default function PersonalCard({
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full rounded-sm p-3 pl-4 text-white tracking-wide cursor-pointer relative`}
+        className={`${personalBg} w-full rounded-sm p-3 pl-4 tracking-wide cursor-pointer relative`}
         {...props}
       >
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
