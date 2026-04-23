@@ -281,7 +281,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
   return (
     <>
-      <div className={`${mailOpen ? "mailOpen" : ""} relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1`}>
+      <div className={`${mailOpen ? "mailOpen" : ""} relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl text-neutral-700 bg-slate-300/70 p-3 mb-1`}>
         <div className="flex items-center gap-2 w-full text-sm text-left leading-none">
           <p>{task.serial}</p>
           <p className={`py-0.5 px-2 rounded-full text-xs ${task.method === "mail" ? "bg-orange-200" : task.method === "tel" ? "bg-green-300/60" : "bg-blue-200"}`}>

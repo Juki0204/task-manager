@@ -35,7 +35,8 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased m-0 w-full bg-neutral-100 text-neutral-700 dark:bg-[#222222] dark:text-neutral-100`}
+        // className={`${geistSans.variable} ${geistMono.variable} antialiased m-0 w-full bg-neutral-100 text-neutral-700 dark:bg-[#222222] dark:text-neutral-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased m-0 w-full text-neutral-700 bg-[#222222]`}
       >
         <ThemeProvider>
           <VersionCheckProvider>{/* バージョンチェック */}

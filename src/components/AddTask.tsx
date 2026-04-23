@@ -20,12 +20,14 @@ import { toast } from "sonner";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 import { FaPlus } from "react-icons/fa6";
+import CancelAlertModal from "./CancelAlertModal";
 
 
 export default function AddTask() {
   const { user } = useAuth();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
   const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
@@ -293,6 +295,10 @@ export default function AddTask() {
     };
   }, []);
 
+  const closeAlert = () => {
+
+  }
+
   return (
     <>
       <Button
@@ -305,8 +311,9 @@ export default function AddTask() {
 
       <Dialog
         open={isOpen}
-        onClose={closeModal}
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+        // onClose={closeModal}
+        onClose={() => setIsAlertOpen(true)}
+        className="relative z-50 transition duration-300 ease-out text-neutral-700 data-closed:opacity-0"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
@@ -315,7 +322,11 @@ export default function AddTask() {
 
             <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1">
               <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
-              <GrClose onClick={closeModal} className="absolute top-3 right-3 cursor-pointer" />
+              <GrClose
+                // onClick={closeModal} 
+                onClick={() => setIsAlertOpen(true)}
+                className="absolute top-3 right-3 cursor-pointer"
+              />
 
               <div className="w-full flex gap-2">
                 <AddTaskInput className="flex-1 [&_input]:bg-neutral-50 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
@@ -414,7 +425,8 @@ export default function AddTask() {
 
             <div className="flex gap-4 justify-end col-span-2 pt-2">
               <Button
-                onClick={closeModal}
+                // onClick={closeModal}
+                onClick={() => setIsAlertOpen(true)}
                 className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
               >
                 キャンセル
@@ -431,6 +443,8 @@ export default function AddTask() {
           </DialogPanel>
         </div>
       </Dialog>
+
+      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={closeModal} />
     </>
   );
 }
