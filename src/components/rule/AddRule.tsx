@@ -15,6 +15,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import { LuNewspaper } from "react-icons/lu";
 import { User } from "@/utils/types/user";
 import CancelAlertModal from "../CancelAlertModal";
+import { toast } from "sonner";
 
 interface RuleDetailProps {
   users: User[];
@@ -53,37 +54,42 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
   const addRule = async () => {
     setIsSend(true);
 
-    const { data: ruleData, error: addErr } = await supabase
-      .from("rules")
-      .insert({
-        title: title,
-        content: content,
-        target: target,
-        type: type,
-        importance: importance,
-        created_by: creator,
-        updated_by: creator,
-      })
-      .select()
-      .single();
+    try {
+      const { data: ruleData, error: addErr } = await supabase
+        .from("rules")
+        .insert({
+          title: title,
+          content: content,
+          target: target,
+          type: type,
+          importance: importance,
+          created_by: creator,
+          updated_by: creator,
+        })
+        .select()
+        .single();
 
-    if (addErr) console.error("新規ルールの追加に失敗しました。");
+      if (addErr) console.error("新規ルールの追加に失敗しました。");
 
-    const { error: historyErr } = await supabase
-      .from("rules_histories")
-      .insert({
-        rule_id: ruleData.id,
-        action_type: "created",
-        acted_by: ruleData.created_by,
-        acted_at: ruleData.created_at,
-      });
+      const { error: historyErr } = await supabase
+        .from("rules_histories")
+        .insert({
+          rule_id: ruleData.id,
+          action_type: "created",
+          acted_by: ruleData.created_by,
+          acted_at: ruleData.created_at,
+        });
 
-    if (historyErr) console.error("ルール追加履歴の記録に失敗しました。");
-
-    setTimeout(() => {
-      onClose();
-      setIsSend(false);
-    }, 500);
+      if (historyErr) console.error("ルール追加履歴の記録に失敗しました。");
+    } catch (error) {
+      console.error(error);
+      toast.error("新規ルールの追加に失敗しました。");
+    } finally {
+      setTimeout(() => {
+        onClose();
+        setIsSend(false);
+      }, 500);
+    }
   }
 
   useEffect(() => {

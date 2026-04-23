@@ -18,6 +18,7 @@ import { LuNewspaper } from "react-icons/lu";
 import { User } from "@/utils/types/user";
 import { Rule, RuleHistory } from "@/utils/types/rule";
 import CancelAlertModal from "../CancelAlertModal";
+import { toast } from "sonner";
 
 interface RuleDetailProps {
   rule: Rule;
@@ -59,51 +60,56 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
   const updateRule = async (updatedType: "major" | "minor") => {
     setIsSend(true);
 
-    const updatePayload: Partial<Rule> = {
-      title: title,
-      content: content,
-      target: target,
-      type: type,
-      importance: importance,
-      updated_by: user?.name,
-      updated_at: new Date(),
-    };
+    try {
+      const updatePayload: Partial<Rule> = {
+        title: title,
+        content: content,
+        target: target,
+        type: type,
+        importance: importance,
+        updated_by: user?.name,
+        updated_at: new Date(),
+      };
 
-    if (updatedType === "major") {
-      updatePayload.confirmation_required_at = new Date();
+      if (updatedType === "major") {
+        updatePayload.confirmation_required_at = new Date();
+      }
+
+      const { data: ruleData, error: addErr } = await supabase
+        .from("rules")
+        .update(updatePayload)
+        .eq("id", rule.id)
+        .select()
+        .single();
+
+      if (addErr) console.error("ルールの更新に失敗しました。");
+
+      const updateHistoryPayload: Partial<RuleHistory> = {
+        rule_id: ruleData.id,
+        acted_by: user?.name,
+        acted_at: new Date(),
+      };
+
+      if (updatedType === "major") {
+        updateHistoryPayload.action_type = "updated_major";
+      } else if (updatedType === "minor") {
+        updateHistoryPayload.action_type = "updated_minor";
+      }
+
+      const { error: historyErr } = await supabase
+        .from("rules_histories")
+        .upsert(updateHistoryPayload);
+
+      if (historyErr) console.error("ルール追加履歴の記録に失敗しました。");
+    } catch (error) {
+      toast.error("ルールの更新に失敗しました。");
+      console.error(error);
+    } finally {
+      setTimeout(() => {
+        onCancel();
+        setIsSend(false);
+      }, 500);
     }
-
-    const { data: ruleData, error: addErr } = await supabase
-      .from("rules")
-      .update(updatePayload)
-      .eq("id", rule.id)
-      .select()
-      .single();
-
-    if (addErr) console.error("新規ルールの追加に失敗しました。");
-
-    const updateHistoryPayload: Partial<RuleHistory> = {
-      rule_id: ruleData.id,
-      acted_by: user?.name,
-      acted_at: new Date(),
-    };
-
-    if (updatedType === "major") {
-      updateHistoryPayload.action_type = "updated_major";
-    } else if (updatedType === "minor") {
-      updateHistoryPayload.action_type = "updated_minor";
-    }
-
-    const { error: historyErr } = await supabase
-      .from("rules_histories")
-      .upsert(updateHistoryPayload);
-
-    if (historyErr) console.error("ルール追加履歴の記録に失敗しました。");
-
-    setTimeout(() => {
-      onCancel();
-      setIsSend(false);
-    }, 500);
   }
 
   useEffect(() => {
