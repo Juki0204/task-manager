@@ -1,5 +1,6 @@
 "use client";
 
+import CancelAlertModal from "@/components/CancelAlertModal";
 import AddRule from "@/components/rule/AddRule";
 import EditRule from "@/components/rule/EditRule";
 import RuleCard from "@/components/rule/RuleCard";
@@ -25,6 +26,8 @@ type Filters = {
 export default function RulePage() {
   const { rules, ruleAcknowledgements, isRulesLoading } = useRuleContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+
   const [activeRule, setActiveRule] = useState<Rule | null>(null);
   const [activeRuleAcknowledgements, setActiveRuleAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
   const [modalMode, setModalMode] = useState<"detail" | "add" | "edit" | null>(null);
@@ -290,10 +293,15 @@ export default function RulePage() {
       <Dialog
         open={isOpen}
         onClose={() => {
-          setIsOpen(false);
-          setModalMode(null);
-          setActiveRule(null);
+          if (modalMode === "edit" || modalMode === "add") {
+            setIsAlertOpen(true);
+          } else {
+            setIsOpen(false);
+            setModalMode(null);
+            setActiveRule(null);
+          }
         }}
+        // onClose={()=> setIsAlertOpen(true)}
         // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
@@ -339,6 +347,16 @@ export default function RulePage() {
           </DialogPanel>
         </div>
       </Dialog>
+
+      <CancelAlertModal
+        alertOpen={isAlertOpen}
+        onModalClose={() => {
+          setIsOpen(false);
+          setModalMode(null);
+          setActiveRule(null);
+        }}
+        onCalcel={() => setIsAlertOpen(false)}
+      />
     </div>
   )
 }

@@ -24,6 +24,7 @@ import { compareHistory } from "@/utils/function/comparHistory";
 import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
 import { useTaskUnread } from "./TaskUnreadProvider";
+import CancelAlertModal from "./CancelAlertModal";
 
 
 interface task {
@@ -36,6 +37,7 @@ interface task {
 }
 
 export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock, deadlineList }: task) {
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const [currentUserName, setCurrentUserName] = useState<string>('');
   const [currentUserId, setCurrentUserId] = useState<string>('');
@@ -381,7 +383,8 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
 
       <div className="flex gap-4 justify-end col-span-2 pt-2">
         <Button
-          onClick={() => { onCancel(); onUnlock(); }}
+          // onClick={() => { onCancel(); onUnlock(); }}
+          onClick={() => setIsAlertOpen(true)}
           className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
         >
           キャンセル
@@ -402,6 +405,8 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
           更新
         </Button>
       </div>
+
+      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={() => { onCancel(); onUnlock(); setIsAlertOpen(false); }} onCalcel={() => setIsAlertOpen(false)} />
     </>
   );
 }

@@ -18,11 +18,13 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 // import HelpDrawer from "@/components/HelpDrawer";
 import { TbReload } from "react-icons/tb";
+import CancelAlertModal from "@/components/CancelAlertModal";
 
 
 export default function AllTaskPage() {
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const { user } = useAuth();
@@ -178,13 +180,25 @@ export default function AllTaskPage() {
       {/* 共通モーダル */}
       <Dialog
         open={isOpen}
+        // onClose={() => {
+        //   if (modalType === "edit") unlockTaskHandler();
+        //   setIsOpen(false);
+        //   setTimeout(() => {
+        //     setActiveTask(null);
+        //     setModalType(null);
+        //   }, 10);
+        // }}
         onClose={() => {
-          if (modalType === "edit") unlockTaskHandler();
-          setIsOpen(false);
-          setTimeout(() => {
-            setActiveTask(null);
-            setModalType(null);
-          }, 10);
+          if (modalType === "edit") {
+            setIsAlertOpen(true);
+          } else {
+            setIsOpen(false);
+            setTimeout(() => {
+              setActiveTask(null);
+              setModalType(null);
+              setIsAlertOpen(false);
+            }, 10);
+          }
         }}
         // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
@@ -224,6 +238,20 @@ export default function AllTaskPage() {
           </DialogPanel>
         </div>
       </Dialog>
+
+      <CancelAlertModal
+        alertOpen={isAlertOpen}
+        onModalClose={() => {
+          unlockTaskHandler();
+          setIsOpen(false);
+          setTimeout(() => {
+            setActiveTask(null);
+            setModalType(null);
+            setIsAlertOpen(false);
+          }, 10);
+        }}
+        onCalcel={() => setIsAlertOpen(false)}
+      />
 
       {menu.visible && menu.taskId && (
         <ContextMenu

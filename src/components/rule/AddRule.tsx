@@ -14,6 +14,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { FiPlusCircle } from "react-icons/fi";
 import { LuNewspaper } from "react-icons/lu";
 import { User } from "@/utils/types/user";
+import CancelAlertModal from "../CancelAlertModal";
 
 interface RuleDetailProps {
   users: User[];
@@ -36,6 +37,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
   // });
 
   const [isSend, setIsSend] = useState<boolean>(false);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const getClient = async () => {
     const { data: clients } = await supabase
@@ -95,7 +97,8 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
     <div className="relative grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100">
       <h2 className="col-span-22 -mt-1 tracking-wider text-center font-bold">新規投稿</h2>
       <GrClose
-        onClick={onClose}
+        // onClick={onClose}
+        onClick={() => setIsAlertOpen(true)}
         className="absolute top-0 right-0 cursor-pointer"
       />
       <div className="col-span-16 flex flex-col gap-2">
@@ -167,6 +170,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
 
       </div>
 
+      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={onClose} onCalcel={() => setIsAlertOpen(false)} />
     </div>
   )
 }

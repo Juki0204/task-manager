@@ -295,10 +295,6 @@ export default function AddTask() {
     };
   }, []);
 
-  const closeAlert = () => {
-
-  }
-
   return (
     <>
       <Button
@@ -444,7 +440,7 @@ export default function AddTask() {
         </div>
       </Dialog>
 
-      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={closeModal} />
+      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={closeModal} onCalcel={() => setIsAlertOpen(false)} />
     </>
   );
 }

@@ -17,6 +17,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import { LuNewspaper } from "react-icons/lu";
 import { User } from "@/utils/types/user";
 import { Rule, RuleHistory } from "@/utils/types/rule";
+import CancelAlertModal from "../CancelAlertModal";
 
 interface RuleDetailProps {
   rule: Rule;
@@ -42,6 +43,7 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
 
   const [isSend, setIsSend] = useState<boolean>(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const getClient = async () => {
     const { data: clients } = await supabase
@@ -111,10 +113,10 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
   return (
     <div className="relative grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100">
       <h2 className="col-span-22 -mt-1 tracking-wider text-center font-bold">編集</h2>
-      <GrClose
+      {/* <GrClose
         onClick={onClose}
         className="absolute top-0 right-0 cursor-pointer"
-      />
+      /> */}
       <div className="col-span-16 flex flex-col gap-2">
         <div className="flex flex-col gap-1 p-3 bg-slate-300/70 rounded-xl">
           <h3 className="relative mb-2 rounded-md text-neutral-700 w-full font-bold text-base text-justify flex gap-1 items-center leading-none">
@@ -176,7 +178,8 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
 
         <div className="col-span-4 grid grid-cols-5 gap-2 mt-auto mb-0">
           <button
-            onClick={onCancel}
+            // onClick={onCancel}
+            onClick={() => setIsAlertOpen(true)}
             disabled={!content || !title || !creator || !target || !type || !importance}
             className="col-span-2 outline-1 outline-neutral-700 rounded-md text-center text-neutral-700 font-bold text-sm py-2 tracking-wider hover:cursor-pointer hover:opacity-60"
           >
@@ -217,7 +220,9 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
             <p onClick={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="-mt-1 -mb-2 w-fit text-sm m-auto tracking-wider text-neutral-600 cursor-pointer hover:opacity-70">キャンセル</p>
           </DialogPanel>
         </div>
-      </Dialog >
-    </div >
+      </Dialog>
+
+      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={onCancel} onCalcel={() => setIsAlertOpen(false)} />
+    </div>
   )
 }
