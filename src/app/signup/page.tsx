@@ -44,7 +44,7 @@ export default function SignUpPage() {
     const { name, email, password, employee } = data;
 
     const { error } = await supabase.auth.signUp({
-      email: email,
+      email: email + "@cdrive.jp",
       password: password,
       options: {
         emailRedirectTo: 'https://cdrive-task-manager.vercel.app/signup/confirm-mail/',
@@ -118,8 +118,9 @@ export default function SignUpPage() {
               type="text"
               className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="メールアドレス"
-              {...register('email', { required: true, pattern: /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$/ })}
+              {...register('email', { required: true, pattern: /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]/ })}
             />
+            <span className="pr-1 text-lg opacity-50 tracking-wider">@cdrive.jp</span>
           </label>
           {errors.email && touchedFields.email && (
             <span className="text-xs text-red-600">メールアドレスを正しく入力して下さい</span>
