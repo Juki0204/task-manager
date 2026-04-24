@@ -24,14 +24,17 @@ export default function CancelAlertModal({ alertOpen, onModalClose, onCalcel }: 
       <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <DialogPanel className="w-fit relative rounded-2xl bg-neutral-100 p-6 pt-8">
+        <DialogPanel className="w-fit relative rounded-2xl bg-neutral-100 p-4 pb-6">
 
-          <div className="relative w-full flex flex-wrap justify-center items-center gap-2 rounded-xl bg-slate-300/70 p-3 px-6 mb-1">
+          <div className="relative w-full flex flex-wrap justify-center items-center gap-2 rounded-lg bg-yellow-300/60 py-2 px-6">
             <IoWarningOutline />
-            <p>保存されていない変更は破棄されます</p>
+            <p>CAUTION</p>
             <IoWarningOutline />
           </div>
-          <p className="text-center p-4">このまま閉じてもよろしいですか？</p>
+          <p className="text-center p-4">
+            保存されていない変更は破棄されます<br />
+            このまま閉じてもよろしいですか？
+          </p>
           <div className="flex justify-center gap-2">
             <button onClick={() => { onModalClose(); onCalcel(); }} className="py-2 px-6 rounded-md bg-sky-600 text-neutral-100">閉じる</button>
             <button onClick={() => onCalcel()} className="py-2 px-6 rounded-md bg-neutral-500 text-neutral-100">キャンセル</button>
