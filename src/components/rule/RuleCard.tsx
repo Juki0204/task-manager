@@ -75,10 +75,12 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
   }, [acknowledgements]);
 
   return (
-    <div onClick={() => onClick(rule)} className="flex w-375 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
+    <div onClick={() => onClick(rule)} className="flex w-374 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
       <div className="flex flex-col w-[calc(100%-(320px+8px))] gap-2 rounded-md bg-neutral-300 p-2">
         <div className="flex justify-between">
           <h3 className="flex gap-1 items-center font-bold truncate text-neutral-800 tracking-wider">
+            {isAcknowledged === "new" && <span className="bg-blue-400 px-3 pt-0.25 pb-0.5 rounded-full text-xs text-white font-medium">未読</span>}
+            {isAcknowledged === "updated" && <span className="bg-red-400 px-3 pb-0.25 rounded-full text-sm text-white font-medium">追記</span>}
             <LuNewspaper />
             <span>{rule.title}</span>
           </h3>

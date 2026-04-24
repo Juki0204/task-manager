@@ -2,10 +2,12 @@
 
 import CancelAlertModal from "@/components/CancelAlertModal";
 import AddRule from "@/components/rule/AddRule";
+import AllGroupRuleList from "@/components/rule/AllGroupRuleList";
 import EditRule from "@/components/rule/EditRule";
 import RuleCard from "@/components/rule/RuleCard";
 import RuleDetail from "@/components/rule/RuleDetail";
 import { useRuleContext } from "@/components/rule/RuleProvider";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 import { supabase } from "@/utils/supabase/supabase";
 import { Rule, RuleAcknowledgement } from "@/utils/types/rule";
@@ -133,7 +135,7 @@ export default function RulePage() {
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
           <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
-            情報共有掲示板
+            作業ルール・情報共有板
           </h2>
         </div>
       </div>
@@ -252,7 +254,7 @@ export default function RulePage() {
             </li>
           </ul>
 
-          <h2 className="font-bold text-white pl-1 border-b pb-1">使い方</h2>
+          {/* <h2 className="font-bold text-white pl-1 border-b pb-1">使い方</h2>
           <ul className="flex flex-col gap-1 mb-4 pl-0.5 pr-1 text-justify">
             <li className="text-sm text-white tracking-wider">■ 新規追加は左上「新規追加」ボタンより入力フォームに内容を入力して下さい。</li>
             <li className="text-sm text-white tracking-wider">■ タスク一覧同様、カードクリックで詳細表示、編集ボタンより編集が可能です。</li>
@@ -263,10 +265,26 @@ export default function RulePage() {
               <div className="flex gap-1 mt-1"><span className="bg-blue-600/80 px-2 rounded-md">未読（新規）</span><span className="bg-red-600/80 px-2 rounded-md">未読（更新分）</span><span className="bg-neutral-500 px-2 rounded-md">既読</span></div>
             </li>
             <li className="text-sm text-white tracking-wider">■ 編集後、全体に通知するかどうかを選択し、全体通知された場合は全員に上記ステータスバーが赤色で表示されます。</li>
-          </ul>
+          </ul> */}
+          <AllGroupRuleList
+            rules={rules}
+            onFilterReset={() => setFilters({ ...filters, targets: [] })}
+            onAccordionChange={(c: string) => {
+              setFilters({
+                ...filters,
+                targets: [c],
+              })
+              console.log(filters);
+            }}
+            onDetailOpen={(r: Rule) => {
+              setIsOpen(true);
+              setModalMode("detail");
+              setActiveRule(r);
+            }}
+          />
         </div>
 
-        <div className="w-[calc(100%-360px)] overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
+        <div className="w-[calc(100%-376px)] overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
           <div className="grid gap-2 mx-auto min-w-200">
             {
               filteredRules && users && filteredRules.map((rule) => (
