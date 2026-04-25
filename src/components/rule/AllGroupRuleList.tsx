@@ -47,7 +47,7 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
             return (
               <AccordionItem key={c} value={`item-${index}`} className="border-none">
                 <AccordionTrigger onClick={() => onAccordionChange(c)} className="flex gap-1 items-center text-neutral-100 data-[state=open]:text-yellow-300 py-1.5 border-none focus:border-none data-[state=open]:pointer-events-none"><FaTag />{c}</AccordionTrigger>
-                <AccordionContent className="text-neutral-100 h-fit pl-4 pr-2 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                <AccordionContent className="text-neutral-100 h-fit pl-4 pr-2">
                   {filteredRules.map((fr, index) => (
                     <div key={fr.id} className="flex gap-1 items-center">
                       {index + 1 === filteredRules.length ? <>&#9492;</> : <>&#9500;</>}
