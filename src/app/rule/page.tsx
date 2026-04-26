@@ -131,7 +131,7 @@ export default function RulePage() {
   }, [activeRule, ruleAcknowledgements]);
 
   return (
-    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 m-auto max-w-[1920px] relative overflow-x-hidden">
+    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-14 m-auto max-w-[1920px] relative overflow-x-clip">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
           <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
@@ -266,22 +266,24 @@ export default function RulePage() {
             </li>
             <li className="text-sm text-white tracking-wider">■ 編集後、全体に通知するかどうかを選択し、全体通知された場合は全員に上記ステータスバーが赤色で表示されます。</li>
           </ul> */}
-          <AllGroupRuleList
-            rules={rules}
-            onFilterReset={() => setFilters({ ...filters, targets: [] })}
-            onAccordionChange={(c: string) => {
-              setFilters({
-                ...filters,
-                targets: [c],
-              })
-              console.log(filters);
-            }}
-            onDetailOpen={(r: Rule) => {
-              setIsOpen(true);
-              setModalMode("detail");
-              setActiveRule(r);
-            }}
-          />
+          <div className="sticky top-14">
+            <AllGroupRuleList
+              rules={rules}
+              onFilterReset={() => setFilters({ ...filters, targets: [] })}
+              onAccordionChange={(c: string) => {
+                setFilters({
+                  ...filters,
+                  targets: [c],
+                })
+                console.log(filters);
+              }}
+              onDetailOpen={(r: Rule) => {
+                setIsOpen(true);
+                setModalMode("detail");
+                setActiveRule(r);
+              }}
+            />
+          </div>
         </div>
 
         <div className="w-[calc(100%-376px)] overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">

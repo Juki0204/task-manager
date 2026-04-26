@@ -121,7 +121,7 @@ export default function Header() {
       {!isExculedPath && (
         <header className="fixed top-0 w-full min-w-[1200px] py-2 px-4 z-50 text-neutral-700 dark:text-neutral-100 bg-neutral-100/70 dark:bg-neutral-600/70 backdrop-blur-md shadow-lg dark:border-b border-neutral-600">
           <div className={`w-full flex justify-end gap-2 items-center pb-2 border-b border-neutral-300 dark:border-neutral-500 transition-all ease-out duration-200
-            ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" ? "" : "!pb-0 !border-0"}`}>
+            ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" && pathname !== "/rule" ? "" : "!pb-0 !border-0"}`}>
             <div className="flex gap-1">
               <Button
                 tabIndex={-1}
@@ -217,7 +217,7 @@ export default function Header() {
           </div>
 
           <div className={`flex gap-2 items-center relative pt-2 transition-all ease-out dark:text-neutral-700 duration-200 -z-10
-            ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" ? "h-10" : "!h-0 !pt-0 opacity-0 overflow-hidden"}`}>
+            ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" && pathname !== "/rule" ? "h-10" : "!h-0 !pt-0 opacity-0 overflow-hidden"}`}>
             {pathname === "/" ? (
               <div className="pr-2 border-r border-neutral-300 dark:border-neutral-500">
                 <select
