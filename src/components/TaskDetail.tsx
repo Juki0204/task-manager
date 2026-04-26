@@ -281,7 +281,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
   return (
     <>
-      <div className={`${mailOpen ? "mailOpen" : ""} relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl text-neutral-700 bg-slate-300/70 p-3 mb-1`}>
+      <div className={`${mailOpen ? "mailOpen" : ""} relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl text-neutral-700 bg-slate-300/70 p-3 mb-1 scheme-light`}>
         <div className="flex items-center gap-2 w-full text-sm text-left leading-none">
           <p>{task.serial}</p>
           <p className={`py-0.5 px-2 rounded-full text-xs ${task.method === "mail" ? "bg-orange-200" : task.method === "tel" ? "bg-green-300/60" : "bg-blue-200"}`}>
@@ -308,6 +308,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         className={`
           ${hasScrollbar ? "pr-2" : ""}
           relative grid grid-cols-2 gap-x-4 gap-y-2 mb-3 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+          scheme-light
         `}
       >
 
@@ -393,7 +394,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
       </div>
 
-      <div className="flex gap-x-4 flex-wrap justify-between col-span-2 mb-0">
+      <div className="flex gap-x-4 flex-wrap justify-between col-span-2 mb-0 scheme-light">
         <Button
           disabled={!!editingUser}
           onClick={lockedTaskHandler}

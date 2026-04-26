@@ -100,7 +100,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
   }, [user]);
 
   return (
-    <div className="relative grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100">
+    <div className="relative grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100 scheme-light">
       <h2 className="col-span-22 -mt-1 tracking-wider text-center font-bold">新規投稿</h2>
       <GrClose
         // onClick={onClose}

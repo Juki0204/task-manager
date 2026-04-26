@@ -86,7 +86,7 @@ export default function RuleDetail({ rule, acknowledgements, users, onClose, onE
 
 
   return (
-    <div className="grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100">
+    <div className="grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100 scheme-light">
       <h2 className="col-span-22 -mt-1 tracking-wider text-center font-bold">詳細内容</h2>
       <GrClose
         onClick={onClose}

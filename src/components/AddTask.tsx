@@ -309,7 +309,7 @@ export default function AddTask() {
         open={isOpen}
         // onClose={closeModal}
         onClose={() => setIsAlertOpen(true)}
-        className="relative z-50 transition duration-300 ease-out text-neutral-700 data-closed:opacity-0"
+        className="relative z-50 transition duration-300 ease-out text-neutral-700 data-closed:opacity-0 scheme-light"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/30" />
 

@@ -285,7 +285,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
 
   return (
     <>
-      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1">
+      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1 scheme-light">
         <DialogTitle className="font-bold text-left col-span-2 sticky">タスク編集</DialogTitle>
         <div className="w-full flex gap-2">
           <AddTaskInput className="flex-1 [&_input]:bg-neutral-50 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
