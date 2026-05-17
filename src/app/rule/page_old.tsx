@@ -405,7 +405,7 @@ export default function RulePage() {
         // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="w-250 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-7">

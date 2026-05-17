@@ -41,7 +41,7 @@ export default function MailConverter({ domain, prefixNo }: MailConverterProps) 
   }, [domain, prefixNo]);
 
   if (!currentMail && !isLoaded) return (
-    <div className="flex justify-center items-center w-full h-full min-h-100 bg-neutral-50/70" aria-label="読み込み中">
+    <div className="flex justify-center items-center w-full h-full min-h-100 bg-neutral-50/70 dark:bg-neutral-600" aria-label="読み込み中">
       <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
     </div>
   )
@@ -51,13 +51,13 @@ export default function MailConverter({ domain, prefixNo }: MailConverterProps) 
   return (
     <div className="relative min-h-100 flex flex-col w-full h-full pr-2 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400">
       {!isLoaded &&
-        <div className="absolute flex justify-center items-center w-full h-full bg-white/70" aria-label="読み込み中">
+        <div className="absolute flex justify-center items-center w-full h-full bg-white/70 dark:bg-neutral-600/50" aria-label="読み込み中">
           <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
         </div>
       }
       {currentMail && (
         <>
-          <div className="w-full sticky top-0 bg-white">
+          <div className="w-full sticky top-0 bg-neutral-100 dark:bg-neutral-800">
             <h3 className="border-b border-neutral-300 text-base font-bold leading-loose">{textToHtml(currentMail.subject)}</h3>
             <p className="text-sm flex gap-1 leading-loose">
               <span>{currentMail.from_name}</span>
@@ -67,7 +67,7 @@ export default function MailConverter({ domain, prefixNo }: MailConverterProps) 
           </div>
 
 
-          <div className="flex-1 text-sm tracking-wide p-2 rounded-lg bg-neutral-200">
+          <div className="flex-1 text-sm tracking-wide p-2 rounded-lg bg-neutral-200 dark:bg-neutral-700">
             <div
               dangerouslySetInnerHTML={{ __html: currentMail.body }}
               className="mail-base w-full p-2"

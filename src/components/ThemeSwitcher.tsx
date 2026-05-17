@@ -19,7 +19,10 @@ export default function ThemeSwitcher() {
         <button
           type="button"
           onClick={() => setTheme("light")}
-          className="rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 border-zinc-300 dark:border-zinc-700 cursor-pointer"
+          className={`
+            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
+            ${theme === "light" ? "bg-blue-200 border-blue-300" : "border-zinc-300"}
+          `}
         >
           Light
         </button>
@@ -27,7 +30,10 @@ export default function ThemeSwitcher() {
         <button
           type="button"
           onClick={() => setTheme("dark")}
-          className="rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 border-zinc-300 dark:border-zinc-700 cursor-pointer"
+          className={`
+            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
+            ${theme === "dark" ? "bg-blue-500/80 border-blue-600" : "border-zinc-300"}
+          `}
         >
           Dark
         </button>
@@ -35,7 +41,10 @@ export default function ThemeSwitcher() {
         <button
           type="button"
           onClick={() => setTheme("system")}
-          className="rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 border-zinc-300 dark:border-zinc-700 cursor-pointer"
+          className={`
+            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
+            ${theme === "system" && resolvedTheme === "dark" ? "bg-blue-500/80 border-blue-600" : theme === "system" && resolvedTheme === "light" ? "bg-blue-200 border-blue-300" : "border-zinc-300"}
+          `}
         >
           System
         </button>

@@ -13,7 +13,7 @@ import { RiTeamFill } from "react-icons/ri";
 import { IoFlag, IoPerson, IoReceipt } from "react-icons/io5";
 import { FaRegCalendarCheck, FaClipboardList } from "react-icons/fa";
 
-import { FaGear } from "react-icons/fa6";
+import { FaGear, FaStar } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
 
 
@@ -90,14 +90,18 @@ export default function Header() {
 
       requestAnimationFrame(() => {
         const currentY = window.scrollY;
-        // const diff = currentY - lastScrollY.current;
+        const diff = currentY - lastScrollY.current;
 
-        // if (currentY > threshold && diff > 0) {
         if (currentY > threshold) {
           setIsScroll(true);
         } else {
           setIsScroll(false);
         }
+
+        if (diff < 0) {
+          setIsScroll(false);
+        }
+
 
         lastScrollY.current = currentY;
         ticking.current = false;
@@ -159,10 +163,10 @@ export default function Header() {
 
               <Button
                 tabIndex={-1}
-                className={`rounded w-10 grid place-content-center p-1.25 text-sm font-bold data-hover:bg-red-500/50 transition-all duration-100 ${pathname === "/important" ? "bg-red-500/50" : "cursor-pointer"}`}
+                className={`rounded w-10 grid place-content-center p-1.25 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/important" ? "bg-blue-500/50" : "cursor-pointer"}`}
                 onClick={() => router.push('/important')}
               >
-                <IoFlag className="text-base" />
+                <FaStar className="text-base" />
               </Button>
 
               <Button

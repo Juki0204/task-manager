@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Tooltip } from "react-tooltip";
 import { RemarksHoverMark } from "./ui/RemarksHoverMark";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
+import { FaStar } from "react-icons/fa6";
 
 interface CardPropd {
   task: Task;
@@ -204,18 +205,18 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_300px_600px_120px_120px_auto] py-2`}
+        className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_300px_600px_120px_120px_auto] py-3`}
         {...props}
       >
         <div className="text-xs flex items-center gap-1.5">
           <div className="flex items-center gap-1">
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
             {user.important_task_id && user.important_task_id.includes(task.id) && (
-              <RiFlag2Fill className="text-red-500/80 text-lg ml-0.5 mt-0.5" />
+              <FaStar className="text-yellow-300 text-lg ml-0.5 mt-0.5" />
             )}
             {currentDeadline && (
               <>
-                <MdAlarm tabIndex={-1} className="text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+                <MdAlarm tabIndex={-1} className="text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
                 <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px" }} />
               </>
             )}

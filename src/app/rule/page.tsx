@@ -131,10 +131,10 @@ export default function RulePage() {
   }, [activeRule, ruleAcknowledgements]);
 
   return (
-    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-14 m-auto max-w-[1920px] relative overflow-x-clip">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-14 m-auto max-w-[1920px] relative overflow-x-clip text-neutral-700 dark:text-neutral-100">
+      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
+          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
             作業ルール・情報共有板
           </h2>
         </div>
@@ -142,7 +142,7 @@ export default function RulePage() {
 
       <div className="pb-4 flex gap-4 w-full max-w-[1876px]">
 
-        <div className="w-90 bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-12rem)]">
+        <div className="w-90 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-12rem)]">
           <div
             onClick={() => {
               setIsOpen(true);
@@ -153,10 +153,10 @@ export default function RulePage() {
             <FiPlusCircle />新規ルール追加
           </div>
 
-          <h2 className="font-bold text-white pl-1 border-b pb-1">フィルタリング</h2>
+          <h2 className="font-bold pl-1 border-b pb-1">フィルタリング</h2>
           <ul className="flex flex-col gap-1 mb-4">
             <li className="flex flex-wrap gap-2 p-2 rounded-md font-bold bg-neutral-400">
-              <div className="w-fit rounded-md font-bold bg-neutral-400 z-4">
+              <div className="w-fit rounded-md font-bold bg-neutral-400 text-neutral-700 z-4">
                 <MultiSelectPopover
                   width={200}
                   options={[
@@ -184,7 +184,7 @@ export default function RulePage() {
                 />
               </div>
 
-              <div className="w-fit rounded-md font-bold bg-neutral-400 z-2">
+              <div className="w-fit rounded-md font-bold bg-neutral-400 text-neutral-700 z-2">
                 <MultiSelectPopover
                   width={100}
                   options={[
@@ -204,7 +204,7 @@ export default function RulePage() {
                 />
               </div>
 
-              <div className="rounded-md font-bold bg-neutral-400 z-3">
+              <div className="rounded-md font-bold bg-neutral-400 text-neutral-700 z-3">
                 <MultiSelectPopover
                   width={150}
                   options={[
@@ -224,7 +224,7 @@ export default function RulePage() {
                 />
               </div>
 
-              <div className="rounded-md font-bold bg-neutral-400 z-1">
+              <div className="rounded-md font-bold bg-neutral-400 text-neutral-700 z-1">
                 <MultiSelectPopover
                   width={150}
                   options={[
@@ -287,7 +287,7 @@ export default function RulePage() {
         </div>
 
         <div className="w-[calc(100%-376px)] overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
-          <div className="grid gap-2 mx-auto min-w-200">
+          <div className="grid mx-auto min-w-200">
             {
               filteredRules && users && filteredRules.map((rule) => (
                 <RuleCard
@@ -325,10 +325,10 @@ export default function RulePage() {
         // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="w-250 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-7">
+          <DialogPanel className="w-300 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] p-4 pt-4.5 shadow-2xl shadow-black/30">
             {activeRule && users && modalMode === "detail" && (
               <RuleDetail
                 rule={activeRule}

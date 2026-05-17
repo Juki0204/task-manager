@@ -123,7 +123,7 @@ export function RemarksHoverMark({
         type="button"
         className={`
           ${className} grid place-content-center py-1 px-3 rounded-full text-xs transition-colors duration-200
-          ${unread ? "bg-yellow-300/80 text-neutral-800 -outline-offset-2 outline-2 outline-yellow-300 font-bold" : "bg-neutral-500/60 text-neutral-50"}
+          ${unread ? "remarksMarkAnim" : "bg-neutral-500/60 text-neutral-50"}
         `}
         onMouseEnter={(e) => {
           isHoveringTrigger.current = true;
@@ -145,7 +145,7 @@ export function RemarksHoverMark({
         }}
         aria-label="備考を表示"
       >
-        備考
+        {unread ? "未読" : "備考"}
       </button>
 
       <CursorHoverPopup

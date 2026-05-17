@@ -568,8 +568,8 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
   return (
 
-    <div className="w-full h-full relative bg-neutral-100 px-2 pt-10 pb-16">
-      <h2 className="absolute top-0 left-0 w-full h-10 mb-0 flex items-center justify-start gap-2 pl-3 font-bold pr-10 bg-neutral-100 z-10">
+    <div className="w-full h-full relative bg-neutral-100 dark:bg-[#2d2d2d] px-2 pt-10 pb-16">
+      <h2 className="absolute top-0 left-0 w-full h-10 mb-0 flex items-center justify-start gap-2 pl-3 font-bold pr-10 z-10">
         請求データ一括入力
         <span className="text-xs text-neutral-400">TABキー, TAB + SHIFTキー押下で項目移動可能</span>
         <div onClick={() => setLPCalcOpen(true)} className="flex gap-1 items-center absolute top-1.5 right-10 cursor-pointer text-xs py-0.5 px-1.5 rounded-sm bg-neutral-300 text-neutral-800 hover:opacity-60">
@@ -579,10 +579,10 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
       </h2>
 
       <div className="flex gap-2 mb-2">
-        <div className="flex flex-wrap flex-2 gap-2 items-center p-3 rounded-lg bg-slate-300/70">
+        <div className="flex flex-wrap flex-2 gap-2 items-center p-3 rounded-lg bg-slate-300/70 dark:bg-[#444444]">
           {/* チェックボックス */}
           <div
-            className={`w-fit h-fit flex items-center gap-2 px-1 rounded-md cursor-pointer ${tempInvoiceValue.checked ? "bg-[#ffff00]" : "bg-neutral-100"}`}
+            className={`w-fit h-fit flex items-center gap-2 px-1 rounded-md cursor-pointer ${tempInvoiceValue.checked ? "bg-[#ffff00]" : "bg-neutral-100 dark:bg-[#313131]"}`}
             onClick={(e) => {
               e.stopPropagation();
               onToggle(tempInvoiceValue.id, !tempInvoiceValue.checked);
@@ -593,12 +593,12 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
             }}
           >
             {/* 行番号 */}
-            <div className="font-bold">#{index}</div>
+            <div className={`font-bold ${tempInvoiceValue.checked ? "dark:text-neutral-700" : ""}`}>#{index}</div>
 
             {tempInvoiceValue.checked ? (
               <MdCheckBox className="text-green-500 text-xl" />
             ) : (
-              <MdCheckBoxOutlineBlank className="text-black text-xl" />
+              <MdCheckBoxOutlineBlank className="text-black dark:text-neutral-100 text-xl" />
             )}
           </div>
           {/* シリアル */}
@@ -627,7 +627,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 ...tempInvoiceValue,
                 title: e.target.value
               })}
-              className="w-full rounded-md leading-none text-lg font-bold focus:bg-neutral-50 focus:py-1 focus:px-2"
+              className="w-full rounded-md leading-none text-lg font-bold focus:bg-neutral-50 focus:dark:bg-[#313131] focus:py-1 focus:px-2"
             />
           </div>
 
@@ -644,17 +644,17 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 ...tempInvoiceValue,
                 description: e.target.value
               })}
-              className="w-full bg-neutral-50 py-2 px-2 rounded-md text-sm"
+              className="w-full bg-neutral-50 dark:bg-[#313131] py-2 px-2 rounded-md text-sm"
             />
           </div>
 
         </div>
 
-        <div className="grid grid-cols-7 flex-1 gap-2 bg-neutral-200 rounded-md p-2">
+        <div className="grid grid-cols-7 flex-1 gap-2 bg-neutral-200 dark:bg-[#444444] rounded-md p-2">
 
           {/* クライアント */}
           <div className="col-span-4">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
               <BsPersonCheck />店舗名
             </h3>
             <Input
@@ -662,13 +662,13 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               type="text"
               readOnly
               value={tempInvoiceValue.client}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
+              className="w-full bg-neutral-300 dark:bg-[#313131] py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 作業担当者 */}
           <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
               <BsPersonCheck />依頼者
             </h3>
             <Input
@@ -676,13 +676,13 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               type="text"
               readOnly
               value={tempInvoiceValue.requester}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
+              className="w-full bg-neutral-300 dark:bg-[#313131] py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 作業担当者 */}
           <div className="col-span-4">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
               <BsPersonCheck />作業担当者
             </h3>
             <Input
@@ -690,13 +690,13 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               type="text"
               readOnly
               value={tempInvoiceValue.manager}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
+              className="w-full bg-neutral-300 dark:bg-[#313131] py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 完了日 */}
           <div className="col-span-3">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
               <FaRegCheckCircle />完了日
             </h3>
             <Input
@@ -708,7 +708,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 ...tempInvoiceValue,
                 finish_date: e.target.value
               })}
-              className="w-full bg-neutral-100 py-1 px-2 rounded-md cursor-pointer text-sm"
+              className="w-full bg-neutral-100 dark:bg-[#313131] py-1 px-2 rounded-md cursor-pointer text-sm"
             />
           </div>
 
@@ -718,18 +718,18 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
       <div
         ref={scrollRef}
-        className="w-full h-[calc(100%-8rem)] relative bg-neutral-100 p-1 pr-2 pb-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
+        className="w-full h-[calc(100%-8rem)] relative p-1 pr-2 pb-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
       >
 
         <div className="col-span-2 flex gap-1 mt-1 mb-1 items-center">
           <span className="text-neutral-400/60 text-xs leading-none tracking-widest">CATEGORY</span>
-          <span className="block h-[1px] bg-neutral-300 w-full" />
+          <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
         </div>
 
         <div className="grid grid-cols-12 gap-2 mb-4">
           {/* 大カテゴリ */}
           <div className="col-span-2">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
               <BiCategoryAlt />大カテゴリ
             </h3>
             <Input
@@ -737,13 +737,13 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               type="text"
               readOnly
               value={tempInvoiceValue.category ?? "-"}
-              className="w-full bg-neutral-300 py-1 px-2 rounded-md pointer-events-none text-sm"
+              className="w-full bg-neutral-300 dark:bg-[#444444] py-1 px-2 rounded-md pointer-events-none text-sm"
             />
           </div>
 
           {/* 中カテゴリ */}
           <div className="flex gap-x-2 flex-wrap col-span-9 border-l border-neutral-200 pl-2">
-            <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+            <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
               <MdLaptopChromebook />中カテゴリ選択
             </h3>
 
@@ -756,7 +756,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 onClick={() => {
                   document.getElementById(opt.id)?.click();
                 }}
-                className={`relative ${opt.width} h-7 bg-neutral-200 text-neutral-700 rounded-md overflow-hidden focus:outline-2 focus:outline-neutral-500`}
+                className={`relative ${opt.width} h-7 bg-neutral-200 text-neutral-700 dark:bg-[#444444] rounded-md overflow-hidden focus:outline-2 focus:outline-neutral-500`}
               >
                 <input
                   type="radio"
@@ -775,7 +775,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 />
                 <label
                   htmlFor={opt.label}
-                  className="absolute top-0 left-0 w-full h-full aspect-square text-center py-1 px-2 text-sm text-neutral-800 peer-checked:bg-blue-300/70 transition duration-300 cursor-pointer"
+                  className="absolute top-0 left-0 w-full h-full aspect-square text-center py-1 px-2 text-sm text-neutral-800 dark:text-neutral-100 peer-checked:bg-blue-300/70 dark:peer-checked:bg-blue-600/80 transition duration-300 cursor-pointer"
                 >
                   {opt.label}
                 </label>
@@ -786,7 +786,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
         {/* 小カテゴリ */}
         <div className="flex flex-wrap">
-          <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold">
+          <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
             <AiOutlinePicture />
             作業カテゴリ選択
             <span
@@ -813,9 +813,9 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               <div
                 data-category="favorite"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[0] = el; }}
-                className="p-2 bg-green-900/15 rounded-md w-48"
+                className="p-2 bg-green-900/15 dark:bg-green-300/20 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">よく使う項目</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700 dark:text-neutral-100">よく使う項目</h3>
                 <ul className="flex flex-col gap-0.5">
                   {favoriteList && (
                     favoriteList.sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
@@ -828,7 +828,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70 dark:bg-blue-600/80" : "bg-neutral-100 dark:bg-[#313131]"}`}
                         >
                           {p.work_name}
                         </li>
@@ -840,8 +840,8 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               <div
                 data-category="WEB"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[1] = el; }}
-                className="p-2 bg-slate-300/70 rounded-md w-48">
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">WEB</h3>
+                className="p-2 bg-slate-300/70 dark:bg-blue-200/30 rounded-md w-48">
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700 dark:text-neutral-100">WEB</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "WEB" && price.sub_category !== "イベント関連")
@@ -854,7 +854,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70 dark:bg-blue-600/80" : "bg-neutral-100 dark:bg-[#313131]"}`}
                         >
                           {p.work_name}
                         </li>
@@ -866,8 +866,8 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               <div
                 data-category="WEB"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[2] = el; }}
-                className="p-2 bg-slate-300/70 rounded-md w-48">
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">イベント</h3>
+                className="p-2 bg-slate-300/70 dark:bg-blue-200/30 rounded-md w-48">
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700 dark:text-neutral-100">イベント</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "WEB" && price.sub_category === "イベント関連")
@@ -880,7 +880,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70 dark:bg-blue-600/80" : "bg-neutral-100 dark:bg-[#313131]"}`}
                         >
                           {p.work_name}
                         </li>
@@ -892,9 +892,9 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               <div
                 data-category="印刷"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[3] = el; }}
-                className="p-2 bg-purple-900/15 rounded-md w-48"
+                className="p-2 bg-purple-900/15 dark:bg-purple-300/30 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">印刷</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700 dark:text-neutral-100">印刷</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "印刷")
@@ -907,7 +907,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70 dark:bg-blue-600/80" : "bg-neutral-100 dark:bg-[#313131]"}`}
                         >
                           {p.work_name}
                         </li>
@@ -919,9 +919,9 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               <div
                 data-category="出力"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[4] = el; }}
-                className="p-2 bg-purple-900/15 rounded-md w-48"
+                className="p-2 bg-purple-900/15 dark:bg-purple-300/30 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">出力</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700 dark:text-neutral-100">出力</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "出力")
@@ -934,7 +934,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70 dark:bg-blue-600/80" : "bg-neutral-100 dark:bg-[#313131]"}`}
                         >
                           {p.work_name}
                         </li>
@@ -946,9 +946,9 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
               <div
                 data-category="その他"
                 ref={(el: HTMLDivElement) => { categoryRefs.current[5] = el; }}
-                className="p-2 bg-neutral-300/70 rounded-md w-48"
+                className="p-2 bg-neutral-300/70 dark:bg-neutral-600 rounded-md w-48"
               >
-                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700">その他</h3>
+                <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 font-bold text-center justify-center text-neutral-700 dark:text-neutral-100">その他</h3>
                 <ul className="flex flex-col gap-0.5">
                   {priceList && (
                     priceList.filter((price) => price.category === "その他")
@@ -961,7 +961,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                           tabIndex={0}
                           onKeyDown={handleSmallCategoryKey}
                           onClick={() => handleClickItem(String(p.id), p.work_name, p.category)}
-                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-100"}`}
+                          className={`py-1.5 px-2 text-sm rounded-md cursor-default palt focus:outline-2 focus:outline-neutral-500 ${p.work_name === tempInvoiceValue.work_name ? "bg-blue-300/70 dark:bg-blue-600/80" : "bg-neutral-100 dark:bg-[#313131]"}`}
                         >
                           {p.work_name}
                         </li>
@@ -978,16 +978,16 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
         <div className="col-span-2 flex gap-1 mt-3 mb-2 items-center">
           <span className="text-neutral-400/60 text-xs leading-none tracking-widest">DETAILS</span>
-          <span className="block h-[1px] bg-neutral-300 w-full" />
+          <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
         </div>
 
         <div className="flex gap-2">
 
-          <div className="w-100 grid grid-cols-6 gap-2 bg-neutral-200 rounded-md p-2">
+          <div className="w-100 grid grid-cols-6 gap-2 bg-neutral-200 dark:bg-[#444444] rounded-md p-2">
 
             {/* 作業点数 */}
             <div className="col-span-2">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><PiPuzzlePiece />作業点数</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><PiPuzzlePiece />作業点数</h3>
               <Input
                 tabIndex={0}
                 ref={piecesRef}
@@ -1016,13 +1016,13 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                     }
                   }
                 }}
-                className="w-full bg-neutral-100 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
+                className="w-full bg-neutral-100 dark:bg-[#313131] py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
               />
             </div>
 
             {/* 修正度 */}
             <div className="col-span-2">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><HiOutlineAdjustments />修正度</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><HiOutlineAdjustments />修正度</h3>
               <Select
                 tabIndex={0}
                 value={tempInvoiceValue.degree ?? "100"}
@@ -1033,7 +1033,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                   });
                   calcAmount();
                 }}
-                className="w-full bg-neutral-100 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
+                className="w-full bg-neutral-100 dark:bg-[#313131] py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
               >
                 <option value="">-</option>
                 <option value="50">50</option>
@@ -1044,7 +1044,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {/* 修正金額 */}
             <div className="col-span-2">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><BiCalculator />修正金額</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><BiCalculator />修正金額</h3>
               <Input
                 tabIndex={0}
                 type="tel"
@@ -1071,7 +1071,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 }}
                 pattern="[0-9]*"
                 className={`
-                w-full bg-neutral-100 py-1 px-2 rounded-md text-right focus:outline-2 focus:outline-neutral-500
+                w-full bg-neutral-100 dark:bg-[#313131] py-1 px-2 rounded-md text-right focus:outline-2 focus:outline-neutral-500
                 ${tempInvoiceValue.adjustment && tempInvoiceValue.adjustment < 0 ? "text-red-600" : ""}
               `}
               />
@@ -1079,34 +1079,34 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {/* 仮請求額 */}
             <div className="col-span-3 pr-6 relative after:content-['▶'] after:text-neutral-400 after:absolute after:right-0 after:bottom-1">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><BiCalculator />仮請求額</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><BiCalculator />仮請求額</h3>
               <Input
                 tabIndex={-1}
                 type="number"
                 value={tempInvoiceValue.amount ?? 0}
                 readOnly
                 pattern="[0-9]*"
-                className="w-full text-xl font-bold leading-none text-neutral-700 border-b pb-0.5 px-2 text-right pointer-events-none"
+                className="w-full text-xl font-bold leading-none text-neutral-700 dark:text-neutral-100 border-b pb-0.5 px-2 text-right pointer-events-none"
               />
             </div>
 
             {/* 本請求額 */}
             <div className="col-span-3">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><BiCalculator />本請求額</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><BiCalculator />本請求額</h3>
               <Input
                 tabIndex={-1}
                 type="number"
                 value={tempInvoiceValue.total_amount ?? 0}
                 readOnly
                 pattern="[0-9]*"
-                className="w-full text-xl font-bold leading-none text-neutral-700 border-b pb-0.5 px-2 text-right pointer-events-none"
+                className="w-full text-xl font-bold leading-none text-neutral-700 dark:text-neutral-100 border-b pb-0.5 px-2 text-right pointer-events-none"
               />
             </div>
           </div>
 
           {/* 備考欄 */}
-          <div className="flex-1 p-2 rounded-md bg-neutral-200">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 font-bold"><LuNotebookPen />備考欄</h3>
+          <div className="flex-1 p-2 rounded-md bg-neutral-200 dark:bg-[#444444]">
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><LuNotebookPen />備考欄</h3>
             <Textarea
               tabIndex={0}
               value={tempInvoiceValue.remarks ?? ""}
@@ -1114,7 +1114,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 ...tempInvoiceValue,
                 remarks: e.target.value
               })}
-              className="block w-full h-24 bg-neutral-100 py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
+              className="block w-full h-24 bg-neutral-100 dark:bg-[#313131] py-1 px-2 rounded-md focus:outline-2 focus:outline-neutral-500"
             />
           </div>
 
@@ -1123,7 +1123,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
       </div>
 
       {/* 確定ボタンたち */}
-      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-4 gap-2 items-center justify-between p-3 bg-neutral-100 mb-0">
+      <div className="absolute bottom-0 left-0 w-full h-fit grid grid-cols-4 gap-2 items-center justify-between p-3 bg-neutral-100 dark:bg-[#2d2d2d] mb-0">
         <button
           disabled={prevId ? false : true}
           onClick={() => {
@@ -1165,21 +1165,21 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
       </div>
 
       <div className={`
-        absolute top-0 p-4 rounded-xl bg-neutral-50 w-80 transition-all duration-300 -z-10
+        absolute top-0 p-4 rounded-xl bg-neutral-50 dark:bg-[#2d2d2d] w-80 transition-all duration-300 -z-10
         ${LPCalcOpen ? "left-[calc(100%+2rem)]" : "left-0"}
       `}>
         <h2 className="mb-2 font-bold text-center">縦長バナー料金計算機</h2>
         <div className="text-[13px] flex flex-col gap-2 border-b border-neutral-300 text-justify pb-2">
-          <p>作成した画像の縦：横のサイズ(px)を入力して<br />
+          <p>作成した画像の横：縦のサイズ(px)を入力して<br />
             1:Xの縦の比率が3倍を超えた時点で縦長バナー用の請求金額を独自の計算式を基に組み立てます。</p>
           <p>ベースを25,000円とし、縦の比率が1倍増える毎に+2,500円、比率の小数点以下が0.5以上の場合は切り上げや切り捨てではなく+1,000円とします。</p>
           <p>比率が3倍を超えない場合はWEBポップと同等の金額になります。</p>
         </div>
         <div className="grid grid-cols-8 gap-4 pt-2 pb-1">
           <div className="col-span-4">
-            <h3 className="text-[13px] px-0.5">縦 ( px )</h3>
+            <h3 className="text-[13px] px-0.5">横 ( px )</h3>
             <input
-              className="w-full py-1 px-2 rounded-md bg-neutral-200 text-right"
+              className="w-full py-1 px-2 rounded-md bg-neutral-200 dark:bg-[#444444] text-right"
               type="tel"
               inputMode="numeric"
               pattern="[0-9]*"
@@ -1196,9 +1196,9 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
             />
           </div>
           <div className="col-span-4">
-            <h3 className="text-[13px] px-0.5">横 ( px )</h3>
+            <h3 className="text-[13px] px-0.5">縦 ( px )</h3>
             <input
-              className="w-full py-1 px-2 rounded-md bg-neutral-200 text-right"
+              className="w-full py-1 px-2 rounded-md bg-neutral-200 dark:bg-[#444444] text-right"
               type="tel"
               inputMode="numeric"
               pattern="[0-9]*"
@@ -1215,25 +1215,25 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
             />
           </div>
           <div className="col-span-3 relative after:content-['：'] after:absolute after:left-full after:bottom-0 after:block after:py-1 after:px-[1px]">
-            <h3 className="text-[13px] px-0.5">比率(縦)</h3>
-            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={1} readOnly />
+            <h3 className="text-[13px] px-0.5">比率(横)</h3>
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 dark:bg-[#444444] text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={1} readOnly />
           </div>
           <div className="col-span-5">
-            <h3 className="text-[13px] px-0.5">比率(横) X</h3>
-            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.rate} readOnly />
+            <h3 className="text-[13px] px-0.5">比率(縦) X</h3>
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 dark:bg-[#444444] pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.rate} readOnly />
           </div>
           <div className="col-span-4">
             <h3 className="text-[13px] px-0.5">縦比率超過分(X - 3)</h3>
-            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.alt_rate} readOnly />
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 dark:bg-[#444444] text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.alt_rate} readOnly />
           </div>
           <div className="col-span-4">
             <h3 className="text-[13px] px-0.5">小数点以下指数</h3>
-            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.decimal} readOnly />
+            <input className="w-full py-1 px-2 rounded-md bg-neutral-300 dark:bg-[#444444] text-right pointer-events-none" type="tel" inputMode="numeric" pattern="[0-9]*" value={LPData.decimal} readOnly />
           </div>
           <div className="col-span-8">
             <h3 className="text-[13px] px-0.5">請求金額</h3>
             <input
-              className="w-full py-1 px-2 rounded-md bg-blue-500/20 text-right"
+              className="w-full py-1 px-2 rounded-md bg-blue-500/20 dark:bg-blue-300/20 text-right"
               type="tel"
               inputMode="numeric"
               pattern="[0-9]*"
@@ -1246,7 +1246,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           </div>
           <div className="col-span-8 flex justify-end gap-2">
             <button
-              className="px-4 py-2 text-sm bg-red-300 rounded-md cursor-pointer hover:opacity-90"
+              className="px-4 py-2 text-sm bg-red-300 dark:bg-red-500/60 rounded-md cursor-pointer hover:opacity-90"
               onClick={() => {
                 setLPData({
                   rows: 0,

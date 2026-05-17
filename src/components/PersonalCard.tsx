@@ -12,7 +12,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
 import HighlightText from "./ui/HighlightText";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
-import { FaRegBuilding } from "react-icons/fa6";
+import { FaRegBuilding, FaStar } from "react-icons/fa6";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { Tooltip } from "react-tooltip";
 import { RemarksHoverMark } from "./ui/RemarksHoverMark";
@@ -302,28 +302,28 @@ export default function PersonalCard({
       {...attributes}
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border after:rounded-md before:rounded-md" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} text-neutral-700 dark:text-neutral-100 rounded-md min-w-90 drop-shadow-md drop-shadow-gray-950/30 dark:hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} text-neutral-700 dark:text-neutral-100 min-w-90 drop-shadow-md drop-shadow-gray-950/30 dark:hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
 
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
 
-      {task.id === currentClickTask && <div className="w-full h-full bg-transparent border-2 border-blue-500 absolute top-0 left-0 rounded-md z-10 pointer-events-none"></div>}
+      {task.id === currentClickTask && <div className="w-full h-full bg-transparent border-2 border-blue-500 absolute top-0 left-0 z-10 pointer-events-none"></div>}
 
       {/* カード（概要） */}
       <div
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full rounded-sm p-3 pl-4 tracking-wide cursor-pointer relative`}
+        className={`${personalBg} w-full p-3 pl-4 tracking-wide cursor-pointer relative`}
         {...props}
       >
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
           {user.important_task_id && user.important_task_id.includes(task.id) && (
-            <RiFlag2Fill className="text-red-500/80 text-lg" />
+            <FaStar className="text-yellow-300 text-lg" />
           )}
           {currentDeadline && (
             <>
-              <MdAlarm className="text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+              <MdAlarm className="text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
               <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px", zIndex: 50 }} />
             </>
           )}
@@ -371,7 +371,7 @@ export default function PersonalCard({
           <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
         </div> */}
 
-        <div className="p-2 rounded-md overflow-hidden relative before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
+        <div className="p-2 rounded-md overflow-hidden relative font-bold dark:font-normal before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
           <div className="grid gap-2 text-sm grid-cols-6">
             <div className="col-span-2 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
             <div className="col-span-2 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>

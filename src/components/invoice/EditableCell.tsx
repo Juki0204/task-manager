@@ -151,8 +151,8 @@ export default function EditableCell({
       }}
       onKeyDown={handleKeyDown}
       className={`relative border-neutral-700 py-1.5 px-2 min-h-8 ${className ?? ""}
-        ${isActive ? "bg-blue-900/50 outline -outline-offset-1 outline-blue-700" : ""}
-        ${editing ? "!bg-blue-800/40 !outline-blue-400" : ""}
+        ${isActive ? "bg-blue-300/50 dark:bg-blue-900/50 outline -outline-offset-1 outline-blue-500 dark:outline-blue-700" : ""}
+        ${editing ? "bg-blue-300/30 dark:!bg-blue-800/40 !outline-blue-300 dark:!outline-blue-400" : ""}
         ${typeof value === "number" && value < 0 ? "text-red-400" : ""}
         h-full flex items-center
       `}

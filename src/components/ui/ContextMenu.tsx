@@ -44,13 +44,13 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateT
   return (
     <div
       ref={menuRef}
-      className="absolute z-50 w-48 rounded bg-slate-700 shadow-neutral-900 shadow-xl p-2"
+      className="absolute z-50 w-48 rounded bg-slate-200 dark:bg-slate-700 shadow-neutral-900/30 dark:shadow-neutral-900 shadow-xl p-2"
       style={{ top: pos.top, left: pos.left }}
       onClick={(e: MouseEvent) => e.stopPropagation()}
     >
-      <h2 className="rounded-md text-center bg-neutral-200 p-1 mb-2 text-sm">{taskSerial}</h2>
+      <h2 className="rounded-md text-center bg-neutral-400 dark:bg-neutral-200 text-white dark:text-neutral-700 p-1 mb-2 text-sm">{taskSerial}</h2>
 
-      <h3 className="text-sm font-bold text-white py-1">■ 状態変更</h3>
+      <h3 className="text-sm font-bold text-neutral-700 dark:text-white py-1">■ 状態変更</h3>
       <ul className="flex flex-col gap-0.5 border-b border-slate-400 pb-1 mb-1">
         <ChangeInProgress taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />
         <ChangeInterrupt taskId={taskId} onClick={onClose} updateTaskStatus={updateTaskStatus} />

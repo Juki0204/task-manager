@@ -16,16 +16,17 @@ export default function MenuBtn() {
         <span className="bar bar2"></span>
         <span className="bar bar3"></span>
       </div>
-      <div className={`fixed top-12.5 right-1 p-4 rounded-md w-fit bg-neutral-100 dark:bg-neutral-600 shadow-lg shadow-neutral-800 transition-opacity duration-300 ${menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className={`fixed top-12.5 right-1 p-4 rounded-md w-fit bg-neutral-100 dark:bg-neutral-600 shadow-lg shadow-neutral-400 dark:shadow-neutral-800 z-10 transition-opacity duration-300 ${menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
         <h3 className="flex items-center justify-center gap-1 pb-2"><FaUserCircle />{user?.name} さん</h3>
         <div className="flex flex-col gap-2">
-          {/* <div className="pb-2 border-b border-neutral-500">
+          <div className="pb-2 border-b border-neutral-500">
             <p className="text-center text-sm pb-2">- Exchange Themes -</p>
             <ThemeSwitcher />
-          </div> */}
+          </div>
           <div className="bg-slate-400 dark:bg-slate-800 rounded-md"><LogoutBtn className="px-10 !py-1 w-full justify-center" /></div>
         </div>
       </div>
+      <div onClick={() => setMenuOpen(false)} className={`overlay fixed top-0 left-0 w-full h-[100vh] opacity-0 ${menuOpen ? "pointer-events-auto" : "pointer-events-none"}`}></div>
     </div>
   )
 }

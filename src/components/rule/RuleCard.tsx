@@ -75,42 +75,49 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
   }, [acknowledgements]);
 
   return (
-    <div onClick={() => onClick(rule)} className="flex w-374 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
-      <div className="flex flex-col w-[calc(100%-(320px+8px))] gap-2 rounded-md bg-neutral-300 p-2">
+    <div onClick={() => onClick(rule)} className="flex flex-col w-374 border-b border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-100 gap-2 p-3 hover:bg-black/4 hover:dark:bg-white/10 hover:cursor-pointer">
+      <div className="flex flex-col w-full">
         <div className="flex justify-between">
-          <h3 className="flex gap-1 items-center font-bold truncate text-neutral-800 tracking-wider">
+          <h3 className="flex flex-1 gap-1 items-center font-bold truncate tracking-widest">
             {isAcknowledged === "new" && <span className="bg-blue-400 px-3 pt-0.25 pb-0.5 rounded-full text-xs text-white font-medium">未読</span>}
             {isAcknowledged === "updated" && <span className="bg-red-400 px-3 pb-0.25 rounded-full text-sm text-white font-medium">追記</span>}
             <LuNewspaper />
             <span>{rule.title}</span>
           </h3>
           <div className="flex gap-1">
-            <p className="w-44 bg-neutral-100 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold">{rule.target}</p>
-            <p className="w-26 bg-neutral-100 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold">{rule.type}</p>
-            <p className={`w-18 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold brightness-105 ${rule.importance === "重要" ? "bg-yellow-300/80" : "bg-green-400/70"}`}>{rule.importance}</p>
+            <p className="w-44 bg-neutral-200 dark:bg-neutral-600 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold">{rule.target}</p>
+            <p className="w-26 bg-neutral-200 dark:bg-neutral-600 py-0.5 px-4 rounded-full text-[13px] text-center tracking-wider font-bold">{rule.type}</p>
+            <p className={`
+              w-18 py-0.5 px-4 rounded-full text-[13px] text-white text-center tracking-wider font-bold brightness-105
+              ${rule.importance === "重要" ? "bg-red-500/80" : "bg-green-400/70"}
+            `}>
+              {rule.importance}
+            </p>
           </div>
         </div>
-        <p className="truncate rounded-md bg-neutral-100 px-1 py-0.5 text-[13px] tracking-wider">{rule.content}</p>
-        <div className={`h-1 rounded-full ${isAcknowledged === "new" ? "bg-blue-400" : isAcknowledged === "updated" ? "bg-red-400" : isAcknowledged === "read" ? "bg-neutral-400" : ""} `}></div>
+      </div>
+      <div className="flex gap-4 justify-end">
+
+        <div className="flex justify-between items-center p-0.5">
+          <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider">
+            <FaPenToSquare />{rule.created_by} {convertDate(rule.created_at)}
+          </h3>
+        </div>
+
+        <div className="flex justify-between items-center p-0.5">
+          <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider">
+            <FaRepeat />{rule.updated_by} {convertDate(rule.updated_at)}
+          </h3>
+        </div>
+
+        <div className="flex justify-between items-center p-0.5">
+          <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider">
+            <FaRegSmile />{readUsers.length} / {users.length}
+          </h3>
+        </div>
       </div>
 
-      <div className="flex flex-col w-80 gap-1">
-
-        <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
-          <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider"><FaPenToSquare />作成</h3>
-          <p className="text-[13px] text-neutral-500 tracking-wider">{rule.created_by} {convertDate(rule.created_at)}</p>
-        </div>
-
-        <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
-          <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider"><FaRepeat />更新</h3>
-          <p className="text-[13px] text-neutral-500 tracking-wider">{rule.updated_by} {convertDate(rule.updated_at)}</p>
-        </div>
-
-        <div className="col-span-2 flex justify-between items-center gap-1 p-0.5 border-b border-neutral-300">
-          <h3 className="flex items-center gap-1 text-[13px] whitespace-nowrap text-neutral-500 tracking-wider"><FaRegSmile />確認</h3>
-          <p className="text-[13px] text-neutral-500 tracking-wider">{readUsers.length} / {users.length}</p>
-        </div>
-      </div>
+      <div className={`h-0.5 rounded-full ${isAcknowledged === "new" ? "bg-blue-400" : isAcknowledged === "updated" ? "bg-red-400" : isAcknowledged === "read" ? "bg-neutral-400" : ""} `}></div>
     </div>
   )
 }

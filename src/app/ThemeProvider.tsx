@@ -11,9 +11,9 @@ export default function ThemeProvider({ children }: Props) {
 
   return (
     <NextThemeProvider
-      attribute="class"
-      // defaultTheme="system"
-      defaultTheme="dark"
+      attribute="data-theme"
+      defaultTheme="system"
+      // defaultTheme="dark"
       enableSystem
       disableTransitionOnChange
     >

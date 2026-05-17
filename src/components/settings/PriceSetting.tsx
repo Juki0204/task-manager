@@ -219,8 +219,8 @@ export default function PriceSetting() {
 
 
   return (
-    <div className="grid gap-2">
-      <h2 className="text-white font-bold p-1 pt-0 text-center border-b border-white">
+    <div className="grid gap-2 w-366">
+      <h2 className="font-bold p-1 pt-0 text-center border-b border-neutral-700 dark:border-white">
         請求単価一覧
       </h2>
 
@@ -234,7 +234,7 @@ export default function PriceSetting() {
           return (
             <div
               key={cat}
-              className="bg-neutral-400 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content] first-of-type:row-span-3"
+              className="bg-slate-300 dark:bg-neutral-400 text-neutral-700 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content] first-of-type:row-span-3"
             >
               <h3 className="text-center pb-1 font-bold">{cat}</h3>
 
@@ -389,7 +389,7 @@ export default function PriceSetting() {
                       .sort((a, b) => a.order - b.order);
 
                     return (
-                      <div className="bg-neutral-300 p-2 rounded-md">
+                      <div className="bg-slate-500/30 dark:bg-slate-500/50 p-2 rounded-md">
                         <DndContext
                           sensors={sensors}
                           collisionDetection={closestCenter}

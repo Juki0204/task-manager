@@ -18,13 +18,13 @@ export default function CancelAlertModal({ alertOpen, onModalClose, onCalcel }: 
   return (
     <Dialog
       open={isAlertOpen}
-      onClose={() => setIsAlertOpen(false)}
+      onClose={() => { }}
       className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
     >
-      <DialogBackdrop className="fixed inset-0 bg-black/30" />
+      <DialogBackdrop onClick={(e) => e.preventDefault()} className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <DialogPanel className="w-fit relative rounded-2xl bg-neutral-100 p-4 pb-5">
+        <DialogPanel className="w-fit relative rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pb-5 shadow-xl shadow-black/20">
 
           <div className="relative w-full flex flex-wrap justify-center items-center gap-2 rounded-lg bg-yellow-300/60 py-2 px-6">
             <IoWarningOutline />
@@ -37,7 +37,7 @@ export default function CancelAlertModal({ alertOpen, onModalClose, onCalcel }: 
           </p>
           <div className="flex justify-center gap-2">
             <button onClick={() => { onModalClose(); onCalcel(); }} className="py-1 px-4 rounded-md text-sm bg-sky-600 text-neutral-100">閉じる</button>
-            <button onClick={() => onCalcel()} className="py-2 px-6 rounded-md text-sm bg-neutral-500 text-neutral-100">キャンセル</button>
+            <button onClick={() => onCalcel()} className="py-2 px-6 rounded-md text-sm bg-neutral-500 dark:bg-neutral-600 text-neutral-100">キャンセル</button>
           </div>
         </DialogPanel>
       </div>

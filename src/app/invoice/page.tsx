@@ -321,17 +321,17 @@ export default function InvoicePage() {
   }, [invoiceSortState, filters, invoices]);
 
   return (
-    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 relative overflow-x-hidden min-h-[80svh]">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 relative overflow-x-hidden min-h-[80svh] text-neutral-700 dark:text-neutral-100">
+      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 text-white text-xl font-bold text-center">
-            <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+          <h2 className="flex justify-center items-center gap-1 text-xl font-bold text-center">
+            <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
               <option value="2024">2024</option>
               <option value="2025">2025</option>
               <option value="2026">2026</option>
             </Select>
             年
-            <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+            <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
               <option value="01">1</option>
               <option value="02">2</option>
               <option value="03">3</option>
@@ -398,53 +398,53 @@ export default function InvoicePage() {
       </div>
 
       <div className="w-fit mr-auto ml-auto mt-3 mb-5">
-        <div className="w-430 grid grid-cols-27 items-center text-sm text-center text-neutral-950 font-bold">
-          <div className="border col-span-1 border-neutral-700 p-1 bg-neutral-100">難波</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">新大阪</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">谷町</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">谷町G</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">梅田</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">梅田G</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">中洲</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">玉乱堂</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">奥様</div>
+        <div className="w-430 grid grid-cols-27 items-center text-sm text-center bg-neutral-200 dark:bg-neutral-100 text-neutral-950 font-bold">
+          <div className="border col-span-1 border-neutral-400 dark:border-neutral-700 p-1">難波</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 ">新大阪</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">谷町</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">谷町G</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">梅田</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">梅田G</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">中洲</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">玉乱堂</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 mr-1">奥様</div>
 
-          <div className="border col-span-1 border-neutral-700 p-1 bg-neutral-100">WEB</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">印刷</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100">出力</div>
-          <div className="border col-span-1 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">その他</div>
+          <div className="border col-span-1 border-neutral-400 dark:border-neutral-700 p-1">WEB</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">印刷</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">出力</div>
+          <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 mr-1">その他</div>
 
-          <div className="border col-span-2 border-neutral-700 p-1 bg-neutral-100">総作業件数</div>
-          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-red-100">未請求件数</div>
-          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100 mr-1">請求件数</div>
+          <div className="border col-span-2 border-neutral-400 dark:border-neutral-700 p-1">総作業件数</div>
+          <div className="border col-span-2 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 bg-red-100">未請求件数</div>
+          <div className="border col-span-2 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 mr-1">請求件数</div>
 
-          <div className="border col-span-3 border-neutral-700 p-1 bg-neutral-100">仮請求額</div>
-          <div className="border col-span-2 border-l-0 border-neutral-700 p-1 bg-neutral-100">調整額</div>
-          <div className="border col-span-3 border-l-0 border-neutral-700 p-1 bg-blue-100">本請求額</div>
+          <div className="border col-span-3 border-neutral-400 dark:border-neutral-700 p-1">仮請求額</div>
+          <div className="border col-span-2 border-l-0 border-neutral-400 dark:border-neutral-700 p-1">調整額</div>
+          <div className="border col-span-3 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 bg-blue-100">本請求額</div>
         </div>
-        <div className="w-430 grid grid-cols-27 items-center border-neutral-700 text-sm tracking-wider">
-          <div className="border col-span-1 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.nmb}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.sno}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tnm}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tng}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.umd}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.umg}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.nks}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalClients.tmr}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalClients.oks}件</div>
+        <div className="w-430 grid grid-cols-27 items-center bg-white dark:bg-transparent border-neutral-400 dark:border-neutral-700 text-sm tracking-wider">
+          <div className="border col-span-1 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.nmb}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.sno}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.tnm}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.tng}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.umd}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.umg}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.nks}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalClients.tmr}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right mr-1">{totalClients.oks}件</div>
 
-          <div className="border col-span-1 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.web}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.dtp}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.print}件</div>
-          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalInvoices.other}件</div>
+          <div className="border col-span-1 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalInvoices.web}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalInvoices.dtp}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalInvoices.print}件</div>
+          <div className="border col-span-1 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right mr-1">{totalInvoices.other}件</div>
 
-          <div className="border col-span-2 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.taskCount}件</div>
-          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right">{totalInvoices.unclaimed}件</div>
-          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right mr-1">{totalInvoices.claimed}件</div>
+          <div className="border col-span-2 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalInvoices.taskCount}件</div>
+          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right">{totalInvoices.unclaimed}件</div>
+          <div className="border col-span-2 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right mr-1">{totalInvoices.claimed}件</div>
 
-          <div className="border col-span-3 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right font-bold">{totalInvoices.amount.toLocaleString()}円</div>
-          <div className={`border col-span-2 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-right font-bold ${totalInvoices.adjustment < 0 ? "text-red-400" : "text-white"}`}>{totalInvoices.adjustment.toLocaleString()}円</div>
-          <div className="border col-span-3 border-l-0 border-t-0 border-neutral-700 min-h-9 p-2 text-white text-right font-bold">{totalInvoices.totalAmount.toLocaleString()}円</div>
+          <div className="border col-span-3 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold">{totalInvoices.amount.toLocaleString()}円</div>
+          <div className={`border col-span-2 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold ${totalInvoices.adjustment < 0 ? "text-red-400" : "text-white"}`}>{totalInvoices.adjustment.toLocaleString()}円</div>
+          <div className="border col-span-3 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold">{totalInvoices.totalAmount.toLocaleString()}円</div>
         </div>
       </div>
     </div>

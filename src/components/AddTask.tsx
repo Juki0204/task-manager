@@ -309,14 +309,14 @@ export default function AddTask() {
         open={isOpen}
         // onClose={closeModal}
         onClose={() => setIsAlertOpen(true)}
-        className="relative z-50 transition duration-300 ease-out text-neutral-700 data-closed:opacity-0 scheme-light"
+        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="w-130 relative rounded-2xl bg-neutral-100 p-6 pt-8">
+          <DialogPanel className="w-130 relative rounded-2xl bg-neutral-100 dark:text-neutral-200 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pt-4.5">
 
-            <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1">
+            <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 mb-1">
               <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
               <GrClose
                 // onClick={closeModal} 
@@ -325,11 +325,11 @@ export default function AddTask() {
               />
 
               <div className="w-full flex gap-2">
-                <AddTaskInput className="flex-1 [&_input]:bg-neutral-50 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
-                <AddTaskInput className="w-36 [&_input]:bg-neutral-50 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+                <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
+                <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
               </div>
 
-              <AddTaskInput className="w-full [&_input]:bg-neutral-50 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
+              <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
             </div>
 
             <div
@@ -341,7 +341,7 @@ export default function AddTask() {
               <div className="col-span-2 flex flex-wrap gap-x-2">
                 <div className="w-full flex gap-1 mt-3 mb-1 items-center col-span-2">
                   <span className="text-neutral-400/60 text-xs leading-none tracking-widest">META</span>
-                  <span className="block h-[1px] bg-neutral-300 w-full" />
+                  <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
                 </div>
 
                 <Field className="flex flex-col">
@@ -371,7 +371,7 @@ export default function AddTask() {
               <div className="col-span-2 flex flex-wrap gap-x-2">
                 <div className="w-full flex gap-1 items-center mt-2 mb-1">
                   <span className="text-neutral-400/60 text-xs leading-none tracking-widest">STATUS</span>
-                  <span className="block h-[1px] bg-neutral-300 w-full" />
+                  <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
                 </div>
 
                 <div className="flex flex-wrap gap-2 flex-1">
@@ -410,7 +410,7 @@ export default function AddTask() {
               <div className="flex flex-col col-span-2">
                 <div className="col-span-2 flex gap-1 items-center mt-2 mb-1">
                   <span className="text-neutral-400/60 text-xs leading-none tracking-widest">REMARKS</span>
-                  <span className="block h-[1px] bg-neutral-300 w-full" />
+                  <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
                 </div>
 
                 <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
@@ -423,14 +423,14 @@ export default function AddTask() {
               <Button
                 // onClick={closeModal}
                 onClick={() => setIsAlertOpen(true)}
-                className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
+                className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 data-hover:dark:text-neutral-700 cursor-pointer"
               >
                 キャンセル
               </Button>
               <Button
                 onClick={() => addTask()}
                 disabled={isValid || isSubmitting}
-                className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
+                className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:dark:opacity-50 data-disabled:cursor-auto"
               >
                 {isSubmitting ? "処理中..." : "新規追加"}
               </Button>

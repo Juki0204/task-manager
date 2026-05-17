@@ -23,8 +23,9 @@ export default function PriorityTasks({ onClick }: { onClick: (t: Task) => void;
     deadlineList.map((d) => [d.task_id, d.date])
   );
 
+  // 検証用
   // const filteredTaskList = (task: Task[]) => {
-  //   const filtered = task.filter(t => t.request_date === "2026-01-17");
+  //   const filtered = task.filter(t => t.request_date === "2026-04-26");
   //   setPriorityTasks(filtered);
   //   setTimeout(() => setIsReady(true), 1000);
   // }
@@ -116,7 +117,7 @@ export default function PriorityTasks({ onClick }: { onClick: (t: Task) => void;
   );
 
   if (isReady && priorityTasks.length === 0) return (
-    <p className="text-center h-full grid place-content-center tracking-widest text-neutral-100">現時点で優先すべきタスクはありません。各々のタスクを進行しましょう。</p>
+    <p className="text-center h-full grid place-content-center tracking-widest">現時点で優先すべきタスクはありません。各々のタスクを進行しましょう。</p>
   );
 
   return (
@@ -188,12 +189,12 @@ function PriorityTaskCard({ task, deadline, annotation, onClick }: { task: Task,
     <div
       // onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
       onClick={() => onClick(task)}
-      className="bg-black/40 rounded-lg min-w-90 drop-shadow-md drop-shadow-gray-950/30 cursor-pointer hover:bg-neutral-800/50">
+      className="text-neutral-100 bg-black/40 rounded-lg min-w-90 drop-shadow-md drop-shadow-gray-950/30 cursor-pointer hover:bg-neutral-800/50">
 
       {/* カード（概要） */}
       <div
         id={task.id}
-        className={`w-full rounded-sm p-3 text-white tracking-wide relative`}
+        className={`w-full rounded-sm p-3 tracking-wide relative`}
       >
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           {task.serial}
@@ -230,7 +231,7 @@ function PriorityTaskCard({ task, deadline, annotation, onClick }: { task: Task,
           {task.description}
         </div>
 
-        <div className="p-2 rounded-md overflow-hidden relative before:bg-white/20 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
+        <div className="p-2 rounded-md overflow-hidden relative before:bg-white/60 before:dark:bg-white/20 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
           <div className="grid gap-2 text-sm grid-cols-6">
             <div className="col-span-3 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 【{task.requester}】</div>
             <div className="col-span-3 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>

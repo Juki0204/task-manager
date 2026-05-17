@@ -117,20 +117,20 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
   }, [user]);
 
   return (
-    <div className="relative grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100">
+    <div className="relative grid grid-cols-22 gap-2 w-full rounded-xl bg-neutral-100 dark:bg-[#2b2b2b] ">
       <h2 className="col-span-22 -mt-1 tracking-wider text-center font-bold">編集</h2>
       {/* <GrClose
         onClick={onClose}
         className="absolute top-0 right-0 cursor-pointer"
       /> */}
       <div className="col-span-16 flex flex-col gap-2">
-        <div className="flex flex-col gap-1 p-3 bg-slate-300/70 rounded-xl">
-          <h3 className="relative mb-2 rounded-md text-neutral-700 w-full font-bold text-base text-justify flex gap-1 items-center leading-none">
+        <div className="flex flex-col gap-1 p-3 bg-slate-300/70 dark:bg-[#444444] rounded-xl">
+          <h3 className="relative mb-2 rounded-md text-neutral-700 dark:text-neutral-100 w-full font-bold text-base text-justify flex gap-1 items-center leading-none">
             <LuNewspaper className="absolute top-0 bottom-0 left-2 m-auto text-lg" />
-            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-neutral-100 w-full rounded-md p-2 pl-8" placeholder="タイトル" />
+            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-neutral-100 dark:bg-neutral-600 w-full rounded-md p-2 pl-8" placeholder="タイトル" />
           </h3>
           <div className="flex-1 bg-neutral-100 rounded-md">
-            <div className="w-full max-h-130 text-sm text-neutral-800 whitespace-pre-wrap tracking-wider text-justify overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400">
+            <div className="w-full max-h-130 text-sm text-neutral-800 dark:text-neutral-100 whitespace-pre-wrap tracking-wider text-justify overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400">
               <AddRuleEditor value={content} onChange={(markdown) => setContent(markdown)} />
             </div>
           </div>
@@ -141,29 +141,29 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
 
       <div className="col-span-6 flex flex-col gap-1 border-l border-neutral-300 pl-2">
 
-        <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-1 items-center font-bold text-[13px] text-neutral-600"><FaBuilding />対象</h4>
-          <Select className="bg-neutral-100 p-1 rounded-md text-[13px] tracking-wider" value={target} onChange={(e) => setTarget(e.target.value)}>
+        <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 dark:bg-green-300/20 rounded-lg">
+          <h4 className="whitespace-nowrap flex gap-1 items-center font-bold text-[13px]"><FaBuilding />対象</h4>
+          <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={target} onChange={(e) => setTarget(e.target.value)}>
             <option value={""}>-</option>
             {clients && clients.map((c, index) => (<option key={index} value={c}>{c}</option>))}
           </Select>
         </div>
 
-        <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px] text-neutral-600"><MdOutlineCategory className="text-base" />種別</h4>
-          <Select className="bg-neutral-100 p-1 rounded-md text-[13px] tracking-wider" value={type} onChange={(e) => setType(e.target.value)}>
+        <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 dark:bg-green-300/20 rounded-lg">
+          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><MdOutlineCategory className="text-base" />種別</h4>
+          <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={type} onChange={(e) => setType(e.target.value)}>
             <option value={""}>-</option>
             <option value={"正式運用"}>正式運用</option>
             <option value={"共有事項"}>共有事項</option>
           </Select>
-          {type === "正式運用" ? (<p className="text-xs text-neutral-600">今後の標準ルール、改定内容、正式共有</p>)
-            : type === "共有事項" ? (<p className="text-xs text-neutral-600">念押しの確認、参考情報、未確定寄りの共有</p>)
+          {type === "正式運用" ? (<p className="text-xs opacity-80">今後の標準ルール、改定内容、正式共有</p>)
+            : type === "共有事項" ? (<p className="text-xs opacity-80">念押しの確認、参考情報、未確定寄りの共有</p>)
               : ""}
         </div>
 
-        <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px] text-neutral-600"><MdNotificationImportant className="text-base" />重要度</h4>
-          <Select className="bg-neutral-100 p-1 rounded-md text-[13px] tracking-wider" value={importance} onChange={(e) => setImportance(e.target.value)}>
+        <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 dark:bg-green-300/20 rounded-lg">
+          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><MdNotificationImportant className="text-base" />重要度</h4>
+          <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={importance} onChange={(e) => setImportance(e.target.value)}>
             <option value={"通常"}>通常</option>
             <option value={"重要"}>重要</option>
           </Select>
@@ -174,9 +174,9 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
           <Input className="bg-neutral-100 p-1 rounded-md text-[13px] tracking-wider" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </div> */}
 
-        <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px] text-neutral-600"><BsPersonCheck className="text-base" />記入者</h4>
-          <Select className="bg-neutral-100 p-1 rounded-md text-[13px] tracking-wider" value={creator} onChange={(e) => setCreator(e.target.value)}>
+        <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-300/80 dark:bg-[#444444] rounded-lg">
+          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><BsPersonCheck className="text-base" />記入者</h4>
+          <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={creator} onChange={(e) => setCreator(e.target.value)}>
             <option value={""}>-</option>
             {users.map((u, index) => (<option key={index} value={u.name}>{u.name}</option>))}
           </Select>
@@ -187,7 +187,7 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
             // onClick={onCancel}
             onClick={() => setIsAlertOpen(true)}
             disabled={!content || !title || !creator || !target || !type || !importance}
-            className="col-span-2 outline-1 outline-neutral-700 rounded-md text-center text-neutral-700 font-bold text-sm py-2 tracking-wider hover:cursor-pointer hover:opacity-60"
+            className="col-span-2 outline-1 outline-neutral-700 dark:outline-neutral-300 rounded-md text-center text-neutral-700 dark:text-neutral-300 font-bold text-sm py-2 tracking-wider hover:cursor-pointer hover:opacity-60"
           >
             キャンセル
           </button>
@@ -204,14 +204,14 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
 
 
       <Dialog open={isConfirmModalOpen} onClose={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
+          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2d2d2d] p-8 pr-6">
             <p className="text-center text-lg font-bold py-4 tracking-wider">更新を全体に通知しますか？</p>
-            <p className="text-sm text-neutral-600 tracking-wider">誤字・脱字の修正や軽微な修正の場合は通知しなくてもOKです。<br />
+            <p className="text-sm tracking-wider">誤字・脱字の修正や軽微な修正の場合は通知しなくてもOKです。<br />
               内容自体に変更が加わった・追加された場合などは基本的に通知するようにして下さい。</p>
-            <p className="text-sm text-neutral-600 tracking-wider">全体に通知した場合は、当該投稿の全員の確認状態がリセットされます。</p>
+            <p className="text-sm tracking-wider">全体に通知した場合は、当該投稿の全員の確認状態がリセットされます。</p>
 
             {isSend ? (
               <div className="flex gap-2">
@@ -223,7 +223,7 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
                 <button onClick={() => updateRule("major")} className="flex-1 p-2 rounded-md bg-sky-600/80 text-white cursor-pointer hover:opacity-70">通知する</button>
               </div>
             )}
-            <p onClick={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="-mt-1 -mb-2 w-fit text-sm m-auto tracking-wider text-neutral-600 cursor-pointer hover:opacity-70">キャンセル</p>
+            <p onClick={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="-mt-1 -mb-2 w-fit text-sm m-auto tracking-wider cursor-pointer hover:opacity-70">キャンセル</p>
           </DialogPanel>
         </div>
       </Dialog>

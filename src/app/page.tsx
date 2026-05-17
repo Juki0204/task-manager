@@ -72,8 +72,26 @@ export default function AllTaskPage() {
   }
 
   const filteredTaskList = useMemo(() => {
+    const today = new Date();
+
     return taskList.filter((task) => {
-      if (task.status === "完了" || task.status === "削除済") return false;
+      // 削除済は除外
+      if (task.status === "削除済") return false;
+
+      // 完了タスク
+      if (task.status === "完了") {
+        // finish_dateなしは表示（気づかせる）
+        if (!task.finish_date) return true;
+
+        const finishDate = new Date(task.finish_date);
+
+        const isToday =
+          finishDate.getFullYear() === today.getFullYear() &&
+          finishDate.getMonth() === today.getMonth() &&
+          finishDate.getDate() === today.getDate();
+
+        return isToday;
+      }
 
       const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
       const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
@@ -203,10 +221,10 @@ export default function AllTaskPage() {
         // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-6.5">
+        <div data-theme="light" className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pt-4.5 shadow-2xl shadow-black/30">
             {modalType === "detail" && activeTask && user && (
               <TaskDetail
                 user={user}

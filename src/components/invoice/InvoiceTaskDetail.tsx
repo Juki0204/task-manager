@@ -52,7 +52,7 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
 
   return (
     <>
-      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1">
+      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 pb-2 mb-1">
         <div className="flex items-center gap-2 w-full text-sm text-left leading-none">
           <p>{task.serial}</p>
           <p className={`py-0.5 px-2 rounded-full text-xs ${task.method === "mail" ? "bg-orange-200" : task.method === "tel" ? "bg-green-300/60" : "bg-blue-200"}`}>
@@ -69,7 +69,25 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
           <MdDriveFileRenameOutline /><span className="flex-1">{task.title}</span>
         </DialogTitle>
 
-        <div className="w-full bg-neutral-100 py-1.5 px-2 text-sm text-neutral-600 rounded-md">{task.description}</div>
+        <div className="w-full border-b border-neutral-400 dark:border-neutral-500 py-1.5 px-2 text-sm">{task.description}</div>
+
+        <div className="w-full relative flex justify-between gap-2 tracking-wider">
+          <div className="flex">
+            <div className="flex gap-1 items-center pr-1.5 w-fit whitespace-nowrap py-1 font-bold text-sm">
+              <FaRegBuilding />
+              {task.client}
+            </div>
+            <div className="flex gap-1 items-center px-1.5 w-fit whitespace-nowrap py-1 font-bold text-sm">
+              <IoPersonAddOutline />
+              {task.requester}
+            </div>
+          </div>
+
+          <div className="flex gap-1 items-center pl-1.5 w-fit whitespace-nowrap py-1 font-bold text-sm">
+            <RiCalendarScheduleLine />
+            {task.request_date}
+          </div>
+        </div>
 
         <GrClose onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
       </div>
@@ -82,27 +100,6 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
         `}
       >
 
-        <div className="col-span-2 flex gap-1 mt-2 items-center">
-          <span className="text-neutral-400/60 text-xs leading-none tracking-widest">META</span>
-          <span className="block h-[1px] bg-neutral-300 w-full" />
-        </div>
-
-        <div className="relative flex gap-2 col-span-2">
-          <div className="flex flex-col flex-1 bg-neutral-200 rounded-md pb-1.5 px-1.5">
-            <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><FaRegBuilding /> クライアント</h3>
-            <p className="bg-neutral-100 py-1 px-2 rounded-md text-sm">{task.client}</p>
-          </div>
-          <div className="flex flex-col w-30 bg-neutral-200 rounded-md pb-1.5 px-1.5">
-            <h3 className="w-20 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><IoPersonAddOutline /> 依頼者</h3>
-            <p className="bg-neutral-100 py-1 px-2 rounded-md text-sm">{task.requester}</p>
-          </div>
-
-          <div className="flex flex-col w-30 bg-amber-800/15 rounded-md pb-1.5 px-1.5">
-            <h3 className="w-20 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><RiCalendarScheduleLine /> 依頼日</h3>
-            <p className="bg-neutral-100 py-1 px-2 rounded-md text-sm">{task.request_date}</p>
-          </div>
-        </div>
-
         <div className="col-span-2 flex gap-1 items-center mt-1">
           <span className="text-neutral-400/60 text-xs leading-none tracking-widest">STATUS</span>
           <span className="block h-[1px] bg-neutral-300 w-full" />
@@ -111,28 +108,28 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
 
         <div className="col-span-2 flex gap-2">
           <div className="flex flex-1 flex-wrap gap-2">
-            <div className="flex flex-col flex-1 bg-neutral-200 rounded-md pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><BsPersonCheck /> 作業担当者</h3>
-              <p className="bg-neutral-100 py-1 px-2 rounded-md text-sm">{task.manager ? task.manager : "-"}</p>
+            <div className="flex flex-col flex-1 bg-neutral-200 dark:bg-[#444444] rounded-md pb-1.5 px-1.5">
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><BsPersonCheck /> 作業担当者</h3>
+              <p className="border-b border-neutral-400 py-1 px-2 text-sm">{task.manager ? task.manager : "-"}</p>
             </div>
-            <div className="flex flex-col w-30 bg-neutral-200 rounded-md pb-1.5 px-1.5">
-              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><TbClockExclamation /> 優先度</h3>
-              <p className={`py-1 px-2 rounded-md text-sm font-bold text-center bg-neutral-100`}>{task.priority ? task.priority : "-"}</p>
+            <div className="flex flex-col w-30 bg-neutral-200 dark:bg-[#444444] rounded-md pb-1.5 px-1.5">
+              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><TbClockExclamation /> 優先度</h3>
+              <p className={`border-b border-neutral-400 py-1 px-2 text-sm`}>{task.priority ? task.priority : "-"}</p>
             </div>
-            <div className="flex flex-col w-full bg-neutral-200 rounded-md pb-1.5 px-1.5">
-              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><MdLaptopChromebook /> 作業状況</h3>
-              <p className={`py-1 px-2 rounded-md text-center text-sm bg-neutral-100`}>{task.status}</p>
+            <div className="flex flex-col w-full bg-neutral-200 dark:bg-[#444444] rounded-md pb-1.5 px-1.5">
+              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><MdLaptopChromebook /> 作業状況</h3>
+              <p className={`border-b border-neutral-400 py-1 px-2 text-sm`}>{task.status}</p>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <div className="flex flex-col w-30 bg-amber-800/15 rounded-md pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><MdAlarm /> 期限日</h3>
-              <p className={`bg-neutral-100 py-1 px-2 rounded-md text-sm `}>-</p>
+            <div className="flex flex-col w-30 bg-amber-800/15 dark:bg-[#4d413b] rounded-md pb-1.5 px-1.5">
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><MdAlarm /> 期限日</h3>
+              <p className={`border-b border-neutral-400 py-1 px-2 text-sm`}>-</p>
             </div>
-            <div className="flex flex-col w-30 bg-amber-800/15 rounded-md pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600"><FaRegCheckCircle /> 完了日</h3>
-              <p className="bg-neutral-100 py-1 px-2 rounded-md text-sm">{task.finish_date ? task.finish_date : "-"}</p>
+            <div className="flex flex-col w-30 bg-amber-800/15 dark:bg-[#4d413b] rounded-md pb-1.5 px-1.5">
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><FaRegCheckCircle /> 完了日</h3>
+              <p className="border-b border-neutral-400 py-1 px-2 text-sm">{task.finish_date ? task.finish_date : "-"}</p>
             </div>
           </div>
         </div>
@@ -142,14 +139,11 @@ export default function InvoiceTaskDetail({ task, onClose }: TaskDetailProps) {
           <span className="block h-[1px] bg-neutral-300 w-full" />
         </div>
 
-        <div className="flex flex-col col-span-2 bg-neutral-200 rounded-md pb-1.5 px-1.5">
-          <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
-            <LuNotebookPen /> 備考欄
-          </h3>
+        <div className="flex flex-col col-span-2 bg-neutral-200 dark:bg-[#444444] rounded-md p-1.5">
           {task.remarks ? (
-            <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
+            <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer border-b border-neutral-400 py-1 px-2 text-sm`} dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(task.remarks) }} />
           ) : (
-            <div className="whitespace-pre-wrap min-h-[100px] bg-neutral-200 py-1 px-2 rounded-md text-sm">-</div>
+            <div className="whitespace-pre-wrap min-h-[100px] bg-neutral-200 dark:bg-[#313131] py-1 px-2 rounded-md text-sm">-</div>
           )}
         </div>
 

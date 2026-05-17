@@ -19,16 +19,7 @@ interface RuleCardProps {
 
 export default function RuleCard({ rule, acknowledgements, users, onClick }: RuleCardProps) {
   const { user } = useAuth();
-  //const [currentAcknowledgements, setCurrentAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
-  const currentAcknowledgements = useMemo(() => {
-    return acknowledgements?.filter((a) => a.rule_id === rule.id) ?? [];
-  }, [acknowledgements, rule.id]);
-
-  const validAcknowledgements = useMemo(() => {
-    return currentAcknowledgements.filter(
-      (a) => a.acknowledged_at >= rule.confirmation_required_at
-    );
-  }, [currentAcknowledgements, rule.confirmation_required_at]);
+  const [currentAcknowledgements, setCurrentAcknowledgements] = useState<RuleAcknowledgement[] | null>(null);
 
   //既読ユーザー一覧・未読ユーザー一覧振り分け
   const validAcknowledgedUserIds = useMemo(() => {
@@ -44,6 +35,7 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
   const readUsers = useMemo(() => {
     return users.filter((u) => validAcknowledgedUserIds.has(u.id));
   }, [users, validAcknowledgedUserIds]);
+
 
   //自分が既読済か未読か判定
   const isAcknowledged = useMemo(() => {
@@ -75,19 +67,20 @@ export default function RuleCard({ rule, acknowledgements, users, onClick }: Rul
     return jpDate;
   }
 
-  // useEffect(() => {
-  //   const filteredAcknowledgements = acknowledgements?.filter(r => r.rule_id === rule.id);
-  //   if (filteredAcknowledgements) {
-  //     setCurrentAcknowledgements(filteredAcknowledgements);
-  //   }
-  // }, [acknowledgements]);
-
+  useEffect(() => {
+    const filteredAcknowledgements = acknowledgements?.filter(r => r.rule_id === rule.id);
+    if (filteredAcknowledgements) {
+      setCurrentAcknowledgements(filteredAcknowledgements);
+    }
+  }, [acknowledgements]);
 
   return (
-    <div onClick={() => onClick(rule)} className="flex w-375 gap-2 rounded-lg bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
-      <div className="flex flex-col w-[calc(100%-(320px+8px))] gap-2 rounded-md bg-neutral-300 p-2">
+    <div onClick={() => onClick(rule)} className="flex w-374 gap-2 rounded-lg text-neutral-700 bg-zinc-300/50 outline outline-neutral-300 -outline-offset-1 dark:bg-neutral-200 p-3 hover:brightness-105 hover:cursor-pointer">
+      <div className="flex flex-col w-[calc(100%-(320px+8px))] gap-2 rounded-md bg-slate-300/70 dark:bg-neutral-300 p-2">
         <div className="flex justify-between">
-          <h3 className="flex gap-1 items-center font-bold truncate text-neutral-800 tracking-wider">
+          <h3 className="flex gap-1 items-center font-bold truncate tracking-wider">
+            {isAcknowledged === "new" && <span className="bg-blue-400 px-3 pt-0.25 pb-0.5 rounded-full text-xs text-white font-medium">未読</span>}
+            {isAcknowledged === "updated" && <span className="bg-red-400 px-3 pb-0.25 rounded-full text-sm text-white font-medium">追記</span>}
             <LuNewspaper />
             <span>{rule.title}</span>
           </h3>

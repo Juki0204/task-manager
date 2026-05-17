@@ -75,14 +75,14 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
       if (showLinkInput) setShowLinkInput(false);
       setSelectedIcon(null);
     }}
-      className="bg-neutral-200 rounded-md p-2 pt-1.5"
+      className="bg-neutral-200 dark:bg-neutral-700 rounded-md p-2 pt-1.5"
     >
       <div className="flex justify-between mb-1 border-b border-neutral-300">
         <div className="flex flex-wrap gap-0.5 pb-1 items-center">
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("bold") ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("bold") ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <FaBold className="text-sm" />
           </Button>
@@ -90,7 +90,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("italic") ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("italic") ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <FaItalic className="text-sm" />
           </Button>
@@ -98,7 +98,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("heading", { level: 1 }) ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("heading", { level: 1 }) ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <LuHeading1 className="text-xl" />
           </Button>
@@ -106,7 +106,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("heading", { level: 2 }) ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("heading", { level: 2 }) ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <LuHeading2 className="text-xl" />
           </Button>
@@ -114,7 +114,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("heading", { level: 3 }) ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("heading", { level: 3 }) ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <LuHeading3 className="text-xl" />
           </Button>
@@ -122,7 +122,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("bulletList") ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("bulletList") ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <FaListUl />
           </Button>
@@ -130,7 +130,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleTaskList().run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("taskList") ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("taskList") ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <FaCheckSquare />
           </Button>
@@ -138,7 +138,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
           <Button
             tabIndex={-1}
             onClick={() => editor.chain().focus().toggleHighlight().run()}
-            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("highlight") ? "bg-neutral-300" : ""}`}
+            className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("highlight") ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
           >
             <MdBorderColor />
           </Button>
@@ -151,12 +151,12 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
                 setLinkUrl(current || "");
                 setShowLinkInput(!showLinkInput);
               }}
-              className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${editor.isActive("link") ? "bg-neutral-300" : ""}`}
+              className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${editor.isActive("link") ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}
             >
               <FaLink />
             </Button>
             {showLinkInput && (
-              <div onClick={(e) => e.stopPropagation()} className="absolute right-1/2 translate-x-1/2 p-2 pt-1 bg-white rounded shadow-md mt-1 z-10 w-70">
+              <div onClick={(e) => e.stopPropagation()} className="absolute right-1/2 translate-x-1/2 p-2 pt-1 bg-white dark:bg-neutral-600 rounded shadow-md mt-1 z-10 w-70">
                 <label className="text-xs font-bold">リンクを挿入</label>
                 <input
                   type="text"
@@ -167,22 +167,22 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
                 />
 
                 <div className="flex justify-between text-sm">
-                  <div className="flex gap-1 text-neutral-600">
+                  <div className="flex gap-1">
                     <button
                       onClick={() => setSelectedIcon("image")}
-                      className={`p-1 rounded hover:bg-neutral-300 ${selectedIcon === "image" ? "bg-neutral-300" : ""}`}
+                      className={`p-1 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${selectedIcon === "image" ? "bg-neutral-300 dark:text-neutral-700" : ""}`}
                     >
                       <ImageIcon size={16} />
                     </button>
                     <button
                       onClick={() => setSelectedIcon("link")}
-                      className={`p-1 rounded hover:bg-neutral-300 ${selectedIcon === "link" ? "bg-neutral-300" : ""}`}
+                      className={`p-1 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${selectedIcon === "link" ? "bg-neutral-300 dark:text-neutral-700" : ""}`}
                     >
                       <LinkIcon size={16} />
                     </button>
                     <button
                       onClick={() => setSelectedIcon("mail")}
-                      className={`p-1 rounded hover:bg-neutral-300 ${selectedIcon === "mail" ? "bg-neutral-300" : ""}`}
+                      className={`p-1 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${selectedIcon === "mail" ? "bg-neutral-300 dark:text-neutral-700" : ""}`}
                     >
                       <MailIcon size={16} />
                     </button>
@@ -208,7 +208,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
                         setLinkUrl("");
                         setSelectedIcon(null);
                       }}
-                      className="px-2 py-1 text-xs border rounded hover:bg-gray-100"
+                      className="px-2 py-1 text-xs border rounded hover:bg-gray-100 hover:dark:text-neutral-700"
                     >
                       キャンセル
                     </Button>
@@ -237,8 +237,8 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
         </div>
 
         <div>
-          <Button tabIndex={-1} onClick={() => setHintOpen(!hintOpen)} className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 ${hintOpen ? "bg-neutral-300" : ""}`}>
-            <FaRegLightbulb className={`${hintOpen ? "text-amber-500" : "text-yellow-700"}`} />
+          <Button tabIndex={-1} onClick={() => setHintOpen(!hintOpen)} className={`grid place-content-center w-7 h-7 rounded hover:bg-neutral-300 hover:dark:bg-neutral-800 ${hintOpen ? "bg-neutral-300 dark:bg-neutral-800" : ""}`}>
+            <FaRegLightbulb className={`${hintOpen ? "text-amber-500" : "text-yellow-700 dark:text-neutral-100"}`} />
           </Button>
         </div>
       </div>
@@ -248,7 +248,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
         className={`tiptap-base tiptap-editor text-sm`}
       />
 
-      <div className={`${hintOpen ? " left-[calc(100%+20px)] opacity-100" : "left-0 opacity-0"} w-70 absolute left-0 -z-10 bottom-0 shadow-md bg-neutral-100 rounded-2xl p-4 whitespace-nowrap transition-all duration-300`}>
+      <div className={`${hintOpen ? " left-[calc(100%+20px)] opacity-100" : "left-0 opacity-0"} w-70 absolute left-0 -z-10 bottom-0 shadow-md bg-neutral-100 dark:bg-neutral-600 rounded-2xl p-4 whitespace-nowrap transition-all duration-300`}>
         <h3 className="pb-1 mb-1 text-center text-sm font-bold">使用可能な記法一覧</h3>
         <div className="grid grid-cols-2 text-sm font-bold text-center mb-1">
           <p>記法</p>

@@ -104,13 +104,13 @@ export default function TrashTaskPage() {
 
 
   return (
-    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 m-auto max-w-[1920px] relative overflow-x-hidden">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 m-auto max-w-[1920px] relative overflow-x-hidden text-neutral-700 dark:text-neutral-100">
+      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
+          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
             削除済タスク一覧
           </h2>
-          <span className="text-xs text-white tracking-wide pb-1">※このページではリアルタイム更新は行われません。最新の状態を確認するには、ページを再読み込みしてください。</span>
+          <span className="text-xs tracking-wide pb-1">※このページではリアルタイム更新は行われません。最新の状態を確認するには、ページを再読み込みしてください。</span>
         </div>
 
       </div>
@@ -149,10 +149,10 @@ export default function TrashTaskPage() {
         // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-8">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pt-4.5 shadow-2xl shadow-black/30">
             {modalType === "detail" && activeTask && user && (
               <TaskDetail
                 user={user}

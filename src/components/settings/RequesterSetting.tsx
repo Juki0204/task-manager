@@ -144,8 +144,8 @@ export default function RequesterSetting() {
   }, []);
 
   return (
-    <div className="grid grid-cols-6 gap-2">
-      <h2 className="col-span-6 text-white font-bold p-1 pt-0 text-center border-b border-white">依頼者一覧</h2>
+    <div className="grid grid-cols-6 gap-2 w-366">
+      <h2 className="col-span-6 font-bold p-1 pt-0 text-center border-b border-neutral-700 dark:border-white">依頼者一覧</h2>
       {[...clients]
         .sort((a, b) => a.id - b.id)
         .map((client: Client) => {
@@ -156,7 +156,7 @@ export default function RequesterSetting() {
           return (
             <div
               key={client.id}
-              className="bg-neutral-400 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content]"
+              className="bg-slate-300 dark:bg-neutral-400 text-neutral-700 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content]"
             >
               <h3 className="text-center pb-1 font-bold">{client.name}</h3>
 
@@ -213,7 +213,7 @@ function SortableRequesterItem({ item, deleteRequester }: SrotableRequesterItemP
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="flex justify-between bg-neutral-300 rounded-sm p-1 pl-6 relative"
+      className="flex justify-between bg-neutral-100 dark:bg-neutral-300 rounded-sm p-1 pl-6 relative"
     >
       <MdDragIndicator
         {...listeners}

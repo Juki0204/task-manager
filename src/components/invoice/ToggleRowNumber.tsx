@@ -35,10 +35,10 @@ export default function ToggleRowNumber({ item, index, onToggle }: ToggleLineNum
           item.checked ? (
             <MdCheckBox className="text-green-500 text-xl" />
           ) : (
-            <MdCheckBoxOutlineBlank className="text-white text-xl" />
+            <MdCheckBoxOutlineBlank className="text-xl" />
           )
         ) : (
-          <span className="text-white">
+          <span className="">
             {index + 1}
           </span>
         )}

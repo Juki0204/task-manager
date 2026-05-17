@@ -105,15 +105,15 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
           {/* ログ一覧表切り替えボタン */}
           <div className="flex gap-4 pr-2 pointer-events-auto">
             <ul className="flex gap-0.5 items-center z-10">
-              <li onClick={() => setViewerType("all")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-sm cursor-pointer hover:opacity-100 ${viewerType === "all" ? "opacity-100 pointer-events-none" : "opacity-40"}`}>ALL</li>
-              <li onClick={() => setViewerType("added")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><AiOutlineFileAdd /><span className="text-sm">追加</span></li>
-              <li onClick={() => setViewerType("changed")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "changed" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FiEdit3 /><span className="text-sm">編集</span></li>
-              <li onClick={() => setViewerType("delete")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-black/40 rounded-tl-md rounded-tr-md text-white text-base cursor-pointer hover:opacity-100 ${viewerType === "delete" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FaRegTrashAlt /><span className="text-sm">削除</span></li>
+              <li onClick={() => setViewerType("all")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-sm cursor-pointer hover:opacity-100 ${viewerType === "all" ? "opacity-100 pointer-events-none" : "opacity-40"}`}>ALL</li>
+              <li onClick={() => setViewerType("added")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><AiOutlineFileAdd /><span className="text-sm">追加</span></li>
+              <li onClick={() => setViewerType("changed")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "changed" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FiEdit3 /><span className="text-sm">編集</span></li>
+              <li onClick={() => setViewerType("delete")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "delete" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FaRegTrashAlt /><span className="text-sm">削除</span></li>
             </ul>
           </div>
 
           {/* ログ一覧 */}
-          <div className="w-full bg-black/40 rounded-lg pl-3 pr-3 py-4 pointer-events-auto">
+          <div className="w-full bg-white/60 dark:bg-black/40 rounded-lg pl-3 pr-3 py-4 pointer-events-auto">
             <div
               ref={notesRef}
               className={`
@@ -139,7 +139,7 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
                             className="w-full flex justify-between items-center gap-4 px-1 py-2 text-left transition"
                           >
                             <div className="flex justify-between items-center gap-4 w-full truncate">
-                              <dl className={`tracking-wider ${open ? "" : "truncate"} w-full ${log.type === "changed" ? "text-gray-100" : log.type === "added" ? "text-cyan-300/80" : log.type === "delete" ? "text-red-400/90" : log.type === "deadline" ? "text-yellow-300/90" : log.type === "system" ? "text-green-300/90" : ""}`}>
+                              <dl className={`tracking-wider ${open ? "" : "truncate"} w-full font-bold dark:font-normal ${log.type === "changed" ? "text-neutral-700 dark:text-gray-100" : log.type === "added" ? "text-sky-600 dark:text-cyan-300/80" : log.type === "delete" ? "text-red-600 dark:text-red-400/90" : log.type === "deadline" ? "text-yellow-600 dark:text-yellow-300/90" : log.type === "system" ? "text-green-600 dark:text-green-300/90" : ""}`}>
                                 <dt className="text-sm text-gray-400 whitespace-nowrap w-fit">{new Date(log.changed_at).toLocaleString("ja-JP")}</dt>
                                 {log.type !== "system" ? (
                                   <dd className={`w-full ${open ? "whitespace-normal" : "truncate"}`}>

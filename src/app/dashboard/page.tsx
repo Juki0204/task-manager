@@ -171,14 +171,14 @@ export default function DashboardPage() {
   /* -------------- モーダル関連 -------------- */
 
   return (
-    <div className="p-1 py-4 sm:p-4 !pt-14 max-w-[1920px] m-auto">
+    <div className="p-1 py-4 sm:p-4 !pt-14 max-w-[1920px] m-auto text-neutral-700 dark:text-neutral-100">
       <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
         <div className="flex justify-start items-center-safe gap-2 w-full">
-          <h2 className="flex justify-center items-center gap-4 py-0.5 px-1 text-white text-xl font-bold text-center">
+          <h2 className="flex justify-center items-center gap-4 py-0.5 px-1 text-xl font-bold text-center">
             <span className="text-2xl">{now.getFullYear()}年 {now.getMonth() + 1}月 {now.getDate()}日</span>
           </h2>
 
-          <div className="flex justify-center items-center gap-4 py-0.5 px-1 text-white text-xl font-bold text-center">
+          <div className="flex justify-center items-center gap-4 py-0.5 px-1 text-xl font-bold text-center">
             {/* <div onMouseEnter={() => setIsDeadlinePop(true)} onMouseLeave={() => setIsDeadlinePop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider cursor-default ${todayDeadlineTasks.length > 0 ? "text-red-700" : "text-neutral-800"}`}>
               {deadline.length > 0 && todayDeadlineTasks.length > 0 ? (
                 <><FaTriangleExclamation />本日が期限のタスクが {todayDeadlineTasks.length}件 あります</>
@@ -211,8 +211,8 @@ export default function DashboardPage() {
       <div className="flex gap-4 p-2 h-[780px]">
 
         {/* 今月の依頼状況 */}
-        <div className="w-88 h-full bg-neutral-500/70 p-4 rounded-xl">
-          <h3 className="font-bold text-center mb-2 text-neutral-100">今月の依頼状況</h3>
+        <div className="w-88 h-full bg-neutral-300 dark:bg-neutral-500/70 p-4 rounded-xl">
+          <h3 className="font-bold text-center mb-2">今月の依頼状況</h3>
           {/* <dl className="grid grid-cols-3">
             <dt className="col-span-2 p-2 bg-neutral-500/70 text-white font-bold text-center tracking-wider border border-neutral-800 rounded-tl-md">総依頼件数</dt>
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 text-right font-bold rounded-tr-md">{tasks.length}件</dd>
@@ -224,7 +224,7 @@ export default function DashboardPage() {
             <dd className="col-span-1 p-2 border border-neutral-800 border-l-0 border-t-0 text-right font-bold rounded-br-md">{tasks.filter(t => t.status === "完了").length}件</dd>
           </dl> */}
 
-          <div className="flex flex-col items-center gap-2 justify-center bg-black/40 text-neutral-100 rounded-xl p-4">
+          <div className="flex flex-col items-center gap-2 justify-center bg-white/60 dark:bg-black/40 rounded-xl p-4">
             <RequestGraph
               size={220}
               thickness={42}
@@ -237,7 +237,7 @@ export default function DashboardPage() {
               ]}
             />
 
-            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`font-bold relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider text-neutral-800 cursor-default`}>
+            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`font-bold relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-300 dark:bg-neutral-200 rounded-md tracking-wider text-neutral-700 cursor-default`}>
               本日の新規依頼数：{todayNewTasks.length}件
               {todayNewTasks && todayNewTasks.length > 0 && (
                 <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
@@ -259,8 +259,8 @@ export default function DashboardPage() {
           </div>
 
 
-          <h3 className="font-bold text-center mt-5 mb-2 text-neutral-100">店舗別依頼数</h3>
-          <dl className="grid grid-cols-[80px_1fr] palt bg-black/40 rounded-xl p-4 pb-1.5 text-neutral-100">
+          <h3 className="font-bold text-center mt-5 mb-2">店舗別依頼数</h3>
+          <dl className="grid grid-cols-[80px_1fr] palt bg-white/60 dark:bg-black/40 rounded-xl p-4 pb-1.5">
             <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">難波</dt>
             <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
               <div
@@ -360,28 +360,28 @@ export default function DashboardPage() {
               <span className="w-18">{tasks.filter(t => t.client === "奥様クラブ").length}件</span>
             </dd>
 
-            <div className="col-span-2 text-xs p-0.5 mt-1 text-center text-neutral-100">※社内案件は度外視の為、数値はあくまで目安です。</div>
+            <div className="col-span-2 text-xs p-0.5 mt-1 text-center">※社内案件は度外視の為、数値はあくまで目安です。</div>
           </dl>
         </div>
 
         <div className="flex flex-col flex-1 gap-4">
           {/* 最新のリリースノート */}
-          <div className="w-full p-4 rounded-xl bg-neutral-500/70">
+          <div className="w-full p-4 rounded-xl bg-neutral-300 dark:bg-neutral-500/70">
             {loading ? (
               <p className="h-99.25 grid place-content-center">loading...</p>
             ) : (
               <>
                 <hgroup className="flex gap-4 items-center justify-between w-full px-1 pb-2">
-                  <h3 className="flex gap-2 items-center font-bold tracking-widest text-neutral-100">
+                  <h3 className="flex gap-2 items-center font-bold tracking-widest">
                     リリースノート {releaseNotes[0].version.replaceAll("_", ".")}
                     <span className="text-xs py-0.5 px-2 rounded-md bg-red-800 text-white">最新版</span>
                     <span className="text-sm">Released on {releaseNotes[0].date}</span>
                   </h3>
-                  <p className="text-blue-300 text-xs cursor-pointer hover:opacity-80" onClick={() => router.push("/release-notes")}>過去の更新履歴はこちら</p>
+                  <p className="text-sky-600 dark:text-blue-300 text-xs cursor-pointer hover:opacity-80" onClick={() => router.push("/release-notes")}>過去の更新履歴はこちら</p>
                 </hgroup>
-                <div className="w-full h-[calc(100%-2rem)] p-3 bg-black/40 rounded-lg">
+                <div className="w-full h-[calc(100%-2rem)] p-3 bg-white/60 dark:bg-black/40 rounded-lg">
                   <div
-                    className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_h2]:!text-neutral-100 [&_p]:!text-neutral-300 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
+                    className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_h2]:!text-neutral-700 [&_h2]:dark:!text-neutral-100 [&_p]:!text-neutral-700 [&_p]:dark:!text-neutral-300 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
                     dangerouslySetInnerHTML={{
                       __html: marked(releaseNotes[0].content ?? ""),
                     }}
@@ -391,10 +391,10 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="w-full h-full bg-neutral-500/70 p-4 rounded-xl">
-            <h3 className="font-bold tracking-widest px-1 pb-2 text-neutral-100">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
-            <div className="w-full h-[calc(100%-2rem)] p-3 pt-2 bg-black/40 rounded-lg">
-              <p className="tracking-wider leading-normal text-xs mb-2 palt text-neutral-100">「優先度が<span className="text-red-300 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-300 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-300 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-300 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(クリックで詳細を確認)</p>
+          <div className="w-full h-full bg-neutral-300 dark:bg-neutral-500/70 p-4 rounded-xl">
+            <h3 className="font-bold tracking-widest px-1 pb-2">優先度の高いタスク<span className="text-xs">（特に作業を強制するものではありません。依頼状況に応じて作業決めの参考にしてください。）</span></h3>
+            <div className="w-full h-[calc(100%-2rem)] p-3 pt-2 bg-white/60 dark:bg-black/40 rounded-lg">
+              <p className="tracking-wider leading-normal text-xs mb-2 palt">「優先度が<span className="text-red-500 dark:text-red-300 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-500 dark:text-red-300 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-500 dark:text-red-300 font-bold">期限日まで残り3日を切っている</span>タスク」<br />の中で<span className="text-red-500 dark:text-red-300 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(クリックで詳細を確認)</p>
               <div className="w-198 h-[calc(100%-2.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300">
                 <PriorityTasks onClick={(t: Task) => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }} />
               </div>
@@ -403,8 +403,8 @@ export default function DashboardPage() {
         </div>
 
         {/* 変更履歴ログ */}
-        <div className="w-160 h-full bg-neutral-500/70 p-4 rounded-xl relative">
-          <h3 className="font-bold text-center mb-2 text-neutral-100">変更履歴ログ（直近50件）</h3>
+        <div className="w-160 h-full bg-neutral-300 dark:bg-neutral-500/70 p-4 rounded-xl relative">
+          <h3 className="font-bold text-center mb-2">変更履歴ログ（直近50件）</h3>
           {/* {notes && notes.length > 0 ? (
             <div className="h-[calc(100%-1.5rem)] pr-3 text-sm overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
               {[...notes].reverse().map(note => (
@@ -440,10 +440,10 @@ export default function DashboardPage() {
         // transition
         className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 p-6 pt-6.5">
+          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-neutral-600 p-6 pt-6.5">
             {!isTaskLoaded && (
               <div className="flex justify-center my-4" aria-label="読み込み中">
                 <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>

@@ -1,7 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 /* @import "shadcn/tailwind.css"; */
-@custom-variant dark (&:where(.dark, .dark *));
+/* @custom-variant dark (&:where(.dark, .dark *)); */
+/* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
+@custom-variant dark (&:where([data-theme="dark"]:not([data-theme="light"]) *));
+@custom-variant light (&:where([data-theme=light], [data-theme=light] *));
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -41,32 +44,32 @@ body {
 :root {
   --card-base: 245 245 245;
 
-  --tani-color: 205 105 175;
-  --tani-bg-opacity: .35;
+  --tani-color: 239 98 197;
+  --tani-bg-opacity: 0.1;
   --tani-bg-opacity--pg: .65;
 
-  --ii-color: 70 155 90;
-  --ii-bg-opacity: .3;
+  --ii-color: 41 191 76;
+  --ii-bg-opacity: 0.1;
   --ii-bg-opacity--pg: .6;
 
-  --hama-color: 200 155 40;
-  --hama-bg-opacity: .35;
+  --hama-color: 235 180 40;
+  --hama-bg-opacity: 0.1;
   --hama-bg-opacity--pg: .65;
 
-  --tagu-color: 200 65 65;
-  --tagu-bg-opacity: .3;
+  --tagu-color: 247 78 78;
+  --tagu-bg-opacity: 0.1;
   --tagu-bg-opacity--pg: .6;
 
-  --nishi-color: 140 95 240;
-  --nishi-bg-opacity: .3;
+  --nishi-color: 136 85 255;
+  --nishi-bg-opacity: 0.1;
   --nishi-bg-opacity--pg: .6;
 
-  --oka-color: 33 167 231;
-  --oka-bg-opacity: .3;
+  --oka-color: 27 181 255;
+  --oka-bg-opacity: 0.1;
   --oka-bg-opacity--pg: .6;
 
   --default-color: 110 110 110;
-  --default-bg-opacity: .3;
+  --default-bg-opacity: 0.15;
   --default-bg-opacity--pg: .6;
 
   /* shadcn */
@@ -104,7 +107,8 @@ body {
   --sidebar-ring: oklch(0.708 0 0); */
 }
 
-.dark {
+/* .dark { */
+[data-theme=dark] {
   --card-base: 48 48 48;
 
   --tani-color: 205 105 175;
@@ -217,7 +221,6 @@ body {
 .static-border {
   display: flex;
   align-items: center;
-  padding: 2px;
   position: relative;
   z-index: 1;
 
@@ -234,14 +237,21 @@ body {
   }
 
   &.inprogress {
-    padding: 4px;
-
     &::before{
       width: calc(100% - 2px);
       height: calc(100% - 2px);
       /* border-radius: 10px; */
     }
   }
+}
+
+/* .light { */
+[data-theme=light]{
+  & .static-border::before{
+      width: 100%;
+      height: 100%;
+      /* border-radius: 10px; */
+    }
 }
 
 .cardListStyle .static-border{
@@ -329,7 +339,7 @@ body {
 .hamaBorder.inprogress {background:rgb(161, 122, 29)}
 .taguBorder.inprogress {background:rgb(165, 39, 39)}
 .nishiBorder.inprogress {background:rgb(109, 66, 207)}
-.defaultBrder.inprogress {background:rgb(77, 77, 77)}
+.defaultBorder.inprogress {background:rgb(77, 77, 77)}
 
 .taniBg {background:conic-gradient(rgb(175, 77, 144)) no-repeat 0 50% / 5px 100%, rgba(175, 77, 144, .18)}
 .iiBg {background:conic-gradient(rgb(50, 127, 67)) no-repeat 0 50% / 5px 100%, rgba(50, 127, 67, .18)}
@@ -353,7 +363,18 @@ body {
 .taguBorder.inprogress {background: rgb(var(--tagu-color))}
 .nishiBorder.inprogress {background: rgb(var(--nishi-color))}
 .okaBorder.inprogress {background: rgb(var(--oka-color))}
-.defaultBrder.inprogress {background: rgb(var(--default-color))}
+.defaultBorder.inprogress {background: rgb(var(--default-color))}
+
+/* .light { */
+[data-theme=light]{
+  & .taniBorder {background: rgb(var(--tani-color))}
+  & .iiBorder {background: rgb(var(--ii-color))}
+  & .hamaBorder {background: rgb(var(--hama-color))}
+  & .taguBorder {background: rgb(var(--tagu-color))}
+  & .nishiBorder {background: rgb(var(--nishi-color))}
+  & .okaBorder {background: rgb(var(--oka-color))}
+  & .defaultBorder {background: rgb(var(--default-color))}
+}
 
 .taniBg {
   background:conic-gradient(rgb(var(--tani-color))) no-repeat 0 50% / 5px 100%, rgb(var(--tani-color) / var(--tani-bg-opacity));
@@ -639,6 +660,15 @@ body {
   }
 }
 
+/* .dark{ */
+[data-theme=dark] {
+  & .tiptap-base {
+    & a{
+      color: #00a2ff;
+    }
+  }
+}
+
 /* 編集画面用 */
 .tiptap-editor {
   min-height: none;
@@ -794,6 +824,25 @@ body {
   }
 }
 
+.remarksMarkAnim {
+  @apply text-neutral-800 font-bold;
+  animation: blinking 1.2s linear infinite;
+}
+
+@keyframes blinking {
+  0% {
+    background: #ffeb39;
+  }
+  50% {
+    background: #ffd739;
+  }
+  51% {
+    background: #ffbe44;
+  }
+  100% {
+    background: #ffbe44;
+  }
+}
 
 /* shadcn */
 /* @theme inline {

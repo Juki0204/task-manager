@@ -37,10 +37,10 @@ export default function SettingPage() {
   }, []);
 
   return (
-    <div className="cardListStyle group p-1 py-4 sm:p-4 sm:pb-2 !pt-14 max-w-[1920px] relative overflow-x-hidden">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
+    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-14 max-w-[1920px] relative overflow-x-hidden text-neutral-700 dark:text-neutral-100">
+      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
         <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-white text-xl font-bold text-center">
+          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
             各種設定
           </h2>
         </div>
@@ -52,26 +52,26 @@ export default function SettingPage() {
 
       <div className="pb-4 flex gap-4 w-full max-w-[1876px]">
 
-        <div className="w-90 bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-9.5rem)]">
-          <div className="flex justify-between items-center py-2 px-3 rounded-md bg-slate-800">
-            <p className="text-white">Last Update: {lastUpdate}</p>
+        <div className="w-90 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-12rem)]">
+          <div className="flex justify-between items-center py-2 px-3 rounded-md bg-slate-300 dark:bg-slate-800">
+            <p className="text-neutral-700 dark:text-white">Last Update: {lastUpdate}</p>
             <div onClick={() => router.push('/release-notes')} className="flex gap-1 justify-center items-center py-1 px-2 w-fit rounded-sm bg-green-800 text-white hover:cursor-pointer hover:opacity-60">
               <FaHistory className="text-sm" /><span className="text-xs font-bold">過去の更新履歴</span>
             </div>
           </div>
 
-          <h2 className="font-bold text-white pl-1 border-b pb-1">タスク管理設定</h2>
+          <h2 className="font-bold pl-1 border-b pb-1">タスク管理設定</h2>
           <ul className="flex flex-col gap-1 mb-4">
-            <li onClick={() => setActiveMenu("requester")} className={`p-2 rounded-md font-bold ${activeMenu === "requester" ? "bg-white" : "bg-neutral-400 cursor-pointer"}`}>依頼者一覧</li>
+            <li onClick={() => setActiveMenu("requester")} className={`p-2 rounded-md font-bold text-neutral-700 ${activeMenu === "requester" ? "bg-white" : "bg-neutral-300 dark:bg-neutral-400 cursor-pointer"}`}>依頼者一覧</li>
           </ul>
 
-          <h2 className="font-bold text-white pl-1 border-b pb-1">請求管理設定</h2>
+          <h2 className="font-bold pl-1 border-b pb-1">請求管理設定</h2>
           <ul className="flex flex-col gap-1">
-            <li onClick={() => setActiveMenu("invoicePrice")} className={`p-2 rounded-md font-bold ${activeMenu === "invoicePrice" ? "bg-white" : "bg-neutral-400 cursor-pointer"}`}>請求単価一覧</li>
+            <li onClick={() => setActiveMenu("invoicePrice")} className={`p-2 rounded-md font-bold text-neutral-700 ${activeMenu === "invoicePrice" ? "bg-white" : "bg-neutral-300 dark:bg-neutral-400 cursor-pointer"}`}>請求単価一覧</li>
           </ul>
         </div>
 
-        <div className="flex-1 bg-zinc-700 p-4 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+        <div className="flex-1 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
           {activeMenu === "requester" && <RequesterSetting />}
           {activeMenu === "invoicePrice" && <PriceSetting />}
         </div>

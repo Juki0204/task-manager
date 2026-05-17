@@ -37,7 +37,7 @@ export function ChangeInProgress({ taskId, onClick, updateTaskStatus }: Progress
         await handleInProgress();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <FaRegPlayCircle />作業中
     </li>
@@ -65,7 +65,7 @@ export function ChangeInterrupt({ taskId, onClick, updateTaskStatus }: Interrupt
         await handleInterrupt();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <FaRegPauseCircle />作業途中
     </li>
@@ -93,7 +93,7 @@ export function ChangeConfirm({ taskId, onClick, updateTaskStatus }: ConfirmProp
         await handleConfirm();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <MdOutlineFactCheck />確認中
     </li>
@@ -123,7 +123,7 @@ export function ChangeNotYetStarted({ taskId, onClick, updateTaskStatus }: NotYe
         await handleNotYetStarted();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <FaRegStickyNote />未着手
     </li>
@@ -151,7 +151,7 @@ export function ChangeRemove({ taskId, onClick, updateTaskStatus }: RemoveProps)
         await handleNotYetStarted();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <MdPersonRemove />担当から外す
     </li>
@@ -183,7 +183,7 @@ export function ChangeComplete({ taskId, onClick, updateTaskStatus }: CompletePr
         await handleComplete();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <FaRegCalendarCheck />完了
     </li>
@@ -227,7 +227,7 @@ export function InsertCopyTask({ taskId, onClick, onCopyTask }: InsertCopyTaskPr
         onCopyTask(copiedTask);
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
+      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
       <LuCopyPlus />コピーして新規追加
     </li>
@@ -280,12 +280,12 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
       onClick={() => {
         setIsOpen(true);
       }}
-      className="flex items-center gap-1 bg-[#994b4b] py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-red-800 cursor-pointer"
+      className="flex items-center gap-1 bg-red-700/70 dark:bg-[#994b4b] py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-red-800 cursor-pointer"
     >
       <FaRegTrashAlt />削除
 
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} transition className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
