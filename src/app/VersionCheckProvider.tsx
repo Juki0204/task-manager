@@ -146,7 +146,7 @@ export default function VersionCheckProvider({ children }: { children: React.Rea
       >
         <DialogBackdrop className="fixed inset-0 bg-black/60" aria-hidden="true" />
         <DialogPanel className="relative w-80 rounded-2xl bg-white p-6 shadow-xl">
-          <DialogTitle className="text-lg font-bold text-center mb-3">アプリが更新されました</DialogTitle>
+          <DialogTitle className="text-lg font-bold text-center mb-3 text-neutral-700">アプリが更新されました</DialogTitle>
           <p className="text-sm text-gray-600 text-center mb-6">
             続行するには再度ログインしてください。
           </p>
