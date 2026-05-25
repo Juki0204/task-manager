@@ -289,17 +289,17 @@ export default function UpdateTask({ task, user, onClose }: task) {
 
   return (
     <>
-      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 p-3 mb-1">
+      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 mb-1">
         <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
         <GrClose onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
 
         <div className="w-full flex gap-2">
-          <AddTaskInput className="flex-1 [&_input]:bg-neutral-50 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
-          <AddTaskInput className="w-36 [&_input]:bg-neutral-50 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+          <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
+          <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
         </div>
 
 
-        <AddTaskInput className="w-full [&_input]:bg-neutral-50 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
+        <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
       </div>
 
       <div
