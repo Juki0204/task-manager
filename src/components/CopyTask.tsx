@@ -392,7 +392,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
       <div className="flex gap-4 justify-end col-span-2 pt-2">
         <Button
           onClick={onClose}
-          className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 cursor-pointer"
+          className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 data-hover:dark:text-neutral-700 cursor-pointer"
         >
           キャンセル
         </Button>
