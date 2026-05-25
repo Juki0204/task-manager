@@ -288,7 +288,7 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
         <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 p-8 pr-6">
+          <DialogPanel className="relative min-w-sm max-w-xl space-y-4 rounded-2xl bg-neutral-100 dark:text-neutral-200 dark:bg-[#2b2b2b] p-8 pr-6">
             <p className="text-center py-4">タスク:{taskSerial}を削除してもよろしいですか？</p>
 
             <div className="flex gap-2">
