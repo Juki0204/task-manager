@@ -162,7 +162,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
                   type="text"
                   value={linkUrl}
                   placeholder="https://example.com"
-                  className="bg-neutral-200 p-1 mb-1 w-full rounded text-sm focus:outline"
+                  className="bg-neutral-200 dark:bg-[#444444] p-1 mb-1 w-full rounded text-sm focus:outline"
                   onChange={(e) => setLinkUrl(e.target.value)}
                 />
 
