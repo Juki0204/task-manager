@@ -392,7 +392,7 @@ export default function InvoicePage() {
           ) : (
             <>
               <InvoiceList setInvoices={setInvoices} invoices={filteredInvoices} sortState={invoiceSortState} user={user} />
-              <p className="text-white text-center my-5">請求するタスクがありません</p>
+              <p className="text-center my-5">請求するタスクがありません</p>
             </>
           ))}
       </div>
