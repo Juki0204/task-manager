@@ -198,7 +198,7 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} min-w-[1860px] shadow-xs shadow-black/30 text-neutral-700 dark:text-neutral-100 ${hoverColor} dark:hover:brightness-125`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} ${task.status === "中止" ? "brightness-75" : ""} min-w-[1860px] shadow-xs shadow-black/30 text-neutral-700 dark:text-neutral-100 ${hoverColor} dark:hover:brightness-125`}>
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
