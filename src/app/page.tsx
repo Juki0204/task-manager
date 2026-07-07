@@ -102,7 +102,7 @@ export default function AllTaskPage() {
           return task.manager === assignee;
         });
       const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status); 
-      const keyword = filters.searchKeywords.toLowerCase() ?? "";
+      const keyword = filters.searchKeywords?.toLowerCase() ?? null;
       const searchMatch = !filters.searchKeywords ||
         task.serial?.toLowerCase().includes(keyword) ||
         task.title?.toLowerCase().includes(keyword) ||
