@@ -73,41 +73,59 @@ export default function AllTaskPage() {
 
   const filteredTaskList = useMemo(() => {
     const today = new Date();
-
+  
     return taskList.filter((task) => {
       // 削除済は除外
       if (task.status === "削除済") return false;
-
-      // 完了タスク
+  
+      // 完了タスクの表示可否
+      let completionMatch = true;
+  
       if (task.status === "完了") {
-        // finish_dateなしは表示（気づかせる）
-        if (!task.finish_date) return true;
-
-        const finishDate = new Date(task.finish_date);
-
-        const isToday =
-          finishDate.getFullYear() === today.getFullYear() &&
-          finishDate.getMonth() === today.getMonth() &&
-          finishDate.getDate() === today.getDate();
-
-        return isToday;
+        // finish_dateなしは表示
+        if (!task.finish_date) {
+          completionMatch = true;
+        } else {
+          const finishDate = new Date(task.finish_date);
+  
+          completionMatch =
+            finishDate.getFullYear() === today.getFullYear() &&
+            finishDate.getMonth() === today.getMonth() &&
+            finishDate.getDate() === today.getDate();
+        }
       }
-
-      const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
-      const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
-        if (assignee === "未担当") return task.manager === "";
-        return task.manager === assignee;
-      });
-      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
-
+  
+      const clientMatch =
+        filters.clients.length === 0 ||
+        filters.clients.includes(task.client);
+  
+      const assigneeMatch =
+        filters.assignees.length === 0 ||
+        filters.assignees.some((assignee) => {
+          if (assignee === "未担当") return task.manager === "";
+          return task.manager === assignee;
+        });
+  
+      const statusMatch =
+        filters.statuses.length === 0 ||
+        filters.statuses.includes(task.status);
+  
+      const keyword = filters.searchKeywords.toLowerCase();
+  
       const searchMatch =
         !filters.searchKeywords ||
-        task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
-
-      return clientMatch && assigneeMatch && statusMatch && searchMatch;
+        task.serial?.toLowerCase().includes(keyword) ||
+        task.title?.toLowerCase().includes(keyword) ||
+        task.description?.toLowerCase().includes(keyword) ||
+        task.requester?.toLowerCase().includes(keyword);
+  
+      return (
+        completionMatch &&
+        clientMatch &&
+        assigneeMatch &&
+        statusMatch &&
+        searchMatch
+      );
     });
   }, [taskList, filters]);
 
