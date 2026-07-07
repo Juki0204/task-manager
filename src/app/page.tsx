@@ -95,25 +95,15 @@ export default function AllTaskPage() {
         }
       }
   
-      const clientMatch =
-        filters.clients.length === 0 ||
-        filters.clients.includes(task.client);
-  
-      const assigneeMatch =
-        filters.assignees.length === 0 ||
+      const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
+      const assigneeMatch = filters.assignees.length === 0 ||
         filters.assignees.some((assignee) => {
           if (assignee === "未担当") return task.manager === "";
           return task.manager === assignee;
         });
-  
-      const statusMatch =
-        filters.statuses.length === 0 ||
-        filters.statuses.includes(task.status);
-  
-      const keyword = filters.searchKeywords.toLowerCase();
-  
-      const searchMatch =
-        !filters.searchKeywords ||
+      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status); 
+      const keyword = filters.searchKeywords.toLowerCase() ?? "";
+      const searchMatch = !filters.searchKeywords ||
         task.serial?.toLowerCase().includes(keyword) ||
         task.title?.toLowerCase().includes(keyword) ||
         task.description?.toLowerCase().includes(keyword) ||
