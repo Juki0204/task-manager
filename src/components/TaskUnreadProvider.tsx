@@ -10,7 +10,7 @@ import React, {
   ReactNode,
 } from "react";
 import { supabase } from "@/utils/supabase/supabase";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "@/app/AuthProvider";
 
 interface TaskStatus {
   task_id: string;
