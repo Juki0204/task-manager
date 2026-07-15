@@ -109,14 +109,14 @@ export function TaskUnreadProvider({
 
   const getTaskAcknowledgement = useCallback(
     (taskId: string, userName: string) => {
-      const searchKey = `${taskId}::${userName}`;
+      // const searchKey = `${taskId}::${userName}`;
       
-      console.log("[ack lookup]", {
-        searchKey,
-        userName,
-        taskId,
-        availableKeys: [...taskAcknowledgementMap.keys()],
-      });
+      // console.log("[ack lookup]", {
+      //   searchKey,
+      //   userName,
+      //   taskId,
+      //   availableKeys: [...taskAcknowledgementMap.keys()],
+      // });
         
       return taskAcknowledgementMap.get(`${taskId}::${userName}`);
     },
