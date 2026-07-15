@@ -118,6 +118,13 @@ export function RemarksHoverMark({
     }
   }, [isHoveringTrigger.current]);
 
+  console.log("[RemarksHoverMark]", {
+    userName: user?.name,
+    taskId: task.id,
+    manager: task.manager,
+    unread,
+  });
+
   return (
     <>
       {/* ここが「備考」カプセル */}
