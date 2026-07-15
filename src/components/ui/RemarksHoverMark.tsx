@@ -82,25 +82,27 @@ export function RemarksHoverMark({
 
     if (!user) return;
 
-    const ackData = {
-      task_id: task.id,
-      acknowledged_by: user?.name,
-      acknowledged_at: new Date(),
-    }
-    // console.log(ackData);
-    const { error } = await supabase
+    const { ackData, error } = await supabase
       .from("tasks_acknowledgements")
-      .upsert(ackData, {
-        onConflict: "task_id,acknowledged_by"
-      });
-
-    if (error) console.error("確認フラグの登録に失敗しました。", error);
-
-    upsertTaskAcknowledgement({
-      task_id: task.id,
-      acknowledged_by: user.name,
-      acknowledged_at: new Date(),
-    });
+      .upsert(
+        {
+          task_id: task.id,
+          acknowledged_by: user.name,
+          acknowledged_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "task_id,acknowledged_by",
+        }
+      )
+      .select("task_id, acknowledged_by, acknowledged_at")
+      .single();
+    
+    if (error) {
+      console.error("確認フラグの登録に失敗しました。", error);
+      return;
+    }
+    
+    upsertTaskAcknowledgement(ackData);
   }
 
   useEffect(() => {
