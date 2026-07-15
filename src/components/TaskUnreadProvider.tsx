@@ -10,6 +10,7 @@ import React, {
   ReactNode,
 } from "react";
 import { supabase } from "@/utils/supabase/supabase";
+import { useAuth } from "./AuthProvider";
 
 interface TaskStatus {
   task_id: string;
@@ -72,6 +73,7 @@ interface TaskUnreadProviderProps {
 export function TaskUnreadProvider({
   children,
 }: TaskUnreadProviderProps) {
+  const { user } = useAuth();
   const [taskStatuses, setTaskStatuses] = useState<TaskStatus[]>([]);
   const [taskAcknowledgements, setTaskAcknowledgements] = useState<
     TaskAcknowledgement[]
@@ -206,15 +208,25 @@ export function TaskUnreadProvider({
   );
 
   const fetchInitialData = useCallback(async () => {
+    if (!user) {
+      setTaskStatuses([]);
+      setTaskAcknowledgements([]);
+      setIsLoading(false);
+      return;
+    }
+    
     setIsLoading(true);
 
     const [statusRes, ackRes] = await Promise.all([
       supabase
         .from("tasks_status")
         .select("task_id, updated_by, updated_at"),
+      
       supabase
         .from("tasks_acknowledgements")
-        .select("task_id, acknowledged_by, acknowledged_at"),
+        .select("task_id, acknowledged_by, acknowledged_at")
+        .eq("acknowledged_by", user.name)
+      : Promise.resolve({ data: [], error: null }),
     ]);
 
     if (statusRes.error) {
@@ -231,7 +243,7 @@ export function TaskUnreadProvider({
     setTaskStatuses((statusRes.data ?? []) as TaskStatus[]);
     setTaskAcknowledgements((ackRes.data ?? []) as TaskAcknowledgement[]);
     setIsLoading(false);
-  }, [supabase]);
+  }, [user]);
 
   const refetch = useCallback(async () => {
     await fetchInitialData();
