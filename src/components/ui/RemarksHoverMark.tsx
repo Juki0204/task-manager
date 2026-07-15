@@ -118,12 +118,12 @@ export function RemarksHoverMark({
     }
   }, [isHoveringTrigger.current]);
 
-  console.log("[RemarksHoverMark]", {
-    userName: user?.name,
-    taskId: task.id,
-    manager: task.manager,
-    unread,
-  });
+  // console.log("[RemarksHoverMark]", {
+  //   userName: user?.name,
+  //   taskId: task.id,
+  //   manager: task.manager,
+  //   unread,
+  // });
 
   return (
     <>
