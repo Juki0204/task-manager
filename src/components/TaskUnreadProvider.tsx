@@ -225,8 +225,7 @@ export function TaskUnreadProvider({
       supabase
         .from("tasks_acknowledgements")
         .select("task_id, acknowledged_by, acknowledged_at")
-        .eq("acknowledged_by", user.name)
-      : Promise.resolve({ data: [], error: null }),
+        .eq("acknowledged_by", user.name),
     ]);
 
     if (statusRes.error) {
