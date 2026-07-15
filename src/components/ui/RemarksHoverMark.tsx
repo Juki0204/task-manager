@@ -33,7 +33,7 @@ export function RemarksHoverMark({
   const isHoveringTrigger = useRef(false);
 
   const { isTaskUnread, upsertTaskAcknowledgement } = useTaskUnread();
-  const unread = isTaskUnread({ id: task.id, manager: task.manager }, user?.name ?? "");
+  const unread = !!user?.name && isTaskUnread({ id: task.id, manager: task.manager }, user.name);
 
   //cleanup
   useEffect(() => {
