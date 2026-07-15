@@ -186,6 +186,13 @@ export function TaskUnreadProvider({
 
       const ack = getTaskAcknowledgement(task.id, userName);
 
+      console.log({
+        ack: ack?.acknowledged_at,
+        status: status.updated_at,
+        ackTime: ack ? new Date(ack.acknowledged_at).getTime() : null,
+        statusTime: new Date(status.updated_at).getTime(),
+      });
+
       if (!ack) return true;
 
       return (
@@ -207,6 +214,10 @@ export function TaskUnreadProvider({
         .from("tasks_acknowledgements")
         .select("task_id, acknowledged_by, acknowledged_at"),
     ]);
+
+    console.log("statusRes", statusRes.data);
+    console.log("ackRes", ackRes.data);
+    console.log("ackError", ackRes.error);
 
     if (statusRes.error) {
       console.error("[TaskUnreadProvider] tasks_status fetch error:", statusRes.error);
