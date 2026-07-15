@@ -82,7 +82,7 @@ export function RemarksHoverMark({
 
     if (!user) return;
 
-    const { ackData, error } = await supabase
+    const { data, error } = await supabase
       .from("tasks_acknowledgements")
       .upsert(
         {
@@ -102,7 +102,7 @@ export function RemarksHoverMark({
       return;
     }
     
-    upsertTaskAcknowledgement(ackData);
+    upsertTaskAcknowledgement(data);
   }
 
   useEffect(() => {
