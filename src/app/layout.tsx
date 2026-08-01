@@ -11,6 +11,7 @@ import VersionCheckProvider from "./VersionCheckProvider";
 import { RuleProvider } from "@/components/rule/RuleProvider";
 import { TaskUnreadProvider } from "@/components/TaskUnreadProvider";
 import ThemeProvider from "@/app/ThemeProvider"
+import SideMenu from "@/components/SideMenu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased m-0 w-full bg-neutral-100 text-neutral-700 dark:bg-[#222222] dark:text-neutral-100`}
+        className={`${geistSans.variable} ${geistMono.variable} flex antialiased m-0 w-full bg-neutral-100 text-neutral-700 dark:bg-[#222222] dark:text-neutral-100`}
       // className={`${geistSans.variable} ${geistMono.variable} antialiased m-0 w-full text-neutral-700 bg-[#222222]`}
       >
         <ThemeProvider>
@@ -45,7 +46,7 @@ export default function RootLayout({
                 <RuleProvider>{/* 掲示板 */}
                   <TaskUnreadProvider>
                     <FilterResetWatcher />
-                    <Header />
+                    {/* <Header /> */}
                     {children}
                     {/* <TaskNotesViewer /> */}
                   </TaskUnreadProvider>

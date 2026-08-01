@@ -1,4 +1,5 @@
-import type { ReactNode, MouseEventHandler } from "react";
+import SideMenu from "@/components/SideMenu";
+import { type ReactNode, type MouseEventHandler, useState } from "react";
 
 type PageLayoutProps = {
   children: ReactNode;
@@ -25,6 +26,11 @@ const overflowClasses = {
   auto: "overflow-x-auto",
 };
 
+const SideMenuToggleClass = {
+  open: "pl-64",
+  close: "pl-12",
+}
+
 export function PageLayout({
   children,
   title,
@@ -36,18 +42,23 @@ export function PageLayout({
   titleAreaClassName = "",
   onClick,
 }: PageLayoutProps) {
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState<boolean>(true);
+
   return (
     <main
       onClick={onClick}
       className={[
-        "relative mx-auto p-1 py-4 !pt-20 text-neutral-700 dark:text-neutral-100",
-        "sm:p-4 sm:pb-2 max-w-[1920px]",
+        "relative mx-auto text-neutral-700 dark:text-neutral-100",
+        "py-2 pr-4 max-w-[1920px] duration-300 transition-[padding]",
+        `${isSideMenuOpen ? "!pl-64" : "!pl-14"}`,
         overflowClasses[overflowX],
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
+      <SideMenu onClick={() => setIsSideMenuOpen(!isSideMenuOpen)} isSideMenuOpen={isSideMenuOpen} />
+
       <header
         className={[
           "mb-2 flex min-w-375 justify-between gap-4",
@@ -60,13 +71,13 @@ export function PageLayout({
       >
         <div
           className={[
-            "flex min-w-0 items-end justify-start gap-4",
+            "flex min-w-0 items-center justify-start gap-4",
             titleAreaClassName,
           ]
             .filter(Boolean)
             .join(" ")}
         >
-          <h1 className="flex items-center gap-1 py-1 text-center text-xl font-bold">
+          <h1 className="flex items-center gap-1 text-center text-xl font-bold">
             {title}
           </h1>
 
