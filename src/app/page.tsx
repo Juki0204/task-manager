@@ -19,6 +19,8 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 // import HelpDrawer from "@/components/HelpDrawer";
 import { TbReload } from "react-icons/tb";
 import CancelAlertModal from "@/components/CancelAlertModal";
+import { PageLayout } from "./PageLayout";
+import { SubscriptionStatus } from "@/components/common/SubscriptionStatus";
 
 
 export default function AllTaskPage() {
@@ -73,42 +75,42 @@ export default function AllTaskPage() {
 
   const filteredTaskList = useMemo(() => {
     const today = new Date();
-  
+
     return taskList.filter((task) => {
       // 削除済は除外
       if (task.status === "削除済") return false;
-  
+
       // 完了タスクの表示可否
       let completionMatch = true;
-  
+
       if (task.status === "完了") {
         // finish_dateなしは表示
         if (!task.finish_date) {
           completionMatch = true;
         } else {
           const finishDate = new Date(task.finish_date);
-  
+
           completionMatch =
             finishDate.getFullYear() === today.getFullYear() &&
             finishDate.getMonth() === today.getMonth() &&
             finishDate.getDate() === today.getDate();
         }
       }
-  
+
       const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
       const assigneeMatch = filters.assignees.length === 0 ||
         filters.assignees.some((assignee) => {
           if (assignee === "未担当") return task.manager === "";
           return task.manager === assignee;
         });
-      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status); 
+      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
       const keyword = filters.searchKeywords?.toLowerCase() ?? "";
       const searchMatch = !filters.searchKeywords ||
         task.serial?.toLowerCase().includes(keyword) ||
         task.title?.toLowerCase().includes(keyword) ||
         task.description?.toLowerCase().includes(keyword) ||
         task.requester?.toLowerCase().includes(keyword);
-  
+
       return (
         completionMatch &&
         clientMatch &&
@@ -155,33 +157,19 @@ export default function AllTaskPage() {
   }, [taskList]);
 
   return (
-    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 max-w-[1920px] m-auto overflow-x-hidden text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-center gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
-            全体タスク一覧
-            {/* <HelpDrawer /> */}
-          </h2>
-          <div className="flex items-center gap-2 py-0.75 px-1.75 rounded-full bg-neutral-200 dark:bg-neutral-500">
-            <span
-              className={`h-2.5 w-2.5 rounded-full ${health === "green" ? "bg-emerald-400" : health === "yellow" ? "bg-amber-400" : "bg-rose-400"
-                }`}
-            />
-            <span className="text-xs mr-1">{taskSubStatus}</span>
+    <PageLayout
+      title="全体タスク一覧"
+      onClick={handleCloseContextMenu}
+      titleAreaClassName="items-center"
+      titleAddon={
+        <SubscriptionStatus
+          health={health}
+          status={taskSubStatus}
+          onResubscribe={resubscribeAll}
+        />
+      }
+    >
 
-            {taskSubStatus !== "SUBSCRIBED" && (
-              <button
-                onClick={resubscribeAll}
-                className="flex items-center gap-1 text-xs px-2 pr-3 py-0.25 rounded-full text-white bg-neutral-400 dark:bg-neutral-600 hover:opacity-80"
-              >
-                <TbReload />
-                再購読
-              </button>
-            )}
-          </div>
-        </div>
-
-      </div>
       {user &&
         <TaskList
           user={user}
@@ -296,6 +284,6 @@ export default function AllTaskPage() {
           }}
         ></ContextMenu>
       )}
-    </div>
+    </PageLayout>
   );
 }

@@ -549,6 +549,14 @@ body {
   }
 }
 
+[data-theme=light] {
+  .release-note {
+    & p{
+      color: #666;
+    }
+  }
+}
+
 .animate-shake {
   animation: shake .5s linear .1s forwards;
 }

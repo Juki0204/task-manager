@@ -14,6 +14,7 @@ import { FaSearch } from "react-icons/fa";
 import { LuDownload } from "react-icons/lu";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import NextCheckMessage from "@/components/ui/NextCheckMessage";
+import { PageLayout } from "../PageLayout";
 
 
 export default function InvoicePage() {
@@ -321,38 +322,37 @@ export default function InvoicePage() {
   }, [invoiceSortState, filters, invoices]);
 
   return (
-    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 relative overflow-x-hidden min-h-[80svh] text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 text-xl font-bold text-center">
-            <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-            </Select>
-            年
-            <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-              <option value="01">1</option>
-              <option value="02">2</option>
-              <option value="03">3</option>
-              <option value="04">4</option>
-              <option value="05">5</option>
-              <option value="06">6</option>
-              <option value="07">7</option>
-              <option value="08">8</option>
-              <option value="09">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-            </Select>
-            月度 請求一覧
-          </h2>
-          <div className="pb-0.75">
-            <NextCheckMessage />
-          </div>
-        </div>
-
-        <div className="flex gap-2">
+    <PageLayout
+      title={
+        <>
+          <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </Select>
+          年
+          <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+            <option value="01">1</option>
+            <option value="02">2</option>
+            <option value="03">3</option>
+            <option value="04">4</option>
+            <option value="05">5</option>
+            <option value="06">6</option>
+            <option value="07">7</option>
+            <option value="08">8</option>
+            <option value="09">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </Select>
+          月度 請求一覧
+        </>
+      }
+      titleAddon={
+        <NextCheckMessage />
+      }
+      actions={
+        <>
           <Button
             disabled={invoiceDL}
             onClick={() => {
@@ -381,8 +381,9 @@ export default function InvoicePage() {
               <span>請求書加工用データ</span>
             )}
           </Button>
-        </div>
-      </div>
+        </>
+      }
+    >
 
       <div className="scroll-container p-1 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 
@@ -447,6 +448,6 @@ export default function InvoicePage() {
           <div className="border col-span-3 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold">{totalInvoices.totalAmount.toLocaleString()}円</div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

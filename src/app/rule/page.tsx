@@ -15,6 +15,7 @@ import { User } from "@/utils/types/user";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useEffect, useMemo, useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
+import { PageLayout } from "../PageLayout";
 
 
 type Filters = {
@@ -131,14 +132,7 @@ export default function RulePage() {
   }, [activeRule, ruleAcknowledgements]);
 
   return (
-    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-14 m-auto max-w-[1920px] relative overflow-x-clip text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
-            作業ルール・情報共有板
-          </h2>
-        </div>
-      </div>
+    <PageLayout title="作業ルール・情報共有板" overflowX="clip">
 
       <div className="pb-4 flex gap-4 w-full max-w-[1876px]">
 
@@ -377,6 +371,6 @@ export default function RulePage() {
         }}
         onCalcel={() => setIsAlertOpen(false)}
       />
-    </div>
+    </PageLayout>
   )
 }

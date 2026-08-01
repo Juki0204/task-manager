@@ -16,6 +16,8 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
+import { PageLayout } from "../PageLayout";
+import { NonRealtimeNotice } from "@/components/common/NonRealtileNotice";
 
 
 export default function CompletedTaskPage() {
@@ -128,39 +130,40 @@ export default function CompletedTaskPage() {
   }, [year, month]);
 
   return (
-    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 m-auto max-w-[1920px] relative overflow-x-hidden text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-0.25 text-xl font-bold text-center">
-            <span className="inline-block mr-2">完了済タスク一覧</span>
-            <Select onChange={(e) => setYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-              <option value="">-</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-            </Select>
-            年
-            <Select onChange={(e) => setMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-              <option value="">-</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-            </Select>
-            月度分
-          </h2>
-          <span className="text-xs tracking-wide pb-1">※このページではリアルタイム更新は行われません。最新の状態を確認するには、ページを再読み込みしてください。</span>
-        </div>
-
-      </div>
+    <PageLayout
+      title={
+        <>
+          <span className="inline-block mr-2">完了済タスク一覧</span>
+          <Select onChange={(e) => setYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+            <option value="">-</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </Select>
+          年
+          <Select onChange={(e) => setMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+            <option value="">-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </Select>
+          月度分
+        </>
+      }
+      onClick={handleCloseContextMenu}
+      titleAddon={
+        <NonRealtimeNotice />
+      }
+    >
 
       {user && taskList.length > 0 ?
         <TaskList
@@ -248,6 +251,6 @@ export default function CompletedTaskPage() {
           updateTaskStatus={updateTaskStatus}
         />
       )}
-    </div>
+    </PageLayout>
   );
 }

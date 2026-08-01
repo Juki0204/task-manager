@@ -40,7 +40,7 @@ export function PageLayout({
     <main
       onClick={onClick}
       className={[
-        "relative mx-auto p-1 py-4 text-neutral-700 dark:text-neutral-100",
+        "relative mx-auto p-1 py-4 !pt-20 text-neutral-700 dark:text-neutral-100",
         "sm:p-4 sm:pb-2 max-w-[1920px]",
         overflowClasses[overflowX],
         className,

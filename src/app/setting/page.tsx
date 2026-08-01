@@ -5,6 +5,7 @@ import PriceSetting from "@/components/settings/PriceSetting";
 import { useEffect, useState } from "react";
 import { FaHistory } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { PageLayout } from "../PageLayout";
 // import Image from "next/image";
 // import { useState } from "react";
 
@@ -37,18 +38,7 @@ export default function SettingPage() {
   }, []);
 
   return (
-    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-14 max-w-[1920px] relative overflow-x-hidden text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
-            各種設定
-          </h2>
-        </div>
-
-        {/* <div className="flex gap-2">
-                <AddTaskBtn onClick={() => { setIsOpen(true); setModalType("add"); }} />
-              </div> */}
-      </div>
+    <PageLayout title="各種設定">
 
       <div className="pb-4 flex gap-4 w-full max-w-[1876px]">
 
@@ -77,6 +67,7 @@ export default function SettingPage() {
         </div>
 
       </div>
-    </div>
+
+    </PageLayout>
   );
 }

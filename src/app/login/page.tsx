@@ -49,7 +49,7 @@ export default function LoginPage() {
 
 
   return (
-    <div className="w-full max-w-xl m-auto min-h-screen text-center text-white p-4 pt-20">
+    <div className="w-full max-w-xl m-auto min-h-screen text-center text-neutral-700 dark:text-neutral-100 p-4 pt-20">
       <h1 className="text-center pb-4 text-4xl font-bold">ログイン</h1>
       <form onSubmit={handleSubmit(onLogin)} className="flex gap-2 flex-wrap p-4">
         <div className="w-full text-left relative">
@@ -66,7 +66,7 @@ export default function LoginPage() {
             </svg>
             <Input
               type="text"
-              className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
+              className="grow pl-10 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="メールアドレス"
               {...register('email', { required: true, pattern: /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]+@[\w\.-]+\.\w{2,}$/ })}
             />
@@ -90,7 +90,7 @@ export default function LoginPage() {
             </svg>
             <Input
               type="password"
-              className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
+              className="grow pl-10 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="パスワード"
               {...register('password', { required: true, pattern: /\w{6,}/ })}
             />
@@ -102,7 +102,7 @@ export default function LoginPage() {
 
         <CorrectBtn className="cursor-pointer" type="submit" disabled={!isValid || isSubmitting}>{isSubmitting ? "ログイン中..." : "ログイン"}</CorrectBtn>
       </form>
-      <OutlineBtn className="outline-white text-white" onClick={() => { router.push('/signup') }}>新規登録へ</OutlineBtn>
+      <OutlineBtn className="outline-neutral-700 dark:outline-neutral-100 text-neutral-700 dark:text-neutral-100" onClick={() => { router.push('/signup') }}>新規登録へ</OutlineBtn>
       <div className="p-4">
         <a className="underline underline-offset-4" onClick={() => { router.push('/reset/send-mail') }}>パスワードを忘れた場合</a>
       </div>

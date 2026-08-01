@@ -18,6 +18,7 @@ import UpdateTask from "@/components/UpdateTask";
 import TaskDetail from "@/components/TaskDetail";
 import { useAuth } from "../AuthProvider";
 import NextCheckMessage from "@/components/ui/NextCheckMessage";
+import { PageLayout } from "../PageLayout";
 
 
 interface ReleaseNoteMeta {
@@ -171,42 +172,14 @@ export default function DashboardPage() {
   /* -------------- モーダル関連 -------------- */
 
   return (
-    <div className="p-1 py-4 sm:p-4 !pt-14 max-w-[1920px] m-auto text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-700 min-w-375">
-        <div className="flex justify-start items-center-safe gap-2 w-full">
-          <h2 className="flex justify-center items-center gap-4 py-0.5 px-1 text-xl font-bold text-center">
-            <span className="text-2xl">{now.getFullYear()}年 {now.getMonth() + 1}月 {now.getDate()}日</span>
-          </h2>
-
-          <div className="flex justify-center items-center gap-4 py-0.5 px-1 text-xl font-bold text-center">
-            {/* <div onMouseEnter={() => setIsDeadlinePop(true)} onMouseLeave={() => setIsDeadlinePop(false)} className={`relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-200 rounded-md tracking-wider cursor-default ${todayDeadlineTasks.length > 0 ? "text-red-700" : "text-neutral-800"}`}>
-              {deadline.length > 0 && todayDeadlineTasks.length > 0 ? (
-                <><FaTriangleExclamation />本日が期限のタスクが {todayDeadlineTasks.length}件 あります</>
-              ) : (
-                <>本日が期限のタスクはありません</>
-              )}
-              {todayDeadlineTasks.length > 0 && (
-                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isDeadlinePop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-200 shadow-md`}>
-                    {todayDeadlineTasks.map(t => (
-                      <div
-                        key={t.id}
-                        onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
-                        className="flex gap-4 justify-between rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
-                      >
-                        <span>【{t.serial}】 {t.title}</span>
-                        <span className="grid place-content-center w-15 whitespace-nowrap text-neutral-200 bg-neutral-400 text-xs rounded-md text-center">{t.status}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div> */}
-            <NextCheckMessage />
-          </div>
-        </div>
-      </div>
-
+    <PageLayout
+      title={
+        <span className="text-2xl">{now.getFullYear()}年 {now.getMonth() + 1}月 {now.getDate()}日</span>
+      }
+      titleAddon={
+        <NextCheckMessage />
+      }
+    >
 
       <div className="flex gap-4 p-2 h-[780px]">
 
@@ -477,7 +450,7 @@ export default function DashboardPage() {
           </DialogPanel>
         </div>
       </Dialog>
-    </div>
+    </PageLayout>
   )
 
 }
