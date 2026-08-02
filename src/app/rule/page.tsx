@@ -15,7 +15,7 @@ import { User } from "@/utils/types/user";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useEffect, useMemo, useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 
 type Filters = {

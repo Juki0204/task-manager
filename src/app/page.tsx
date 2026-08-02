@@ -19,8 +19,9 @@ import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext
 // import HelpDrawer from "@/components/HelpDrawer";
 import { TbReload } from "react-icons/tb";
 import CancelAlertModal from "@/components/CancelAlertModal";
-import { PageLayout } from "./PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { SubscriptionStatus } from "@/components/common/SubscriptionStatus";
+import AddTask from "@/components/AddTask";
 
 
 export default function AllTaskPage() {
@@ -167,6 +168,9 @@ export default function AllTaskPage() {
           status={taskSubStatus}
           onResubscribe={resubscribeAll}
         />
+      }
+      actions={
+        <AddTask />
       }
     >
 

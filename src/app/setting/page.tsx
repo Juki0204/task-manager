@@ -5,7 +5,7 @@ import PriceSetting from "@/components/settings/PriceSetting";
 import { useEffect, useState } from "react";
 import { FaHistory } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 // import Image from "next/image";
 // import { useState } from "react";
 

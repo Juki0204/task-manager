@@ -16,7 +16,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { NonRealtimeNotice } from "@/components/common/NonRealtileNotice";
 
 
@@ -160,7 +160,7 @@ export default function CompletedTaskPage() {
         </>
       }
       onClick={handleCloseContextMenu}
-      titleAddon={
+      actions={
         <NonRealtimeNotice />
       }
     >

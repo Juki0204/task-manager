@@ -14,7 +14,7 @@ import { FaSearch } from "react-icons/fa";
 import { LuDownload } from "react-icons/lu";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import NextCheckMessage from "@/components/ui/NextCheckMessage";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 
 export default function InvoicePage() {

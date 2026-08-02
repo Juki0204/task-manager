@@ -28,7 +28,7 @@ import { TbReload } from "react-icons/tb";
 import { compareHistory } from "@/utils/function/comparHistory";
 import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 import CancelAlertModal from "@/components/CancelAlertModal";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { SubscriptionStatus } from "@/components/common/SubscriptionStatus";
 
 

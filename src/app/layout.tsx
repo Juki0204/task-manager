@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 
 import AuthProvider from "@/app/AuthProvider"
-import Header from "@/components/Header";
 import { Toaster } from "sonner";
 import { TaskListPreferencesProvider } from "@/utils/hooks/TaskListPreferencesContext";
 import FilterResetWatcher from "@/components/FilterResetWatcher";
@@ -11,7 +10,7 @@ import VersionCheckProvider from "./VersionCheckProvider";
 import { RuleProvider } from "@/components/rule/RuleProvider";
 import { TaskUnreadProvider } from "@/components/TaskUnreadProvider";
 import ThemeProvider from "@/app/ThemeProvider"
-import SideMenu from "@/components/SideMenu";
+import AppShell from "@/components/layout/AppShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,8 +45,9 @@ export default function RootLayout({
                 <RuleProvider>{/* 掲示板 */}
                   <TaskUnreadProvider>
                     <FilterResetWatcher />
-                    {/* <Header /> */}
-                    {children}
+                    <AppShell>
+                      {children}
+                    </AppShell>
                     {/* <TaskNotesViewer /> */}
                   </TaskUnreadProvider>
                 </RuleProvider>

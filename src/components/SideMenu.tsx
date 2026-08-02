@@ -89,39 +89,6 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  useEffect(() => {
-    const onScroll = () => {
-      if (ticking.current) return;
-
-      ticking.current = true;
-
-      requestAnimationFrame(() => {
-        const currentY = window.scrollY;
-        const diff = currentY - lastScrollY.current;
-
-        if (currentY > threshold) {
-          setIsScroll(true);
-        } else {
-          setIsScroll(false);
-        }
-
-        if (diff < 0) {
-          setIsScroll(false);
-        }
-
-
-        lastScrollY.current = currentY;
-        ticking.current = false;
-      });
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    }
-  }, []);
-
   const falsePathname = ['/login', '/reset', '/signup']
   const pathname = usePathname();
 
@@ -138,13 +105,12 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
             </div> */}
             {/* バグ報告ボタン */}
             {/* <MenuBtn /> */}
-            <Button onClick={onClick} className="cursor-pointer p-3 grid place-content-center">
+            <Button tabIndex={-1} onClick={onClick} className="cursor-pointer p-3 grid place-content-center">
               <ChevronDownIcon className={`${isSideMenuOpen ? "rotate-90" : "-rotate-90"}`} />
             </Button>
           </div>
 
-          <div className={`w-full flex flex-col gap-2 pb-2 border-b border-neutral-300 dark:border-neutral-500 transition-all ease-out duration-200
-            ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" && pathname !== "/rule" ? "" : "!pb-0 !border-0"}`}>
+          <div className={`w-full flex flex-col gap-2 pb-2 transition-all ease-out duration-200`}>
             <div className="flex flex-col">
               <SideMenuBtn
                 title="ダッシュボード"
@@ -250,7 +216,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
           </div>
 
-          <div className={`flex gap-2 items-center relative pt-2 transition-all ease-out dark:text-neutral-700 duration-200 -z-10
+          {/* <div className={`flex gap-2 items-center relative pt-2 transition-all ease-out dark:text-neutral-700 duration-200 -z-10
             ${!isScroll && pathname !== "/dashboard" && pathname !== "/setting" && pathname !== "/release-notes" && pathname !== "/rule" ? "h-10" : "!h-0 !pt-0 opacity-0 overflow-hidden"}`}>
             {pathname === "/" ? (
               <div className="pr-2 border-r border-neutral-300 dark:border-neutral-500">
@@ -374,7 +340,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
         </aside>
       )}
     </>

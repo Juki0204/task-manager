@@ -16,7 +16,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import { NonRealtimeNotice } from "@/components/common/NonRealtileNotice";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 
 export default function TrashTaskPage() {
@@ -109,7 +109,7 @@ export default function TrashTaskPage() {
     <PageLayout
       title="削除済タスク一覧"
       onClick={handleCloseContextMenu}
-      titleAddon={
+      actions={
         <NonRealtimeNotice />
       }
     >

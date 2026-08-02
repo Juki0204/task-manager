@@ -302,7 +302,7 @@ export default function PersonalCard({
       {...attributes}
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} text-neutral-700 dark:text-neutral-100 min-w-90 drop-shadow-md drop-shadow-gray-950/30 dark:hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} text-neutral-700 dark:text-neutral-100 min-w-90 shadow-xs shadow-neutral-400 dark:hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
 
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
 

@@ -16,9 +16,9 @@ import DashboardNotesViewer from "@/components/DashboadNotesViewer";
 import PriorityTasks from "@/components/PriorityTasks";
 import UpdateTask from "@/components/UpdateTask";
 import TaskDetail from "@/components/TaskDetail";
-import { useAuth } from "../AuthProvider";
+import { useAuth } from "@/app/AuthProvider";
 import NextCheckMessage from "@/components/ui/NextCheckMessage";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 
 interface ReleaseNoteMeta {

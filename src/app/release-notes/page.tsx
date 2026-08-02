@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { marked } from "marked";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { ChevronDownIcon } from "lucide-react";
-import { PageLayout } from "../PageLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 interface ReleaseNoteMeta {
   version: string;
