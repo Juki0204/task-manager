@@ -1,9 +1,3 @@
-import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
-import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
-import { MdAlarm, MdMailOutline } from "react-icons/md";
-import { FiPhone } from "react-icons/fi";
-import { BsPersonCheck } from "react-icons/bs";
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
@@ -15,7 +9,7 @@ import { toast } from "sonner";
 import { Tooltip } from "react-tooltip";
 import { RemarksHoverMark } from "./ui/RemarksHoverMark";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
-import { FaStar } from "react-icons/fa6";
+import { AlarmClock, Building, CalendarClock, CircleCheck, CircleQuestionMark, Mail, Phone, Star, UserPen } from "lucide-react";
 
 interface CardPropd {
   task: Task;
@@ -205,34 +199,30 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
         onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_minmax(160px,300px)_minmax(200px,700px)_80px_120px_240px] py-3`}
+        className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[110px_240px_minmax(160px,300px)_minmax(200px,700px)_70px_120px_260px] py-3`}
         {...props}
       >
         <div className="text-xs flex items-center gap-1.5">
           <div className="flex items-center gap-1">
+            {user.important_task_id && user.important_task_id.includes(task.id) ? (
+              <Star className="w-4.5 text-yellow-400 fill-yellow-300 text-lg mt-0.5 mr-0.5" />
+            ) : (
+              <Star className="w-4.5 text-neutral-400/50 fill-neutral-400/40 text-lg mt-0.5 mr-0.5" />
+            )}
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
-            {user.important_task_id && user.important_task_id.includes(task.id) && (
-              <FaStar className="text-yellow-300 text-lg ml-0.5 mt-0.5" />
-            )}
-            {currentDeadline && (
-              <>
-                <MdAlarm tabIndex={-1} className="text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
-                <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px" }} />
-              </>
-            )}
           </div>
         </div>
 
-        <div className="text-sm [grid-area:cli] flex gap-1 items-center"><FaRegBuilding />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+        <div className="text-sm [grid-area:cli] flex gap-1 items-center"><Building className="w-4.5" />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
 
         <h3 className="font-bold flex items-center gap-1 [grid-area:ttl] text-sm">
           {
             task.method === 'mail' ?
-              <MdMailOutline className="w-4 h-4" />
+              <Mail className="w-4.5" />
               : task.method === 'tel' ?
-                <FiPhone className="w-4 h-4" />
+                <Phone className="w-4.5" />
                 :
-                <FaRegQuestionCircle className="w-4 h-4" />
+                <CircleQuestionMark className="w-4.5" />
           }
           <span className="truncate flex-1 pr-3">
             <HighlightText text={task.title} keyword={filters.searchKeywords} />
@@ -262,11 +252,17 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
           )}
         </div>
 
-        <div className="text-sm [grid-area:mana] flex gap-1 items-center"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
+        <div className="text-sm [grid-area:mana] flex gap-1 items-center"><UserPen className="w-4.5" />{task.manager ? task.manager : "-"}</div>
 
-        <div className="grid gap-2 text-sm grid-cols-6 [grid-area:date]">
-          <div className="col-span-3 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>
-          <div className="col-span-3 flex gap-1 items-center"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
+        <div className="grid gap-2 text-sm grid-cols-11 [grid-area:date]">
+          <div className="col-span-5 flex gap-1 items-center"><CalendarClock className="w-4.5" />{task.request_date}</div>
+          <div className="col-span-5 flex gap-1 items-center"><CircleCheck className="w-4.5" />{task.finish_date ? task.finish_date : "-"}</div>
+          {currentDeadline && (
+            <>
+              <AlarmClock tabIndex={-1} className="w-5 text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+              <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px" }} />
+            </>
+          )}
         </div>
       </div>
     </div>

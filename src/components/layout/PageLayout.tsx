@@ -8,6 +8,7 @@ import { FaFilter } from "react-icons/fa";
 import MultiSelectPopover from "../ui/MultiSelectPopover";
 import { FaSearch } from "react-icons/fa";
 import { Input } from "@headlessui/react";
+import { Filter } from "lucide-react";
 
 type PageLayoutProps = {
   children: ReactNode;
@@ -86,7 +87,7 @@ export function PageLayout({
 
       <header
         className={[
-          "sticky top-0 py-2 bg-neutral-100 dark:bg-neutral-700 flex flex-col z-40",
+          "sticky top-0 py-2 bg-neutral-100 dark:bg-[#222222] flex flex-col z-40",
           headerClassName,
         ]
           .filter(Boolean)
@@ -108,8 +109,9 @@ export function PageLayout({
             {titleAddon}
 
             {!nonFilterPathname.includes(pathname) && (
-              <div className="flex gap-2 items-center" onClick={() => setIsFilterOpen(!isFilterOpen)}>
-                <FaFilter className="text-neutral-500 dark:text-neutral-100 cursor-pointer" />
+              <div className="flex gap-1 items-center px-3 text-xs rounded-full bg-neutral-200 dark:bg-neutral-500 cursor-pointer hover:opacity-80" onClick={() => setIsFilterOpen(!isFilterOpen)}>
+                <Filter className="w-3 text-neutral-500 dark:text-neutral-100 cursor-pointer" />
+                FILTER
               </div>
             )}
           </div>

@@ -14,8 +14,8 @@ import { Rule, RuleAcknowledgement } from "@/utils/types/rule";
 import { User } from "@/utils/types/user";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useEffect, useMemo, useState } from "react";
-import { FiPlusCircle } from "react-icons/fi";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { CirclePlus } from "lucide-react";
 
 
 type Filters = {
@@ -144,7 +144,7 @@ export default function RulePage() {
             }}
             className="px-3 py-2 mb-2 flex items-center justify-center gap-1 rounded-md bg-sky-600 text-white font-bold hover:cursor-pointer hover:opacity-80"
           >
-            <FiPlusCircle />新規ルール追加
+            <CirclePlus />新規ルール追加
           </div>
 
           <h2 className="font-bold pl-1 border-b pb-1">フィルタリング</h2>

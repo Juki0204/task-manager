@@ -3,9 +3,9 @@
 import RequesterSetting from "@/components/settings/RequesterSetting";
 import PriceSetting from "@/components/settings/PriceSetting";
 import { useEffect, useState } from "react";
-import { FaHistory } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { RotateCcwClock } from "lucide-react";
 // import Image from "next/image";
 // import { useState } from "react";
 
@@ -46,7 +46,7 @@ export default function SettingPage() {
           <div className="flex justify-between items-center py-2 px-3 rounded-md bg-slate-300 dark:bg-slate-800">
             <p className="text-neutral-700 dark:text-white">Last Update: {lastUpdate}</p>
             <div onClick={() => router.push('/release-notes')} className="flex gap-1 justify-center items-center py-1 px-2 w-fit rounded-sm bg-green-800 text-white hover:cursor-pointer hover:opacity-60">
-              <FaHistory className="text-sm" /><span className="text-xs font-bold">過去の更新履歴</span>
+              <RotateCcwClock className="text-sm" /><span className="text-sm font-bold">更新履歴</span>
             </div>
           </div>
 

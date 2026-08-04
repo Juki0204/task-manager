@@ -10,11 +10,10 @@ import InvoiceList from "@/components/invoice/InvoiceList";
 import { Button, Input, Select } from "@headlessui/react";
 import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 
-import { FaSearch } from "react-icons/fa";
-import { LuDownload } from "react-icons/lu";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import NextCheckMessage from "@/components/ui/NextCheckMessage";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { LucideDownload } from "lucide-react";
 
 
 export default function InvoicePage() {
@@ -360,7 +359,7 @@ export default function InvoicePage() {
             }}
             className={`py-2 flex items-center gap-1 rounded pl-3.5 pr-4.5 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${invoiceDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
-            <LuDownload />
+            <LucideDownload />
             {invoiceDL ? (
               <span>処理中...</span>
             ) : (
@@ -374,7 +373,7 @@ export default function InvoicePage() {
             }}
             className={`py-2 flex items-center gap-1 rounded pl-3.5 pr-4.5 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${processingDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
-            <LuDownload />
+            <LucideDownload />
             {processingDL ? (
               <span>処理中...</span>
             ) : (

@@ -104,7 +104,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
               <AddTask />
             </div> */}
             {/* バグ報告ボタン */}
-            {/* <MenuBtn /> */}
+            <MenuBtn />
             <Button tabIndex={-1} onClick={onClick} className="cursor-pointer p-3 grid place-content-center">
               <ChevronDownIcon className={`${isSideMenuOpen ? "rotate-90" : "-rotate-90"}`} />
             </Button>

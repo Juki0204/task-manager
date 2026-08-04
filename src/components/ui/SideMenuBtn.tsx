@@ -23,7 +23,7 @@ export function SideMenuBtn({ className, title, icon, pathname, isSideMenuOpen, 
   return (
     <Button
       tabIndex={-1}
-      className={`flex items-center p-3 text-sm font-bold data-hover:bg-neutral-100 transition-all duration-100 ${className} ${pathname === currentPath ? "bg-neutral-100" : "cursor-pointer"}`}
+      className={`flex items-center p-3 text-sm font-bold hover:bg-neutral-100 dark:hover:bg-[#222222] transition-all duration-100 ${className} ${pathname === currentPath ? "bg-neutral-100 dark:bg-[#222222]" : "cursor-pointer"}`}
       onClick={onClick}
     >
       {icon}<span className={`text-left overflow-clip whitespace-nowrap duration-300 transition-all ${isSideMenuOpen ? "delay-300 w-40 pl-2 opacity-100" : "w-0 pl-0 opacity-0 pointer-events-none"}`}>{title}</span>
@@ -63,7 +63,7 @@ export function WithBadgeSideMenuBtn({ className, title, icon, pathname, isSideM
   return (
     <Button
       tabIndex={-1}
-      className={`flex items-center p-3 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${className} ${pathname === currentPath ? "bg-neutral-100" : "cursor-pointer"}`}
+      className={`flex items-center p-3 text-sm font-bold hover:bg-neutral-100 dark:hover:bg-[#222222] transition-all duration-100 ${className} ${pathname === currentPath ? "bg-neutral-100 dark:bg-[#222222]" : "cursor-pointer"}`}
       onClick={onClick}
     >
       <div className="relative">

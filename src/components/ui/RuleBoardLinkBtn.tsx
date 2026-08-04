@@ -30,7 +30,7 @@ export default function RuleBoardLinkBtn({ className, pathname, onClick }: RuleB
   return (
     <Button
       tabIndex={-1}
-      className={`flex items-center gap-2 p-3 text-sm font-bold data-hover:bg-blue-500/50 transition-all duration-100 ${pathname === "/rule" ? "bg-blue-500/50" : "cursor-pointer"}`}
+      className={`flex items-center gap-2 p-3 text-sm font-bold data-hover:bg-neutral-100 transition-all duration-100 ${pathname === "/rule" ? "bg-neutral-100" : "cursor-pointer"}`}
       onClick={onClick}
     >
       <div className="relative">

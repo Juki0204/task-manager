@@ -1,6 +1,6 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
+import { TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
-import { IoWarningOutline } from "react-icons/io5";
 
 interface CancelAlertModalProps {
   alertOpen: boolean;
@@ -27,9 +27,9 @@ export default function CancelAlertModal({ alertOpen, onModalClose, onCalcel }: 
         <DialogPanel className="w-fit relative rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pb-5 shadow-xl shadow-black/20">
 
           <div className="relative w-full flex flex-wrap justify-center items-center gap-2 rounded-lg bg-yellow-300/60 py-2 px-6">
-            <IoWarningOutline />
+            <TriangleAlert />
             <p>CAUTION</p>
-            <IoWarningOutline />
+            <TriangleAlert />
           </div>
           <p className="text-center p-4 text-sm tracking-wider">
             保存されていない変更は破棄されます<br />
