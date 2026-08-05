@@ -315,11 +315,11 @@ export default function AddTask() {
               />
 
               <div className="w-full flex gap-2">
-                <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<PencilLine />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
-                <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<CalendarClock />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+                <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<PencilLine className="w-4.5 text-neutral-500" />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
+                <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<CalendarClock className="w-4.5 text-neutral-500" />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
               </div>
 
-              <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<NotepadText />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
+              <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<NotepadText className="w-4.5 text-neutral-500" />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
             </div>
 
             <div
@@ -335,7 +335,7 @@ export default function AddTask() {
                 </div>
 
                 <Field className="flex flex-col">
-                  <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><Mail /> 依頼手段</h3>
+                  <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><Mail className="w-4.5 text-neutral-500" /> 依頼手段</h3>
                   <div className="flex gap-x-1">
                     <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
                     <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
@@ -343,13 +343,13 @@ export default function AddTask() {
                   </div>
                 </Field>
 
-                <AddTaskSelect className="flex-2 text-sm" name="CLIENT" label="クライアント" icon={<Building />} value={client} onChange={(e) => setClient(e.target.value)}>
+                <AddTaskSelect className="flex-2 text-sm" name="CLIENT" label="クライアント" icon={<Building className="w-4.5 text-neutral-500" />} value={client} onChange={(e) => setClient(e.target.value)}>
                   {clientList.map(client => (
                     <option key={client} value={client}>{client}</option>
                   ))}
                 </AddTaskSelect>
 
-                <AddTaskSelect className="flex-1 text-sm" name="REQUESTER" label="依頼者" icon={<UserPlus />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
+                <AddTaskSelect className="flex-1 text-sm" name="REQUESTER" label="依頼者" icon={<UserPlus className="w-4.5 text-neutral-500" />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
                   <option disabled value="">-</option>
                   {requesterList.map(requester => (
                     <option key={requester} value={requester}>{requester}</option>
@@ -365,21 +365,21 @@ export default function AddTask() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 flex-1">
-                  <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<UserPen />} value={manager} onChange={(e) => setManager(e.target.value)}>
+                  <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<UserPen className="w-4.5 text-neutral-500" />} value={manager} onChange={(e) => setManager(e.target.value)}>
                     {userNameList.map(name => (
                       <option key={name} value={name}>{name}</option>
                     ))}
                     <option value=''>未決定</option>
                   </AddTaskSelect>
 
-                  <AddTaskSelect className="w-28 text-sm" name="PRIORITY" label="優先度" icon={<ClockAlert />} value={priority} onChange={(e) => setPriority(e.target.value)}>
+                  <AddTaskSelect className="w-28 text-sm" name="PRIORITY" label="優先度" icon={<ClockAlert className="w-4.5 text-neutral-500" />} value={priority} onChange={(e) => setPriority(e.target.value)}>
                     <option value=""></option>
                     <option value="急">至急</option>
                     <option value="高">高</option>
                     <option value="低">低</option>
                   </AddTaskSelect>
 
-                  <AddTaskSelect className="w-full text-sm" name="STATUS" label="作業状況" icon={<Pickaxe />} value={status} onChange={(e) => setStatus(e.target.value)}>
+                  <AddTaskSelect className="w-full text-sm" name="STATUS" label="作業状況" icon={<Pickaxe className="w-4.5 text-neutral-500" />} value={status} onChange={(e) => setStatus(e.target.value)}>
                     <option value="未着手">未着手</option>
                     <option value="作業中">作業中</option>
                     <option value="作業途中">作業途中</option>
@@ -392,8 +392,8 @@ export default function AddTask() {
                 </div>
 
                 <div className="w-36 flex flex-wrap gap-2">
-                  <AddTaskInput className={`w-full text-sm ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<AlarmClock />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-                  <AddTaskInput className="w-full text-sm" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<CircleCheck />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+                  <AddTaskInput className={`w-full text-sm ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<AlarmClock className="w-4.5 text-neutral-500" />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+                  <AddTaskInput className="w-full text-sm" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<CircleCheck className="w-4.5 text-neutral-500" />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
                 </div>
               </div>
 
@@ -403,7 +403,7 @@ export default function AddTask() {
                   <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
                 </div>
 
-                <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><NotebookPen /> 備考欄</h3>
+                <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><NotebookPen className="w-4.5 text-neutral-500" /> 備考欄</h3>
                 <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
               </div>
 

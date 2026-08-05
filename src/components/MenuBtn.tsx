@@ -1,8 +1,8 @@
 import { useAuth } from "@/app/AuthProvider";
 import { useState } from "react"
-import { FaUserCircle } from "react-icons/fa";
 import LogoutBtn from "./ui/LogoutBtn";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { CircleUserRound } from "lucide-react";
 
 
 export default function MenuBtn() {
@@ -17,7 +17,7 @@ export default function MenuBtn() {
         <span className="bar bar3"></span>
       </div>
       <div className={`fixed top-12.5 right-1 p-4 rounded-md w-fit bg-neutral-100 dark:bg-neutral-600 shadow-lg shadow-neutral-400 dark:shadow-neutral-800 z-10 transition-opacity duration-300 ${menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        <h3 className="flex items-center justify-center gap-1 pb-2"><FaUserCircle />{user?.name} さん</h3>
+        <h3 className="flex items-center justify-center gap-1 pb-2"><CircleUserRound className="w-4.5 text-neutral-500" />{user?.name} さん</h3>
         <div className="flex flex-col gap-2">
           <div className="pb-2 border-b border-neutral-500">
             <p className="text-center text-sm pb-2">- Exchange Themes -</p>

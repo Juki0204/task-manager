@@ -2,23 +2,15 @@
 import { useEffect, useRef, useState } from "react";
 
 import { DialogTitle, Button } from "@headlessui/react";
-import { GrClose } from "react-icons/gr";
 import { AddTaskInput, AddTaskSelect } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
-
-import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
-import { RiCalendarScheduleLine } from "react-icons/ri";
-import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline, MdAlarm } from "react-icons/md";
-import { IoPersonAddOutline } from "react-icons/io5";
-import { BsPersonCheck } from "react-icons/bs";
-import { TbClockExclamation } from "react-icons/tb";
-import { LuNotebookPen } from "react-icons/lu";
 
 import { Task } from "@/utils/types/task";
 import { toast } from "sonner";
 import { User } from "@/utils/types/user";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
+import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, NotebookPen, NotepadText, PencilLine, Pickaxe, UserPen, UserPlus, X } from "lucide-react";
 
 
 interface task {
@@ -291,15 +283,15 @@ export default function UpdateTask({ task, user, onClose }: task) {
     <>
       <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 mb-1">
         <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
-        <GrClose onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
+        <X onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
 
         <div className="w-full flex gap-2">
-          <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
-          <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+          <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<PencilLine className="w-4.5 text-neutral-500" />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
+          <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<CalendarClock className="w-4.5 text-neutral-500" />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
         </div>
 
 
-        <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
+        <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<NotepadText className="w-4.5 text-neutral-500" />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
       </div>
 
       <div
@@ -317,7 +309,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
           </div>
 
           <div className="flex flex-col">
-            <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><MdMailOutline /> 依頼手段</h3>
+            <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><Mail className="w-4.5 text-neutral-500" /> 依頼手段</h3>
             <div className="flex gap-x-1">
               <MailRadio defaultChecked={task.method === 'mail' ? true : false} name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
               <TelRadio defaultChecked={task.method === 'tel' ? true : false} name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
@@ -325,13 +317,13 @@ export default function UpdateTask({ task, user, onClose }: task) {
             </div>
           </div>
 
-          <AddTaskSelect className="flex-2 text-sm" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
+          <AddTaskSelect className="flex-2 text-sm" name="CLIENT" label="クライアント" icon={<Building className="w-4.5 text-neutral-500" />} value={client} onChange={(e) => setClient(e.target.value)}>
             {clientList.map(client => (
               <option key={client} value={client}>{client}</option>
             ))}
           </AddTaskSelect>
 
-          <AddTaskSelect className="flex-1 text-sm" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => setRequester(e.target.value)}>
+          <AddTaskSelect className="flex-1 text-sm" name="REQUESTER" label="依頼者" icon={<UserPlus className="w-4.5 text-neutral-500" />} value={requester} onChange={(e) => setRequester(e.target.value)}>
             {requesterList.map(requester => (
               <option key={requester} value={requester}>{requester}</option>
             ))}
@@ -346,21 +338,21 @@ export default function UpdateTask({ task, user, onClose }: task) {
           </div>
 
           <div className="flex flex-wrap gap-2 flex-1">
-            <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
+            <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<UserPen className="w-4.5 text-neutral-500" />} value={manager} onChange={(e) => setManager(e.target.value)}>
               {userNameList.map(name => (
                 <option key={name} value={name}>{name}</option>
               ))}
               <option value=''>未決定</option>
             </AddTaskSelect>
 
-            <AddTaskSelect className="w-28 text-sm" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <AddTaskSelect className="w-28 text-sm" name="PRIORITY" label="優先度" icon={<ClockAlert className="w-4.5 text-neutral-500" />} value={priority} onChange={(e) => setPriority(e.target.value)}>
               <option value=""></option>
               <option value="急">至急</option>
               <option value="高">高</option>
               <option value="低">低</option>
             </AddTaskSelect>
 
-            <AddTaskSelect className="w-full text-sm" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
+            <AddTaskSelect className="w-full text-sm" name="STATUS" label="作業状況" icon={<Pickaxe className="w-4.5 text-neutral-500" />} value={status} onChange={(e) => setStatus(e.target.value)}>
               <option value="未着手">未着手</option>
               <option value="作業中">作業中</option>
               <option value="作業途中">作業途中</option>
@@ -373,8 +365,8 @@ export default function UpdateTask({ task, user, onClose }: task) {
           </div>
 
           <div className="w-36 flex flex-wrap gap-2">
-            <AddTaskInput className={`w-full text-sm ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-            <AddTaskInput className="w-full text-sm" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
+            <AddTaskInput className={`w-full text-sm ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<AlarmClock className="w-4.5 text-neutral-500" />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+            <AddTaskInput className="w-full text-sm" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<CircleCheck className="w-4.5 text-neutral-500" />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
           </div>
         </div>
 
@@ -384,7 +376,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
             <span className="block h-[1px] bg-neutral-300 w-full" />
           </div>
 
-          <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
+          <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><NotebookPen className="w-4.5 text-neutral-500" /> 備考欄</h3>
           <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
         </div>
       </div>

@@ -74,3 +74,22 @@ export function WithBadgeSideMenuBtn({ className, title, icon, pathname, isSideM
     </Button>
   )
 }
+
+
+
+
+import LogoutBtn from "@/components/ui/LogoutBtn";
+import { CircleUserRound } from "lucide-react";
+
+export function UserMenu() {
+  const { user } = useAuth();
+
+  return (
+    <div className="mb-0 mt-auto p-4">
+      <h3 className="flex items-center justify-center gap-1 pb-2"><CircleUserRound className="w-4.5 text-neutral-500" />{user?.name} さん</h3>
+      <div className="flex flex-col gap-2">
+        <div className="bg-slate-400 dark:bg-slate-800 rounded-md"><LogoutBtn className="px-10 !py-1 w-full justify-center" /></div>
+      </div>
+    </div>
+  )
+}

@@ -2,57 +2,87 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 
 export default function ThemeSwitcher() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const { setTheme, resolvedTheme } = useTheme();
+
+  const isDark = resolvedTheme === "dark";
+  const [switchDark, setSwitchDark] = useState(isDark);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setSwitchDark(isDark);
+  }, [isDark]);
 
-  if (!mounted) return null;
+  const handleToggle = () => {
+    const nextDark = !switchDark;
+
+    // スイッチはクリック直後に動かす
+    setSwitchDark(nextDark);
+
+    // 丸が動いたあとにテーマ変更
+    window.setTimeout(() => {
+      setTheme(nextDark ? "dark" : "light");
+    }, 150);
+  };
 
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setTheme("light")}
+    <div className="flex items-center justify-center gap-3">
+      {/* <span
+        className={`
+          text-sm
+          ${!isDark
+            ? "font-bold text-neutral-800 dark:text-neutral-100"
+            : "text-neutral-400"
+          }
+        `}
+      >
+        Light
+      </span> */}
+
+      <button
+        type="button"
+        role="switch"
+        aria-checked={isDark}
+        aria-label={`テーマを${isDark ? "ライト" : "ダーク"}モードに変更`}
+        onClick={handleToggle}
+        className={`
+          relative h-7 w-13 shrink-0 rounded-full
+          border transition-colors duration-200
+          focus-visible:outline-2
+          focus-visible:outline-offset-2
+          focus-visible:outline-blue-500
+          cursor-pointer
+          ${isDark
+            ? "border-neutral-900 bg-neutral-800"
+            : "border-neutral-300 bg-neutral-300/50"
+          }
+        `}
+      >
+        <span
           className={`
-            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
-            ${theme === "light" ? "bg-blue-200 border-blue-300" : "border-zinc-300"}
+            absolute top-1/2 left-0.5 grid place-content-center size-6
+            -translate-y-1/2 rounded-full
+            shadow-sm
+            transition-transform duration-200
+            ${switchDark ? "translate-x-5.5 bg-black" : "translate-x-0 bg-white"}
           `}
         >
-          Light
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setTheme("dark")}
-          className={`
-            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
-            ${theme === "dark" ? "bg-blue-500/80 border-blue-600" : "border-zinc-300"}
-          `}
-        >
-          Dark
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setTheme("system")}
-          className={`
-            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
-            ${theme === "system" && resolvedTheme === "dark" ? "bg-blue-500/80 border-blue-600" : theme === "system" && resolvedTheme === "light" ? "bg-blue-200 border-blue-300" : "border-zinc-300"}
-          `}
-        >
-          System
-        </button>
-      </div>
-
-      <span className="text-sm text-zinc-500 dark:text-zinc-400">
-        current: {theme} / applied: {resolvedTheme}
-      </span>
+          {switchDark ? (<Moon className="w-4 text-neutral-100" />) : (<Sun className="w-4 text-neutral-500" />)}
+        </span>
+      </button>
+      {/* 
+      <span
+        className={`
+          text-sm
+          ${isDark
+            ? "font-bold text-neutral-800 dark:text-neutral-100"
+            : "text-neutral-400"
+          }
+        `}
+      >
+        Dark
+      </span> */}
     </div>
   );
 }

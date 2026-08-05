@@ -2,18 +2,10 @@
 
 import { useTaskNotesRealtime } from "@/utils/hooks/useTaskNotesRealtime";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, FilePlusCorner, PencilLine, Play, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { AiOutlineFileAdd } from "react-icons/ai";
-import { FiEdit3 } from "react-icons/fi";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { BiSolidRightArrow } from "react-icons/bi";
-
-import { RiFullscreenFill } from "react-icons/ri";
-import { MdOutlineNotes } from "react-icons/md";
-import { CgBorderStyleSolid } from "react-icons/cg";
 import { DiffResult } from "@/utils/function/comparHistory";
 import { Task } from "@/utils/types/task";
 import { usePathname } from "next/navigation";
@@ -106,9 +98,9 @@ export default function DashboardNotesViewer({ SerialClick }: DashboardNotesView
           <div className="flex gap-4 pr-2 pointer-events-auto">
             <ul className="flex gap-0.5 items-center z-10">
               <li onClick={() => setViewerType("all")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-sm cursor-pointer hover:opacity-100 ${viewerType === "all" ? "opacity-100 pointer-events-none" : "opacity-40"}`}>ALL</li>
-              <li onClick={() => setViewerType("added")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><AiOutlineFileAdd /><span className="text-sm">追加</span></li>
-              <li onClick={() => setViewerType("changed")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "changed" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FiEdit3 /><span className="text-sm">編集</span></li>
-              <li onClick={() => setViewerType("delete")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "delete" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FaRegTrashAlt /><span className="text-sm">削除</span></li>
+              <li onClick={() => setViewerType("added")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "added" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><FilePlusCorner className="w-4.5 text-neutral-500" /><span className="text-sm">追加</span></li>
+              <li onClick={() => setViewerType("changed")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "changed" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><PencilLine className="w-4.5 text-neutral-500" /><span className="text-sm">編集</span></li>
+              <li onClick={() => setViewerType("delete")} className={`flex items-center justify-center gap-1 backdrop-blur-md h-7 px-2 bg-white/60 dark:bg-black/40 rounded-tl-md rounded-tr-md text-base cursor-pointer hover:opacity-100 ${viewerType === "delete" ? "opacity-100 pointer-events-none" : "opacity-40"}`}><Trash2 className="w-4.5 text-neutral-500" /><span className="text-sm">削除</span></li>
             </ul>
           </div>
 
@@ -226,7 +218,7 @@ function DiffItem({
       <h4 className="font-semibold text-neutral-300 whitespace-nowrap w-full">【{label}】</h4>
       {/* <div className={`text-gray-500 leading-relaxed ${!oldValue || oldValue === "" ? "" : "line-through"}`}>{formatValue(oldValue)}</div> */}
       <div className={`flex-1 text-neutral-400 bg-neutral-700 leading-relaxed py-0.5 px-1 rounded-sm h-[stretch]`}>{formatValue(oldValue)}</div>
-      <BiSolidRightArrow className="font-sm" />
+      <Play className="w-3 fill-neutral-300" />
 
       {isLongField && hasDiff ? (
         <div

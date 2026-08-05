@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import LogoutBtn from "@/components/ui/LogoutBtn";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/app/AuthProvider";
 import { Button, Input } from "@headlessui/react";
 import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
-
-import { FaSearch } from "react-icons/fa";
 
 import { RiTeamFill } from "react-icons/ri";
 import { IoFlag, IoPerson, IoReceipt } from "react-icons/io5";
@@ -16,21 +13,12 @@ import { FaRegCalendarCheck, FaClipboardList } from "react-icons/fa";
 import { FaGear, FaStar } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
 
-
 import { TbMessageReport } from "react-icons/tb";
 
-import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
-import MultiSelectPopover from "./ui/MultiSelectPopover";
-import HelpDrawer from "./HelpDrawer";
-import AddTask from "./AddTask";
-import TaskNotesViewer from "./TaskNotesViewer";
-import RuleBoardLinkBtn from "./ui/RuleBoardLinkBtn";
 import MenuBtn from "./MenuBtn";
-import { SideMenuBtn, WithBadgeSideMenuBtn } from "@/components/ui/SideMenuBtn";
-import { ChevronDownIcon } from "lucide-react";
-
-type TaskListSortType = "byDate" | "byManager";
-type InvoiceSortStates = "byDate" | "byClient" | "byClientRev";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { SideMenuBtn, UserMenu, WithBadgeSideMenuBtn } from "@/components/ui/SideMenuBtn";
+import { CalendarCheck, ChevronDownIcon, ClipboardList, LayoutDashboard, MessageSquareWarning, ScrollText, Settings, Star, Trash2, User, Users } from "lucide-react";
 
 interface SideMenuProps {
   onClick: () => void;
@@ -41,41 +29,6 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
   const { user } = useAuth();
   const router = useRouter();
 
-  const [isLogoutOpen, setIsLogoutOpen] = useState<boolean>(false);
-  const [isScroll, setIsScroll] = useState<boolean>(false);
-  const threshold = 50;
-  const lastScrollY = useRef(0);
-  const ticking = useRef(false);
-
-  const [currentUserName, setCurrentUserName] = useState<string>('');
-
-  const pageIndex: Record<string, string> = {
-    "/": "全体タスク一覧",
-    "/personal": "個人タスク一覧",
-    "/complete": "完了タスク一覧",
-    "/important": "重要タスク一覧",
-    "/trash": "削除済タスク一覧",
-    "/setting": "各種設定",
-    "/invoice": "請求データ一覧",
-    "/release-notes": "リリースノート一覧",
-    "/dashboard": "ダッシュボード"
-  }
-
-  const {
-    taskListSortType,
-    setTaskListSortType,
-    invoiceSortState,
-    setInvoiceSortState,
-    filters,
-    setFilters
-  } = useTaskListPreferences();
-
-  const setCurrentUser = async () => {
-    if (user) {
-      setCurrentUserName(user.name);
-    }
-  }
-
   function handleReport() {
     const report = confirm("報告用のスプレッドシートに移行します。");
     if (report) {
@@ -83,11 +36,6 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
       window.open(url, '_blank', 'noopener,noreferrer');
     }
   }
-
-  useEffect(() => {
-    setCurrentUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   const falsePathname = ['/login', '/reset', '/signup']
   const pathname = usePathname();
@@ -104,7 +52,8 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
               <AddTask />
             </div> */}
             {/* バグ報告ボタン */}
-            <MenuBtn />
+            {/* <MenuBtn /> */}
+            <ThemeSwitcher />
             <Button tabIndex={-1} onClick={onClick} className="cursor-pointer p-3 grid place-content-center">
               <ChevronDownIcon className={`${isSideMenuOpen ? "rotate-90" : "-rotate-90"}`} />
             </Button>
@@ -114,7 +63,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
             <div className="flex flex-col">
               <SideMenuBtn
                 title="ダッシュボード"
-                icon={<MdSpaceDashboard className="text-xl" />}
+                icon={<LayoutDashboard className="w-5" />}
                 pathname="/dashboard"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/dashboard')}
@@ -126,7 +75,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="全体タスク"
-                icon={<RiTeamFill className="text-xl" />}
+                icon={<Users className={`w-5`} />}
                 pathname="/"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/')}
@@ -134,7 +83,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="個人タスク"
-                icon={<IoPerson className="text-xl" />}
+                icon={<User className="w-5" />}
                 pathname="/personal"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/personal')}
@@ -142,7 +91,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="完了済みタスク"
-                icon={<FaRegCalendarCheck className="text-xl" />}
+                icon={<CalendarCheck className="w-5" />}
                 pathname="/complete"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/complete')}
@@ -150,7 +99,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="重要タスク"
-                icon={<FaStar className="text-xl" />}
+                icon={<Star className="w-5" />}
                 pathname="/important"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/important')}
@@ -158,7 +107,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="削除済みタスク"
-                icon={<FaRegTrashAlt className="text-xl" />}
+                icon={<Trash2 className="w-5" />}
                 pathname="/trash"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/trash')}
@@ -170,7 +119,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <WithBadgeSideMenuBtn
                 title="掲示板"
-                icon={<FaClipboardList className="text-xl" />}
+                icon={<ClipboardList className="w-5" />}
                 pathname="/rule"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/rule')}
@@ -178,7 +127,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="請求一覧"
-                icon={<IoReceipt className="text-xl" />}
+                icon={<ScrollText className="w-5" />}
                 pathname="/invoice"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/invoice')}
@@ -190,7 +139,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="各種設定"
-                icon={<FaGear className="text-xl" />}
+                icon={<Settings className="w-5" />}
                 pathname="/setting"
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/setting')}
@@ -198,11 +147,13 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
               <SideMenuBtn
                 title="フィードバック"
-                icon={<TbMessageReport className="text-xl" />}
+                icon={<MessageSquareWarning className="w-5" />}
                 pathname=""
                 isSideMenuOpen={isSideMenuOpen}
                 onClick={handleReport}
               />
+
+              {/* <UserMenu /> */}
 
               {/* <div className="p-2 flex justify-end">
                 <button tabIndex={-1} className="flex gap-1 items-center py-1.25 px-3 bg-green-700/80 dark:bg-green-800 text-neutral-100 rounded-md hover:opacity-60 cursor-pointer" onClick={handleReport}><TbMessageReport className="text-xl" /></button>
@@ -341,8 +292,9 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
               </div>
             )}
           </div> */}
-        </aside>
-      )}
+        </aside >
+      )
+      }
     </>
   )
 
