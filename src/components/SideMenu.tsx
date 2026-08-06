@@ -4,16 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/app/AuthProvider";
 import { Button, Input } from "@headlessui/react";
-import { FaRegTrashAlt, FaFilter, FaUserCircle } from "react-icons/fa";
-
-import { RiTeamFill } from "react-icons/ri";
-import { IoFlag, IoPerson, IoReceipt } from "react-icons/io5";
-import { FaRegCalendarCheck, FaClipboardList } from "react-icons/fa";
-
-import { FaGear, FaStar } from "react-icons/fa6";
-import { MdSpaceDashboard } from "react-icons/md";
-
-import { TbMessageReport } from "react-icons/tb";
 
 import MenuBtn from "./MenuBtn";
 import ThemeSwitcher from "@/components/ThemeSwitcher";

@@ -1,8 +1,3 @@
-import { FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
-import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
-import { MdAlarm, MdMailOutline } from "react-icons/md";
-import { FiPhone } from "react-icons/fi";
-
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useDraggable } from "@dnd-kit/core";
@@ -12,11 +7,11 @@ import { supabase } from "@/utils/supabase/supabase";
 import { toast } from "sonner";
 import HighlightText from "./ui/HighlightText";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
-import { FaRegBuilding, FaStar } from "react-icons/fa6";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { Tooltip } from "react-tooltip";
 import { RemarksHoverMark } from "./ui/RemarksHoverMark";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
+import { AlarmClock, Building, CalendarClock, CheckCircle, CircleQuestionMark, Mail, Phone, Star } from "lucide-react";
 
 interface CardPropd {
   task: Task;
@@ -319,11 +314,11 @@ export default function PersonalCard({
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
           <HighlightText text={task.serial} keyword={filters.searchKeywords} />
           {user.important_task_id && user.important_task_id.includes(task.id) && (
-            <FaStar className="text-yellow-300 text-lg" />
+            <Star className="text-yellow-300 text-lg" />
           )}
           {currentDeadline && (
             <>
-              <MdAlarm className="text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+              <AlarmClock className="w-4 text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
               <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px", zIndex: 50 }} />
             </>
           )}
@@ -331,11 +326,11 @@ export default function PersonalCard({
         <h3 className="relative text-base font-bold flex items-center gap-1 pr-16">
           {
             task.method === 'mail' ?
-              <MdMailOutline className="w-4 h-4" />
+              <Mail className="w-4 h-4" />
               : task.method === 'tel' ?
-                <FiPhone className="w-4 h-4" />
+                <Phone className="w-4 h-4" />
                 :
-                <FaRegQuestionCircle className="w-4 h-4" />
+                <CircleQuestionMark className="w-4 h-4" />
           }
           <span className="truncate flex-1">
             <HighlightText text={task.title} keyword={filters.searchKeywords} />
@@ -373,9 +368,9 @@ export default function PersonalCard({
 
         <div className="p-2 rounded-md overflow-hidden relative font-bold dark:font-normal before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
           <div className="grid gap-2 text-sm grid-cols-6">
-            <div className="col-span-2 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
-            <div className="col-span-2 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>
-            <div className="col-span-2 flex gap-1 items-center"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
+            <div className="col-span-2 flex gap-1 items-center"><Building className="w-4 text-neutral-700" />{clientList[task.client]} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+            <div className="col-span-2 flex gap-1 items-center"><CalendarClock className="w-4 text-neutral-700" />{task.request_date}</div>
+            <div className="col-span-2 flex gap-1 items-center"><CheckCircle className="w-4 text-neutral-700" />{task.finish_date ? task.finish_date : "-"}</div>
           </div>
         </div>
       </div>

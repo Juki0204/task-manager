@@ -4,28 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { Button, DialogTitle } from "@headlessui/react";
 
-import { MdAlarm, MdDriveFileRenameOutline, MdLaptopChromebook, MdMailOutline } from "react-icons/md";
-import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
-import { FaStar } from "react-icons/fa";
-
-import { GrClose } from "react-icons/gr";
-import { IoPersonAddOutline } from "react-icons/io5";
-import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
-import { BsPersonCheck } from "react-icons/bs";
-import { LuNotebookPen } from "react-icons/lu";
-
 import { supabase } from "@/utils/supabase/supabase";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
 import { toast } from "sonner";
 import { User } from "@/utils/types/user";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
 import { TaskNote } from "@/utils/hooks/useTaskNotesRealtime";
-import { TbClockExclamation } from "react-icons/tb";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 import { extractMailRefs } from "@/utils/function/extractMailRefs";
 import MailConverter from "./MailConverter";
 import { useTaskUnread } from "./TaskUnreadProvider";
+import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, PenLine, Pickaxe, Star, UserCheck, UserPlus, X } from "lucide-react";
 
 
 interface TaskDetailProps {
@@ -296,7 +286,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         </div>
 
         <DialogTitle className="w-full font-bold text-lg col-span-2 text-justify flex gap-1 items-center leading-none">
-          <MdDriveFileRenameOutline /><span className="flex-1">{task.title}</span>
+          <PenLine className="w-4.5 text-neutral-500" /><span className="flex-1">{task.title}</span>
         </DialogTitle>
 
         <div className="w-full border-b border-neutral-400 dark:border-neutral-500 py-1.5 px-2 text-sm">{task.description}</div>
@@ -304,22 +294,22 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         <div className="w-full relative flex justify-between gap-2 tracking-wider">
           <div className="flex">
             <div className="flex gap-1 items-center pr-1.5 w-fit whitespace-nowrap py-1 font-bold text-sm">
-              <FaRegBuilding />
+              <Building className="w-4.5 text-neutral-500" />
               {task.client}
             </div>
             <div className="flex gap-1 items-center px-1.5 w-fit whitespace-nowrap py-1 font-bold text-sm">
-              <IoPersonAddOutline />
+              <UserPlus className="w-4.5 text-neutral-500" />
               {task.requester}
             </div>
           </div>
 
           <div className="flex gap-1 items-center pl-1.5 w-fit whitespace-nowrap py-1 font-bold text-sm">
-            <RiCalendarScheduleLine />
+            <CalendarClock className="w-4.5 text-neutral-500" />
             {task.request_date}
           </div>
         </div>
 
-        <GrClose onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
+        <X onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
       </div>
 
       <div
@@ -338,26 +328,26 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         <div className="col-span-2 flex gap-2">
           <div className="flex flex-1 flex-wrap gap-2">
             <div className="flex flex-col flex-1 bg-neutral-200 dark:bg-[#444444] rounded-md pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><BsPersonCheck /> 作業担当者</h3>
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><UserCheck className="w-4.5 text-neutral-500" /> 作業担当者</h3>
               <p className="border-b border-neutral-400 py-1 px-2 text-sm">{task.manager ? task.manager : "-"}</p>
             </div>
             <div className="flex flex-col w-30 bg-neutral-200 dark:bg-[#444444] rounded-md pb-1.5 px-1.5">
-              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><TbClockExclamation /> 優先度</h3>
+              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><ClockAlert className="w-4.5 text-neutral-500" /> 優先度</h3>
               <p className={`py-1 px-2 text-sm font-bold ${priorityStyle !== "" ? priorityStyle + " text-center rounded-md" : "border-b border-neutral-400"}`}>{task.priority ? task.priority : "-"}</p>
             </div>
             <div className="flex flex-col w-full bg-neutral-200 dark:bg-[#444444] rounded-md pb-1.5 px-1.5">
-              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><MdLaptopChromebook /> 作業状況</h3>
+              <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><Pickaxe className="w-4.5 text-neutral-500" /> 作業状況</h3>
               <p className={`py-1 px-2 rounded-md text-center text-sm font-bold ${statusStyle}`}>{task.status}</p>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
             <div className="flex flex-col w-30 bg-amber-800/15 dark:bg-[#4d413b] rounded-md pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><MdAlarm /> 期限日</h3>
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><AlarmClock className="w-4.5 text-neutral-500" /> 期限日</h3>
               <p className={`border-b border-neutral-400 py-1 px-2 text-sm ${currentDeadline ? "text-red-600 dark:text-yellow-400" : ""}`}>{currentDeadline ? currentDeadline.date : "-"}</p>
             </div>
             <div className="flex flex-col w-30 bg-amber-800/15 dark:bg-[#4d413b] rounded-md pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><FaRegCheckCircle /> 完了日</h3>
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><CircleCheck className="w-4.5 text-neutral-500" /> 完了日</h3>
               <p className="border-b border-neutral-400 py-1 px-2 text-sm">{task.finish_date ? task.finish_date : "-"}</p>
             </div>
           </div>
@@ -376,7 +366,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
                 onClick={() => { setNotesOpen(false); setMailOpen(!mailOpen) }}
                 className="w-fit flex gap-1 items-center px-2.5 py-0.25 font-normal rounded-full text-xs tracking-wider text-white bg-slate-600 dark:bg-blue-600/50 cursor-pointer transition-all hover:bg-slate-500"
               >
-                <MdMailOutline className="text-base" />依頼に関連するメール {mailRefs.length}件
+                <Mail className="w-4" />依頼に関連するメール {mailRefs.length}件
               </div>
             )}
             {unread && <span className="px-4 py-0.25 font-bold bg-yellow-200 dark:text-neutral-700 text-xs rounded-full">更新あり</span>}
@@ -396,7 +386,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
           onClick={lockedTaskHandler}
           className="w-full flex gap-2 items-center justify-center mb-3 pr-4 rounded-md bg-neutral-900 dark:bg-slate-700 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
         >
-          <MdDriveFileRenameOutline />
+          <PenLine className="w-4.5 text-neutral-100" />
           {editingUser ? `${editingUser.userName}さんが編集中...` : "編集"}
         </Button>
 
@@ -414,7 +404,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
               }}
               className={`w-9 h-9 grid place-content-center rounded-md hover:opacity-80 cursor-pointer ${importantIds?.includes(task.id) ? "bg-blue-600/70" : "bg-neutral-300"}`}
             >
-              <FaStar className={`text-lg ${importantIds?.includes(task.id) ? "text-yellow-300" : "text-neutral-500"}`} />
+              <Star className={`text-lg ${importantIds?.includes(task.id) ? "text-yellow-300" : "text-neutral-500"}`} />
             </div>
           )}
           <Button
@@ -435,7 +425,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
       {notes && notes.length > 0 && (
         <div className={`w-80 h-120 bg-neutral-100 dark:bg-neutral-800 p-4 pr-3 mb-0 rounded-2xl absolute bottom-0 -z-10 transition-all duration-200 ${notesOpen ? "left-[calc(100%+1rem)]" : "left-0"}`}>
-          <GrClose onClick={() => setNotesOpen(false)} className="absolute top-4.5 right-4.5 cursor-pointer" />
+          <X onClick={() => setNotesOpen(false)} className="absolute top-4.5 right-4.5 cursor-pointer" />
           <h3 className="font-bold text-sm text-center">変更履歴ログ</h3>
           <div className="h-[calc(100%-1.25rem)] pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
             {notes?.map(note => (
@@ -451,7 +441,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
       {/* メールドロワー */}
       {mailRefs && mailRefs.length > 0 && (
         <div className={`min-h-120 flex flex-col h-full bg-neutral-100 dark:bg-neutral-800 shadow-2xl shadow-black/30 p-4 pb-3 rounded-2xl absolute bottom-0 -z-10 transition-all duration-300 ${mailOpen ? "left-[calc(100%+1rem)] w-180" : "left-0 w-10"}`}>
-          <GrClose onClick={() => setMailOpen(false)} className="absolute top-5 right-5 cursor-pointer" />
+          <X onClick={() => setMailOpen(false)} className="absolute top-5 right-5 cursor-pointer" />
           <div className="grid grid-cols-3 gap-2 mb-4 pr-8">
             {mailRefs.map(m => (
               <div

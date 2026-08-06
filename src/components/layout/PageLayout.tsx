@@ -109,8 +109,8 @@ export function PageLayout({
             {titleAddon}
 
             {!nonFilterPathname.includes(pathname) && (
-              <div className="flex gap-1 items-center px-3 text-xs rounded-full bg-neutral-200 dark:bg-neutral-500 cursor-pointer hover:opacity-80" onClick={() => setIsFilterOpen(!isFilterOpen)}>
-                <Filter className="w-3 text-neutral-500 dark:text-neutral-100 cursor-pointer" />
+              <div className="h-8 flex gap-1 items-center px-3 text-xs rounded-full bg-neutral-200 dark:bg-neutral-500 cursor-pointer hover:opacity-80" onClick={() => setIsFilterOpen(!isFilterOpen)}>
+                <Filter className="w-3.5 text-neutral-500 dark:text-neutral-100 cursor-pointer" />
                 FILTER
               </div>
             )}

@@ -12,7 +12,7 @@ interface TaskColumnProps {
   user: User;
   onClick: (t: Task) => void;
   onContextMenu: (e: React.MouseEvent, taskId: string, taskSerial: string) => void;
-  className: string;
+  titleStyle: string;
   currentClickTask: string | null;
   onEdit: (t: Task) => void;
   draggingTaskId: string | null;
@@ -29,7 +29,7 @@ export function TaskColumn({
   user,
   onClick,
   onContextMenu,
-  className,
+  titleStyle,
   currentClickTask,
   onEdit,
   draggingTaskId,
@@ -41,30 +41,34 @@ export function TaskColumn({
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div ref={setNodeRef} className={className}>
-      <h2 className="font-bold text-white p-2 text-center bg-neutral-800/50 mb-1">{title}</h2>
+    <div ref={setNodeRef} className="flex flex-col min-h-[calc(100vh-9.5rem)] min-w-90">
+      <h2 className={`font-bold p-2 text-center ${titleStyle}`}>{title}</h2>
 
-      {tasks.map((task, index) => (
-        <PersonalCard
-          user={user}
-          key={task.id}
-          data={{ containerId: id }}
-          task={task}
-          onClick={onClick}
-          onContextMenu={onContextMenu}
-          currentClickTask={currentClickTask}
-          onEdit={onEdit}
-          isDraggable={
-            !task.manager || task.manager === user.name
-          }
-          draggingTaskId={draggingTaskId}
-          draggingTaskPrevIndex={draggingTaskPrevIndex}
-          index={index}
-          flyAnimationRef={flyAnimationRef}
-          lastDropRef={lastDropRef}
-          deadlineList={deadlineList}
-        />
-      ))}
+      <div className={`p-0.5 h-full ${titleStyle}`}>
+        <div className="p-1.5 bg-neutral-100 flex flex-col gap-1 h-full">
+          {tasks.map((task, index) => (
+            <PersonalCard
+              user={user}
+              key={task.id}
+              data={{ containerId: id }}
+              task={task}
+              onClick={onClick}
+              onContextMenu={onContextMenu}
+              currentClickTask={currentClickTask}
+              onEdit={onEdit}
+              isDraggable={
+                !task.manager || task.manager === user.name
+              }
+              draggingTaskId={draggingTaskId}
+              draggingTaskPrevIndex={draggingTaskPrevIndex}
+              index={index}
+              flyAnimationRef={flyAnimationRef}
+              lastDropRef={lastDropRef}
+              deadlineList={deadlineList}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

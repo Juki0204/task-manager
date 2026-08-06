@@ -3,21 +3,11 @@ import { Invoice } from "@/utils/types/invoice";
 import { Input, Select, Textarea } from "@headlessui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { AiOutlinePicture } from "react-icons/ai";
-import { BsPersonCheck } from "react-icons/bs";
-import { FaRegCheckCircle } from "react-icons/fa";
-import { GrClose, GrFormNext, GrFormPrevious } from "react-icons/gr";
-import { MdDriveFileRenameOutline, MdLaptopChromebook, MdOutlineCategory, MdTask, MdOutlineStickyNote2, MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
-import { FaCalculator } from "react-icons/fa6";
-import { PiPuzzlePiece } from "react-icons/pi";
-import { HiOutlineAdjustments } from "react-icons/hi";
-import { BiCalculator, BiCategoryAlt } from "react-icons/bi";
-import { LuNotebookPen } from "react-icons/lu";
+import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 
 import { toast } from "sonner";
 import { OutlineBtn } from "../ui/Btn";
-
-
+import { Building, Calculator, ChartBarStacked, ChevronLeft, ChevronRight, CircleCheck, FileCheck, Image, Laptop, NotebookPen, Puzzle, SlidersVertical, UserCheck, UserPlus, X } from "lucide-react";
 
 
 interface AllEditableFormProps {
@@ -573,9 +563,9 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
         請求データ一括入力
         <span className="text-xs text-neutral-400">TABキー, TAB + SHIFTキー押下で項目移動可能</span>
         <div onClick={() => setLPCalcOpen(true)} className="flex gap-1 items-center absolute top-1.5 right-10 cursor-pointer text-xs py-0.5 px-1.5 rounded-sm bg-neutral-300 text-neutral-800 hover:opacity-60">
-          <FaCalculator />LP計算機
+          <Calculator className="w-4.5 text-neutral-500" />LP計算機
         </div>
-        <GrClose onClick={onClose} className="absolute top-2 right-2 cursor-pointer" />
+        <X onClick={onClose} className="absolute top-2 right-2 cursor-pointer" />
       </h2>
 
       <div className="flex gap-2 mb-2">
@@ -607,10 +597,10 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                 <BsPersonCheck />タスクNo
               </h3> */}
             <div
-              className="flex gap-1 items-center rounded-md cursor-pointer text-sm font-bold"
+              className="flex gap-1 items-center px-1 rounded-md cursor-pointer text-sm font-bold bg-neutral-100 dark:bg-[#313131]"
               onClick={onCheckTask}
             >
-              <MdTask />{currentInvoice.serial}
+              <FileCheck className="w-4.5 text-neutral-500" />{currentInvoice.serial}
             </div>
           </div>
 
@@ -655,7 +645,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           {/* クライアント */}
           <div className="col-span-4">
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
-              <BsPersonCheck />店舗名
+              <Building className="w-4.5 text-neutral-500" />店舗名
             </h3>
             <Input
               tabIndex={-1}
@@ -669,7 +659,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           {/* 作業担当者 */}
           <div className="col-span-3">
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
-              <BsPersonCheck />依頼者
+              <UserPlus className="w-4.5 text-neutral-500" />依頼者
             </h3>
             <Input
               tabIndex={-1}
@@ -683,7 +673,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           {/* 作業担当者 */}
           <div className="col-span-4">
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
-              <BsPersonCheck />作業担当者
+              <UserCheck className="w-4.5 text-neutral-500" />作業担当者
             </h3>
             <Input
               tabIndex={-1}
@@ -697,7 +687,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           {/* 完了日 */}
           <div className="col-span-3">
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
-              <FaRegCheckCircle />完了日
+              <CircleCheck className="w-4.5 text-neutral-500" />完了日
             </h3>
             <Input
               tabIndex={-1}
@@ -730,7 +720,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           {/* 大カテゴリ */}
           <div className="col-span-2">
             <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
-              <BiCategoryAlt />大カテゴリ
+              <ChartBarStacked className="w-4.5 text-neutral-500" />大カテゴリ
             </h3>
             <Input
               tabIndex={-1}
@@ -744,7 +734,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           {/* 中カテゴリ */}
           <div className="flex gap-x-2 flex-wrap col-span-9 border-l border-neutral-200 pl-2">
             <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
-              <MdLaptopChromebook />中カテゴリ選択
+              <Laptop className="w-4.5 text-neutral-500" />中カテゴリ選択
             </h3>
 
             {mediaOptions.map((opt, index) => (
@@ -787,7 +777,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
         {/* 小カテゴリ */}
         <div className="flex flex-wrap">
           <h3 className="w-full flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold">
-            <AiOutlinePicture />
+            <Image className="w-4.5 text-neutral-500" />
             作業カテゴリ選択
             <span
               className={`pb-1 pt-0.5 px-2 text-black text-xs rounded-md cursor-pointer ${!tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
@@ -987,7 +977,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {/* 作業点数 */}
             <div className="col-span-2">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><PiPuzzlePiece />作業点数</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><Puzzle className="w-4.5 text-neutral-500" />作業点数</h3>
               <Input
                 tabIndex={0}
                 ref={piecesRef}
@@ -1022,7 +1012,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {/* 修正度 */}
             <div className="col-span-2">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><HiOutlineAdjustments />修正度</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><SlidersVertical className="w-4.5 text-neutral-500" />修正度</h3>
               <Select
                 tabIndex={0}
                 value={tempInvoiceValue.degree ?? "100"}
@@ -1044,7 +1034,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {/* 修正金額 */}
             <div className="col-span-2">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><BiCalculator />修正金額</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><Calculator className="w-4.5 text-neutral-500" />修正金額</h3>
               <Input
                 tabIndex={0}
                 type="tel"
@@ -1079,7 +1069,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {/* 仮請求額 */}
             <div className="col-span-3 pr-6 relative after:content-['▶'] after:text-neutral-400 after:absolute after:right-0 after:bottom-1">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><BiCalculator />仮請求額</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><Calculator className="w-4.5 text-neutral-500" />仮請求額</h3>
               <Input
                 tabIndex={-1}
                 type="number"
@@ -1092,7 +1082,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {/* 本請求額 */}
             <div className="col-span-3">
-              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><BiCalculator />本請求額</h3>
+              <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><Calculator className="w-4.5 text-neutral-500" />本請求額</h3>
               <Input
                 tabIndex={-1}
                 type="number"
@@ -1106,7 +1096,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
           {/* 備考欄 */}
           <div className="flex-1 p-2 rounded-md bg-neutral-200 dark:bg-[#444444]">
-            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><LuNotebookPen />備考欄</h3>
+            <h3 className="flex items-center gap-1 text-sm pl-0.5 mb-1 text-neutral-500 dark:text-neutral-100 font-bold"><NotebookPen className="w-4.5 text-neutral-500" />備考欄</h3>
             <Textarea
               tabIndex={0}
               value={tempInvoiceValue.remarks ?? ""}
@@ -1130,9 +1120,9 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
             if (!prevId) return;
             onChangeRecord(prevId);
           }}
-          className="flex gap-1 pl-2 pr-4 py-2 leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex gap-1 pl-2 pr-4 py-1 items-center leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <GrFormPrevious />
+          <ChevronLeft className="w-4.5" />
           <span className="flex-1 text-center">前の請求</span>
         </button>
 
@@ -1157,10 +1147,10 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
             if (!nextId) return;
             onChangeRecord(nextId);
           }}
-          className="flex gap-1 pl-4 pr-2 py-2 leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex gap-1 pl-4 pr-2 py-1 items-center leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="flex-1 text-center">次の請求</span>
-          <GrFormNext />
+          <ChevronRight className="w-4.5" />
         </button>
       </div>
 

@@ -13,14 +13,10 @@ import InvoiceTaskDetail from "./InvoiceTaskDetail";
 import EditableCombobox from "./EditableCombobox";
 import EditableTextarea from "./EditableTextarea";
 
-import { FaSortAmountDown, FaSortAmountDownAlt } from "react-icons/fa";
-import { MdTask } from "react-icons/md";
-import { PiNotePencilBold } from "react-icons/pi";
-
-
 import AllEditableForm from "./AllEditableForm";
 import ToggleRowNumber from "./ToggleRowNumber";
 import { InvoiceEditingProvider } from "./InvoiceEditingProvider";
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, FileCheck, SquarePen } from "lucide-react";
 
 
 interface InvoiceListProps {
@@ -236,13 +232,13 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
           <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-20 z-20">確認</div>
           <div className={`border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 sticky left-30 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
             クライアント
-            {sortState === "byClient" && <FaSortAmountDownAlt className="absolute top-1/2 -translate-y-1/2 right-2" />}
-            {sortState === "byClientRev" && <FaSortAmountDown className="absolute top-1/2 -translate-y-1/2 right-2" />}
+            {sortState === "byClient" && <ArrowDownNarrowWide className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
+            {sortState === "byClientRev" && <ArrowDownWideNarrow className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
           </div>
           <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-80 z-20">作業タイトル</div>
           <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-140 z-20" id="standardPosition">作業内容</div>
           <div className={`border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 ${sortState === "byDate" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
-            完了日 {sortState === "byDate" && <FaSortAmountDownAlt className="absolute top-1/2 -translate-y-1/2 right-2" />}
+            完了日 {sortState === "byDate" && <ArrowDownNarrowWide className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
           </div>
           <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">担当者</div>
           <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">大カテゴリ</div>
@@ -280,7 +276,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 ${activeRecord?.currentId === i.id ? "!bg-yellow-300 text-black" : ""}
               `}
               >
-                <PiNotePencilBold className="text-lg" />
+                <SquarePen className="w-4.5" />
               </div>
               <div
                 className={`
@@ -289,7 +285,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
               `}
                 onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}
               >
-                <MdTask className="text-lg" />
+                <FileCheck className="w-4.5" />
                 {/* {i.serial} */}
               </div>
               <div className={`flex items-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-30 z-20 ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.client} 【{i.requester}】</div>

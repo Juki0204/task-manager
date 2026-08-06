@@ -1,4 +1,4 @@
-import { TbReload } from "react-icons/tb";
+import { RefreshCcw } from "lucide-react";
 
 type SubscriptionStatusProps = {
   health: "green" | "yellow" | "red";
@@ -18,7 +18,7 @@ export function SubscriptionStatus({
   }[health];
 
   return (
-    <div className="flex items-center gap-2 rounded-full bg-neutral-200 px-1.75 py-0.75 dark:bg-neutral-500">
+    <div className="h-8 flex items-center gap-2 rounded-full bg-neutral-200 px-1.75 py-0.75 dark:bg-neutral-500">
       <span className={`h-2.5 w-2.5 rounded-full ${healthClass}`} />
 
       <span className="mr-1 text-xs">{status}</span>
@@ -29,7 +29,7 @@ export function SubscriptionStatus({
           onClick={onResubscribe}
           className="flex items-center gap-1 rounded-full bg-neutral-400 px-2 py-0.25 pr-3 text-xs text-white hover:opacity-80 dark:bg-neutral-600"
         >
-          <TbReload />
+          <RefreshCcw className="w-3.5" />
           再購読
         </button>
       )}

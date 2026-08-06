@@ -32,8 +32,8 @@ export default function PersonalTaskList({
   deadlineList,
 }: PersonalTaskListProps) {
   return (
-    <div className="pb-4 overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-      <div className="grid grid-cols-4 gap-2 min-w-366">
+    <div className="pb-2 overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+      <div className="grid grid-cols-4 min-w-380">
         <TaskColumn
           id="NotYetStarted"
           title="未担当タスク"
@@ -41,7 +41,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-90"
+          titleStyle="bg-gray-200 dark:bg-neutral-700/50"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -58,7 +58,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-90"
+          titleStyle="bg-blue-600/10 dark:bg-blue-400/10"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -75,7 +75,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-90"
+          titleStyle="bg-pink-400/10 dark:bg-pink-400/15"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -112,7 +112,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-90"
+          titleStyle="bg-green-600/10 dark:bg-green-300/10"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
