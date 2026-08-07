@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { Task } from "@/utils/types/task";
-import { Dialog, DialogBackdrop, DialogPanel, Select } from "@headlessui/react";
+import { Button, Dialog, DialogBackdrop, DialogPanel, Input, Select } from "@headlessui/react";
 
 import AddTask from "@/components/AddTask";
 import TaskList from "@/components/TaskList";
@@ -18,21 +18,40 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { NonRealtimeNotice } from "@/components/common/NonRealtileNotice";
+import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
+import { Search } from "lucide-react";
 
+interface searchTermsTypes {
+  startYear: string,
+  startMonth: string,
+  endYear: string,
+  endMonth: string,
+  clients: string[],
+  assignees: string[],
+  keyword: string,
+}
 
 export default function CompletedTaskPage() {
   const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const [year, setYear] = useState<string>("");
-  const [month, setMonth] = useState<string>("");
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
 
   const [taskList, setTaskList] = useState<Task[]>([]);
   const { user } = useAuth();
   const { updateTaskStatus, deadlineList } = useTaskRealtime(user ?? null);
   const { filters } = useTaskListPreferences();
+
+  const [searchTerms, setSearchTerms] = useState<searchTermsTypes>({
+    startYear: "2025",
+    startMonth: "11",
+    endYear: "",
+    endMonth: "",
+    clients: [],
+    assignees: [],
+    keyword: "",
+  });
 
   const [menu, setMenu] = useState<{
     visible: boolean,
@@ -72,20 +91,34 @@ export default function CompletedTaskPage() {
     // }
   }
 
-  const getTasks = async (year: string, month: string) => {
-    if (!year || !month) return;
+  const getTasks = async () => {
     setIsLoaded(false);
-    const m = month.padStart(2, "0");
+    const sm = searchTerms.startMonth.padStart(2, "0");
+    const em = searchTerms.endMonth.padStart(2, "0");
 
-    const start = `${year}-${m}-01`;
-    const end = `${year}-${m}-31`;
+    const start = `${searchTerms.startYear}-${sm}-01`;
+    const end = `${searchTerms.endYear}-${em}-31`;
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("tasks")
       .select("*")
-      .eq("status", "完了")
       .gte("finish_date", start)
-      .lte("finish_date", end);
+      .lte("finish_date", end)
+      .eq("status", "完了");
+
+    if (searchTerms.clients.length > 0) {
+      query = query.in("client", searchTerms.clients);
+    }
+
+    if (searchTerms.assignees.length > 0) {
+      query = query.in("manager", searchTerms.assignees);
+    }
+
+    if (searchTerms.keyword) {
+      query = query.or(`title.ilike.%${searchTerms.keyword}%,description.ilike.%${searchTerms.keyword}%`);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error(error);
@@ -125,75 +158,218 @@ export default function CompletedTaskPage() {
     return sortedTask;
   }
 
-  useEffect(() => {
-    getTasks(year, month);
-  }, [year, month]);
-
   return (
     <PageLayout
-      title={
-        <>
-          <span className="inline-block mr-2">完了済タスク一覧</span>
-          <Select onChange={(e) => setYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-            <option value="">-</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-          </Select>
-          年
-          <Select onChange={(e) => setMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-            <option value="">-</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-          </Select>
-          月度分
-        </>
-      }
+      title="完了済タスク一覧"
       onClick={handleCloseContextMenu}
       actions={
         <NonRealtimeNotice />
       }
     >
 
-      {user && taskList.length > 0 ?
-        <TaskList
-          user={user}
-          taskList={sortTask(filteredTaskList)}
-          onClick={(t: Task) => {
-            if (isOpen) return;
-            if (menu.visible) return;
+      <div className="pb-4 flex gap-2 w-full max-w-[1876px]">
+        <div className="w-68 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-2">
+          <h2 className="w-full text-center font-bold text-sm mb-2">絞り込み検索</h2>
 
-            setActiveTask(t);
-            setModalType("detail");
-            setIsOpen(true);
-          }}
-          onContextMenu={handleContextMenu}
-          onEdit={(t: Task) => {
-            setActiveTask(t);
-            setModalType("edit");
-            setIsOpen(true);
-          }}
-          deadlineList={deadlineList}
-        />
-        :
-        month && year && isLoaded ?
-          <div className="text-center">該当するタスクがありません。</div>
-          :
-          !isLoaded ?
-            <div className="text-center">取得中...</div>
-            :
-            <div className="text-center">年月を選択すると該当月分の完了済みタスクが閲覧できます。</div>
-      }
+          <div className="text-justify text-sm">検索負荷軽減のため、期間は必須としています。<br />項目入力後、「検索ボタン」押下で該当する完了済みタスクが表示されます。</div>
+
+          <div className="flex flex-col gap-1 pb-3 border-b border-neutral-300">
+            <h3 className="font-bold text-sm">期間</h3>
+            <div className="flex gap-1 items-end">
+              <Select
+                onChange={(e) => {
+                  setSearchTerms({
+                    ...searchTerms,
+                    startYear: e.target.value,
+                  })
+                }}
+                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
+                value={searchTerms.startYear}
+              >
+                <option value="">-</option>
+                <option value="2024">2024</option>
+                <option value="2025" defaultChecked>2025</option>
+                <option value="2026">2026</option>
+              </Select>
+              年
+              <Select
+                onChange={(e) => {
+                  setSearchTerms({
+                    ...searchTerms,
+                    startMonth: e.target.value,
+                  })
+                }}
+                value={searchTerms.startMonth}
+                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
+              >
+                <option value="">-</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11" defaultChecked>11</option>
+                <option value="12">12</option>
+              </Select>
+              月<span className="px-1 text-sm">から</span>
+            </div>
+
+            <div className="flex gap-1 items-end">
+              <Select
+                onChange={(e) => {
+                  setSearchTerms({
+                    ...searchTerms,
+                    endYear: e.target.value,
+                  })
+                }}
+                value={searchTerms.endYear}
+                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
+              >
+                <option value="">-</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+              </Select>
+              年
+              <Select
+                onChange={(e) => {
+                  setSearchTerms({
+                    ...searchTerms,
+                    endMonth: e.target.value,
+                  })
+                }}
+                value={searchTerms.endMonth}
+                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
+              >
+                <option value="">-</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </Select>
+              月<span className="px-1 text-sm">まで</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1 z-40 pb-3 border-b border-neutral-300 dark:text-neutral-700">
+            <h3 className="font-bold text-sm dark:text-neutral-100">クライアント</h3>
+            <MultiSelectPopover
+              options={[
+                { id: 1, label: "難波秘密倶楽部" },
+                { id: 2, label: "新大阪秘密倶楽部" },
+                { id: 3, label: "谷町秘密倶楽部" },
+                { id: 4, label: "谷町人妻ゴールデン" },
+                { id: 5, label: "梅田人妻秘密倶楽部" },
+                { id: 6, label: "梅田ゴールデン" },
+                { id: 7, label: "中洲秘密倶楽部" },
+                { id: 8, label: "奥様クラブ" },
+                { id: 9, label: "快楽玉乱堂" },
+              ]}
+              selectedLabels={searchTerms.clients}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
+                setSearchTerms({
+                  ...searchTerms,
+                  clients: e.target.checked
+                    ? [...searchTerms.clients, label]
+                    : searchTerms.clients.filter((c) => c !== label)
+                })
+              }
+              defaultText="店舗を選択"
+              width={240}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1 pb-3 border-b border-neutral-300 dark:text-neutral-700">
+            <h3 className="font-bold text-sm dark:text-neutral-100">作業担当者</h3>
+            <MultiSelectPopover
+              options={[
+                { id: 1, label: "浜口" },
+                { id: 2, label: "飯塚" },
+                { id: 3, label: "谷" },
+                { id: 4, label: "田口" },
+                { id: 5, label: "西谷" },
+                { id: 6, label: "岡本" },
+                { id: 7, label: "未担当" },
+              ]}
+              selectedLabels={searchTerms.assignees}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
+                setSearchTerms({
+                  ...searchTerms,
+                  assignees: e.target.checked
+                    ? [...searchTerms.assignees, label]
+                    : searchTerms.assignees.filter((c) => c !== label)
+                })
+              }
+              defaultText="担当者を選択"
+              width={240}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1 dark:text-neutral-700">
+            <h3 className="font-bold text-sm dark:text-neutral-100">キーワード</h3>
+            <div className="relative">
+              <Search className="w-4 absolute top-1/2 left-2 -translate-y-1/2" />
+              <Input
+                tabIndex={-1}
+                type="text"
+                className="flex w-60 items-center justify-between rounded-md border border-gray-400 dark:border-gray-300 bg-neutral-100 px-4 pl-8 py-1 text-sm font-medium dark:shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                placeholder="タイトル or 内容"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+
+                  setSearchTerms({
+                    ...searchTerms,
+                    keyword: value.trim() === "" ? "" : value,
+                  });
+                }}
+              />
+            </div>
+          </div>
+
+          <Button
+            disabled={!searchTerms.startYear || !searchTerms.startMonth || !searchTerms.endYear || !searchTerms.endMonth}
+            onClick={getTasks}
+            className="w-full flex gap-2 items-center justify-center mt-3 pr-4 rounded-md bg-neutral-900 dark:bg-slate-700 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
+          >
+            検索
+          </Button>
+        </div>
+
+        {user && taskList.length > 0 &&
+          <TaskList
+            user={user}
+            taskList={sortTask(filteredTaskList)}
+            onClick={(t: Task) => {
+              if (isOpen) return;
+              if (menu.visible) return;
+
+              setActiveTask(t);
+              setModalType("detail");
+              setIsOpen(true);
+            }}
+            onContextMenu={handleContextMenu}
+            onEdit={(t: Task) => {
+              setActiveTask(t);
+              setModalType("edit");
+              setIsOpen(true);
+            }}
+            deadlineList={deadlineList}
+          />
+        }
+      </div>
 
       {/* 共通モーダル */}
       <Dialog

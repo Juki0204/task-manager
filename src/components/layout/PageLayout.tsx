@@ -8,7 +8,7 @@ import { FaFilter } from "react-icons/fa";
 import MultiSelectPopover from "../ui/MultiSelectPopover";
 import { FaSearch } from "react-icons/fa";
 import { Input } from "@headlessui/react";
-import { Filter } from "lucide-react";
+import { Filter, Search } from "lucide-react";
 
 type PageLayoutProps = {
   children: ReactNode;
@@ -87,7 +87,7 @@ export function PageLayout({
 
       <header
         className={[
-          "sticky top-0 py-2 bg-neutral-100 dark:bg-[#222222] flex flex-col z-40",
+          "sticky top-0 py-2 bg-neutral-100 dark:bg-[#222222] flex flex-col z-100",
           headerClassName,
         ]
           .filter(Boolean)
@@ -225,7 +225,7 @@ export function PageLayout({
             )}
 
             <div className="relative">
-              <FaSearch className="absolute top-1/2 left-2 -translate-y-1/2" />
+              <Search className="w-4 absolute top-1/2 left-2 -translate-y-1/2" />
               <Input
                 tabIndex={-1}
                 type="text"
