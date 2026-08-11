@@ -213,8 +213,8 @@ export default function AllTaskPage() {
       }
       actions={<AddTask />}
     >
-      {user && recentryTaskList && (
-        <div className="dark:bg-black pb-2 mb-4 border-b-2 border-neutral-300 dark:border-neutral-700">
+      {user && recentryTaskList.length > 0 && (
+        <div className="pb-2 mb-4 border-b-2 border-neutral-300 dark:border-neutral-700">
           <h3 className="mb-2 tracking-wider text-sm font-bold">■ 最近追加されたタスク（直近1時間）</h3>
           <TaskList
             user={user}

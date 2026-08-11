@@ -15,7 +15,7 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { extractMailRefs } from "@/utils/function/extractMailRefs";
 import MailConverter from "./MailConverter";
 import { useTaskUnread } from "./TaskUnreadProvider";
-import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, PenLine, Pickaxe, RotateCcwClock, Star, UserCheck, UserPlus, X } from "lucide-react";
+import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, PenLine, Pickaxe, Star, UserCheck, UserPlus, X } from "lucide-react";
 
 
 interface TaskDetailProps {
@@ -185,7 +185,6 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
     const check = () => {
       const sc = el.scrollHeight > el.clientHeight;
-
       setHasScrollbar(sc);
       // console.log(sc);
     };
@@ -273,7 +272,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
   return (
     <>
-      <div className={`${mailOpen ? "mailOpen" : ""} relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 pb-2 mb-2`}>
+      <div className={`${mailOpen ? "mailOpen" : ""} relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 pb-2 mb-1`}>
         <div className="flex items-center gap-2 w-full text-sm text-left leading-none">
           <p>{task.serial}</p>
           <p className={`py-0.5 px-2 rounded-full text-xs dark:text-neutral-700 ${task.method === "mail" ? "bg-orange-200" : task.method === "tel" ? "bg-green-300/60" : "bg-blue-200"}`}>
@@ -317,7 +316,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         ref={contentRef}
         className={`
           ${hasScrollbar ? "pr-2" : ""}
-          relative grid grid-cols-2 gap-x-4 gap-y-2 overscroll-contain max-h-[calc(100svh-294px)] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+          relative grid grid-cols-2 gap-x-4 gap-y-2 mb-3 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
         `}
       >
 
@@ -379,27 +378,9 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
           )}
         </div>
 
-        <div className="col-span-2 flex gap-1 items-center mt-1">
-          <span className="text-neutral-400/60 text-xs leading-none tracking-widest">OTHERS</span>
-          <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
-        </div>
-
-        {notes && notes.length > 0 && (
-          <div className={`col-span-2 h-auto bg-neutral-100 dark:bg-neutral-800 p-4 pr-3 mb-0 rounded-md`}>
-            <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><RotateCcwClock className="w-4.5 text-neutral-500" /> 優先度</h3>
-            <div className="h-[calc(100%-1.25rem)] pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
-              {notes?.map(note => (
-                <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
-                  <span className="block">{new Date(note.changed_at).toLocaleString("sv-SE")}</span>
-                  {note.changed_by}さんが{note.message.substring(10)}
-                </p>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
-      <div className="fixed bottom-0 right-0 w-full bg-white pt-4 px-4 pb-3 flex gap-x-2 flex-wrap justify-between col-span-2 mb-0">
+      <div className="flex gap-x-4 flex-wrap justify-between col-span-2 mb-0">
         <Button
           disabled={!!editingUser}
           onClick={lockedTaskHandler}
@@ -442,9 +423,24 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         </div>
       </div>
 
+      {notes && notes.length > 0 && (
+        <div className={`w-80 h-120 bg-neutral-100 dark:bg-neutral-800 p-4 pr-3 mb-0 rounded-2xl absolute bottom-0 -z-10 transition-all duration-200 ${notesOpen ? "left-[calc(100%+1rem)]" : "left-0"}`}>
+          <X onClick={() => setNotesOpen(false)} className="absolute top-4.5 right-4.5 cursor-pointer" />
+          <h3 className="font-bold text-sm text-center">変更履歴ログ</h3>
+          <div className="h-[calc(100%-1.25rem)] pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
+            {notes?.map(note => (
+              <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
+                <span className="block">{new Date(note.changed_at).toLocaleString("sv-SE")}</span>
+                {note.changed_by}さんが{note.message.substring(10)}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* メールドロワー */}
       {mailRefs && mailRefs.length > 0 && (
-        <div className={`max-h-160 h-full flex flex-col rounded-2xl bg-neutral-100 dark:bg-neutral-800 shadow-2xl shadow-black/30 p-4 absolute -z-10 bottom-4 pb-3 ${mailOpen ? "w-180 right-134 opacity-100" : "w-10 right-0 opacity-0"}`}>
+        <div className={`min-h-120 flex flex-col h-full bg-neutral-100 dark:bg-neutral-800 shadow-2xl shadow-black/30 p-4 pb-3 rounded-2xl absolute bottom-0 -z-10 transition-all duration-300 ${mailOpen ? "left-[calc(100%+1rem)] w-180" : "left-0 w-10"}`}>
           <X onClick={() => setMailOpen(false)} className="absolute top-5 right-5 cursor-pointer" />
           <div className="grid grid-cols-3 gap-2 mb-4 pr-8">
             {mailRefs.map(m => (
@@ -464,7 +460,6 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
           {activeMail && mailOpen && <p className="text-xs text-red-700 text-center pt-2">※梅田・中洲は特に文字コードが複雑で変換が不安定の為、内容に違和感がある場合は元のメールを確認してください。</p>}
         </div>
       )}
-
     </>
   )
 

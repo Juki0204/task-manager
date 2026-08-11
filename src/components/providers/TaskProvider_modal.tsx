@@ -169,52 +169,57 @@ export function TaskProvider({ children }: TaskProviderProps) {
     >
       {children}
 
-      {/* タスク共通ドロワー */}
-      <div
-        className={`
-          fixed right-0 top-0 z-100
-          h-svh w-[520px] p-4 pb-30
-          bg-white dark:bg-neutral-800
-          shadow-xl
-          transition-transform duration-300
-          ${isModalOpen ? "translate-x-0" : "translate-x-full"}
-        `}
+      {/* タスク共通モーダル */}
+      <Dialog
+        open={isModalOpen}
+        onClose={closeModal}
+        className="relative z-100 transition duration-300 ease-out data-closed:opacity-0"
       >
-        {modalType === "detail" &&
-          activeTask &&
-          user && (
-            <TaskDetail
-              user={user}
-              task={activeTask}
-              onClose={resetModal}
-              onEdit={handleEdit}
-              deadlineList={deadlineList}
-            />
-          )}
+        <DialogBackdrop
+          className="fixed inset-0"
+        />
 
-        {modalType === "edit" &&
-          activeTask &&
-          user && (
-            <UpdateTask
-              user={user}
-              task={activeTask}
-              onComplete={handleBackToDetail}
-              onCancel={handleBackToDetail}
-              onUnlock={unlockTask}
-              deadlineList={deadlineList}
-            />
-          )}
+        <div
+          className="fixed inset-0 flex w-screen items-center justify-end px-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]"
+        >
+          <DialogPanel className="relative w-130 h-full space-y-4 bg-neutral-100 p-4 pt-4.5 shadow-2xl shadow-black/30 dark:border dark:border-zinc-700 dark:bg-[#2b2b2b]">
+            {modalType === "detail" &&
+              activeTask &&
+              user && (
+                <TaskDetail
+                  user={user}
+                  task={activeTask}
+                  onClose={resetModal}
+                  onEdit={handleEdit}
+                  deadlineList={deadlineList}
+                />
+              )}
 
-        {modalType === "copy" &&
-          activeTask &&
-          user && (
-            <CopyTask
-              user={user}
-              task={activeTask}
-              onClose={resetModal}
-            />
-          )}
-      </div>
+            {modalType === "edit" &&
+              activeTask &&
+              user && (
+                <UpdateTask
+                  user={user}
+                  task={activeTask}
+                  onComplete={handleBackToDetail}
+                  onCancel={handleBackToDetail}
+                  onUnlock={unlockTask}
+                  deadlineList={deadlineList}
+                />
+              )}
+
+            {modalType === "copy" &&
+              activeTask &&
+              user && (
+                <CopyTask
+                  user={user}
+                  task={activeTask}
+                  onClose={resetModal}
+                />
+              )}
+          </DialogPanel>
+        </div>
+      </Dialog>
 
       {/* 編集中キャンセル確認 */}
       <CancelAlertModal
