@@ -105,7 +105,7 @@ export function useTaskRealtime(user: UserData) {
 
         const dateA = new Date(a.request_date).getTime();
         const dateB = new Date(b.request_date).getTime();
-        return dateA - dateB;
+        return dateB - dateA;
       });
       return copied;
     },

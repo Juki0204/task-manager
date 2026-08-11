@@ -42,9 +42,9 @@ export default function SettingPage() {
 
       <div className="pb-4 flex gap-4 w-full max-w-[1876px]">
 
-        <div className="w-90 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-12rem)]">
+        <div className="w-90 bg-neutral-200 outline -outline-offset-1 dark:outline-none outline-neutral-300 dark:bg-neutral-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-12rem)]">
           <div className="flex justify-between items-center py-2 px-3 rounded-md bg-slate-300 dark:bg-slate-800">
-            <p className="text-neutral-700 dark:text-white">Last Update: {lastUpdate}</p>
+            <p className="text-neutral-700 dark:text-white">最終更新: {lastUpdate}</p>
             <div onClick={() => router.push('/release-notes')} className="flex gap-1 justify-center items-center py-1 px-2 w-fit rounded-sm bg-green-800 text-white hover:cursor-pointer hover:opacity-60">
               <RotateCcwClock className="text-sm" /><span className="text-sm font-bold">更新履歴</span>
             </div>
@@ -61,7 +61,7 @@ export default function SettingPage() {
           </ul>
         </div>
 
-        <div className="flex-1 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+        <div className="flex-1 bg-neutral-200 outline -outline-offset-1 dark:outline-none outline-neutral-300 dark:bg-neutral-700 p-4 rounded-xl flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
           {activeMenu === "requester" && <RequesterSetting />}
           {activeMenu === "invoicePrice" && <PriceSetting />}
         </div>

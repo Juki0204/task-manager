@@ -287,6 +287,11 @@ export default function PersonalCard({
     }, DOUBLE_CLICK_GRACE);
   }
 
+  const convertDate = (date: string) => {
+    const splitDate = date.split("-");
+    return `${splitDate[1]}月${splitDate[2]}日`;
+  }
+
   return (
     <div
       ref={(el) => {
@@ -297,7 +302,7 @@ export default function PersonalCard({
       {...attributes}
       style={draggableStyle}
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} text-neutral-700 dark:text-neutral-100 min-w-90 shadow-xs shadow-neutral-400 dark:hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} text-neutral-700 dark:text-neutral-100 min-w-90 dark:hover:brightness-125 ${draggingTaskId === task.id ? "!z-10" : ""} ${isDragging ? "" : "transition-all duration-200"}`}>
 
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
 
@@ -367,10 +372,10 @@ export default function PersonalCard({
         </div> */}
 
         <div className="p-2 rounded-md overflow-hidden relative font-bold dark:font-normal before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
-          <div className="grid gap-2 text-sm grid-cols-6">
-            <div className="col-span-2 flex gap-1 items-center"><Building className="w-4 text-neutral-700" />{clientList[task.client]} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
-            <div className="col-span-2 flex gap-1 items-center"><CalendarClock className="w-4 text-neutral-700" />{task.request_date}</div>
-            <div className="col-span-2 flex gap-1 items-center"><CheckCircle className="w-4 text-neutral-700" />{task.finish_date ? task.finish_date : "-"}</div>
+          <div className="grid gap-2 text-sm grid-cols-[1.4fr_1fr_1fr]">
+            <div className="flex gap-1 items-center"><Building className="w-4" />{clientList[task.client]} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+            <div className="flex gap-1 items-center"><CalendarClock className="w-4" />{convertDate(task.request_date)}</div>
+            <div className="flex gap-1 items-center"><CheckCircle className="w-4" />{task.finish_date ? convertDate(task.finish_date) : "-"}</div>
           </div>
         </div>
       </div>

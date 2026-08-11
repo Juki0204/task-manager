@@ -136,7 +136,7 @@ export default function RulePage() {
 
       <div className="pb-4 flex gap-4 w-full max-w-[1876px]">
 
-        <div className="w-90 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-12rem)]">
+        <div className="w-90 bg-neutral-200 p-4 outline -outline-offset-1 dark:outline-none outline-neutral-300 dark:bg-neutral-700 rounded-xl flex flex-col gap-2 min-h-[calc(100vh-12rem)]">
           <div
             onClick={() => {
               setIsOpen(true);
@@ -248,18 +248,6 @@ export default function RulePage() {
             </li>
           </ul>
 
-          {/* <h2 className="font-bold text-white pl-1 border-b pb-1">使い方</h2>
-          <ul className="flex flex-col gap-1 mb-4 pl-0.5 pr-1 text-justify">
-            <li className="text-sm text-white tracking-wider">■ 新規追加は左上「新規追加」ボタンより入力フォームに内容を入力して下さい。</li>
-            <li className="text-sm text-white tracking-wider">■ タスク一覧同様、カードクリックで詳細表示、編集ボタンより編集が可能です。</li>
-            <li className="text-sm text-white tracking-wider"><span className="text-red-400">■ 現時点で削除機能は実装していないので、やむを得ず削除したい場合は管理者までご連絡ください。</span></li>
-            <li className="text-sm text-white tracking-wider">■ 新規投稿された情報には投稿者を含め、全員の未読 / 既読フラグが設定されます。</li>
-            <li className="text-sm text-white tracking-wider">■ 内容を確認したら「確認しました」ボタン押下で既読済になります。</li>
-            <li className="text-sm text-white tracking-wider mb-1">■ カード下部のバーの色で未読状態のステータスが確認できます。
-              <div className="flex gap-1 mt-1"><span className="bg-blue-600/80 px-2 rounded-md">未読（新規）</span><span className="bg-red-600/80 px-2 rounded-md">未読（更新分）</span><span className="bg-neutral-500 px-2 rounded-md">既読</span></div>
-            </li>
-            <li className="text-sm text-white tracking-wider">■ 編集後、全体に通知するかどうかを選択し、全体通知された場合は全員に上記ステータスバーが赤色で表示されます。</li>
-          </ul> */}
           <div className="sticky top-14">
             <AllGroupRuleList
               rules={rules}
@@ -315,9 +303,8 @@ export default function RulePage() {
             setActiveRule(null);
           }
         }}
-        // onClose={()=> setIsAlertOpen(true)}
         // transition
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+        className="relative z-100 transition duration-300 ease-out data-closed:opacity-0"
       >
         <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 

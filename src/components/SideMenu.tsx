@@ -35,7 +35,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
   return (
     <>
       {!isExculedPath && (
-        <aside className={`fixed top-0 left-0 h-lvh z-50 text-neutral-700 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-600/70 backdrop-blur-md dark:border-b border-neutral-600 overflow-clip duration-300 transition-[width] ${isSideMenuOpen ? "w-60" : "w-11"}`}>
+        <aside className={`fixed top-0 left-0 h-lvh z-110 text-neutral-700 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-600/70 backdrop-blur-md dark:border-b border-neutral-600 duration-300 transition-[width] ${isSideMenuOpen ? "w-60" : "w-11"}`}>
           <div className="flex items-center justify-end">
             {/* タスク追加ボタン */}
             {/* <div className="flex gap-2">
@@ -59,7 +59,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 onClick={() => router.push('/dashboard')}
               />
 
-              <div className={`py-2 px-3 text-xs font-bold whitespace-nowrap ${isSideMenuOpen ? "block" : "hidden"}`}>
+              <div className={`py-2 px-3 text-xs font-bold overflow-x-clip whitespace-nowrap ${isSideMenuOpen ? "block" : "hidden"}`}>
                 作業・案件
               </div>
 
@@ -103,7 +103,7 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 onClick={() => router.push('/trash')}
               />
 
-              <div className={`py-2 px-3 text-xs font-bold whitespace-nowrap ${isSideMenuOpen ? "block" : "hidden"}`}>
+              <div className={`py-2 px-3 text-xs font-bold whitespace-nowrap overflow-x-clip ${isSideMenuOpen ? "block" : "hidden"}`}>
                 社内共有
               </div>
 

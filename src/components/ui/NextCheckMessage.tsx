@@ -56,7 +56,7 @@ export default function NextCheckMessage() {
   }
 
   return (
-    <div className={`flex items-end gap-1 py-0.5 px-4 font-bold text-base bg-neutral-200 rounded-md tracking-wider text-neutral-800 palt`}>
-      次回の日報チェックは<span className="text-red-700 palt">{nextWed}（水）</span>です。{nextWed}の午前中までに各自請求データの入力をお願いします。</div>
+    <div className={`flex items-end gap-1 py-0.5 px-4 font-bold text-base bg-neutral-200 rounded-md tracking-wider text-neutral-800 palt whitespace-nowrap`}>
+      次回の日報チェック予定日：<span className="text-red-700 palt">{nextWed}（水）</span></div>
   )
 }

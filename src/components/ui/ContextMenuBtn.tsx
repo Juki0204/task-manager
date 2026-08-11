@@ -1,18 +1,33 @@
 import { FaRegStickyNote, FaRegTrashAlt, FaRegPauseCircle, FaRegPlayCircle, FaRegCalendarCheck } from "react-icons/fa";
-import { MdPersonRemove, MdOutlineFactCheck } from "react-icons/md";
-import { LuCopyPlus } from "react-icons/lu";
 
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { CorrectBtn, OutlineBtn } from "./Btn";
 import { toast } from "sonner";
 import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
+import { CalendarCheck, CirclePause, CirclePlay, CopyPlus, PackageCheck, Pause, Play, StickyNote, Trash, Trash2, UserMinus } from "lucide-react";
 
 
+//---------Btn Template---------
+type ContextMenuBtnProps = {
+  className?: string;
+  onClick: () => void;
+  children: ReactNode;
+}
 
+export function ContextMenuBtn({ className, onClick, children }: ContextMenuBtnProps) {
+  return (
+    <div
+      onClick={onClick}
+      className={`flex items-center gap-1 py-2 px-1 rounded-md tracking-wider text-sm cursor-pointer hover:bg-neutral-300/60 dark:hover:bg-neutral-700 ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
 
 
 //---------InProgress Btn---------
@@ -32,15 +47,14 @@ export function ChangeInProgress({ taskId, onClick, updateTaskStatus }: Progress
   }
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={async () => {
         await handleInProgress();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
-      <FaRegPlayCircle />作業中
-    </li>
+      <Play className="w-4" /><span className="font-bold">作業中</span>に変更
+    </ContextMenuBtn>
   );
 }
 
@@ -60,15 +74,14 @@ export function ChangeInterrupt({ taskId, onClick, updateTaskStatus }: Interrupt
   }
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={async () => {
         await handleInterrupt();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
-      <FaRegPauseCircle />作業途中
-    </li>
+      <Pause className="w-4" /><span className="font-bold">作業を中断</span>する
+    </ContextMenuBtn>
   );
 }
 
@@ -88,15 +101,14 @@ export function ChangeConfirm({ taskId, onClick, updateTaskStatus }: ConfirmProp
   }
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={async () => {
         await handleConfirm();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
-      <MdOutlineFactCheck />確認中
-    </li>
+      <PackageCheck className="w-4" /><span className="font-bold">確認中</span>に変更
+    </ContextMenuBtn>
   );
 }
 
@@ -118,15 +130,14 @@ export function ChangeNotYetStarted({ taskId, onClick, updateTaskStatus }: NotYe
   }
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={async () => {
         await handleNotYetStarted();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
-      <FaRegStickyNote />未着手
-    </li>
+      <StickyNote className="w-4" /><span className="font-bold">未着手</span>に戻す
+    </ContextMenuBtn>
   );
 }
 
@@ -146,15 +157,14 @@ export function ChangeRemove({ taskId, onClick, updateTaskStatus }: RemoveProps)
   }
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={async () => {
         await handleNotYetStarted();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
-      <MdPersonRemove />担当から外す
-    </li>
+      <UserMinus className="w-4" /><span className="font-bold">担当から外れる</span>
+    </ContextMenuBtn>
   );
 }
 
@@ -178,15 +188,14 @@ export function ChangeComplete({ taskId, onClick, updateTaskStatus }: CompletePr
   }
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={async () => {
         await handleComplete();
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
-      <FaRegCalendarCheck />完了
-    </li>
+      <CalendarCheck className="w-4" /><span className="font-bold">完了</span>にする
+    </ContextMenuBtn>
   );
 }
 
@@ -220,17 +229,15 @@ export function InsertCopyTask({ taskId, onClick, onCopyTask }: InsertCopyTaskPr
   }, [taskId]);
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={async () => {
-        //console.log(copiedTask);
         if (!copiedTask) return;
         onCopyTask(copiedTask);
         onClick();
       }}
-      className="flex items-center gap-1 bg-slate-400 dark:bg-slate-500 py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-sky-700 cursor-pointer"
     >
-      <LuCopyPlus />コピーして新規追加
-    </li>
+      <CopyPlus className="w-4" /><span className="font-bold">複製して新規追加</span>
+    </ContextMenuBtn>
   );
 }
 
@@ -276,13 +283,13 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
   }
 
   return (
-    <li
+    <ContextMenuBtn
       onClick={() => {
         setIsOpen(true);
       }}
-      className="flex items-center gap-1 bg-red-700/70 dark:bg-[#994b4b] py-1 px-2 rounded-md font-bold text-white text-sm hover:bg-red-800 cursor-pointer"
+      className="text-red-700 dark:text-red-500"
     >
-      <FaRegTrashAlt />削除
+      <Trash2 className="w-4" /><span className="font-bold">削除</span>
 
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} transition className="relative z-50 data-closed:opacity-0">
         <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
@@ -293,11 +300,11 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
 
             <div className="flex gap-2">
               <OutlineBtn className="cursor-pointer hover:opacity-60" onClick={() => setIsOpen(false)}>キャンセル</OutlineBtn>
-              <CorrectBtn className="flex items-center justify-center gap-1 !bg-red-700 !m-0 cursor-pointer hover:opacity-60" onClick={async () => await handleDelete()}><FaRegTrashAlt />削除</CorrectBtn>
+              <CorrectBtn className="flex items-center justify-center gap-1 !bg-red-700 !m-0 cursor-pointer hover:opacity-60" onClick={async () => await handleDelete()}><Trash2 className="w-4.5" />削除</CorrectBtn>
             </div>
           </DialogPanel>
         </div>
       </Dialog>
-    </li>
+    </ContextMenuBtn>
   );
 }

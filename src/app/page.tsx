@@ -101,12 +101,9 @@ export default function AllTaskPage() {
             new Date(task.finish_date);
 
           completionMatch =
-            finishDate.getFullYear() ===
-            today.getFullYear() &&
-            finishDate.getMonth() ===
-            today.getMonth() &&
-            finishDate.getDate() ===
-            today.getDate();
+            finishDate.getFullYear() === today.getFullYear() &&
+            finishDate.getMonth() === today.getMonth() &&
+            finishDate.getDate() === today.getDate();
         }
       }
 
@@ -169,11 +166,11 @@ export default function AllTaskPage() {
 
           //未担当は最後
           if (managerA === "" && managerB !== "") {
-            return 1;
+            return -1;
           }
 
           if (managerA !== "" && managerB === "") {
-            return -1;
+            return 1;
           }
 
           const managerDiff = managerA.localeCompare(managerB, "ja");
@@ -184,7 +181,7 @@ export default function AllTaskPage() {
           }
 
           return (
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
         }
 
@@ -192,6 +189,15 @@ export default function AllTaskPage() {
       }
     );
   }, [filteredTaskList, taskListSortType]);
+
+  const recentryTaskList = useMemo(() => {
+    const st = new Date();
+    st.setHours(st.getHours() - 1);
+    const recentry = [...filteredTaskList].filter(task => new Date(task.created_at) > st);
+    return recentry.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  }, [filteredTaskList]);
+
+  console.log(recentryTaskList);
 
   return (
     <PageLayout
@@ -207,6 +213,24 @@ export default function AllTaskPage() {
       }
       actions={<AddTask />}
     >
+      {user && recentryTaskList && (
+        <div className="dark:bg-black pb-2 mb-4 border-b-2 border-neutral-300 dark:border-neutral-700">
+          <h3 className="mb-2 tracking-wider text-sm font-bold">■ 最近追加されたタスク（直近1時間）</h3>
+          <TaskList
+            user={user}
+            taskList={recentryTaskList}
+            onClick={(task: Task) => {
+              if (isModalOpen) return;
+              if (menu.visible) return;
+
+              openDetail(task);
+            }}
+            onContextMenu={handleContextMenu}
+            onEdit={openEdit}
+            deadlineList={deadlineList}
+          />
+        </div>
+      )}
       {user && (
         <TaskList
           user={user}

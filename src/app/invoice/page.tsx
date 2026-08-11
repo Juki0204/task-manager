@@ -344,11 +344,13 @@ export default function InvoicePage() {
             <option value="11">11</option>
             <option value="12">12</option>
           </Select>
-          月度 請求一覧
+          <span className="whitespace-nowrap">月度 請求一覧</span>
         </>
       }
       titleAddon={
-        <NextCheckMessage />
+        <div className="order-last">
+          <NextCheckMessage />
+        </div>
       }
       actions={
         <>
@@ -384,7 +386,7 @@ export default function InvoicePage() {
       }
     >
 
-      <div className="scroll-container p-1 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+      <div className="scroll-container pt-1 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 
         {user &&
           (filteredInvoices && filteredInvoices.length > 0 ? (
@@ -397,7 +399,7 @@ export default function InvoicePage() {
           ))}
       </div>
 
-      <div className="w-fit mr-auto ml-auto mt-3 mb-5">
+      <div className="w-fit max-w-full mr-auto ml-auto mt-3 mb-5 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
         <div className="w-430 grid grid-cols-27 items-center text-sm text-center bg-neutral-200 dark:bg-neutral-100 text-neutral-950 font-bold">
           <div className="border col-span-1 border-neutral-400 dark:border-neutral-700 p-1">難波</div>
           <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 ">新大阪</div>

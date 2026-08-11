@@ -45,7 +45,7 @@ export function TaskColumn({
       <h2 className={`font-bold p-2 text-center ${titleStyle}`}>{title}</h2>
 
       <div className={`p-0.5 h-full ${titleStyle}`}>
-        <div className="p-1.5 bg-neutral-100 flex flex-col gap-1 h-full">
+        <div className="p-1.5 bg-neutral-100 dark:bg-black/25 flex flex-col gap-1 h-full">
           {tasks.map((task, index) => (
             <PersonalCard
               user={user}

@@ -1,49 +1,59 @@
 "use client";
 
-// import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { Button, Input, Select } from "@headlessui/react";
 
-import { Task } from "@/utils/types/task";
-import { Button, Dialog, DialogBackdrop, DialogPanel, Input, Select } from "@headlessui/react";
-
-import AddTask from "@/components/AddTask";
-import TaskList from "@/components/TaskList";
-import TaskDetail from "@/components/TaskDetail";
-import UpdateTask from "@/components/UpdateTask";
-import ContextMenu from "@/components/ui/ContextMenu";
-
-import { supabase } from "@/utils/supabase/supabase";
-import { useAuth } from "@/app/AuthProvider";
-import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
-import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
-import { PageLayout } from "@/components/layout/PageLayout";
-import { NonRealtimeNotice } from "@/components/common/NonRealtileNotice";
-import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 import { Search } from "lucide-react";
 
-interface searchTermsTypes {
-  startYear: string,
-  startMonth: string,
-  endYear: string,
-  endMonth: string,
-  clients: string[],
-  assignees: string[],
-  keyword: string,
-}
+import { Task } from "@/utils/types/task";
+import { supabase } from "@/utils/supabase/supabase";
+import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
+import { useAuth } from "@/app/AuthProvider";
+import { useTask } from "@/components/providers/TaskProvider";
+
+import { PageLayout } from "@/components/layout/PageLayout";
+import { NonRealtimeNotice } from "@/components/common/NonRealtileNotice";
+import TaskList from "@/components/TaskList";
+import ContextMenu from "@/components/ui/ContextMenu";
+import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
+
+type SearchTerms = {
+  startYear: string;
+  startMonth: string;
+  endYear: string;
+  endMonth: string;
+  clients: string[];
+  assignees: string[];
+  keyword: string;
+};
+
+type ContextMenuState = {
+  visible: boolean;
+  x: number;
+  y: number;
+  taskId?: string;
+  taskSerial?: string;
+};
 
 export default function CompletedTaskPage() {
-  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-
-  const [isLoaded, setIsLoaded] = useState<boolean>(true);
-
-  const [taskList, setTaskList] = useState<Task[]>([]);
   const { user } = useAuth();
-  const { updateTaskStatus, deadlineList } = useTaskRealtime(user ?? null);
+
+  const {
+    updateTaskStatus,
+    deadlineList,
+
+    isModalOpen,
+    openDetail,
+    openEdit,
+  } = useTask();
+
   const { filters } = useTaskListPreferences();
 
-  const [searchTerms, setSearchTerms] = useState<searchTermsTypes>({
+  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [isLoaded, setIsLoaded] = useState(true);
+
+  //検索条件
+  const [searchTerms, setSearchTerms] = useState<SearchTerms>({
     startYear: "2025",
     startMonth: "11",
     endYear: "",
@@ -53,51 +63,56 @@ export default function CompletedTaskPage() {
     keyword: "",
   });
 
-  const [menu, setMenu] = useState<{
-    visible: boolean,
-    x: number,
-    y: number,
-    taskId?: string,
-    taskSerial?: string,
-  }>({ visible: false, x: 0, y: 0 });
+  //年度セレクト
+  const currentYear = new Date().getFullYear();
+
+  const yearOptions = Array.from(
+    { length: currentYear - 2025 + 1 },
+    (_, index) => 2025 + index
+  );
+
+  //ContextMenu
+  const [menu, setMenu] = useState<ContextMenuState>({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
 
   const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
-    setMenu({ visible: true, x: e.pageX, y: e.pageY, taskId, taskSerial });
-  }
+    setMenu({
+      visible: true,
+      x: e.pageX,
+      y: e.pageY,
+      taskId,
+      taskSerial,
+    });
+  };
 
   const handleCloseContextMenu = () => {
-    if (menu.visible) {
-      setMenu({ ...menu, visible: false });
-    }
-  }
+    setMenu((prev) => {
+      if (!prev.visible) {
+        return prev;
+      }
 
-  const unlockTaskHandler = async () => {
-    if (!activeTask || !user) return;
-    const { error } = await supabase
-      .from('tasks')
-      .update({
-        locked_by_id: null,
-        locked_by_name: null,
-        locked_by_at: null,
-      })
-      .eq("id", activeTask.id)
-      .eq("locked_by_id", user.id);
+      return {
+        ...prev,
+        visible: false,
+      };
+    });
+  };
 
-    if (error) {
-      console.error("unlock failed");
-    }
-    // else {
-    //   console.log("unlocked task: taskId =", activeTask.id);
-    // }
-  }
-
+  //完了済みタスク取得
   const getTasks = async () => {
     setIsLoaded(false);
-    const sm = searchTerms.startMonth.padStart(2, "0");
-    const em = searchTerms.endMonth.padStart(2, "0");
 
-    const start = `${searchTerms.startYear}-${sm}-01`;
-    const end = `${searchTerms.endYear}-${em}-31`;
+    const startMonth = searchTerms.startMonth.padStart(2, "0");
+    const endMonth = searchTerms.endMonth.padStart(2, "0");
+
+    const endDate = new Date(Number(searchTerms.endYear), Number(searchTerms.endMonth), 0);
+    const endDay = String(endDate.getDate()).padStart(2, "0");
+
+    const start = `${searchTerms.startYear}-${startMonth}-01`;
+    const end = `${searchTerms.endYear}-${endMonth}-${endDay}`;
 
     let query = supabase
       .from("tasks")
@@ -106,14 +121,17 @@ export default function CompletedTaskPage() {
       .lte("finish_date", end)
       .eq("status", "完了");
 
+    //クライアント
     if (searchTerms.clients.length > 0) {
       query = query.in("client", searchTerms.clients);
     }
 
+    //担当者
     if (searchTerms.assignees.length > 0) {
       query = query.in("manager", searchTerms.assignees);
     }
 
+    //キーワード
     if (searchTerms.keyword) {
       query = query.or(`title.ilike.%${searchTerms.keyword}%,description.ilike.%${searchTerms.keyword}%`);
     }
@@ -122,150 +140,189 @@ export default function CompletedTaskPage() {
 
     if (error) {
       console.error(error);
-      return false;
+      setIsLoaded(true);
+      return;
     }
 
-    if (!data) return false;
-    setTaskList(data);
+    setTaskList(data ?? []);
     setIsLoaded(true);
-  }
+  };
 
-  const filteredTaskList = useMemo(() => {
-    return taskList.filter((task) => {
-      const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
-      const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
-        if (assignee === "未担当") return task.manager === "";
-        return task.manager === assignee;
-      });
-      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+  //グローバルフィルター適用
+  //検索パネルで取得した結果に対して、SideMenu側のフィルターをさらに適用
+  const filteredTaskList =
+    useMemo(() => {
+      return taskList.filter((task) => {
+        //クライアント
+        const clientMatch = filters.clients.length === 0 ||
+          filters.clients.includes(task.client);
 
-      const searchMatch =
-        !filters.searchKeywords ||
-        task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+        //担当者
+        const assigneeMatch = filters.assignees.length === 0 ||
+          filters.assignees.some((assignee) => {
+            if (assignee === "未担当") {
+              return (
+                task.manager === "" || task.manager === null
+              );
+            }
 
-      return clientMatch && assigneeMatch && statusMatch && searchMatch;
+            return (
+              task.manager === assignee
+            );
+          }
+          );
+
+        //ステータス
+        const statusMatch = filters.statuses.length === 0 ||
+          filters.statuses.includes(task.status);
+
+        //キーワード
+        const keyword = filters.searchKeywords?.toLowerCase() ?? "";
+
+        const searchMatch = !filters.searchKeywords ||
+          task.serial?.toLowerCase().includes(keyword) ||
+          task.title?.toLowerCase().includes(keyword) ||
+          task.description?.toLowerCase().includes(keyword) ||
+          task.requester?.toLowerCase().includes(keyword);
+
+        return (
+          clientMatch &&
+          assigneeMatch &&
+          statusMatch &&
+          searchMatch
+        );
+      }
+      );
+    }, [taskList, filters]);
+
+  //完了日順
+  const sortedTaskList = useMemo(() => {
+    return [...filteredTaskList].sort((a, b) => {
+      return (
+        new Date(a.finish_date ?? "").getTime() - new Date(b.finish_date ?? "").getTime()
+      );
     });
-  }, [taskList, filters]);
+  }, [filteredTaskList]);
 
-  const sortTask = (task: Task[]) => {
-    const sortedTask = [...task].sort((a, b) => {
-      return new Date(a.finish_date ?? "").getTime() - new Date(b.finish_date ?? "").getTime();
-    });
-
-    return sortedTask;
-  }
+  //検索可能状態
+  const canSearch =
+    Boolean(
+      searchTerms.startYear &&
+      searchTerms.startMonth &&
+      searchTerms.endYear &&
+      searchTerms.endMonth
+    );
 
   return (
     <PageLayout
       title="完了済タスク一覧"
-      onClick={handleCloseContextMenu}
+      onClick={
+        handleCloseContextMenu
+      }
       actions={
         <NonRealtimeNotice />
       }
     >
+      <div className="flex w-full max-w-[1876px] gap-2 pb-4">
+        {/* 検索パネル */}
+        <div className="flex w-68 shrink-0 flex-col gap-2 rounded-xl bg-neutral-200 p-4 outline -outline-offset-1 outline-neutral-300 dark:bg-neutral-700 dark:outline-none">
+          <h2 className="mb-2 w-full text-center text-sm font-bold">絞り込み検索</h2>
 
-      <div className="pb-4 flex gap-2 w-full max-w-[1876px]">
-        <div className="w-68 bg-zinc-300/50 outline dark:outline-none outline-neutral-300 -outline-offset-1 dark:bg-zinc-700 p-4 rounded-xl flex flex-col gap-2">
-          <h2 className="w-full text-center font-bold text-sm mb-2">絞り込み検索</h2>
+          <div className="text-justify text-sm">
+            検索負荷軽減のため、期間は必須としています。
+            <br />
+            項目入力後、「検索ボタン」押下で該当する完了済みタスクが表示されます。
+          </div>
 
-          <div className="text-justify text-sm">検索負荷軽減のため、期間は必須としています。<br />項目入力後、「検索ボタン」押下で該当する完了済みタスクが表示されます。</div>
+          {/* 期間 */}
+          <div className="flex flex-col gap-1 border-b border-neutral-300 pb-3">
+            <h3 className="text-sm font-bold">期間</h3>
 
-          <div className="flex flex-col gap-1 pb-3 border-b border-neutral-300">
-            <h3 className="font-bold text-sm">期間</h3>
-            <div className="flex gap-1 items-end">
+            <div className="flex items-end gap-1">
               <Select
-                onChange={(e) => {
-                  setSearchTerms({
-                    ...searchTerms,
-                    startYear: e.target.value,
-                  })
-                }}
-                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
                 value={searchTerms.startYear}
-              >
+                onChange={(e) => setSearchTerms((prev) => ({
+                  ...prev,
+                  startYear: e.target.value,
+                }))}
+                className="rounded-md bg-white px-2 pb-0.75 pt-0.5 outline outline-neutral-300 dark:text-neutral-700">
                 <option value="">-</option>
-                <option value="2024">2024</option>
-                <option value="2025" defaultChecked>2025</option>
-                <option value="2026">2026</option>
+
+                {yearOptions.map((year) => (
+                  <option key={year} value={String(year)}>{year}</option>
+                ))}
               </Select>
+
               年
+
               <Select
-                onChange={(e) => {
-                  setSearchTerms({
-                    ...searchTerms,
-                    startMonth: e.target.value,
-                  })
-                }}
                 value={searchTerms.startMonth}
-                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
-              >
+                onChange={(e) => setSearchTerms((prev) => ({
+                  ...prev,
+                  startMonth: e.target.value,
+                }))}
+                className="rounded-md bg-white px-2 pb-0.75 pt-0.5 outline outline-neutral-300 dark:text-neutral-700">
                 <option value="">-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11" defaultChecked>11</option>
-                <option value="12">12</option>
+
+                {Array.from({ length: 12 }, (_, index) => {
+                  const month = String(index + 1);
+
+                  return (
+                    <option key={month} value={month}>{month}</option>
+                  );
+                })}
               </Select>
-              月<span className="px-1 text-sm">から</span>
+
+              月
+
+              <span className="px-1 text-sm">から</span>
             </div>
 
-            <div className="flex gap-1 items-end">
+            <div className="flex items-end gap-1">
               <Select
-                onChange={(e) => {
-                  setSearchTerms({
-                    ...searchTerms,
-                    endYear: e.target.value,
-                  })
-                }}
                 value={searchTerms.endYear}
-                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
-              >
+                onChange={(e) => setSearchTerms((prev) => ({
+                  ...prev,
+                  endYear: e.target.value,
+                }))}
+                className="rounded-md bg-white px-2 pb-0.75 pt-0.5 outline outline-neutral-300 dark:text-neutral-700">
                 <option value="">-</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
+
+                {yearOptions.map((year) => (
+                  <option key={year} value={String(year)}>{year}</option>
+                ))}
               </Select>
+
               年
+
               <Select
-                onChange={(e) => {
-                  setSearchTerms({
-                    ...searchTerms,
-                    endMonth: e.target.value,
-                  })
-                }}
                 value={searchTerms.endMonth}
-                className="bg-white outline outline-neutral-300 rounded-md px-2 pt-0.5 pb-0.75 dark:text-neutral-700"
-              >
+                onChange={(e) => setSearchTerms((prev) => ({
+                  ...prev,
+                  endMonth: e.target.value,
+                }))}
+                className="rounded-md bg-white px-2 pb-0.75 pt-0.5 outline outline-neutral-300 dark:text-neutral-700">
                 <option value="">-</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
+
+                {Array.from({ length: 12 }, (_, index) => {
+                  const month = String(index + 1);
+
+                  return (
+                    <option key={month} value={month}>{month}</option>
+                  );
+                })}
               </Select>
-              月<span className="px-1 text-sm">まで</span>
+
+              月
+
+              <span className="px-1 text-sm">まで</span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-1 z-40 pb-3 border-b border-neutral-300 dark:text-neutral-700">
-            <h3 className="font-bold text-sm dark:text-neutral-100">クライアント</h3>
+          {/* クライアント */}
+          <div className="z-40 flex flex-col gap-1 border-b border-neutral-300 pb-3 dark:text-neutral-700">
+            <h3 className="text-sm font-bold dark:text-neutral-100">クライアント</h3>
+
             <MultiSelectPopover
               options={[
                 { id: 1, label: "難波秘密倶楽部" },
@@ -279,21 +336,26 @@ export default function CompletedTaskPage() {
                 { id: 9, label: "快楽玉乱堂" },
               ]}
               selectedLabels={searchTerms.clients}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
-                setSearchTerms({
-                  ...searchTerms,
-                  clients: e.target.checked
-                    ? [...searchTerms.clients, label]
-                    : searchTerms.clients.filter((c) => c !== label)
-                })
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) => {
+                setSearchTerms(
+                  (prev) => ({
+                    ...prev,
+
+                    clients: e.target.checked
+                      ? [...prev.clients, label]
+                      : prev.clients.filter((client) => client !== label),
+                  })
+                );
+              }}
               defaultText="店舗を選択"
               width={240}
             />
           </div>
 
-          <div className="flex flex-col gap-1 pb-3 border-b border-neutral-300 dark:text-neutral-700">
-            <h3 className="font-bold text-sm dark:text-neutral-100">作業担当者</h3>
+          {/* 作業担当者 */}
+          <div className="flex flex-col gap-1 border-b border-neutral-300 pb-3 dark:text-neutral-700">
+            <h3 className="text-sm font-bold dark:text-neutral-100">作業担当者</h3>
+
             <MultiSelectPopover
               options={[
                 { id: 1, label: "浜口" },
@@ -305,128 +367,88 @@ export default function CompletedTaskPage() {
                 { id: 7, label: "未担当" },
               ]}
               selectedLabels={searchTerms.assignees}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) =>
-                setSearchTerms({
-                  ...searchTerms,
-                  assignees: e.target.checked
-                    ? [...searchTerms.assignees, label]
-                    : searchTerms.assignees.filter((c) => c !== label)
-                })
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, label: string) => {
+                setSearchTerms(
+                  (prev) => ({
+                    ...prev,
+
+                    assignees: e.target.checked
+                      ? [...prev.assignees, label]
+                      : prev.assignees.filter((assignee) => assignee !== label),
+                  })
+                );
+              }}
               defaultText="担当者を選択"
               width={240}
             />
           </div>
 
+          {/* キーワード */}
           <div className="flex flex-col gap-1 dark:text-neutral-700">
-            <h3 className="font-bold text-sm dark:text-neutral-100">キーワード</h3>
+            <h3 className="text-sm font-bold dark:text-neutral-100">キーワード</h3>
+
             <div className="relative">
-              <Search className="w-4 absolute top-1/2 left-2 -translate-y-1/2" />
+              <Search className="absolute left-2 top-1/2 w-4 -translate-y-1/2" />
+
               <Input
                 tabIndex={-1}
                 type="text"
-                className="flex w-60 items-center justify-between rounded-md border border-gray-400 dark:border-gray-300 bg-neutral-100 px-4 pl-8 py-1 text-sm font-medium dark:shadow-sm hover:bg-gray-50 focus:outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                value={searchTerms.keyword}
+                className="flex w-60 items-center justify-between rounded-md border border-gray-400 bg-neutral-100 px-4 py-1 pl-8 text-sm font-medium placeholder:font-normal placeholder:text-neutral-400 hover:bg-gray-50 focus:outline-none dark:border-gray-300 dark:shadow-sm"
                 placeholder="タイトル or 内容"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value;
-
-                  setSearchTerms({
-                    ...searchTerms,
-                    keyword: value.trim() === "" ? "" : value,
-                  });
-                }}
+                onChange={(e) => setSearchTerms((prev) => ({
+                  ...prev,
+                  keyword: e.target.value,
+                }))}
               />
             </div>
           </div>
 
           <Button
-            disabled={!searchTerms.startYear || !searchTerms.startMonth || !searchTerms.endYear || !searchTerms.endMonth}
+            disabled={!canSearch || !isLoaded}
             onClick={getTasks}
-            className="w-full flex gap-2 items-center justify-center mt-3 pr-4 rounded-md bg-neutral-900 dark:bg-slate-700 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
+            className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-neutral-900 px-2 py-2 pr-4 text-white hover:opacity-80 data-disabled:opacity-30 data-disabled:cursor-not-allowed"
           >
-            検索
+            {isLoaded ? "検索" : "検索中..."}
           </Button>
         </div>
 
-        {user && taskList.length > 0 &&
-          <TaskList
-            user={user}
-            taskList={sortTask(filteredTaskList)}
-            onClick={(t: Task) => {
-              if (isOpen) return;
-              if (menu.visible) return;
+        {/* タスク一覧 */}
+        {user &&
+          taskList.length > 0 && (
+            <TaskList
+              user={user}
+              taskList={sortedTaskList}
+              onClick={(task: Task) => {
+                if (isModalOpen) {
+                  return;
+                }
 
-              setActiveTask(t);
-              setModalType("detail");
-              setIsOpen(true);
-            }}
-            onContextMenu={handleContextMenu}
-            onEdit={(t: Task) => {
-              setActiveTask(t);
-              setModalType("edit");
-              setIsOpen(true);
-            }}
-            deadlineList={deadlineList}
-          />
-        }
+                if (menu.visible) {
+                  return;
+                }
+
+                openDetail(task);
+              }}
+              onContextMenu={handleContextMenu}
+              onEdit={openEdit}
+              deadlineList={deadlineList}
+            />
+          )}
       </div>
 
-      {/* 共通モーダル */}
-      <Dialog
-        open={isOpen}
-        onClose={() => {
-          if (modalType === "edit") unlockTaskHandler();
-          setIsOpen(false);
-          setTimeout(() => {
-            setActiveTask(null);
-            setModalType(null);
-          }, 10);
-        }}
-        // transition
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
-      >
-        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
-
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pt-4.5 shadow-2xl shadow-black/30">
-            {modalType === "detail" && activeTask && user && (
-              <TaskDetail
-                user={user}
-                task={activeTask}
-                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
-                onEdit={(t: Task) => {
-                  const latest = taskList.find(x => x.id === t.id) ?? t;
-                  setActiveTask(latest);
-                  setModalType("edit");
-                }}
-                deadlineList={deadlineList}
-              />
-            )}
-
-            {modalType === "edit" && activeTask && user && (
-              <UpdateTask
-                user={user}
-                task={activeTask}
-                onComplete={() => setModalType("detail")}
-                onCancel={() => setModalType("detail")}
-                onUnlock={unlockTaskHandler}
-                deadlineList={deadlineList}
-              />
-            )}
-          </DialogPanel>
-        </div>
-      </Dialog>
-
-      {menu.visible && menu.taskId && (
-        <ContextMenu
-          x={menu.x}
-          y={menu.y}
-          taskId={menu.taskId ? menu.taskId : ""}
-          taskSerial={menu.taskSerial ? menu.taskSerial : ""}
-          onClose={handleCloseContextMenu}
-          updateTaskStatus={updateTaskStatus}
-        />
-      )}
+      {/* ContextMenu */}
+      {menu.visible &&
+        menu.taskId && (
+          <ContextMenu
+            x={menu.x}
+            y={menu.y}
+            taskId={menu.taskId}
+            taskSerial={menu.taskSerial ?? ""}
+            onClose={handleCloseContextMenu}
+            updateTaskStatus={updateTaskStatus}
+          />
+        )}
     </PageLayout>
   );
 }

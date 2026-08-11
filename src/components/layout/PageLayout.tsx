@@ -102,7 +102,7 @@ export function PageLayout({
               .filter(Boolean)
               .join(" ")}
           >
-            <h1 className="flex items-center gap-1 text-center text-xl font-bold">
+            <h1 className="flex items-center gap-1 text-center text-xl font-bold whitespace-nowrap">
               {title}
             </h1>
 

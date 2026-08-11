@@ -19,7 +19,7 @@ export default function CancelAlertModal({ alertOpen, onModalClose, onCalcel }: 
     <Dialog
       open={isAlertOpen}
       onClose={() => { }}
-      className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+      className="relative z-100 transition duration-300 ease-out data-closed:opacity-0"
     >
       <DialogBackdrop onClick={(e) => e.preventDefault()} className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 

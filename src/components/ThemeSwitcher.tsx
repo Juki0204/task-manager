@@ -7,12 +7,27 @@ import { Moon, Sun } from "lucide-react";
 export default function ThemeSwitcher() {
   const { setTheme, resolvedTheme } = useTheme();
 
-  const isDark = resolvedTheme === "dark";
-  const [switchDark, setSwitchDark] = useState(isDark);
+  const [mounted, setMounted] = useState(false);
+  const [switchDark, setSwitchDark] = useState(false);
 
   useEffect(() => {
-    setSwitchDark(isDark);
-  }, [isDark]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    setSwitchDark(resolvedTheme === "dark");
+  }, [mounted, resolvedTheme]);
+
+  if (!mounted) {
+    return (
+      <div
+        aria-hidden="true"
+        className="h-7 w-13 rounded-full border border-neutral-300 bg-neutral-300/50"
+      />
+    );
+  }
 
   const handleToggle = () => {
     const nextDark = !switchDark;
@@ -20,69 +35,51 @@ export default function ThemeSwitcher() {
     // スイッチはクリック直後に動かす
     setSwitchDark(nextDark);
 
-    // 丸が動いたあとにテーマ変更
+    // スイッチの移動後にテーマを切り替える
     window.setTimeout(() => {
       setTheme(nextDark ? "dark" : "light");
-    }, 150);
+    }, 200);
   };
 
   return (
-    <div className="flex items-center justify-center gap-3">
-      {/* <span
-        className={`
-          text-sm
-          ${!isDark
-            ? "font-bold text-neutral-800 dark:text-neutral-100"
-            : "text-neutral-400"
-          }
-        `}
-      >
-        Light
-      </span> */}
-
-      <button
-        type="button"
-        role="switch"
-        aria-checked={isDark}
-        aria-label={`テーマを${isDark ? "ライト" : "ダーク"}モードに変更`}
-        onClick={handleToggle}
-        className={`
-          relative h-7 w-13 shrink-0 rounded-full
-          border transition-colors duration-200
-          focus-visible:outline-2
-          focus-visible:outline-offset-2
-          focus-visible:outline-blue-500
-          cursor-pointer
-          ${isDark
-            ? "border-neutral-900 bg-neutral-800"
-            : "border-neutral-300 bg-neutral-300/50"
-          }
-        `}
-      >
-        <span
-          className={`
-            absolute top-1/2 left-0.5 grid place-content-center size-6
-            -translate-y-1/2 rounded-full
-            shadow-sm
-            transition-transform duration-200
-            ${switchDark ? "translate-x-5.5 bg-black" : "translate-x-0 bg-white"}
-          `}
-        >
-          {switchDark ? (<Moon className="w-4 text-neutral-100" />) : (<Sun className="w-4 text-neutral-500" />)}
-        </span>
-      </button>
-      {/* 
+    <button
+      type="button"
+      role="switch"
+      aria-checked={switchDark}
+      aria-label={`テーマを${switchDark ? "ライト" : "ダーク"}モードに変更`}
+      onClick={handleToggle}
+      className={`
+        relative h-7 w-13 shrink-0 rounded-full
+        border cursor-pointer
+        transition-colors duration-0 delay-200
+        focus-visible:outline-2
+        focus-visible:outline-offset-2
+        focus-visible:outline-blue-500
+        ${switchDark
+          ? "border-neutral-900 bg-neutral-800"
+          : "border-neutral-300 bg-neutral-300/50"
+        }
+      `}
+    >
       <span
         className={`
-          text-sm
-          ${isDark
-            ? "font-bold text-neutral-800 dark:text-neutral-100"
-            : "text-neutral-400"
+          absolute top-1/2 left-0.5
+          grid size-6 place-content-center
+          -translate-y-1/2 rounded-full
+          shadow-sm
+          transition-transform duration-200 ease-out
+          ${switchDark
+            ? "translate-x-5.5 bg-black"
+            : "translate-x-0 bg-white"
           }
         `}
       >
-        Dark
-      </span> */}
-    </div>
+        {switchDark ? (
+          <Moon className="w-4 text-neutral-100" />
+        ) : (
+          <Sun className="w-4 text-neutral-500" />
+        )}
+      </span>
+    </button>
   );
 }

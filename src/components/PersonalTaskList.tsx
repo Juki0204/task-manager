@@ -41,7 +41,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          titleStyle="bg-gray-200 dark:bg-neutral-700/50"
+          titleStyle="bg-gray-200 dark:bg-neutral-600/50"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -58,7 +58,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          titleStyle="bg-blue-600/10 dark:bg-blue-400/10"
+          titleStyle="bg-blue-600/10 dark:bg-blue-400/15"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -107,12 +107,12 @@ export default function PersonalTaskList({
             const finishB = b.finish_date ? new Date(`${b.finish_date}T00:00:00`).getTime() : -Infinity;
 
             //完了日順ソート
-            return finishA - finishB;
+            return finishB - finishA;
           })}
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          titleStyle="bg-green-600/10 dark:bg-green-300/10"
+          titleStyle="bg-green-600/10 dark:bg-green-300/15"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
