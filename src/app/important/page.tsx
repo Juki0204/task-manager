@@ -28,7 +28,7 @@ export default function ImportantTaskPage() {
     updateTaskStatus,
     deadlineList,
 
-    isModalOpen,
+    isPanelOpen,
     openDetail,
     openEdit,
   } = useTask();
@@ -157,9 +157,9 @@ export default function ImportantTaskPage() {
           user={user}
           taskList={filteredTaskList}
           onClick={(task: Task) => {
-            if (isModalOpen) {
-              return;
-            }
+            // if (isPanelOpen) {
+            //   return;
+            // }
 
             if (menu.visible) {
               return;

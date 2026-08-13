@@ -12,22 +12,22 @@ export function SubscriptionStatus({
   onResubscribe,
 }: SubscriptionStatusProps) {
   const healthClass = {
-    green: "bg-emerald-400",
-    yellow: "bg-amber-400",
-    red: "bg-rose-400",
+    green: "bg-emerald-400 text-neutral-700",
+    yellow: "bg-amber-400 text-neutral-700",
+    red: "bg-rose-400 text-neutral-700",
   }[health];
 
   return (
-    <div className="h-8 flex items-center gap-2 rounded-full bg-neutral-200 px-1.75 py-0.75 dark:bg-neutral-500">
-      <span className={`h-2.5 w-2.5 rounded-full ${healthClass}`} />
+    <div className={`h-8 flex items-center gap-2 rounded-full px-4 py-0.75 font-bold text-neutral-700 ${healthClass} ${status !== "SUBSCRIBED" ? "pr-1" : ""}`}>
+      {/* <span className={`h-2.5 w-2.5 rounded-full ${healthClass}`} /> */}
 
-      <span className="mr-1 text-xs">{status}</span>
+      <span className="text-xs">{status}</span>
 
       {status !== "SUBSCRIBED" && (
         <button
           type="button"
           onClick={onResubscribe}
-          className="flex items-center gap-1 rounded-full bg-neutral-400 px-2 py-0.25 pr-3 text-xs text-white hover:opacity-80 dark:bg-neutral-600"
+          className="flex items-center gap-1 rounded-full bg-neutral-600 px-2 py-0.25 pr-3 ml-1 text-xs text-white hover:opacity-80"
         >
           <RefreshCcw className="w-3.5" />
           再購読

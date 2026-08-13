@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import { useTaskNotesRealtime } from "@/utils/hooks/useTaskNotesRealtime";
 import { supabase } from "@/utils/supabase/supabase";
 import { Task } from "@/utils/types/task";
 import { marked } from "marked";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import InvoiceTaskDetail from "@/components/invoice/InvoiceTaskDetail";
 
 import { RequestGraph } from "@/components/ui/RequestGraph";
 import DashboardNotesViewer from "@/components/DashboadNotesViewer";
@@ -34,7 +32,6 @@ export default function DashboardPage() {
   const now = new Date();
   const [deadline, setDeadline] = useState<{ task_id: string, date: string }[]>([]);
   const [todayDeadlineTasks, setTodayDeadlineTasks] = useState<Task[]>([]);
-  const [isDeadlinePop, setIsDeadlinePop] = useState<boolean>(false);
   const [isNewTaskPop, setIsNewTaskPop] = useState<boolean>(false);
 
   // const { notes, isReady } = useTaskNotesRealtime();
@@ -183,7 +180,7 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4 p-2 min-w-300">
 
         {/* 今月の依頼状況 */}
-        <div className="w-full p-4 flex gap-4 border-b border-neutral-300">
+        <div className="w-full py-4 flex gap-4 border-b border-neutral-300">
 
           <div className="flex flex-col gap-2 justify-between p-4">
             <h3 className="font-bold text-center mb-2">今月の依頼状況</h3>
@@ -200,7 +197,7 @@ export default function DashboardPage() {
             />
 
             <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`font-bold relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-300 dark:bg-neutral-200 rounded-md tracking-wider text-neutral-700 cursor-default`}>
-              本日の新規依頼数：{todayNewTasks.length}件
+              <span className="w-full text-center">本日の新規依頼数：{todayNewTasks.length}件</span>
               {todayNewTasks && todayNewTasks.length > 0 && (
                 <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
                   <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-200 shadow-md`}>
@@ -220,7 +217,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="p-4 max-w-100">
+          <div className="p-4 w-100">
             <h3 className="font-bold text-center mb-2">店舗別依頼数</h3>
             <dl className="w-full grid grid-cols-[80px_1fr] palt pb-1.5">
               <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">難波</dt>
@@ -326,7 +323,7 @@ export default function DashboardPage() {
             </dl>
           </div>
 
-          <div className="p-4 flex-1">
+          {/* <div className="p-4 flex-1">
             <h3 className="font-bold tracking-widest px-1 pb-2">優先度の高いタスク<span className="text-xs">（作業を強制するものではなく、依頼状況に応じて作業決めの参考にしてください。）</span></h3>
             <div className="w-full h-[calc(100%-2rem)] p-3 pt-2 bg-white/60 dark:bg-black/40 rounded-lg">
               <p className="tracking-wider leading-normal text-xs mb-2 palt">「優先度が<span className="text-red-500 dark:text-red-300 font-bold">【高】または【急】</span>のタスク」、「依頼日から<span className="text-red-500 dark:text-red-300 font-bold">1週間以上経過</span>しているタスク」、「期限日設定あり＋<span className="text-red-500 dark:text-red-300 font-bold">期限日まで残り3日を切っている</span>タスク」の中で<span className="text-red-500 dark:text-red-300 font-bold">担当者が未決定</span>のタスクが優先的に表示されます。(クリックで詳細を確認)</p>
@@ -334,6 +331,13 @@ export default function DashboardPage() {
                 <PriorityTasks onClick={(t: Task) => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }} />
               </div>
             </div>
+          </div> */}
+
+          {/* 変更履歴ログ */}
+          <div className="w-[calc(100%-700px)] p-4 relative">
+            <h3 className="font-bold text-left pl-2 -mb-4">変更履歴ログ（直近50件）</h3>
+
+            <DashboardNotesViewer />
           </div>
 
         </div>
@@ -353,7 +357,7 @@ export default function DashboardPage() {
                   </h3>
                   <p className="text-sky-600 dark:text-blue-300 text-xs cursor-pointer hover:opacity-80" onClick={() => router.push("/release-notes")}>過去の更新履歴はこちら</p>
                 </hgroup>
-                <div className="w-full h-[calc(100%-2rem)] p-3 bg-white/60 dark:bg-black/40 rounded-lg">
+                <div className="w-full h-[calc(100%-2rem)] p-3 border border-neutral-300 dark:border-neutral-700 bg-white/60 dark:bg-black/40 rounded-lg">
                   <div
                     className="release-note prose prose-sm max-w-none text-sm h-90 pr-2 palt [&_h2]:!text-neutral-700 [&_h2]:dark:!text-neutral-100 [&_p]:!text-neutral-700 [&_p]:dark:!text-neutral-300 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300"
                     dangerouslySetInnerHTML={{
@@ -367,12 +371,6 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* 変更履歴ログ */}
-        <div className="w-full p-4 relative">
-          <h3 className="font-bold text-center mb-2">変更履歴ログ（直近50件）</h3>
-
-          <DashboardNotesViewer SerialClick={(serial: string) => { handleActiveTask(serial); setIsOpen(true); setModalType("detail"); }} />
-        </div>
       </div>
 
 

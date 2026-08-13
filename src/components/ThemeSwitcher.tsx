@@ -49,7 +49,7 @@ export default function ThemeSwitcher() {
       aria-label={`テーマを${switchDark ? "ライト" : "ダーク"}モードに変更`}
       onClick={handleToggle}
       className={`
-        relative h-7 w-13 shrink-0 rounded-full
+        relative h-5.5 w-8 shrink-0 rounded-full
         border cursor-pointer
         transition-colors duration-0 delay-200
         focus-visible:outline-2
@@ -57,19 +57,19 @@ export default function ThemeSwitcher() {
         focus-visible:outline-blue-500
         ${switchDark
           ? "border-neutral-900 bg-neutral-800"
-          : "border-neutral-300 bg-neutral-300/50"
+          : "border-neutral-400/70 bg-neutral-400/50"
         }
       `}
     >
       <span
         className={`
-          absolute top-1/2 left-0.5
-          grid size-6 place-content-center
+          absolute top-1/2 left-0
+          grid size-5 place-content-center
           -translate-y-1/2 rounded-full
           shadow-sm
           transition-transform duration-200 ease-out
           ${switchDark
-            ? "translate-x-5.5 bg-black"
+            ? "translate-x-2.5 bg-black"
             : "translate-x-0 bg-white"
           }
         `}

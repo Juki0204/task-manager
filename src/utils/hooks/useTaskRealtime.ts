@@ -124,7 +124,13 @@ export function useTaskRealtime(user: UserData) {
       });
 
       setTimeout(() => {
-        toast.success(`${inserted.created_manager}さんがタスク【${inserted.serial}】を追加しました。`);
+        toast.success(
+          `${inserted.created_manager}さんが新規タスク【${inserted.serial}】${inserted.title} を追加しました。`,
+          {
+            duration: 8000,
+            position: "top-center"
+          }
+        );
       }, 500);
 
       return;

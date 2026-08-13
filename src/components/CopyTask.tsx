@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-import { DialogTitle, Button } from "@headlessui/react";
+import { Button } from "@headlessui/react";
 import { AddTaskInput, AddTaskSelect } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
@@ -282,7 +282,7 @@ export default function UpdateTask({ task, user, onClose }: task) {
   return (
     <>
       <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 mb-1">
-        <DialogTitle className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</DialogTitle>
+        <h3 className="font-bold text-left col-span-2 sticky">コピーして新規追加（コピー元:{task.serial}）</h3>
         <X onClick={onClose} className="absolute top-3 right-3 cursor-pointer" />
 
         <div className="w-full flex gap-2">

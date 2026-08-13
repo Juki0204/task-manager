@@ -9,7 +9,6 @@ import { Task } from "@/utils/types/task";
 
 import TaskList from "@/components/TaskList";
 import ContextMenu from "@/components/ui/ContextMenu";
-import AddTask from "@/components/AddTask";
 
 import { useAuth } from "./AuthProvider";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
@@ -36,7 +35,7 @@ export default function AllTaskPage() {
     taskSubStatus,
     resubscribeAll,
 
-    isModalOpen,
+    isPanelOpen,
     openDetail,
     openEdit,
     openCopy,
@@ -197,7 +196,7 @@ export default function AllTaskPage() {
     return recentry.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   }, [filteredTaskList]);
 
-  console.log(recentryTaskList);
+
 
   return (
     <PageLayout
@@ -211,7 +210,7 @@ export default function AllTaskPage() {
           onResubscribe={resubscribeAll}
         />
       }
-      actions={<AddTask />}
+    // actions={<AddTask />}
     >
       {user && recentryTaskList.length > 0 && (
         <div className="pb-2 mb-4 border-b-2 border-neutral-300 dark:border-neutral-700">
@@ -220,7 +219,7 @@ export default function AllTaskPage() {
             user={user}
             taskList={recentryTaskList}
             onClick={(task: Task) => {
-              if (isModalOpen) return;
+              // if (isPanelOpen) return;
               if (menu.visible) return;
 
               openDetail(task);
@@ -236,7 +235,7 @@ export default function AllTaskPage() {
           user={user}
           taskList={sortedTaskList}
           onClick={(task: Task) => {
-            if (isModalOpen) return;
+            // if (isPanelOpen) return;
             if (menu.visible) return;
 
             openDetail(task);

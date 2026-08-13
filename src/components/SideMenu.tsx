@@ -7,17 +7,18 @@ import { Button, Input } from "@headlessui/react";
 
 import MenuBtn from "./MenuBtn";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { SideMenuBtn, UserMenu, WithBadgeSideMenuBtn } from "@/components/ui/SideMenuBtn";
-import { CalendarCheck, ChevronDownIcon, ClipboardList, LayoutDashboard, MessageSquareWarning, ScrollText, Settings, Star, Trash2, User, Users } from "lucide-react";
+import { AddTaskBtn, SideMenuBtn, UserMenu, WithBadgeSideMenuBtn } from "@/components/ui/SideMenuBtn";
+import { CalendarCheck, CirclePlus, ClipboardList, LayoutDashboard, MessageSquareWarning, Plus, ScrollText, Settings, Star, Trash2, User, Users } from "lucide-react";
+import { useTask } from "./providers/TaskProvider";
 
-interface SideMenuProps {
-  onClick: () => void;
-  isSideMenuOpen: boolean;
-}
+// interface SideMenuProps {
+//   onClick: () => void;
+// }
 
-export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
+export default function SideMenu() {
   const { user } = useAuth();
   const router = useRouter();
+  const { openAdd } = useTask();
 
   function handleReport() {
     const report = confirm("報告用のスプレッドシートに移行します。");
@@ -35,39 +36,39 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
   return (
     <>
       {!isExculedPath && (
-        <aside className={`fixed top-0 left-0 h-lvh z-110 text-neutral-700 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-600/70 backdrop-blur-md dark:border-b border-neutral-600 duration-300 transition-[width] ${isSideMenuOpen ? "w-60" : "w-11"}`}>
-          <div className="flex items-center justify-end">
+        <aside className={`w-11 fixed top-0 left-0 h-svh z-110 text-neutral-700 dark:text-neutral-100 bg-neutral-200 dark:bg-neutral-600 backdrop-blur-md dark:border-b border-neutral-600 duration-300 transition-[width]`}>
+          <div className="">
             {/* タスク追加ボタン */}
             {/* <div className="flex gap-2">
               <AddTask />
             </div> */}
             {/* バグ報告ボタン */}
             {/* <MenuBtn /> */}
-            <ThemeSwitcher />
-            <Button tabIndex={-1} onClick={onClick} className="cursor-pointer p-3 grid place-content-center">
+            {/* <Button tabIndex={-1} onClick={onClick} className="cursor-pointer p-3 grid place-content-center">
               <ChevronDownIcon className={`${isSideMenuOpen ? "rotate-90" : "-rotate-90"}`} />
-            </Button>
+            </Button> */}
+            {/* <Button className="w-full aspect-square bg-blue-600 p-1.5 flex items-center justify-center">
+              <Plus className="text-white" />
+            </Button> */}
           </div>
 
-          <div className={`w-full flex flex-col gap-2 pb-2 transition-all ease-out duration-200`}>
+          <div className={`w-full h-full grid grid-rows-[auto_1fr] justify-between gap-2 pb-2 transition-all ease-out duration-200`}>
             <div className="flex flex-col">
+              <AddTaskBtn
+                onClick={openAdd}
+              />
+
               <SideMenuBtn
                 title="ダッシュボード"
                 icon={<LayoutDashboard className="w-5" />}
                 pathname="/dashboard"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/dashboard')}
               />
-
-              <div className={`py-2 px-3 text-xs font-bold overflow-x-clip whitespace-nowrap ${isSideMenuOpen ? "block" : "hidden"}`}>
-                作業・案件
-              </div>
 
               <SideMenuBtn
                 title="全体タスク"
                 icon={<Users className={`w-5`} />}
                 pathname="/"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/')}
               />
 
@@ -75,7 +76,6 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 title="個人タスク"
                 icon={<User className="w-5" />}
                 pathname="/personal"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/personal')}
               />
 
@@ -83,7 +83,6 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 title="完了済みタスク"
                 icon={<CalendarCheck className="w-5" />}
                 pathname="/complete"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/complete')}
               />
 
@@ -91,7 +90,6 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 title="重要タスク"
                 icon={<Star className="w-5" />}
                 pathname="/important"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/important')}
               />
 
@@ -99,19 +97,13 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 title="削除済みタスク"
                 icon={<Trash2 className="w-5" />}
                 pathname="/trash"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/trash')}
               />
-
-              <div className={`py-2 px-3 text-xs font-bold whitespace-nowrap overflow-x-clip ${isSideMenuOpen ? "block" : "hidden"}`}>
-                社内共有
-              </div>
 
               <WithBadgeSideMenuBtn
                 title="掲示板"
                 icon={<ClipboardList className="w-5" />}
                 pathname="/rule"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/rule')}
               />
 
@@ -119,19 +111,13 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 title="請求一覧"
                 icon={<ScrollText className="w-5" />}
                 pathname="/invoice"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/invoice')}
               />
-
-              <div className={`py-2 px-3 text-xs font-bold whitespace-nowrap ${isSideMenuOpen ? "block" : "hidden"}`}>
-                その他
-              </div>
 
               <SideMenuBtn
                 title="各種設定"
                 icon={<Settings className="w-5" />}
                 pathname="/setting"
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={() => router.push('/setting')}
               />
 
@@ -139,11 +125,8 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
                 title="フィードバック"
                 icon={<MessageSquareWarning className="w-5" />}
                 pathname=""
-                isSideMenuOpen={isSideMenuOpen}
                 onClick={handleReport}
               />
-
-              {/* <UserMenu /> */}
 
               {/* <div className="p-2 flex justify-end">
                 <button tabIndex={-1} className="flex gap-1 items-center py-1.25 px-3 bg-green-700/80 dark:bg-green-800 text-neutral-100 rounded-md hover:opacity-60 cursor-pointer" onClick={handleReport}><TbMessageReport className="text-xl" /></button>
@@ -151,7 +134,12 @@ export default function SideMenu({ onClick, isSideMenuOpen }: SideMenuProps) {
 
             </div>
 
-            <div className="flex-1 min-w-0">
+            <div className="flex flex-col items-center justify-end">
+              <div className="grid w-full aspect-square place-content-center">
+                <ThemeSwitcher />
+              </div>
+
+              <UserMenu />
               {/* <TaskNotesViewer /> */}
             </div>
 

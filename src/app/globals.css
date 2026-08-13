@@ -688,7 +688,7 @@ body {
   background: transparent;
 
   & > div {
-    min-height: 126px;
+    min-height: 200px;
     max-height: 440px;
     height: auto;
     overflow-y: auto;
@@ -714,7 +714,7 @@ body {
 /* 閲覧画面用 */
 .tiptap-viewer {
   white-space: pre-wrap;
-  min-height: 126px;
+  min-height: 200px;
   cursor: default;
 
   & li[data-checked] {

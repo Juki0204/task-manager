@@ -42,7 +42,7 @@ export default function CompletedTaskPage() {
     updateTaskStatus,
     deadlineList,
 
-    isModalOpen,
+    isPanelOpen,
     openDetail,
     openEdit,
   } = useTask();
@@ -223,9 +223,9 @@ export default function CompletedTaskPage() {
         <NonRealtimeNotice />
       }
     >
-      <div className="flex w-full max-w-[1876px] gap-2 pb-4">
+      <div className="flex w-full gap-2 pb-4">
         {/* 検索パネル */}
-        <div className="flex w-68 shrink-0 flex-col gap-2 rounded-xl bg-neutral-200 p-4 outline -outline-offset-1 outline-neutral-300 dark:bg-neutral-700 dark:outline-none">
+        <div className="flex w-68 shrink-0 flex-col gap-2 rounded-md bg-neutral-200 p-4 outline -outline-offset-1 outline-neutral-300 dark:bg-neutral-700 dark:outline-none">
           <h2 className="mb-2 w-full text-center text-sm font-bold">絞り込み検索</h2>
 
           <div className="text-justify text-sm">
@@ -235,7 +235,7 @@ export default function CompletedTaskPage() {
           </div>
 
           {/* 期間 */}
-          <div className="flex flex-col gap-1 border-b border-neutral-300 pb-3">
+          <div className="flex flex-col gap-1 border-b border-neutral-300 dark:border-neutral-600 pt-1 pb-4">
             <h3 className="text-sm font-bold">期間</h3>
 
             <div className="flex items-end gap-1">
@@ -320,7 +320,7 @@ export default function CompletedTaskPage() {
           </div>
 
           {/* クライアント */}
-          <div className="z-40 flex flex-col gap-1 border-b border-neutral-300 pb-3 dark:text-neutral-700">
+          <div className="z-40 flex flex-col gap-1 border-b border-neutral-300 dark:border-neutral-600 pt-1 pb-4 dark:text-neutral-700">
             <h3 className="text-sm font-bold dark:text-neutral-100">クライアント</h3>
 
             <MultiSelectPopover
@@ -353,7 +353,7 @@ export default function CompletedTaskPage() {
           </div>
 
           {/* 作業担当者 */}
-          <div className="flex flex-col gap-1 border-b border-neutral-300 pb-3 dark:text-neutral-700">
+          <div className="flex flex-col gap-1 border-b border-neutral-300 dark:border-neutral-600 pt-1 pb-4 dark:text-neutral-700">
             <h3 className="text-sm font-bold dark:text-neutral-100">作業担当者</h3>
 
             <MultiSelectPopover
@@ -384,7 +384,7 @@ export default function CompletedTaskPage() {
           </div>
 
           {/* キーワード */}
-          <div className="flex flex-col gap-1 dark:text-neutral-700">
+          <div className="flex flex-col gap-1 dark:text-neutral-700 pt-1 pb-4">
             <h3 className="text-sm font-bold dark:text-neutral-100">キーワード</h3>
 
             <div className="relative">
@@ -407,7 +407,7 @@ export default function CompletedTaskPage() {
           <Button
             disabled={!canSearch || !isLoaded}
             onClick={getTasks}
-            className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-neutral-900 px-2 py-2 pr-4 text-white hover:opacity-80 data-disabled:opacity-30 data-disabled:cursor-not-allowed"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-neutral-900 px-2 py-2 pr-4 text-white hover:opacity-80 data-disabled:opacity-30 data-disabled:cursor-not-allowed"
           >
             {isLoaded ? "検索" : "検索中..."}
           </Button>
@@ -420,9 +420,9 @@ export default function CompletedTaskPage() {
               user={user}
               taskList={sortedTaskList}
               onClick={(task: Task) => {
-                if (isModalOpen) {
-                  return;
-                }
+                // if (isPanelOpen) {
+                //   return;
+                // }
 
                 if (menu.visible) {
                   return;

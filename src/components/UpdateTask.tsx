@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-import { DialogTitle, Button } from "@headlessui/react";
+import { Button } from "@headlessui/react";
 import { AddTaskInput, AddTaskSelect } from "./ui/AddTaskForm";
 import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
@@ -17,7 +17,7 @@ import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
 import { useTaskUnread } from "./TaskUnreadProvider";
 import CancelAlertModal from "./CancelAlertModal";
-import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, NotebookPen, NotepadText, PenLine, Pickaxe, UserCheck, UserPlus } from "lucide-react";
+import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, NotebookPen, NotepadText, PenLine, Pickaxe, UserCheck, UserPen, UserPlus } from "lucide-react";
 
 
 interface task {
@@ -278,31 +278,31 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
 
   return (
     <>
-      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 mb-1">
-        <DialogTitle className="font-bold text-left col-span-2 sticky">タスク編集</DialogTitle>
+      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-md border border-neutral-300 dark:border-neutral-600 bg-slate-300/50 dark:bg-[#444444] p-3 mb-4">
+        <h3 className="font-bold text-left col-span-2 sticky">タスク編集</h3>
         <div className="w-full flex gap-2">
-          <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<PenLine className="w-4.5 text-neutral-500" />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
-          <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<CalendarClock className="w-4.5 text-neutral-500" />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
+          <AddTaskInput className="flex-1 [&_input]:bg-white [&_input]:dark:bg-neutral-800 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" icon={<PenLine className="w-4.5 text-neutral-500" />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(e.target.value, taskDescription); }} />
+          <AddTaskInput className="w-36 [&_input]:bg-white [&_input]:dark:bg-neutral-800 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<CalendarClock className="w-4.5 text-neutral-500" />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
         </div>
 
-        <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<NotepadText className="w-4.5 text-neutral-500" />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
+        <AddTaskInput className="w-full [&_input]:bg-white [&_input]:dark:bg-neutral-800 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<NotepadText className="w-4.5 text-neutral-500" />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(taskTitle, e.target.value); }} />
       </div>
 
       <div
         ref={contentRef}
         className={`${hasScrollbar ? "pr-2" : ""}
-          max-h-[60svh] grid grid-cols-2 gap-y-2 mb-0 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+          max-h-[calc(100svh-200px)] grid grid-cols-2 gap-y-2 overflow-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
         `}
       >
-        <div className="col-span-2 flex flex-wrap gap-x-2">
-          <div className="w-full flex gap-1 mt-3 mb-1 items-center col-span-2">
-            <span className="text-neutral-400/60 text-xs leading-none tracking-widest">META</span>
-            <span className="block h-[1px] bg-neutral-300 w-full" />
+        <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">META</span>
+            <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
-          <div className="flex flex-col w-fit">
-            <h3 className="w-fit whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><Mail className="w-4.5 text-neutral-500" /> 依頼手段</h3>
-            <div className="flex gap-x-1 w-fit">
+          <div className="flex flex-col">
+            <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><Mail className="w-4.5 text-neutral-500" /> 依頼手段</h3>
+            <div className="flex gap-x-1">
               <MailRadio defaultChecked={task.method === 'mail' ? true : false} name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
               <TelRadio defaultChecked={task.method === 'tel' ? true : false} name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
               <OtherRadio defaultChecked={task.method === 'other' ? true : false} name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
@@ -323,14 +323,14 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
           </AddTaskSelect>
         </div>
 
-        <div className="col-span-2 flex flex-wrap gap-x-2">
+        <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
           <div className="w-full flex gap-1 items-center mt-2 mb-1">
-            <span className="text-neutral-400/60 text-xs leading-none tracking-widest">STATUS</span>
-            <span className="block h-[1px] bg-neutral-300 w-full" />
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">DETAILS</span>
+            <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <div className="flex flex-wrap gap-2 flex-1">
-            <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<UserCheck className="w-4.5 text-neutral-500" />} value={manager} onChange={(e) => setManager(e.target.value)}>
+            <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<UserPen className="w-4.5 text-neutral-500" />} value={manager} onChange={(e) => setManager(e.target.value)}>
               {userNameList.map(name => (
                 <option key={name} value={name}>{name}</option>
               ))}
@@ -363,9 +363,9 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
         </div>
 
         <div className="flex flex-col col-span-2">
-          <div className="col-span-2 flex gap-1 items-center mt-2 mb-1">
+          <div className="w-full flex gap-1 items-center mt-2 mb-1">
             <span className="text-neutral-400/60 text-xs leading-none tracking-widest">REMARKS</span>
-            <span className="block h-[1px] bg-neutral-300 w-full" />
+            <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><NotebookPen className="w-4.5 text-neutral-500" /> 備考欄</h3>
@@ -374,11 +374,11 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
 
       </div>
 
-      <div className="flex gap-4 justify-end col-span-2 pt-2">
+      <div className="fixed bottom-0 right-0 w-full bg-white dark:bg-neutral-800 pt-4 px-4 pb-3 flex gap-x-2 flex-wrap justify-between col-span-2 mb-0">
         <Button
           // onClick={() => { onCancel(); onUnlock(); }}
           onClick={() => setIsAlertOpen(true)}
-          className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 data-hover:dark:bg-neutral-700 cursor-pointer"
+          className="outline-1 -outline-offset-1 rounded px-8 py-2 text-sm data-hover:bg-neutral-200 data-hover:dark:text-neutral-700 cursor-pointer"
         >
           キャンセル
         </Button>
@@ -393,7 +393,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
             }, 500);
           }
           }
-          className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
+          className="flex-1 bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:cursor-auto"
         >
           更新
         </Button>

@@ -14,20 +14,22 @@ import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
 import CopyTask from "@/components/CopyTask";
 import CancelAlertModal from "@/components/CancelAlertModal";
+import AddTask from "../AddTask";
 
-type TaskModalType = "detail" | "edit" | "copy" | null;
+type TaskPanelType = "add" | "detail" | "edit" | "copy" | null;
 
 type TaskRealtimeContext = ReturnType<typeof useTaskRealtime>;
 
 interface TaskContextValue extends TaskRealtimeContext {
   activeTask: Task | null;
-  modalType: TaskModalType;
-  isModalOpen: boolean;
+  panelType: TaskPanelType;
+  isPanelOpen: boolean;
 
+  openAdd: () => void;
   openDetail: (task: Task) => void;
   openEdit: (task: Task) => void;
   openCopy: (task: Task) => void;
-  closeModal: () => void;
+  closePanel: () => void;
 }
 
 const TaskContext = createContext<TaskContextValue | null>(null);
@@ -45,9 +47,9 @@ export function TaskProvider({ children }: TaskProviderProps) {
   const { taskList, deadlineList } = realtime;
 
   //モーダル関連
-  const [modalType, setModalType] = useState<TaskModalType>(null);
+  const [panelType, setPanelType] = useState<TaskPanelType>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   //Realtime更新時、モーダル表示中のタスクも最新状態へ更新
@@ -67,11 +69,19 @@ export function TaskProvider({ children }: TaskProviderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskList, activeTask?.id]);
 
+
+  //新規追加
+  const openAdd = () => {
+    setActiveTask(null);
+    setPanelType("add");
+    setIsPanelOpen(true);
+  }
+
   //詳細表示
   const openDetail = (task: Task) => {
     setActiveTask(task);
-    setModalType("detail");
-    setIsModalOpen(true);
+    setPanelType("detail");
+    setIsPanelOpen(true);
   };
 
   //編集表示
@@ -80,8 +90,8 @@ export function TaskProvider({ children }: TaskProviderProps) {
       taskList.find((item) => item.id === task.id) ?? task;
 
     setActiveTask(latestTask);
-    setModalType("edit");
-    setIsModalOpen(true);
+    setPanelType("edit");
+    setIsPanelOpen(true);
   };
 
   //コピー表示
@@ -90,26 +100,26 @@ export function TaskProvider({ children }: TaskProviderProps) {
       taskList.find((item) => item.id === task.id) ?? task;
 
     setActiveTask(latestTask);
-    setModalType("copy");
-    setIsModalOpen(true);
+    setPanelType("copy");
+    setIsPanelOpen(true);
   };
 
   //モーダルのstateを初期化
   //Dialogのtransitionが終わる前にmodalTypeをnullにすると
   //中身だけ先に消えるため、少し待ってから初期化
   const resetModal = () => {
-    setIsModalOpen(false);
+    setIsPanelOpen(false);
 
     window.setTimeout(() => {
       setActiveTask(null);
-      setModalType(null);
+      setPanelType(null);
     }, 300);
   };
 
   //通常のモーダルClose
   //編集中の場合は確認モーダルを表示する
-  const closeModal = () => {
-    if (modalType === "edit") {
+  const closePanel = () => {
+    if (panelType === "edit") {
       setIsAlertOpen(true);
       return;
     }
@@ -151,20 +161,23 @@ export function TaskProvider({ children }: TaskProviderProps) {
 
   //編集 → 詳細
   const handleBackToDetail = () => {
-    setModalType("detail");
+    setPanelType("detail");
   };
 
   return (
     <TaskContext.Provider
       value={{
         ...realtime,
+
         activeTask,
-        modalType,
-        isModalOpen,
+        panelType,
+        isPanelOpen,
+
+        openAdd,
         openDetail,
         openEdit,
         openCopy,
-        closeModal,
+        closePanel,
       }}
     >
       {children}
@@ -177,10 +190,16 @@ export function TaskProvider({ children }: TaskProviderProps) {
           bg-white dark:bg-neutral-800
           shadow-xl
           transition-transform duration-300
-          ${isModalOpen ? "translate-x-0" : "translate-x-full"}
+          ${isPanelOpen ? "translate-x-0" : "translate-x-full"}
         `}
       >
-        {modalType === "detail" &&
+        {panelType === "add" && user && (
+          <AddTask
+            onClose={resetModal}
+          />
+        )}
+
+        {panelType === "detail" &&
           activeTask &&
           user && (
             <TaskDetail
@@ -192,7 +211,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
             />
           )}
 
-        {modalType === "edit" &&
+        {panelType === "edit" &&
           activeTask &&
           user && (
             <UpdateTask
@@ -205,7 +224,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
             />
           )}
 
-        {modalType === "copy" &&
+        {panelType === "copy" &&
           activeTask &&
           user && (
             <CopyTask

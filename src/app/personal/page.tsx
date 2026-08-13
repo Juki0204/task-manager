@@ -50,7 +50,7 @@ export default function PersonalTaskPage() {
     taskSubStatus,
     resubscribeAll,
 
-    isModalOpen,
+    isPanelOpen,
     openDetail,
     openEdit,
     openCopy,
@@ -348,7 +348,7 @@ export default function PersonalTaskPage() {
       timerRef.current = null;
     }
 
-    if (currentClickTask && !isModalOpen && !isDragging) {
+    if (currentClickTask && !isPanelOpen && !isDragging) {
       timerRef.current =
         setTimeout(() => {
           setCurrentClickTask(null);
@@ -364,7 +364,7 @@ export default function PersonalTaskPage() {
         timerRef.current = null;
       }
     };
-  }, [currentClickTask, isModalOpen, isDragging]);
+  }, [currentClickTask, isPanelOpen, isDragging]);
 
   //Realtime初期化待ち
   if (!isReady) {
@@ -387,7 +387,7 @@ export default function PersonalTaskPage() {
           }
         />
       }
-      actions={<AddTask />}
+    // actions={<AddTask />}
     >
       {user && (
         <DndContext
@@ -399,9 +399,9 @@ export default function PersonalTaskPage() {
             user={user}
             taskList={sortTask(filteredTaskList)}
             onClick={(task: Task) => {
-              if (isModalOpen) {
-                return;
-              }
+              // if (isPanelOpen) {
+              //   return;
+              // }
 
               if (menu.visible) {
                 return;
@@ -436,7 +436,7 @@ export default function PersonalTaskPage() {
             onClose={handleCloseContextMenu}
             updateTaskStatus={updateTaskStatus}
             onCopyTask={(task) => {
-              if (isModalOpen) {
+              if (isPanelOpen) {
                 return;
               }
 

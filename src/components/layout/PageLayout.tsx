@@ -77,7 +77,7 @@ export function PageLayout({
       onClick={onClick}
       className={[
         "text-neutral-700 dark:text-neutral-100",
-        "p-2 pt-0 pl-3 max-w-[1920px] duration-300 transition-[padding]",
+        "p-2 pt-0 pl-3 duration-300 transition-[padding]",
         // overflowClasses[overflowX],
         className,
       ]

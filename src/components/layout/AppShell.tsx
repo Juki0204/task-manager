@@ -21,33 +21,22 @@ export default function AppShell({ children }: AppShellProps) {
 }
 
 function AppShellInner({ children }: AppShellProps) {
-  const [isSideMenuOpen, setIsSideMenuOpen] =
-    useState(true);
-
   const pathname = usePathname();
 
   const falsePathname = ["/login", "/reset", "/signup"];
 
   const isExcludedPath = falsePathname.some((path) => pathname.includes(path));
 
-  const { isModalOpen } = useTask();
+  const { isPanelOpen } = useTask();
 
   return (
     <div className="min-h-svh w-full">
-      <SideMenu
-        isSideMenuOpen={isSideMenuOpen}
-        onClick={() =>
-          setIsSideMenuOpen(
-            (prev) => !prev
-          )
-        }
-      />
+      <SideMenu />
 
       <div
-        className={`min-w-0 box-border transition-[padding] duration-300
-          ${isSideMenuOpen ? "pl-60" : "pl-11"}
+        className={`min-w-0 box-border transition-[padding] duration-300 pl-11
           ${isExcludedPath ? "!p-0" : ""}
-          ${isModalOpen ? "pr-130" : ""}
+          ${isPanelOpen ? "pr-130" : ""}
         `}
       >
         {children}
