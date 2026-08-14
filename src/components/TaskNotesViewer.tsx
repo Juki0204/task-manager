@@ -37,7 +37,7 @@ export default function TaskNotesViewer() {
 
   useEffect(() => {
     scrollToBottom();
-    setFormatNotes(notes.reverse());
+    setFormatNotes(notes);
   }, [notes, notes.length]);
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export default function TaskNotesViewer() {
               h-6
             `}>
               <AnimatePresence>
-                {formatNotes.map((log) => (
+                {formatNotes.toReversed().map((log) => (
                   <motion.div
                     key={log.id}
                     layout

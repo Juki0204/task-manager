@@ -10,12 +10,11 @@ import { toast } from "sonner";
 import { User } from "@/utils/types/user";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
 import { TaskNote } from "@/utils/hooks/useTaskNotesRealtime";
-import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 import { extractMailRefs } from "@/utils/function/extractMailRefs";
 import MailConverter from "./MailConverter";
 import { useTaskUnread } from "./TaskUnreadProvider";
-import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, PenLine, Pickaxe, RotateCcwClock, Star, UserCheck, UserPlus, X } from "lucide-react";
+import { AlarmClock, Building, CalendarClock, CircleCheck, Mail, PenLine, RotateCcwClock, Star, UserCheck, UserPlus, X } from "lucide-react";
 
 
 interface TaskDetailProps {
@@ -40,7 +39,6 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
   const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
 
-  const isRemarksTrigger = useRef(false);
   const { isTaskUnread, upsertTaskAcknowledgement } = useTaskUnread();
   const unread = isTaskUnread({ id: task.id, manager: task.manager }, user?.name ?? "");
 
@@ -217,6 +215,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
   useEffect(() => {
     // console.log(mailRefs);
     initActiveMail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mailRefs]);
 
   // useEffect(() => {
@@ -269,6 +268,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
     return () => {
       clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -429,7 +429,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         )}
       </div>
 
-      <div className="fixed bottom-0 right-0 w-full bg-white dark:bg-neutral-800 pt-4 px-4 pb-3 flex gap-x-2 flex-wrap justify-between col-span-2 mb-0">
+      <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-neutral-800 pt-4 px-4 pb-3 flex gap-x-2 flex-wrap justify-between col-span-2 mb-0">
         <Button
           disabled={!!editingUser}
           onClick={lockedTaskHandler}

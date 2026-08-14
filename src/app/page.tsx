@@ -35,7 +35,6 @@ export default function AllTaskPage() {
     taskSubStatus,
     resubscribeAll,
 
-    isPanelOpen,
     openDetail,
     openEdit,
     openCopy,
@@ -193,7 +192,7 @@ export default function AllTaskPage() {
     const st = new Date();
     st.setHours(st.getHours() - 1);
     const recentry = [...filteredTaskList].filter(task => new Date(task.created_at) > st);
-    return recentry.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    return recentry.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [filteredTaskList]);
 
 

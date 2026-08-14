@@ -128,23 +128,6 @@ export default function DashboardPage() {
   }, []);
 
 
-  //タスク詳細モーダル開く
-  const handleActiveTask = async (serial: string) => {
-    const { data: task } = await supabase.from("tasks").select("*").eq("serial", serial).single();
-    if (task) setActiveTask(task);
-
-    setIsTaskLoaded(true);
-  };
-
-  //タスク詳細モーダル開く(今日が期限日のタスク用)
-  const handleTodayTask = async (currentTask: Task) => {
-    if (!currentTask) return;
-
-    setActiveTask(currentTask);
-    setIsTaskLoaded(true);
-  };
-
-
   /* -------------- モーダル関連 -------------- */
 
   //モーダルロック解除
@@ -196,32 +179,16 @@ export default function DashboardPage() {
               ]}
             />
 
-            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`font-bold relative flex items-center gap-1 py-0.5 px-4 text-base bg-neutral-300 dark:bg-neutral-200 rounded-md tracking-wider text-neutral-700 cursor-default`}>
+            <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`font-bold relative flex items-center gap-1 py-0.5 px-4 text-base border border-neutral-300 dark:border-neutral-700 bg-white/60 dark:bg-black/40 rounded-md tracking-wider cursor-default`}>
               <span className="w-full text-center">本日の新規依頼数：{todayNewTasks.length}件</span>
-              {todayNewTasks && todayNewTasks.length > 0 && (
-                <div className={`absolute top-full left-0 pt-1 transition-opacity duration-100 z-10 ${isNewTaskPop ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-                  <div className={`flex flex-col gap-1 p-1 text-sm rounded-md text-left text-neutral-900 bg-neutral-200 shadow-md`}>
-                    {todayNewTasks.map(t => (
-                      <div
-                        key={t.id}
-                        onClick={() => { handleTodayTask(t); setIsOpen(true); setModalType("detail"); }}
-                        className="flex gap-1 rounded-md p-1 px-2 cursor-pointer hover:bg-neutral-300 whitespace-nowrap"
-                      >
-                        <span className="w-11 whitespace-nowrap text-neutral-500 font-normal">{new Date(t.created_at).toTimeString().substring(0, 5)}</span>
-                        <span>【{t.serial}】 {t.title}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
           <div className="p-4 w-100">
             <h3 className="font-bold text-center mb-2">店舗別依頼数</h3>
             <dl className="w-full grid grid-cols-[80px_1fr] palt pb-1.5">
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">難波</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">難波</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "難波秘密倶楽部").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -231,8 +198,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "難波秘密倶楽部").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">新大阪</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">新大阪</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "新大阪秘密倶楽部").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -242,8 +209,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "新大阪秘密倶楽部").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">谷町</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">谷町</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町秘密倶楽部").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -253,8 +220,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "谷町秘密倶楽部").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">谷町G</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">谷町G</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "谷町人妻ゴールデン").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -264,8 +231,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "谷町人妻ゴールデン").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">梅田</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">梅田</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -275,8 +242,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "梅田人妻秘密倶楽部").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">梅田G</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">梅田G</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "梅田ゴールデン").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -286,8 +253,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "梅田ゴールデン").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">中洲</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">中洲</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "中洲秘密倶楽部").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -297,8 +264,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "中洲秘密倶楽部").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">玉乱堂</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify] border-b border-neutral-600">玉乱堂</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold border-b border-b-neutral-600">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "快楽玉乱堂").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -308,8 +275,8 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "快楽玉乱堂").length}件</span>
               </dd>
 
-              <dt className="p-1.75 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify]">奥様</dt>
-              <dd className="p-1.75 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold">
+              <dt className="p-2 pr-2.5 font-bold text-sm text-center tracking-wider [text-align-last:justify]">奥様</dt>
+              <dd className="p-2 pl-0 flex justify-between text-sm border-neutral-200 border-l text-right font-bold">
                 <div
                   style={{ width: `${Math.round(((tasks.filter(t => t.client === "奥様クラブ").length) / tasks.length) * 200)}%` }}
                   className={`
@@ -319,7 +286,7 @@ export default function DashboardPage() {
                 <span className="w-18">{tasks.filter(t => t.client === "奥様クラブ").length}件</span>
               </dd>
 
-              <div className="col-span-2 text-xs p-0.5 mt-1 text-center">※社内案件は度外視の為、数値はあくまで目安です。</div>
+              <div className="col-span-2 text-xs mt-1 text-center">※社内案件は度外視の為、数値はあくまで目安です。</div>
             </dl>
           </div>
 

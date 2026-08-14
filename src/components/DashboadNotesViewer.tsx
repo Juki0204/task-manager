@@ -18,7 +18,7 @@ import { supabase } from "@/utils/supabase/supabase";
 // }
 
 export default function DashboardNotesViewer() {
-  const { notes, isReady } = useTaskNotesRealtime();
+  const { notes } = useTaskNotesRealtime();
   const [viewerType, setViewerType] = useState<"all" | "added" | "changed" | "delete">("all");
 
   const { openDetail } = useTask();

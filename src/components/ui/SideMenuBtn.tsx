@@ -21,7 +21,6 @@ export function SideMenuBtn({ className, title, icon, pathname, onClick }: SideM
   const currentPath = usePathname();
 
   const idPathName = pathname.replace("/", "");
-  console.log(idPathName);
 
   return (
     <Button

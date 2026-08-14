@@ -65,6 +65,8 @@ export default function SideMenu() {
                 onClick={() => router.push('/dashboard')}
               />
 
+              <hr className="text-neutral-400/50 my-1 w-7/10 mx-auto" />
+
               <SideMenuBtn
                 title="全体タスク"
                 icon={<Users className={`w-5`} />}
@@ -100,6 +102,8 @@ export default function SideMenu() {
                 onClick={() => router.push('/trash')}
               />
 
+              <hr className="text-neutral-400/50 my-1 w-7/10 mx-auto" />
+
               <WithBadgeSideMenuBtn
                 title="掲示板"
                 icon={<ClipboardList className="w-5" />}
@@ -113,6 +117,8 @@ export default function SideMenu() {
                 pathname="/invoice"
                 onClick={() => router.push('/invoice')}
               />
+
+              <hr className="text-neutral-400/50 my-1 w-7/10 mx-auto" />
 
               <SideMenuBtn
                 title="各種設定"

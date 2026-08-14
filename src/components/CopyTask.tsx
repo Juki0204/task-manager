@@ -20,7 +20,7 @@ interface task {
 }
 
 
-export default function UpdateTask({ task, user, onClose }: task) {
+export default function CopyTask({ task, user, onClose }: task) {
   const [currentUserName, setCurrentUserName] = useState<string>('');
 
   const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧

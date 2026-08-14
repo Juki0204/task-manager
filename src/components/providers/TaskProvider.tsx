@@ -2,8 +2,6 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 
@@ -12,13 +10,17 @@ import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 import TaskDetail from "@/components/TaskDetail";
 import UpdateTask from "@/components/UpdateTask";
-import CopyTask from "@/components/CopyTask";
 import CancelAlertModal from "@/components/CancelAlertModal";
 import AddTask from "../AddTask";
 
 type TaskPanelType = "add" | "detail" | "edit" | "copy" | null;
 
 type TaskRealtimeContext = ReturnType<typeof useTaskRealtime>;
+
+type PendingPanel = {
+  type: TaskPanelType;
+  task?: Task | null;
+};
 
 interface TaskContextValue extends TaskRealtimeContext {
   activeTask: Task | null;
@@ -46,13 +48,14 @@ export function TaskProvider({ children }: TaskProviderProps) {
 
   const { taskList, deadlineList } = realtime;
 
-  //モーダル関連
+  //ドロワー関連
   const [panelType, setPanelType] = useState<TaskPanelType>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [pendingPanel, setPendingPanel] = useState<PendingPanel | null>(null);
 
-  //Realtime更新時、モーダル表示中のタスクも最新状態へ更新
+  //Realtime更新時、ドロワー表示中のタスクも最新状態へ更新
   useEffect(() => {
     if (!activeTask) return;
 
@@ -70,44 +73,66 @@ export function TaskProvider({ children }: TaskProviderProps) {
   }, [taskList, activeTask?.id]);
 
 
+  //ドロワーを開く処理
+  const applyPanelChange = (type: TaskPanelType, task?: Task | null) => {
+    if (type === null) {
+      resetPanel();
+      return;
+    }
+
+    if (type === "add") {
+      setActiveTask(null);
+      setPanelType("add");
+      setIsPanelOpen(true);
+      return;
+    }
+
+    if (!task) return;
+
+    const latestTask = taskList.find((item) => item.id === task.id) ?? task;
+
+    setActiveTask(latestTask);
+    setPanelType(type);
+    setIsPanelOpen(true);
+  };
+
+  //ドロワー切り替え判定
+  const requestPanelChange = (type: TaskPanelType, task?: Task | null) => {
+    if (isPanelOpen && panelType !== "detail") {
+      setPendingPanel({ type, task });
+
+      setIsAlertOpen(true);
+      return;
+    }
+
+    applyPanelChange(type, task);
+  };
+
   //新規追加
   const openAdd = () => {
-    setActiveTask(null);
-    setPanelType("add");
-    setIsPanelOpen(true);
+    requestPanelChange("add");
   }
 
   //詳細表示
   const openDetail = (task: Task) => {
-    setActiveTask(task);
-    setPanelType("detail");
-    setIsPanelOpen(true);
+    requestPanelChange("detail", task);
   };
 
   //編集表示
   const openEdit = (task: Task) => {
-    const latestTask =
-      taskList.find((item) => item.id === task.id) ?? task;
-
-    setActiveTask(latestTask);
-    setPanelType("edit");
-    setIsPanelOpen(true);
+    requestPanelChange("edit", task);
   };
 
   //コピー表示
   const openCopy = (task: Task) => {
-    const latestTask =
-      taskList.find((item) => item.id === task.id) ?? task;
-
-    setActiveTask(latestTask);
-    setPanelType("copy");
-    setIsPanelOpen(true);
+    requestPanelChange("copy", task);
   };
 
-  //モーダルのstateを初期化
+
+  //ドロワーのstateを初期化
   //Dialogのtransitionが終わる前にmodalTypeをnullにすると
   //中身だけ先に消えるため、少し待ってから初期化
-  const resetModal = () => {
+  const resetPanel = () => {
     setIsPanelOpen(false);
 
     window.setTimeout(() => {
@@ -116,15 +141,17 @@ export function TaskProvider({ children }: TaskProviderProps) {
     }, 300);
   };
 
-  //通常のモーダルClose
-  //編集中の場合は確認モーダルを表示する
+  //通常のドロワーClose
+  //詳細表示以外の場合は確認モーダルを表示する
   const closePanel = () => {
-    if (panelType === "edit") {
+    if (panelType !== "detail") {
+      setPendingPanel({ type: null });
+
       setIsAlertOpen(true);
       return;
     }
 
-    resetModal();
+    resetPanel();
   };
 
   //タスク編集ロック解除
@@ -147,11 +174,28 @@ export function TaskProvider({ children }: TaskProviderProps) {
   };
 
   //編集キャンセル確認
-  const handleConfirmCancelEdit = async () => {
-    await unlockTask();
+  const handleConfirmPanelChange = async () => {
+    if (panelType === "edit") {
+      await unlockTask();
+    }
 
     setIsAlertOpen(false);
-    resetModal();
+
+    if (pendingPanel) {
+      const { type, task } = pendingPanel;
+
+      setPendingPanel(null);
+
+      if (type === null) {
+        resetPanel();
+        return;
+      }
+
+      applyPanelChange(type, task);
+      return;
+    }
+
+    resetPanel();
   };
 
   //詳細 → 編集
@@ -159,9 +203,18 @@ export function TaskProvider({ children }: TaskProviderProps) {
     openEdit(task);
   };
 
-  //編集 → 詳細
-  const handleBackToDetail = () => {
-    setPanelType("detail");
+  //編集 → 詳細（編集キャンセル時）
+  const handleEditCancel = () => {
+    if (!activeTask) return;
+
+    requestPanelChange("detail", activeTask);
+  };
+
+  //編集 → 詳細（編集完了時）
+  const handleEditComplete = () => {
+    if (!activeTask) return;
+
+    applyPanelChange("detail", activeTask);
   };
 
   return (
@@ -195,7 +248,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
       >
         {panelType === "add" && user && (
           <AddTask
-            onClose={resetModal}
+            onClose={closePanel}
           />
         )}
 
@@ -205,7 +258,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
             <TaskDetail
               user={user}
               task={activeTask}
-              onClose={resetModal}
+              onClose={closePanel}
               onEdit={handleEdit}
               deadlineList={deadlineList}
             />
@@ -217,8 +270,8 @@ export function TaskProvider({ children }: TaskProviderProps) {
             <UpdateTask
               user={user}
               task={activeTask}
-              onComplete={handleBackToDetail}
-              onCancel={handleBackToDetail}
+              onComplete={handleEditComplete}
+              onCancel={handleEditCancel}
               onUnlock={unlockTask}
               deadlineList={deadlineList}
             />
@@ -227,10 +280,9 @@ export function TaskProvider({ children }: TaskProviderProps) {
         {panelType === "copy" &&
           activeTask &&
           user && (
-            <CopyTask
-              user={user}
+            <AddTask
               task={activeTask}
-              onClose={resetModal}
+              onClose={closePanel}
             />
           )}
       </div>
@@ -238,8 +290,11 @@ export function TaskProvider({ children }: TaskProviderProps) {
       {/* 編集中キャンセル確認 */}
       <CancelAlertModal
         alertOpen={isAlertOpen}
-        onModalClose={handleConfirmCancelEdit}
-        onCalcel={() => setIsAlertOpen(false)}
+        onModalClose={handleConfirmPanelChange}
+        onCalcel={() => {
+          setIsAlertOpen(false);
+          setPendingPanel(null);
+        }}
       />
     </TaskContext.Provider>
   );
