@@ -45,6 +45,7 @@ export default function CompletedTaskPage() {
     isPanelOpen,
     openDetail,
     openEdit,
+    openCopy,
   } = useTask();
 
   const { filters } = useTaskListPreferences();
@@ -416,24 +417,26 @@ export default function CompletedTaskPage() {
         {/* タスク一覧 */}
         {user &&
           taskList.length > 0 && (
-            <TaskList
-              user={user}
-              taskList={sortedTaskList}
-              onClick={(task: Task) => {
-                // if (isPanelOpen) {
-                //   return;
-                // }
+            <div className="flex-1">
+              <TaskList
+                user={user}
+                taskList={sortedTaskList}
+                onClick={(task: Task) => {
+                  // if (isPanelOpen) {
+                  //   return;
+                  // }
 
-                if (menu.visible) {
-                  return;
-                }
+                  if (menu.visible) {
+                    return;
+                  }
 
-                openDetail(task);
-              }}
-              onContextMenu={handleContextMenu}
-              onEdit={openEdit}
-              deadlineList={deadlineList}
-            />
+                  openDetail(task);
+                }}
+                onContextMenu={handleContextMenu}
+                onEdit={openEdit}
+                deadlineList={deadlineList}
+              />
+            </div>
           )}
       </div>
 
@@ -447,6 +450,7 @@ export default function CompletedTaskPage() {
             taskSerial={menu.taskSerial ?? ""}
             onClose={handleCloseContextMenu}
             updateTaskStatus={updateTaskStatus}
+            onCopyTask={openCopy}
           />
         )}
     </PageLayout>

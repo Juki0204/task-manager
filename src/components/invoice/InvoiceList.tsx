@@ -17,6 +17,7 @@ import AllEditableForm from "./AllEditableForm";
 import ToggleRowNumber from "./ToggleRowNumber";
 import { InvoiceEditingProvider } from "./InvoiceEditingProvider";
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, FileCheck, SquarePen } from "lucide-react";
+import { useTask } from "../providers/TaskProvider";
 
 
 interface InvoiceListProps {
@@ -35,14 +36,14 @@ const FIELDS = [
 type FieldName = (typeof FIELDS)[number];
 
 export default function InvoiceList({ invoices, user, setInvoices, sortState }: InvoiceListProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isTaskLoaded, setIsTaskLoaded] = useState<boolean>(false);
+  // const [isTaskLoaded, setIsTaskLoaded] = useState<boolean>(false);
   const [isAllEditableFromOpen, setIsAllEditableFromOpen] = useState(false);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [priceList, setPriceList] = useState<string[] | null>(null);
   const [allPriceList, setAllPriceList] = useState<{ id: number, category: string, sub_category: string, work_name: string, price: number }[] | null>(null);
   const [activeCell, setActiveCell] = useState<{ recordId: string, field: string } | null>(null);
   const [activeRecord, setActiveRecord] = useState<{ currentId: string | null, prevId: string | null, nextId: string | null } | null>(null)
+
+  const { openDetail, isPanelOpen } = useTask();
 
   const recordRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -93,12 +94,12 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   }, [activeCell]);
 
   // タスク詳細モーダル開く
-  const handleActiveTask = async (id: string) => {
-    const { data: task } = await supabase.from("tasks").select("*").eq("id", id).single();
-    if (task) setActiveTask(task);
+  // const handleActiveTask = async (id: string) => {
+  //   const { data: task } = await supabase.from("tasks").select("*").eq("id", id).single();
+  //   if (task) setActiveTask(task);
 
-    setIsTaskLoaded(true);
-  };
+  //   setIsTaskLoaded(true);
+  // };
 
   // 価格一覧を取得
   useEffect(() => {
@@ -144,6 +145,21 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
 
     setActiveCell({ recordId: invoices[nextRow].id, field: FIELDS[nextCol] });
   };
+
+  const handleTaskCheck = async (id: string) => {
+    const { data } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (!data) {
+      alert("対象のタスクが見つかりませんでした");
+      return;
+    }
+
+    openDetail(data);
+  }
 
   useEffect(() => {
     if (!activeCell) return;
@@ -283,7 +299,11 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                 flex items-center justify-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-20 z-20 cursor-pointer
                 ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}
               `}
-                onClick={() => { handleActiveTask(i.id); setIsOpen(true) }}
+                onClick={() => {
+                  // handleActiveTask(i.id);
+                  // setIsOpen(true);
+                  handleTaskCheck(i.id);
+                }}
               >
                 <FileCheck className="w-4.5" />
                 {/* {i.serial} */}
@@ -431,7 +451,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
           )
           )}
 
-        <Dialog
+        {/* <Dialog
           open={isOpen}
           onClose={() => {
             setIsOpen(false);
@@ -460,7 +480,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
               )}
             </DialogPanel>
           </div>
-        </Dialog>
+        </Dialog> */}
 
         {/* 一括入力フォーム */}
         <Dialog
@@ -470,15 +490,15 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
             setActiveRecord(null);
           }}
           // transition
-          className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
+          className="relative z-100 transition duration-300 ease-out data-closed:opacity-0"
         >
           <DialogBackdrop
             onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }}
             className="fixed inset-0 bg-black/20 dark:bg-white/20"
           />
 
-          <div className="fixed inset-0 w-screen flex items-center justify-center">
-            <DialogPanel className="relative h-[85svh] w-300 space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2d2d2d] p-5 pt-6">
+          <div className={`fixed inset-0 w-screen flex items-center justify-center transition-transform duration-300 ${isPanelOpen ? "-translate-x-[250px]" : ""}`}>
+            <DialogPanel className="relative h-[85svh] w-320 space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2d2d2d] p-5 pt-6">
               {activeRecord && (
                 <AllEditableForm
                   index={!invoices ? 0 : invoices.findIndex(i => i.id === activeRecord.currentId) + 1}
@@ -498,8 +518,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
                   }}
                   onCheckTask={() => {
                     if (!activeRecord.currentId) return;
-                    handleActiveTask(activeRecord.currentId);
-                    setIsOpen(true);
+                    handleTaskCheck(activeRecord.currentId);
                   }}
                 />
               )}

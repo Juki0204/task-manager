@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -27,6 +28,7 @@ type ContextMenuState = {
 
 export default function AllTaskPage() {
   const { user } = useAuth();
+  const [now, setNow] = useState(() => Date.now());
 
   const {
     taskList,
@@ -146,7 +148,7 @@ export default function AllTaskPage() {
     return [...filteredTaskList].sort(
       (a, b) => {
         if (taskListSortType === "byDate") {
-          const requestDateDiff = new Date(a.request_date).getTime() - new Date(b.request_date).getTime();
+          const requestDateDiff = new Date(b.request_date).getTime() - new Date(a.request_date).getTime();
 
           //request_dateが同一の場合はcreated_at順
           if (requestDateDiff !== 0) {
@@ -154,7 +156,7 @@ export default function AllTaskPage() {
           }
 
           return (
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
         }
 
@@ -188,12 +190,20 @@ export default function AllTaskPage() {
     );
   }, [filteredTaskList, taskListSortType]);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const recentryTaskList = useMemo(() => {
-    const st = new Date();
-    st.setHours(st.getHours() - 1);
-    const recentry = [...filteredTaskList].filter(task => new Date(task.created_at) > st);
-    return recentry.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  }, [filteredTaskList]);
+    const threshold = now - 60 * 60 * 1000;
+
+    return filteredTaskList.filter((task) => new Date(task.created_at).getTime() >= threshold)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }, [filteredTaskList, now]);
 
 
 

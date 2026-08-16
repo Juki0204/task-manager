@@ -34,6 +34,7 @@ export default function TrashTaskPage() {
     isPanelOpen,
     openDetail,
     openEdit,
+    openCopy,
   } = useTask();
 
   const { filters } = useTaskListPreferences();
@@ -174,6 +175,7 @@ export default function TrashTaskPage() {
             taskSerial={menu.taskSerial ?? ""}
             onClose={handleCloseContextMenu}
             updateTaskStatus={updateTaskStatus}
+            onCopyTask={openCopy}
           />
         )}
     </PageLayout>

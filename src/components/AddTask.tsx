@@ -47,6 +47,7 @@ type ClientTaskMeta = {
 interface AddTaskProps {
   task?: Task;
   onClose: () => void;
+  onComplete: () => void;
 }
 
 const getToday = () =>
@@ -97,7 +98,7 @@ const initialClientMeta: ClientTaskMeta = {
   taskNum: "",
 };
 
-export default function AddTask({ task, onClose }: AddTaskProps) {
+export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
   const { user } = useAuth();
   const { syncInvoiceWithTask } = useInvoiceSync();
   const { closePanel } = useTask();
@@ -229,7 +230,7 @@ export default function AddTask({ task, onClose }: AddTaskProps) {
 
   //Drawer Close
   const closeForm = () => {
-    closePanel();
+    onComplete();
     resetForm();
     onClose();
   };

@@ -8,7 +8,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
-import { CalendarCheck, CirclePause, CirclePlay, CopyPlus, PackageCheck, Pause, Play, StickyNote, Trash, Trash2, UserMinus } from "lucide-react";
+import { CalendarCheck, CirclePause, CirclePlay, CopyPlus, PackageCheck, Pause, PencilLine, Play, StickyNote, Trash, Trash2, UserMinus } from "lucide-react";
 
 
 //---------Btn Template---------
@@ -29,9 +29,30 @@ export function ContextMenuBtn({ className, onClick, children }: ContextMenuBtnP
   )
 }
 
+//---------Btn Template---------
+type FlexContextMenuBtnProps = {
+  className?: string;
+  onClick: () => void;
+  children: ReactNode;
+}
+
+export function FlexContextMenuBtn({ className, onClick, children }: FlexContextMenuBtnProps) {
+  return (
+    <div
+      onClick={onClick}
+      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-md tracking-wider text-sm cursor-pointer hover:bg-neutral-300/60 dark:hover:bg-neutral-700 ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
+
+
+/* ================================================================
+ * タスク状態管理関係
+  ================================================================ */
 
 //---------InProgress Btn---------
-
 
 type ProgressProps = {
   taskId: string;
@@ -57,6 +78,7 @@ export function ChangeInProgress({ taskId, onClick, updateTaskStatus }: Progress
     </ContextMenuBtn>
   );
 }
+
 
 //---------Interrupt Btn---------
 
@@ -111,7 +133,6 @@ export function ChangeConfirm({ taskId, onClick, updateTaskStatus }: ConfirmProp
     </ContextMenuBtn>
   );
 }
-
 
 
 //---------NotYetStarted Btn---------
@@ -200,16 +221,60 @@ export function ChangeComplete({ taskId, onClick, updateTaskStatus }: CompletePr
 }
 
 
+/* ================================================================
+ * タスク変更関係
+  ================================================================ */
 
 //---------InsertCopyTask Btn---------
 
-type InsertCopyTaskProps = {
+type UpdateTaskBtnProps = {
+  taskId: string;
+  onClick: () => void;
+  onEdit: (t: Task) => void;
+}
+
+export function UpdateTaskBtn({ taskId, onClick, onEdit }: UpdateTaskBtnProps) {
+
+  const [editTask, setEditTask] = useState<Task | null>(null);
+
+  const getCurrentTask = async (taskId: string) => {
+    const { data } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq("id", taskId)
+      .single();
+
+    if (!data) return false;
+    setEditTask(data);
+  };
+
+  useEffect(() => {
+    getCurrentTask(taskId);
+  }, [taskId]);
+
+  return (
+    <FlexContextMenuBtn
+      onClick={async () => {
+        if (!editTask) return;
+        onEdit(editTask);
+        onClick();
+      }}
+    >
+      <PencilLine className="w-4" /><span className="font-bold">編集</span>
+    </FlexContextMenuBtn>
+  );
+}
+
+
+//---------InsertCopyTask Btn---------
+
+type CopyTaskBtnProps = {
   taskId: string;
   onClick: () => void;
   onCopyTask: (t: Task) => void;
 }
 
-export function InsertCopyTask({ taskId, onClick, onCopyTask }: InsertCopyTaskProps) {
+export function CopyTaskBtn({ taskId, onClick, onCopyTask }: CopyTaskBtnProps) {
 
   const [copiedTask, setCopiedTask] = useState<Task | null>(null);
 
@@ -229,29 +294,29 @@ export function InsertCopyTask({ taskId, onClick, onCopyTask }: InsertCopyTaskPr
   }, [taskId]);
 
   return (
-    <ContextMenuBtn
+    <FlexContextMenuBtn
       onClick={async () => {
         if (!copiedTask) return;
         onCopyTask(copiedTask);
         onClick();
       }}
     >
-      <CopyPlus className="w-4" /><span className="font-bold">複製して新規追加</span>
-    </ContextMenuBtn>
+      <CopyPlus className="w-4" /><span className="font-bold">複製</span>
+    </FlexContextMenuBtn>
   );
 }
 
 
 //---------Delete Btn---------
 
-type DeleteProps = {
+type DeleteTaskBtnProps = {
   taskId: string;
   taskSerial: string;
   onClick: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 }
 
-export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: DeleteProps) {
+export function DeleteTaskBtn({ taskId, taskSerial, onClick, updateTaskStatus }: DeleteTaskBtnProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { user } = useAuth();
 
@@ -283,7 +348,7 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
   }
 
   return (
-    <ContextMenuBtn
+    <FlexContextMenuBtn
       onClick={() => {
         setIsOpen(true);
       }}
@@ -305,6 +370,6 @@ export function ChangeDelete({ taskId, taskSerial, onClick, updateTaskStatus }: 
           </DialogPanel>
         </div>
       </Dialog>
-    </ContextMenuBtn>
+    </FlexContextMenuBtn>
   );
 }
