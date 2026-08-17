@@ -256,36 +256,36 @@ export default function PersonalCard({
   }
 
   // クリック判定(シングル・ダブル)
-  const DOUBLE_CLICK_GRACE = 200;
-  const timerRef = useRef<NodeJS.Timeout>(null);
-  const handleDoubleClick = async () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
+  // const DOUBLE_CLICK_GRACE = 200;
+  // const timerRef = useRef<NodeJS.Timeout>(null);
+  // const handleDoubleClick = async () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //     timerRef.current = null;
+  //   }
 
-    //console.log("ダブルクリックです");
-    const ok = await lockedTaskHandler();
-    if (!ok) return;
+  //   //console.log("ダブルクリックです");
+  //   const ok = await lockedTaskHandler();
+  //   if (!ok) return;
 
-    if (!editingUser) {
-      onEdit(task);
-    }
-  }
+  //   if (!editingUser) {
+  //     onEdit(task);
+  //   }
+  // }
 
-  const handleSingleClick = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-      return;
-    }
+  // const handleSingleClick = () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //     timerRef.current = null;
+  //     return;
+  //   }
 
-    timerRef.current = setTimeout(() => {
-      //console.log("シングルクリックです");
-      onClick(task);
-      timerRef.current = null;
-    }, DOUBLE_CLICK_GRACE);
-  }
+  //   timerRef.current = setTimeout(() => {
+  //     //console.log("シングルクリックです");
+  //     onClick(task);
+  //     timerRef.current = null;
+  //   }, DOUBLE_CLICK_GRACE);
+  // }
 
   const convertDate = (date: string) => {
     const splitDate = date.split("-");
@@ -310,8 +310,8 @@ export default function PersonalCard({
 
       {/* カード（概要） */}
       <div
-        onClick={handleSingleClick}
-        onDoubleClick={handleDoubleClick}
+        onClick={() => onClick(task)}
+        // onDoubleClick={handleDoubleClick}
         id={task.id}
         className={`${personalBg} w-full p-3 pl-4 tracking-wide cursor-pointer relative`}
         {...props}

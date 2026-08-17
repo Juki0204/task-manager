@@ -96,12 +96,12 @@ export function RemarksHoverMark({
       )
       .select("task_id, acknowledged_by, acknowledged_at")
       .single();
-    
+
     if (error) {
       console.error("確認フラグの登録に失敗しました。", error);
       return;
     }
-    
+
     upsertTaskAcknowledgement(data);
   }
 
@@ -168,7 +168,7 @@ export function RemarksHoverMark({
           }
         }}
         className="rounded-xl bg-neutral-200 shadow-lg p-2 pt-1 text-sm text-neutral-900"
-        maxWidth={520}
+        maxWidth={480}
         maxHeight={1000}
       >
         <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">

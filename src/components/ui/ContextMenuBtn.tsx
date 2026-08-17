@@ -234,8 +234,8 @@ type UpdateTaskBtnProps = {
 }
 
 export function UpdateTaskBtn({ taskId, onClick, onEdit }: UpdateTaskBtnProps) {
-
   const [editTask, setEditTask] = useState<Task | null>(null);
+  const { user } = useAuth();
 
   const getCurrentTask = async (taskId: string) => {
     const { data } = await supabase
@@ -248,6 +248,27 @@ export function UpdateTaskBtn({ taskId, onClick, onEdit }: UpdateTaskBtnProps) {
     setEditTask(data);
   };
 
+  const lockedTaskHandler = async () => {
+    const { data } = await supabase
+      .from('tasks')
+      .update({
+        locked_by_id: user?.id,
+        locked_by_name: user?.name,
+        locked_by_at: new Date().toISOString(),
+      })
+      .eq("id", taskId)
+      .is("locked_by_id", null)
+      .select();
+
+    if (!data?.length) {
+      toast.error('他のユーザーが編集中です', { position: "top-center" });
+      return false;
+    }
+
+    // console.log("locked task: taskId =", task.id);
+    return true;
+  }
+
   useEffect(() => {
     getCurrentTask(taskId);
   }, [taskId]);
@@ -256,6 +277,7 @@ export function UpdateTaskBtn({ taskId, onClick, onEdit }: UpdateTaskBtnProps) {
     <FlexContextMenuBtn
       onClick={async () => {
         if (!editTask) return;
+        lockedTaskHandler();
         onEdit(editTask);
         onClick();
       }}

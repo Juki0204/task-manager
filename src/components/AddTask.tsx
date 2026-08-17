@@ -632,7 +632,7 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
         <Button
           onClick={addTask}
           disabled={!isValid || isSubmitting}
-          className="flex-1 cursor-pointer rounded bg-sky-600 px-4 py-2 text-sm font-bold text-white data-hover:opacity-80 data-disabled:cursor-auto data-disabled:bg-neutral-400 data-disabled:dark:opacity-50"
+          className="flex-1 cursor-pointer rounded bg-blue-700 dark:bg-blue-900 px-4 py-2 text-sm font-bold text-white data-hover:opacity-80 data-disabled:cursor-auto data-disabled:bg-neutral-400 data-disabled:dark:opacity-50"
         >
           {isSubmitting ? "処理中..." : isCopyMode ? "複製して追加" : "新規追加"}
         </Button>

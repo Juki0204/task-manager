@@ -14,7 +14,8 @@ import { TaskNote } from "@/utils/hooks/useTaskNotesRealtime";
 import { extractMailRefs } from "@/utils/function/extractMailRefs";
 import MailConverter from "./MailConverter";
 import { useTaskUnread } from "./TaskUnreadProvider";
-import { AlarmClock, Building, CalendarClock, CircleCheck, Mail, PenLine, RotateCcwClock, Star, UserCheck, UserPlus, X } from "lucide-react";
+import { AlarmClock, Building, CalendarClock, CircleCheck, Mail, MailOpen, PenLine, RotateCcwClock, Search, Star, UserCheck, UserPlus, X } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 
 
 interface TaskDetailProps {
@@ -35,7 +36,6 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
   const [importantIds, setImportantIds] = useState<string[]>([]);
 
   const [notes, setNotes] = useState<TaskNote[] | null>([]);
-  const [notesOpen, setNotesOpen] = useState<boolean>(false);
 
   const currentDeadline = deadlineList?.filter(d => d.task_id === task.id)[0];
 
@@ -298,17 +298,17 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         <X onClick={onClose} className="absolute top-0 right-0 cursor-pointer" />
       </div>
 
-      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-md border border-neutral-300 dark:border-neutral-600 bg-slate-300/50 dark:bg-[#444444] p-3 pb-2 mb-4">
+      <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-md border border-neutral-300 dark:border-neutral-600 bg-slate-300/60 dark:bg-[#444444] p-3 pb-2 mb-4">
 
         <h3 className="w-full font-bold text-xl tracking-wider py-1 col-span-2 text-justify flex gap-1 items-center leading-none">
-          <PenLine className="w-4.5 text-neutral-500" /><span className="flex-1">{task.title}</span>
+          <PenLine className="w-4.5 text-neutral-500 dark:text-neutral-400" /><span className="flex-1">{task.title}</span>
         </h3>
 
         <div className="w-full tracking-wider border-b border-neutral-400 dark:border-neutral-500 py-1.5 px-1 text-sm">{task.description}</div>
 
         <div className="w-full relative flex gap-2 tracking-wider">
           <div className="flex gap-1 items-center pl-1.5 w-fit whitespace-nowrap py-1.5 font-bold text-sm">
-            <UserCheck className="w-4.5 text-neutral-500" />
+            <UserCheck className="w-4.5 text-neutral-500 dark:text-neutral-400" />
             <span className="px-1">{task.manager ? task.manager : "-"}</span>
           </div>
 
@@ -338,43 +338,44 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
         <div className="col-span-2 flex gap-1 items-center mt-1">
           <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">DETAILS</span>
-          <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+          <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
         </div>
 
         <div className="col-span-2 pb-4 tracking-wider">
           <div className="w-full flex flex-col gap-2 pt-0 px-2 pb-3">
             <div className="flex items-center justify-between border-b border-neutral-300 dark:border-neutral-600 pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm">
-                <Building className="w-4.5 text-neutral-500" /> クライアント
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-500 dark:text-neutral-400">
+                <Building className="w-4.5" /> クライアント
               </h3>
               <p className="py-1 px-2 text-sm font-bold">{task.client}</p>
             </div>
 
             <div className="flex items-center justify-between border-b border-neutral-300 dark:border-neutral-600 pb-1.5 px-1.5">
-              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm">
-                <UserPlus className="w-4.5 text-neutral-500" /> 依頼担当者
+              <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-500 dark:text-neutral-400">
+                <UserPlus className="w-4.5" /> 依頼担当者
               </h3>
               <p className="py-1 px-2 text-sm font-bold">{task.requester}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border border-neutral-300 dark:border-neutral-600 rounded-md">
+          <div className="grid grid-cols-3 mb-3 border border-neutral-300 dark:border-neutral-600 rounded-md">
             <div className="flex flex-col p-3 border-r border-neutral-300 dark:border-neutral-600">
-              <h3 className="w-28 whitespace-nowrap pb-1 flex gap-1 items-center font-bold text-sm"><CalendarClock className="w-4.5 text-neutral-500" /> 依頼日</h3>
+              <h3 className="w-28 whitespace-nowrap pb-1 flex gap-1 items-center font-bold text-sm text-neutral-500 dark:text-neutral-400"><CalendarClock className="w-4.5" /> 依頼日</h3>
               <p className="border-b border-neutral-400 py-1 px-2 text-sm font-bold">{task.request_date}</p>
             </div>
             <div className="flex flex-col p-3 border-r border-neutral-300 dark:border-neutral-600">
-              <h3 className="w-28 whitespace-nowrap pb-1 flex gap-1 items-center font-bold text-sm"><AlarmClock className="w-4.5 text-neutral-500" /> 期限日</h3>
+              <h3 className="w-28 whitespace-nowrap pb-1 flex gap-1 items-center font-bold text-sm text-neutral-500 dark:text-neutral-400"><AlarmClock className="w-4.5" /> 期限日</h3>
               <p className={`border-b border-neutral-400 py-1 px-2 text-sm font-bold ${currentDeadline ? "text-red-600 dark:text-yellow-400" : ""}`}>{currentDeadline ? currentDeadline.date : "-"}</p>
             </div>
             <div className="flex flex-col p-3">
-              <h3 className="w-28 whitespace-nowrap pb-1 flex gap-1 items-center font-bold text-sm"><CircleCheck className="w-4.5 text-neutral-500" /> 完了日</h3>
+              <h3 className="w-28 whitespace-nowrap pb-1 flex gap-1 items-center font-bold text-sm text-neutral-500 dark:text-neutral-400"><CircleCheck className="w-4.5" /> 完了日</h3>
               <p className="border-b border-neutral-400 py-1 px-2 text-sm font-bold">{task.finish_date ? task.finish_date : "-"}</p>
             </div>
           </div>
+
         </div>
 
-        {mailRefs.length > 0 && (
+        {/* {mailRefs.length > 0 && (
           <>
             <div className="col-span-2 flex gap-1 items-center mt-1">
               <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">ACCESSORIES</span>
@@ -383,19 +384,32 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
             <div className="col-span-2 flex gap-2 pb-4">
               <div
-                onClick={() => { setNotesOpen(false); setMailOpen(!mailOpen) }}
+                onClick={() => { setMailOpen(!mailOpen) }}
                 className="w-fit flex gap-1 items-center px-4 py-0.25 font-normal rounded-full text-xs tracking-wider text-white bg-slate-600 dark:bg-blue-600/50 cursor-pointer transition-all hover:bg-slate-500"
               >
                 <Mail className="w-4" />依頼に関連するメール {mailRefs.length}件
               </div>
             </div>
           </>
-        )}
+
+        )} */}
 
         <div className="col-span-2 flex gap-1 items-center mt-1">
           <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">REMARKS</span>
-          <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+          <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
         </div>
+
+        {mailRefs.length > 0 && (
+          <div className="col-span-2 flex gap-2 items-center font-bold pb-2 border-b border-neutral-300 dark:border-neutral-700">
+            <Mail className="w-4" />依頼に関連するメール： {mailRefs.length}件
+            <div
+              onClick={() => { setMailOpen(!mailOpen) }}
+              className="w-fit flex gap-1 items-center px-4 py-0.25 font-bold rounded-full text-sm tracking-wider text-white bg-blue-800 dark:bg-blue-600/50 cursor-pointer transition-all hover:bg-slate-500"
+            >
+              <MailOpen className="w-4" /> CHECK
+            </div>
+          </div>
+        )}
 
         <div className={`relative flex flex-col col-span-2 pb-4`}>
           <div className="border border-neutral-300 dark:border-neutral-600 bg-neutral-100 dark:bg-[#333333] rounded-md p-2">
@@ -411,21 +425,34 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
         <div className="col-span-2 flex gap-1 items-center mt-1">
           <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">OTHERS</span>
-          <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+          <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
         </div>
 
         {notes && notes.length > 0 && (
-          <div className={`col-span-2 h-auto mb-0 rounded-md pt-0 p-1`}>
-            <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><RotateCcwClock className="w-4.5 text-neutral-500" /> 変更履歴ログ</h3>
-            <div className="h-[calc(100%-1.25rem)] pr-2 text-xs overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400">
-              {notes?.toReversed().map(note => (
-                <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
-                  <span className="block">{new Date(note.changed_at).toLocaleString("sv-SE")}</span>
-                  {note.changed_by}さんが{note.message.substring(10)}
-                </p>
-              ))}
-            </div>
-          </div>
+          // <div className={`col-span-2 h-auto mb-0 rounded-md pt-0 p-1`}>
+          //   <h3 className="w-fit whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm"><RotateCcwClock className="w-4.5 text-neutral-500" /> 変更履歴ログ</h3>
+          //   <div className="pr-2 text-xs">
+          //     {notes?.toReversed().map(note => (
+          //       <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
+          //         <span className="block">{new Date(note.changed_at).toLocaleString("sv-SE")}</span>
+          //         {note.changed_by}さんが{note.message.substring(10)}
+          //       </p>
+          //     ))}
+          //   </div>
+          // </div>
+          <Accordion type="single" collapsible defaultValue="all" className="col-span-2">
+            <AccordionItem key="notes" value="item-1" className="h-auto mb-0 rounded-md pt-0 p-1">
+              <AccordionTrigger className="w-fit whitespace-nowrap py-1 flex gap-1 items-center justify-start font-bold text-sm cursor-pointer [&_svg]:!ml-0"><RotateCcwClock className="w-4.5 text-neutral-500" /> 変更履歴ログ</AccordionTrigger>
+              <AccordionContent className="pr-2 text-xs w-full">
+                {notes?.toReversed().map(note => (
+                  <p key={note.id} className="not-[:last-of-type]:border-b border-neutral-300 py-1 text-justify">
+                    <span className="block">{new Date(note.changed_at).toLocaleString("sv-SE")}</span>
+                    {note.changed_by}さんが{note.message.substring(10)}
+                  </p>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
       </div>
 
@@ -433,7 +460,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         <Button
           disabled={!!editingUser}
           onClick={lockedTaskHandler}
-          className="w-full flex gap-2 items-center justify-center mb-3 pr-4 rounded-md bg-neutral-900 dark:bg-slate-700 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
+          className="w-full flex gap-2 items-center justify-center mb-3 pr-4 rounded-md bg-blue-700 dark:bg-blue-900 text-white py-2 px-2 cursor-pointer hover:opacity-80 data-disabled:opacity-30"
         >
           <PenLine className="w-4.5 text-neutral-100" />
           {editingUser ? `${editingUser.userName}さんが編集中...` : "編集"}
@@ -445,13 +472,6 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
         </div>
 
         <div className="flex gap-2">
-          <Button
-            disabled={notes && notes.length > 0 ? false : true}
-            onClick={() => { setMailOpen(false); setNotesOpen(!notesOpen); }}
-            className="bg-green-900/80 text-white rounded px-4 py-2 text-sm data-hover:bg-green-800 cursor-pointer disabled:grayscale-100 disabled:opacity-50"
-          >
-            変更履歴
-          </Button>
           <Button
             onClick={onClose}
             className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 data-hover:text-neutral-700 cursor-pointer"

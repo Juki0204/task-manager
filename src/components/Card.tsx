@@ -156,36 +156,36 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
   }
 
   // クリック判定(シングル・ダブル)
-  const DOUBLE_CLICK_GRACE = 200;
-  const timerRef = useRef<NodeJS.Timeout>(null);
-  const handleDoubleClick = async () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
+  // const DOUBLE_CLICK_GRACE = 200;
+  // const timerRef = useRef<NodeJS.Timeout>(null);
+  // const handleDoubleClick = async () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //     timerRef.current = null;
+  //   }
 
-    //console.log("ダブルクリックです");
-    const ok = await lockedTaskHandler();
-    if (!ok) return;
+  //   //console.log("ダブルクリックです");
+  //   const ok = await lockedTaskHandler();
+  //   if (!ok) return;
 
-    if (!task.locked_by_id) {
-      onEdit(task);
-    }
-  }
+  //   if (!task.locked_by_id) {
+  //     onEdit(task);
+  //   }
+  // }
 
-  const handleSingleClick = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-      return;
-    }
+  // const handleSingleClick = () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //     timerRef.current = null;
+  //     return;
+  //   }
 
-    timerRef.current = setTimeout(() => {
-      //console.log("シングルクリックです");
-      onClick(task);
-      timerRef.current = null;
-    }, DOUBLE_CLICK_GRACE);
-  }
+  //   timerRef.current = setTimeout(() => {
+  //     //console.log("シングルクリックです");
+  //     onClick(task);
+  //     timerRef.current = null;
+  //   }, DOUBLE_CLICK_GRACE);
+  // }
 
   const hoverColor = `hover:[--${personalUnique}-bg-opacity:0.2]`;
 
@@ -196,8 +196,8 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
-        onClick={handleSingleClick}
-        onDoubleClick={handleDoubleClick}
+        onClick={() => onClick(task)}
+        // onDoubleClick={handleDoubleClick}
         id={task.id}
         className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[110px_240px_minmax(160px,300px)_minmax(200px,700px)_70px_120px_260px] py-3`}
         {...props}
