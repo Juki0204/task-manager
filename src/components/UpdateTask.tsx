@@ -48,7 +48,7 @@ interface UpdateTaskProps {
   task: Task;
   user: User;
   onCancel: () => void;
-  onComplete: () => void;
+  onComplete: (task: Task) => void;
   onUnlock: () => void;
   deadlineList: { task_id: string; date: string }[];
 }
@@ -145,8 +145,8 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
     }));
   };
 
-  const updateTask = async (): Promise<boolean> => {
-    if (isSubmitting) return false;
+  const updateTask = async (): Promise<Task | null> => {
+    if (isSubmitting) return null;
 
     setIsSubmitting(true);
 
@@ -155,7 +155,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
 
       if (oldTaskError || !oldTaskData) {
         console.error("変更前のタスク取得に失敗しました:", oldTaskError);
-        return false;
+        return null;
       }
 
       const finishDate = (form.status === "完了" || form.status === "確認中") && !form.finishDate ? new Date().toLocaleDateString("sv-SE") : form.finishDate;
@@ -184,7 +184,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
       if (updateTaskError || !taskData) {
         console.error("タスクの更新に失敗しました:", updateTaskError);
         alert("タスクの更新に失敗しました");
-        return false;
+        return null;
       }
 
       if (form.deadline) {
@@ -262,10 +262,10 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
         }
       }
 
-      return true;
+      return taskData;
     } catch (error) {
       console.error(error);
-      return false;
+      return null;
     } finally {
       setIsSubmitting(false);
     }
@@ -274,16 +274,15 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
   const handleSubmit = async () => {
     if (!isValid || isSubmitting) return;
 
-    const success = await updateTask();
+    const updatedTask = await updateTask();
 
-    if (!success) return;
+    if (!updatedTask) return;
 
     await onUnlock();
 
-    window.setTimeout(() => {
-      onComplete();
-      toast.info(`タスク【${task.serial}】を更新しました。`);
-    }, 500);
+    onComplete(updatedTask);
+
+    toast.info(`タスク【${task.serial}】を更新しました。`);
   };
 
   useEffect(() => {
@@ -343,7 +342,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
         <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
           <div className="w-full flex gap-1 items-center mt-1">
             <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">META</span>
-            <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <div className="flex flex-col">
@@ -373,9 +372,9 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
         </div>
 
         <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
-          <div className="w-full flex gap-1 items-center mt-2 mb-1">
+          <div className="w-full flex gap-1 items-center mt-1">
             <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">DETAILS</span>
-            <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <div className="flex flex-wrap gap-2 flex-1">
@@ -413,9 +412,9 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
         </div>
 
         <div className="flex flex-col col-span-2">
-          <div className="w-full flex gap-1 items-center mt-2 mb-1">
-            <span className="text-neutral-400/60 text-xs leading-none tracking-widest">REMARKS</span>
-            <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">REMARKS</span>
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><NotebookPen className="w-4.5 text-neutral-500" /> 備考欄</h3>

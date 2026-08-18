@@ -167,11 +167,11 @@ export function RemarksHoverMark({
             closeIfNotHovering();
           }
         }}
-        className="rounded-xl bg-neutral-200 shadow-lg p-2 pt-1 text-sm text-neutral-900"
+        className="bg-neutral-100/95 dark:bg-neutral-800/95 shadow-lg p-2 pt-1 text-sm overflow-hidden"
         maxWidth={480}
-        maxHeight={1000}
+        maxHeight={800}
       >
-        <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
+        <h3 className="w-full whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm border-b border-neutral-300 dark:border-neutral-700">
           <LuNotebookPen /> 備考
         </h3>
         {children}

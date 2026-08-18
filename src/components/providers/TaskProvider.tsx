@@ -211,10 +211,9 @@ export function TaskProvider({ children }: TaskProviderProps) {
   };
 
   //編集 → 詳細（編集完了時）
-  const handleEditComplete = () => {
-    if (!activeTask) return;
-
-    applyPanelChange("detail", activeTask);
+  const handleEditComplete = (updatedTask: Task) => {
+    setActiveTask(updatedTask);
+    setPanelType("detail");
   };
 
   return (

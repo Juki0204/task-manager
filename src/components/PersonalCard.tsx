@@ -313,44 +313,25 @@ export default function PersonalCard({
         onClick={() => onClick(task)}
         // onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-3 pl-4 tracking-wide cursor-pointer relative`}
+        className={`${personalBg} w-full p-2 pl-3 tracking-wide cursor-pointer relative`}
         {...props}
       >
         <div className="flex items-center gap-1 text-sm leading-6 pb-1.5">
-          <HighlightText text={task.serial} keyword={filters.searchKeywords} />
-          {user.important_task_id && user.important_task_id.includes(task.id) && (
-            <Star className="text-yellow-300 text-lg" />
+          {user.important_task_id && user.important_task_id.includes(task.id) ? (
+            <Star className="w-5 text-yellow-400 fill-yellow-300 text-lg" />
+          ) : (
+            <Star className="w-5 text-neutral-400/50 fill-neutral-400/40 text-lg mt-0.5 mr-0.5" />
           )}
+          <HighlightText text={task.serial} keyword={filters.searchKeywords} />
           {currentDeadline && (
             <>
-              <AlarmClock className="w-4 text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+              <AlarmClock className="w-5 text-red-500 dark:text-yellow-300 text-lg ml-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
               <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px", zIndex: 50 }} />
             </>
           )}
         </div>
-        <h3 className="relative text-base font-bold flex items-center gap-1 pr-16">
-          {
-            task.method === 'mail' ?
-              <Mail className="w-4 h-4" />
-              : task.method === 'tel' ?
-                <Phone className="w-4 h-4" />
-                :
-                <CircleQuestionMark className="w-4 h-4" />
-          }
-          <span className="truncate flex-1">
-            <HighlightText text={task.title} keyword={filters.searchKeywords} />
-          </span>
 
-          {hasRemarksInfo && task.remarks && (
-            <RemarksHoverMark handleHover={setHover} task={task} className="absolute inset-y-0 right-0">
-              {hover && remarksHtml && (
-                <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
-              )}
-            </RemarksHoverMark>
-          )}
-        </h3>
-
-        <div className="w-fit flex gap-1 items-center pl-1 absolute top-3 right-3">
+        <div className="w-fit flex gap-1 items-center pl-1 absolute top-2 right-2">
           {
             task.priority ?
               <span className={`py-1 px-2 h-fit rounded-sm text-xs font-bold whitespace-nowrap ${priorityStyle}`}>{task.priority}</span>
@@ -360,24 +341,44 @@ export default function PersonalCard({
           <span className={`py-1 px-2 h-fit w-16.5 text-center rounded-sm text-xs font-bold whitespace-nowrap ${statusStyle}`}>{task.status}</span>
         </div>
 
-        <div className="line-clamp-2 w-full truncate text-sm h-5 mb-2">
-          <HighlightText text={task.description} keyword={filters.searchKeywords} />
-        </div>
+        <div className="px-2 py-1.5 rounded-md overflow-hidden relative font-bold dark:font-normal before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
+          <h3 className="relative text-base font-bold flex items-center gap-1 pr-16 mb-1">
+            {
+              task.method === 'mail' ?
+                <Mail className="w-4 h-4" />
+                : task.method === 'tel' ?
+                  <Phone className="w-4 h-4" />
+                  :
+                  <CircleQuestionMark className="w-4 h-4" />
+            }
+            <span className="truncate flex-1 text-lg">
+              <HighlightText text={task.title} keyword={filters.searchKeywords} />
+            </span>
 
-        {/* <div className="grid gap-2 text-sm grid-cols-6
-        group-[.cardListStyle]:mb-2
-        group-[.rowListStyle]:[grid-area:cli-mana] group-[.rowListStyle]:gap-1">
-          <div className="col-span-4 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><FaRegBuilding />{task.client} 《<HighlightText text={task.requester} keyword={filters.searchKeywords} />》</div>
-          <div className="col-span-2 flex gap-1 items-center group-[.cardListStyle]:border-b border-neutral-600"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
-        </div> */}
+            {hasRemarksInfo && task.remarks && (
+              <RemarksHoverMark handleHover={setHover} task={task} className="absolute inset-y-0 right-0 bg-neutral-600 h-fit">
+                {hover && remarksHtml && (
+                  <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
+                )}
+              </RemarksHoverMark>
+            )}
+          </h3>
 
-        <div className="p-2 rounded-md overflow-hidden relative font-bold dark:font-normal before:bg-white/40 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
-          <div className="grid gap-2 text-sm grid-cols-[1.4fr_1fr_1fr]">
-            <div className="flex gap-1 items-center"><Building className="w-4" />{clientList[task.client]} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+          <div className="w-full truncate text-sm pb-2 mb-2 border-b border-neutral-300">
+            <HighlightText text={task.description} keyword={filters.searchKeywords} />
+          </div>
+
+          <div className="col-span-2 flex gap-1 items-center text-sm tracking-wider">
+            <Building className="w-4" />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】
+          </div>
+
+          <div className="grid gap-2 text-sm grid-cols-2">
             <div className="flex gap-1 items-center"><CalendarClock className="w-4" />{convertDate(task.request_date)}</div>
             <div className="flex gap-1 items-center"><CheckCircle className="w-4" />{task.finish_date ? convertDate(task.finish_date) : "-"}</div>
           </div>
+
         </div>
+
       </div>
     </div>
   )

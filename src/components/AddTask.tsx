@@ -451,9 +451,9 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
       >
 
         <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
-          <div className="mt-1 flex w-full items-center gap-1">
-            <span className="text-xs font-bold leading-none tracking-widest text-neutral-500">META</span>
-            <span className="block h-0.5 w-full bg-neutral-400 dark:bg-neutral-300/30" />
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">META</span>
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <Field className="flex flex-col">
@@ -526,9 +526,9 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
         </div>
 
         <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
-          <div className="mb-1 mt-2 flex w-full items-center gap-1">
-            <span className="text-xs font-bold leading-none tracking-widest text-neutral-500">DETAILS</span>
-            <span className="block h-0.5 w-full bg-neutral-400 dark:bg-neutral-300/30" />
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">DETAILS</span>
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <div className="flex flex-1 flex-wrap gap-2">
@@ -605,9 +605,9 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
         </div>
 
         <div className="col-span-2 flex flex-col">
-          <div className="mb-1 mt-2 flex w-full items-center gap-1">
-            <span className="text-xs leading-none tracking-widest text-neutral-400/60">REMARKS</span>
-            <span className="block h-0.5 w-full bg-neutral-400 dark:bg-neutral-300/30" />
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">REMARKS</span>
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
           </div>
 
           <h3 className="flex w-28 items-center gap-x-1 whitespace-nowrap py-1 pl-0.5 text-sm font-bold">

@@ -187,6 +187,11 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
   //   }, DOUBLE_CLICK_GRACE);
   // }
 
+  const convertDate = (date: string) => {
+    const splitDate = date.split("-");
+    return `${splitDate[1]}月${splitDate[2]}日`;
+  }
+
   const hoverColor = `hover:[--${personalUnique}-bg-opacity:0.2]`;
 
   return (
@@ -213,7 +218,7 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
           </div>
         </div>
 
-        <div className="text-sm [grid-area:cli] flex gap-1 items-center"><Building className="w-4.5" />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+        <div className="text-sm [grid-area:cli] flex gap-1 items-center font-bold"><Building className="w-4.5" />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
 
         <h3 className="font-bold flex items-center gap-1 [grid-area:ttl] text-sm">
           {
@@ -240,23 +245,23 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
         </div>
 
         <div className="relative line-clamp-2 w-full text-sm pr-18 truncate [grid-area:dis]">
-          <span className="truncate font-bold">
+          <span className="truncate">
             <HighlightText text={task.description} keyword={filters.searchKeywords} />
           </span>
           {hasRemarksInfo && task.remarks && (
             <RemarksHoverMark handleHover={setHover} task={task} className="absolute inset-y-0 right-4">
               {hover && remarksHtml && (
-                <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
+                <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer py-2 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
               )}
             </RemarksHoverMark>
           )}
         </div>
 
-        <div className="text-sm [grid-area:mana] flex gap-1 items-center"><UserPen className="w-4.5" />{task.manager ? task.manager : "-"}</div>
+        <div className="text-sm [grid-area:mana] flex gap-2 items-center"><UserPen className="w-4.5" />{task.manager ? task.manager : "-"}</div>
 
         <div className="grid gap-2 text-sm grid-cols-11 [grid-area:date]">
-          <div className="col-span-5 flex gap-1 items-center"><CalendarClock className="w-4.5" />{task.request_date}</div>
-          <div className="col-span-5 flex gap-1 items-center"><CircleCheck className="w-4.5" />{task.finish_date ? task.finish_date : "-"}</div>
+          <div className="col-span-5 flex gap-2 items-center"><CalendarClock className="w-4.5" />{convertDate(task.request_date)}</div>
+          <div className="col-span-5 flex gap-2 items-center"><CircleCheck className="w-4.5" />{task.finish_date ? convertDate(task.finish_date) : "-"}</div>
           {currentDeadline && (
             <>
               <AlarmClock tabIndex={-1} className="w-5 text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
