@@ -226,7 +226,7 @@ export default function CompletedTaskPage() {
     >
       <div className="flex w-full gap-2 pb-4">
         {/* 検索パネル */}
-        <div className="flex w-68 shrink-0 flex-col gap-2 rounded-md bg-neutral-200 p-4 outline -outline-offset-1 outline-neutral-300 dark:bg-neutral-700 dark:outline-none">
+        <div className="flex w-68 min-h-[calc(100svh-90px)] shrink-0 flex-col gap-2 rounded-md bg-neutral-200 p-4 outline -outline-offset-1 outline-neutral-300 dark:bg-neutral-700 dark:outline-none">
           <h2 className="mb-2 w-full text-center text-sm font-bold">絞り込み検索</h2>
 
           <div className="text-justify text-sm">
@@ -416,28 +416,30 @@ export default function CompletedTaskPage() {
 
         {/* タスク一覧 */}
         {user &&
-          taskList.length > 0 && (
-            <div className="flex-1">
-              <TaskList
-                user={user}
-                taskList={sortedTaskList}
-                onClick={(task: Task) => {
-                  // if (isPanelOpen) {
-                  //   return;
-                  // }
+          taskList.length > 0 ? (
+          <div className="w-[calc(100%-280px)]">
+            <TaskList
+              user={user}
+              taskList={sortedTaskList}
+              onClick={(task: Task) => {
+                // if (isPanelOpen) {
+                //   return;
+                // }
 
-                  if (menu.visible) {
-                    return;
-                  }
+                if (menu.visible) {
+                  return;
+                }
 
-                  openDetail(task);
-                }}
-                onContextMenu={handleContextMenu}
-                onEdit={openEdit}
-                deadlineList={deadlineList}
-              />
-            </div>
-          )}
+                openDetail(task);
+              }}
+              onContextMenu={handleContextMenu}
+              onEdit={openEdit}
+              deadlineList={deadlineList}
+            />
+          </div>
+        ) : (
+          <p className="w-[calc(100%-280px)] text-center">検索条件に該当するタスクは見つかりませんでした。</p>
+        )}
       </div>
 
       {/* ContextMenu */}

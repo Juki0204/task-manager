@@ -218,7 +218,7 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
           </div>
         </div>
 
-        <div className="text-sm [grid-area:cli] flex gap-1 items-center font-bold"><Building className="w-4.5" />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+        <div className="text-sm [grid-area:cli] flex gap-1 items-center palt"><Building className="w-4.5" />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
 
         <h3 className="font-bold flex items-center gap-1 [grid-area:ttl] text-sm">
           {
@@ -245,7 +245,7 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
         </div>
 
         <div className="relative line-clamp-2 w-full text-sm pr-18 truncate [grid-area:dis]">
-          <span className="truncate">
+          <span className="truncate font-bold">
             <HighlightText text={task.description} keyword={filters.searchKeywords} />
           </span>
           {hasRemarksInfo && task.remarks && (
