@@ -138,23 +138,21 @@ export function useTaskRealtime(user: UserData) {
 
     if (payload.eventType === "UPDATE") {
       const updated = payload.new;
-
-      console.log("Realtime UPDATE:", {
-        id: updated.id,
-        status: updated.status,
-        remarks: updated.remarks,
-        updated,
-      });
-
+    
+      const patch = Object.fromEntries(
+        Object.entries(updated).filter(
+          ([, value]) => value !== undefined
+        )
+      ) as Partial<Task>;
+    
       setTaskList((prev) => {
         const exists = prev.some((t) => t.id === updated.id);
-
-        //取りこぼし対策：存在しないなら追加
-        if (!exists) return [...prev, updated];
-
-        return prev.map((t) => (t.id === updated.id ? updated : t));
+    
+        if (!exists) return [...prev, updated as Task];
+    
+        return prev.map((t) => t.id === updated.id ? { ...t, ...patch } : t);
       });
-
+    
       return;
     }
 
