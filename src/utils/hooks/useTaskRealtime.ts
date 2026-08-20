@@ -139,6 +139,13 @@ export function useTaskRealtime(user: UserData) {
     if (payload.eventType === "UPDATE") {
       const updated = payload.new;
 
+      console.log("Realtime UPDATE:", {
+        id: updated.id,
+        status: updated.status,
+        remarks: updated.remarks,
+        updated,
+      });
+
       setTaskList((prev) => {
         const exists = prev.some((t) => t.id === updated.id);
 
