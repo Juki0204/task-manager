@@ -171,9 +171,6 @@ export function RemarksHoverMark({
         maxWidth={480}
         maxHeight={800}
       >
-        <h3 className="w-full whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm border-b border-neutral-300 dark:border-neutral-700">
-          <LuNotebookPen /> 備考
-        </h3>
         {children}
       </CursorHoverPopup>
     </>

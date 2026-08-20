@@ -18,7 +18,7 @@ import { useTask } from "./providers/TaskProvider";
 export default function SideMenu() {
   const { user } = useAuth();
   const router = useRouter();
-  const { openAdd, isPanelOpen } = useTask();
+  const { openAdd, isPanelOpen, panelType } = useTask();
 
   function handleReport() {
     const report = confirm("報告用のスプレッドシートに移行します。");
@@ -57,6 +57,7 @@ export default function SideMenu() {
               <AddTaskBtn
                 onClick={openAdd}
                 isPanelOpen={isPanelOpen}
+                panelType={panelType}
               />
 
               <SideMenuBtn

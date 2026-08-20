@@ -121,13 +121,14 @@ import { Plus } from "lucide-react";
 interface AddTaskBtnProps {
   onClick: () => void;
   isPanelOpen: boolean;
+  panelType: "add" | "detail" | "edit" | "copy" | null;
 }
 
-export function AddTaskBtn({ onClick, isPanelOpen }: AddTaskBtnProps) {
+export function AddTaskBtn({ onClick, isPanelOpen, panelType }: AddTaskBtnProps) {
   return (
     <Button
       onClick={onClick}
-      className={`w-full aspect-square bg-blue-600 p-1.5 flex items-center justify-center cursor-pointer ${isPanelOpen ? "pointer-events-none" : ""}`}
+      className={`w-full aspect-square bg-blue-600 p-1.5 flex items-center justify-center cursor-pointer ${isPanelOpen && panelType === "add" ? "pointer-events-none" : ""}`}
       data-tooltip-id={`menuTips-AddTask`}
       data-tooltip-content="新規タスク追加"
     >

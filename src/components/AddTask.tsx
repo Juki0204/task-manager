@@ -447,7 +447,7 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
 
       <div
         ref={contentRef}
-        className={`${hasScrollbar ? "pr-2" : ""} grid max-h-[calc(100svh-300px)] grid-cols-2 gap-y-2 overflow-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
+        className={`${hasScrollbar ? "pr-2" : ""} pb-2 grid max-h-[calc(100svh-300px)] grid-cols-2 gap-y-2 overflow-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
       >
 
         <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">

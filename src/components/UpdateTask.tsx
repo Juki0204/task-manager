@@ -338,7 +338,7 @@ export default function UpdateTask({ task, user, onCancel, onComplete, onUnlock,
         <AddTaskInput className="w-full [&_input]:bg-white [&_input]:dark:bg-neutral-800 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" icon={<NotepadText className="w-4.5 text-neutral-500" />} value={form.description} onChange={(e) => updateForm("description", e.target.value)} />
       </div>
 
-      <div ref={contentRef} className={`${hasScrollbar ? "pr-2" : ""} max-h-[calc(100svh-200px)] grid grid-cols-2 gap-y-2 overflow-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}>
+      <div ref={contentRef} className={`${hasScrollbar ? "pr-2" : ""} max-h-[calc(100svh-300px)] grid grid-cols-2 gap-y-2 overflow-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}>
         <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
           <div className="w-full flex gap-1 items-center mt-1">
             <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">META</span>

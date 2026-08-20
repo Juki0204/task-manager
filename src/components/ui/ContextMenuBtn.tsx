@@ -9,6 +9,7 @@ import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 import { CalendarCheck, CirclePause, CirclePlay, CopyPlus, PackageCheck, Pause, PencilLine, Play, StickyNote, Trash, Trash2, UserMinus } from "lucide-react";
+import { User } from "@/utils/types/user";
 
 
 //---------Btn Template---------
@@ -17,6 +18,55 @@ type ContextMenuBtnProps = {
   onClick: () => void;
   children: ReactNode;
 }
+
+//タスクステータス変更時通知メッセージ追加
+const taskStatusAddChangeNotes = async (taskId: string, taskSerial: string, userName: string | undefined, status: string) => {
+  const { data } = await supabase
+    .from('tasks')
+    .select('title')
+    .eq("id", taskId)
+    .single();
+
+  if (!data) return;
+
+  const { error } = await supabase.from("task_notes").insert({
+    task_serial: taskSerial,
+    message: `【${taskSerial}】${userName ? userName : "unknown"}さんがタスク「${data}」のステータスを【${status}】に変更しました。`,
+    diff: {},
+    old_record: {},
+    new_record: {},
+    changed_by: userName ? userName : null,
+    changed_at: new Date().toISOString(),
+    type: "changed",
+  });
+
+  if (error) console.error(error);
+}
+
+//タスク担当者を未担当変更時通知メッセージ追加
+const taskManagerRemoveChangeNotes = async (taskId: string, taskSerial: string, userName: string | undefined) => {
+  const { data } = await supabase
+    .from('tasks')
+    .select('title')
+    .eq("id", taskId)
+    .single();
+
+  if (!data) return;
+
+  const { error } = await supabase.from("task_notes").insert({
+    task_serial: taskSerial,
+    message: `【${taskSerial}】${userName ? userName : "unknown"}さんがタスク「${data}」の担当者を未担当に変更しました。`,
+    diff: {},
+    old_record: {},
+    new_record: {},
+    changed_by: userName ? userName : null,
+    changed_at: new Date().toISOString(),
+    type: "changed",
+  });
+
+  if (error) console.error(error);
+}
+
 
 export function ContextMenuBtn({ className, onClick, children }: ContextMenuBtnProps) {
   return (
@@ -56,15 +106,17 @@ export function FlexContextMenuBtn({ className, onClick, children }: FlexContext
 
 type ProgressProps = {
   taskId: string;
+  taskSerial: string;
   onClick: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 }
 
-export function ChangeInProgress({ taskId, onClick, updateTaskStatus }: ProgressProps) {
+export function ChangeInProgress({ taskId, taskSerial, onClick, updateTaskStatus }: ProgressProps) {
   const { user } = useAuth();
 
   const handleInProgress = async () => {
     await updateTaskStatus(taskId, "作業中", "", { manager: user?.name, updated_manager: user?.name });
+    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "作業中");
   }
 
   return (
@@ -84,15 +136,17 @@ export function ChangeInProgress({ taskId, onClick, updateTaskStatus }: Progress
 
 type InterruptProps = {
   taskId: string;
+  taskSerial: string;
   onClick: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 }
 
-export function ChangeInterrupt({ taskId, onClick, updateTaskStatus }: InterruptProps) {
+export function ChangeInterrupt({ taskId, taskSerial, onClick, updateTaskStatus }: InterruptProps) {
   const { user } = useAuth();
 
   const handleInterrupt = async () => {
     await updateTaskStatus(taskId, "作業途中", "", { updated_manager: user?.name });
+    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "作業途中");
   }
 
   return (
@@ -112,14 +166,16 @@ export function ChangeInterrupt({ taskId, onClick, updateTaskStatus }: Interrupt
 
 type ConfirmProps = {
   taskId: string;
+  taskSerial: string;
   onClick: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 }
 
-export function ChangeConfirm({ taskId, onClick, updateTaskStatus }: ConfirmProps) {
+export function ChangeConfirm({ taskId, taskSerial, onClick, updateTaskStatus }: ConfirmProps) {
   const { user } = useAuth();
   const handleConfirm = async () => {
     await updateTaskStatus(taskId, "確認中", "", { updated_manager: user?.name });
+    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "確認中");
   }
 
   return (
@@ -139,15 +195,17 @@ export function ChangeConfirm({ taskId, onClick, updateTaskStatus }: ConfirmProp
 
 type NotYetStartedProps = {
   taskId: string;
+  taskSerial: string;
   onClick: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 }
 
-export function ChangeNotYetStarted({ taskId, onClick, updateTaskStatus }: NotYetStartedProps) {
+export function ChangeNotYetStarted({ taskId, taskSerial, onClick, updateTaskStatus }: NotYetStartedProps) {
   const { user } = useAuth();
 
   const handleNotYetStarted = async () => {
     await updateTaskStatus(taskId, "未着手", "", { manager: user?.name, updated_manager: user?.name });
+    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "未着手");
   }
 
   return (
@@ -167,14 +225,16 @@ export function ChangeNotYetStarted({ taskId, onClick, updateTaskStatus }: NotYe
 
 type RemoveProps = {
   taskId: string;
+  taskSerial: string;
   onClick: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 }
 
-export function ChangeRemove({ taskId, onClick, updateTaskStatus }: RemoveProps) {
+export function ChangeRemove({ taskId, taskSerial, onClick, updateTaskStatus }: RemoveProps) {
   const { user } = useAuth();
   const handleNotYetStarted = async () => {
     await updateTaskStatus(taskId, "未着手", "", { manager: null, updated_manager: user?.name });
+    await taskManagerRemoveChangeNotes(taskId, taskSerial, user?.name);
   }
 
   return (
@@ -195,17 +255,19 @@ export function ChangeRemove({ taskId, onClick, updateTaskStatus }: RemoveProps)
 
 type CompleteProps = {
   taskId: string;
+  taskSerial: string;
   onClick: () => void;
   updateTaskStatus: (taskId: string, newStatus: string, prevStatus: string, extraFields?: Partial<Task>) => Promise<void>;
 }
 
-export function ChangeComplete({ taskId, onClick, updateTaskStatus }: CompleteProps) {
+export function ChangeComplete({ taskId, taskSerial, onClick, updateTaskStatus }: CompleteProps) {
   const { syncInvoiceWithTask } = useInvoiceSync();
   const { user } = useAuth();
 
   const handleComplete = async () => {
     await updateTaskStatus(taskId, "完了", "", { updated_manager: user?.name });
     await syncInvoiceWithTask(taskId, "完了");
+    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "未着手");
   }
 
   return (

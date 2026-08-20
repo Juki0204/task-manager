@@ -234,26 +234,26 @@ export default function PersonalCard({
 
 
   //編集ロック
-  const lockedTaskHandler = async () => {
-    const { data } = await supabase
-      .from('tasks')
-      .update({
-        locked_by_id: user.id,
-        locked_by_name: user.name,
-        locked_by_at: new Date().toISOString(),
-      })
-      .eq("id", task.id)
-      .is("locked_by_id", null)
-      .select();
+  // const lockedTaskHandler = async () => {
+  //   const { data } = await supabase
+  //     .from('tasks')
+  //     .update({
+  //       locked_by_id: user.id,
+  //       locked_by_name: user.name,
+  //       locked_by_at: new Date().toISOString(),
+  //     })
+  //     .eq("id", task.id)
+  //     .is("locked_by_id", null)
+  //     .select();
 
-    if (!data?.length) {
-      toast.error('他のユーザーが編集中です', { position: "top-center" });
-      return false;
-    }
+  //   if (!data?.length) {
+  //     toast.error('他のユーザーが編集中です', { position: "top-center" });
+  //     return false;
+  //   }
 
-    // console.log("locked task: taskId =", task.id);
-    return true;
-  }
+  //   // console.log("locked task: taskId =", task.id);
+  //   return true;
+  // }
 
   // クリック判定(シングル・ダブル)
   // const DOUBLE_CLICK_GRACE = 200;
