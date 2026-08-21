@@ -7,12 +7,10 @@ import EditRule from "@/components/rule/EditRule";
 import RuleCard from "@/components/rule/RuleCard";
 import RuleDetail from "@/components/rule/RuleDetail";
 import { useRuleContext } from "@/components/rule/RuleProvider";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 import { supabase } from "@/utils/supabase/supabase";
 import { Rule, RuleAcknowledgement } from "@/utils/types/rule";
 import { User } from "@/utils/types/user";
-import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useEffect, useMemo, useState } from "react";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { CirclePlus } from "lucide-react";
@@ -248,7 +246,7 @@ export default function RulePage() {
             </li>
           </ul>
 
-          <div className="sticky top-14">
+          <div className="sticky top-16">
             <AllGroupRuleList
               rules={rules}
               onFilterReset={() => setFilters({ ...filters, targets: [] })}
@@ -264,6 +262,7 @@ export default function RulePage() {
                 setModalMode("detail");
                 setActiveRule(r);
               }}
+              activeRule={activeRule}
             />
           </div>
         </div>
@@ -292,69 +291,66 @@ export default function RulePage() {
 
 
       {/* 共通モーダル */}
-      <Dialog
-        open={isOpen}
-        onClose={() => {
-          if (modalMode === "edit" || modalMode === "add") {
-            setIsAlertOpen(true);
+      <div
+        className={`
+          fixed right-0 top-0 z-100 w-full max-w-[calc(100%-430px)] h-svh
+          bg-neutral-100 dark:bg-[#2b2b2b]
+          transition duration-300 ease-out 
+          data-closed:opacity-0
+          p-4 pt-4.5 shadow-2xl shadow-black/30
+          ${isOpen ? "translate-x-0" : "translate-x-full"}
+        `}
+      >
+        {activeRule && users && modalMode === "detail" && (
+          <RuleDetail
+            rule={activeRule}
+            acknowledgements={activeRuleAcknowledgements}
+            users={users}
+            onEdit={() => setModalMode("edit")}
+            onClose={() => {
+              setIsOpen(false);
+              setModalMode(null);
+              setActiveRule(null);
+            }}
+          />
+        )}
+        {users && modalMode === "add" && (
+          <AddRule
+            users={users}
+            onCancel={() => {
+              setIsAlertOpen(true);
+            }}
+            onComplete={() => {
+              setIsOpen(false);
+              setModalMode(null);
+              setActiveRule(null);
+            }}
+          />
+        )}
+        {activeRule && users && modalMode === "edit" && (
+          <EditRule
+            rule={activeRule}
+            users={users}
+            onCancel={() => setModalMode("detail")}
+            onClose={() => {
+              setIsOpen(false);
+              setModalMode(null);
+              setActiveRule(null);
+            }}
+          />
+        )}
+      </div>
+
+      <CancelAlertModal
+        alertOpen={isAlertOpen}
+        onModalClose={() => {
+          if (modalMode === "edit") {
+            setModalMode("detail");
           } else {
             setIsOpen(false);
             setModalMode(null);
             setActiveRule(null);
           }
-        }}
-        // transition
-        className="relative z-100 transition duration-300 ease-out data-closed:opacity-0"
-      >
-        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
-
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="w-300 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] p-4 pt-4.5 shadow-2xl shadow-black/30">
-            {activeRule && users && modalMode === "detail" && (
-              <RuleDetail
-                rule={activeRule}
-                acknowledgements={activeRuleAcknowledgements}
-                users={users}
-                onEdit={() => setModalMode("edit")}
-                onClose={() => {
-                  setIsOpen(false);
-                  setModalMode(null);
-                  setActiveRule(null);
-                }}
-              />
-            )}
-            {users && modalMode === "add" && (
-              <AddRule
-                users={users}
-                onClose={() => {
-                  setIsOpen(false);
-                  setModalMode(null);
-                  setActiveRule(null);
-                }}
-              />
-            )}
-            {activeRule && users && modalMode === "edit" && (
-              <EditRule
-                rule={activeRule}
-                users={users}
-                onCancel={() => setModalMode("detail")}
-                onClose={() => {
-                  setIsOpen(false);
-                  setModalMode(null);
-                  setActiveRule(null);
-                }}
-              />
-            )}
-          </DialogPanel>
-        </div>
-      </Dialog>
-
-      <CancelAlertModal
-        alertOpen={isAlertOpen}
-        onModalClose={() => {
-          setIsOpen(false);
-          setModalMode(null);
-          setActiveRule(null);
         }}
         onCalcel={() => setIsAlertOpen(false)}
       />

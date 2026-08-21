@@ -10,6 +10,7 @@ type Segment = {
 
 type DonutChartProps = {
   segments: Segment[];     // 4項目想定（任意の数でもOK）
+  method: Segment[];
   size?: number;           // default 300
   thickness?: number;      // ドーナツの太さ（default 32）
   gapDeg?: number;         // セグメント間の隙間角度（default 0.8）
@@ -59,6 +60,7 @@ function describeDonutArc(
 
 export function RequestGraph({
   segments,
+  method,
   size = 300,
   thickness = 32,
   gapDeg = 0,
@@ -199,11 +201,19 @@ export function RequestGraph({
           textAlign: "center",
         }}
       >
-        <div style={{ fontSize: 48, fontWeight: 800, lineHeight: 1 }}>
+        <div className="text-[13px] opacity-80 leading-none font-bold">
+          {title}
+        </div>
+        <div className="mb-2 text-5xl font-black leading-none">
           {total}<span className="text-base">件</span>
         </div>
-        <div style={{ marginTop: 4, fontSize: 13, opacity: 0.8, lineHeight: 1 }} className="font-bold">
-          {title}
+
+        <div className="px-2 py-1 rounded-md bg-white dark:bg-black border border-neutral-300 dark:border-neutral-700">
+          {method.map(m => (
+            <div className="flex gap-3 justify-between text-sm tracking-wider font-bold" key={m.key}>
+              <span>{m.key}:</span><span>{m.value}件</span>
+            </div>
+          ))}
         </div>
 
         {/* hover中だけ中央に補助表示 */}

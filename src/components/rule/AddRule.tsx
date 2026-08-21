@@ -3,26 +3,20 @@
 import { supabase } from "@/utils/supabase/supabase";
 import { useEffect, useState } from "react";
 
-import { GrClose } from "react-icons/gr";
-import { MdDriveFileRenameOutline, MdNotificationImportant, MdOutlineCategory } from "react-icons/md";
 import { Input, Select } from "@headlessui/react";
 import AddRuleEditor from "./AddRuleEditor";
-import { FaBuilding, FaPenToSquare } from "react-icons/fa6";
-import { FaRegSmile } from "react-icons/fa";
-import { BsPersonCheck } from "react-icons/bs";
 import { useAuth } from "@/app/AuthProvider";
-import { FiPlusCircle } from "react-icons/fi";
-import { LuNewspaper } from "react-icons/lu";
 import { User } from "@/utils/types/user";
-import CancelAlertModal from "../CancelAlertModal";
 import { toast } from "sonner";
+import { Building, ChartBarStacked, CirclePlus, Newspaper, TriangleAlert, UserCheck, X } from "lucide-react";
 
 interface RuleDetailProps {
   users: User[];
-  onClose: () => void;
+  onCancel: () => void;
+  onComplete: () => void;
 }
 
-export default function AddRule({ users, onClose }: RuleDetailProps) {
+export default function AddRule({ users, onCancel, onComplete }: RuleDetailProps) {
   const { user } = useAuth();
   const [clients, setClients] = useState<string[] | null>(null);
 
@@ -86,7 +80,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
       toast.error("新規ルールの追加に失敗しました。");
     } finally {
       setTimeout(() => {
-        onClose();
+        onComplete();
         setIsSend(false);
       }, 500);
     }
@@ -102,19 +96,19 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
   return (
     <div className="relative grid grid-cols-24 gap-2 w-full rounded-xl">
       <h2 className="col-span-24 -mt-1 tracking-wider text-center font-bold">新規投稿</h2>
-      <GrClose
+      <X
         // onClick={onClose}
-        onClick={() => setIsAlertOpen(true)}
+        onClick={onCancel}
         className="absolute top-0 right-0 cursor-pointer"
       />
       <div className="col-span-18 flex flex-col gap-2">
         <div className="flex flex-col gap-1 p-3 bg-slate-300/70 dark:bg-[#444444] rounded-xl">
           <h3 className="relative mb-2 rounded-md w-full font-bold text-base text-justify flex gap-1 items-center leading-none">
-            <LuNewspaper className="absolute top-0 bottom-0 left-2 m-auto text-lg" />
-            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-neutral-100 dark:bg-[#313131] w-full rounded-md p-2 pl-8" placeholder="タイトル" />
+            <Newspaper className="absolute top-0 bottom-0 left-2 m-auto w-5" />
+            <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-neutral-100 dark:bg-[#313131] w-full rounded-md p-2 pl-9 text-xl" placeholder="タイトル" />
           </h3>
           <div className="flex-1 bg-neutral-100 dark:bg-[#313131] rounded-md">
-            <div className="w-full max-h-130 text-sm whitespace-pre-wrap tracking-wider text-justify overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400">
+            <div className="w-full h-[calc(100svh-140px)] text-sm whitespace-pre-wrap tracking-wider text-justify overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400">
               <AddRuleEditor value={content} onChange={(markdown) => setContent(markdown)} />
             </div>
           </div>
@@ -126,7 +120,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
       <div className="col-span-6 flex flex-col gap-1 border-l border-neutral-300 pl-2">
 
         <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 dark:bg-green-300/20 rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-1 items-center font-bold text-[13px]"><FaBuilding />対象</h4>
+          <h4 className="whitespace-nowrap flex gap-1 items-center font-bold text-[13px]"><Building className="w-5" />対象</h4>
           <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={target} onChange={(e) => setTarget(e.target.value)}>
             <option value={""}>-</option>
             {clients && clients.map((c, index) => (<option key={index} value={c}>{c}</option>))}
@@ -134,7 +128,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
         </div>
 
         <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 dark:bg-green-300/20 rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><MdOutlineCategory className="text-base" />種別</h4>
+          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><ChartBarStacked className="w-5" />種別</h4>
           <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={type} onChange={(e) => setType(e.target.value)}>
             <option value={""}>-</option>
             <option value={"正式運用"}>正式運用</option>
@@ -146,7 +140,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
         </div>
 
         <div className="col-span-4 flex flex-col gap-1 p-2 bg-green-700/15 dark:bg-green-300/20 rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><MdNotificationImportant className="text-base" />重要度</h4>
+          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><TriangleAlert className="w-5" />重要度</h4>
           <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={importance} onChange={(e) => setImportance(e.target.value)}>
             <option value={"通常"}>通常</option>
             <option value={"重要"}>重要</option>
@@ -159,7 +153,7 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
         </div> */}
 
         <div className="col-span-4 flex flex-col gap-1 p-2 bg-neutral-200 dark:bg-[#444444] rounded-lg">
-          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><BsPersonCheck className="text-base" />記入者</h4>
+          <h4 className="whitespace-nowrap flex gap-0.5 items-center font-bold text-[13px]"><UserCheck className="w-5" />記入者</h4>
           <Select className="bg-neutral-100 dark:bg-[#313131] p-1 rounded-md text-[13px] tracking-wider" value={creator} onChange={(e) => setCreator(e.target.value)}>
             <option value={""}>-</option>
             {users.map((u, index) => (<option key={index} value={u.name}>{u.name}</option>))}
@@ -171,12 +165,11 @@ export default function AddRule({ users, onClose }: RuleDetailProps) {
           disabled={!content || !title || !creator || !target || !type || !importance || isSend}
           className="flex justify-center items-center gap-1 rounded-md bg-sky-600 text-center text-white font-bold text-sm py-2 mt-auto mb-0 tracking-wider hover:cursor-pointer hover:opacity-60 disabled:grayscale dark:disabled:bg-neutral-400 disabled:opacity-70"
         >
-          {isSend ? "追加中..." : <><FiPlusCircle />投稿</>}
+          {isSend ? "追加中..." : <><CirclePlus className="w-5" />投稿</>}
         </button>
 
       </div>
 
-      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={onClose} onCalcel={() => setIsAlertOpen(false)} />
     </div>
   )
 }

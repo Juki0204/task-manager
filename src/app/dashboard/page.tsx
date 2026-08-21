@@ -177,6 +177,11 @@ export default function DashboardPage() {
                 { key: "完了済", value: Number(`${tasks.filter(t => t.status === "完了").length}`), color: "#4668a5" },
                 { key: "その他", value: Number(`${tasks.filter(t => t.status === "保留" || t.status === "詳細待ち" || t.status === "中止" || t.status === "保留").length}`), color: "#84538d" },
               ]}
+              method={[
+                { key: "電話", value: Number(`${tasks.filter(t => t.method === "tel").length}`), color: "#ffffff" },
+                { key: "メール", value: Number(`${tasks.filter(t => t.method === "mail").length}`), color: "#ffffff" },
+                // { key: "その他", value: Number(`${tasks.filter(t => t.method === "other").length}`), color: "#ffffff" },
+              ]}
             />
 
             <div onMouseEnter={() => setIsNewTaskPop(true)} onMouseLeave={() => setIsNewTaskPop(false)} className={`font-bold relative flex items-center gap-1 py-0.5 px-4 text-base border border-neutral-300 dark:border-neutral-700 bg-white/60 dark:bg-black/40 rounded-md tracking-wider cursor-default`}>

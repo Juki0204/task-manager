@@ -238,7 +238,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
       <div
         className={`
           fixed right-0 top-0 z-110
-          h-svh w-[520px] p-4 pb-30
+          h-svh w-full max-w-[520px] p-4 pb-30
           bg-white dark:bg-neutral-800
           shadow-xl
           transition-transform duration-300

@@ -1,18 +1,18 @@
 import { Rule } from "@/utils/types/rule";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
-import { FaBook, FaTag } from "react-icons/fa";
-import { RiArticleFill } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/supabase";
+import { BookOpenText, BookText, Tag } from "lucide-react";
 
 interface AllGroupRuleListProps {
   rules: Rule[];
   onDetailOpen: (r: Rule) => void;
   onAccordionChange: (c: string) => void;
   onFilterReset: () => void;
+  activeRule: Rule | null;
 }
 
-export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChange, onFilterReset }: AllGroupRuleListProps) {
+export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChange, onFilterReset, activeRule }: AllGroupRuleListProps) {
   const [clients, setClients] = useState<string[] | null>(null);
 
   const getClient = async () => {
@@ -37,7 +37,7 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
       <Accordion type="single" collapsible defaultValue="all">
 
         <AccordionItem value="all" className="border-none">
-          <AccordionTrigger onClick={() => onFilterReset()} className="flex gap-1 items-center data-[state=open]:text-red-700 data-[state=open]:dark:text-yellow-300 py-1.5 border-none [&_.lucide-chevron-down]:invisible [&_.lucide-chevron-up]:invisible focus:border-none data-[state=open]:pointer-events-none"><FaBook />すべてのルール</AccordionTrigger>
+          <AccordionTrigger onClick={() => onFilterReset()} className="flex gap-1 items-center data-[state=open]:text-red-700 data-[state=open]:dark:text-yellow-300 py-1.5 border-none [&_.lucide-chevron-down]:invisible [&_.lucide-chevron-up]:invisible focus:border-none data-[state=open]:pointer-events-none"><BookText className="w-5" />すべてのルール</AccordionTrigger>
         </AccordionItem>
 
         {clients && clients.map((c, index) => {
@@ -46,12 +46,12 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
           if (filteredRules.length > 0) {
             return (
               <AccordionItem key={c} value={`item-${index}`} className="border-none">
-                <AccordionTrigger onClick={() => onAccordionChange(c)} className="flex gap-1 items-center data-[state=open]:text-red-700 data-[state=open]:dark:text-yellow-300 py-1.5 border-none focus:border-none data-[state=open]:pointer-events-none"><FaTag />{c}</AccordionTrigger>
+                <AccordionTrigger onClick={() => onAccordionChange(c)} className="flex gap-1 items-center data-[state=open]:text-red-700 data-[state=open]:dark:text-yellow-300 py-1.5 border-none focus:border-none data-[state=open]:pointer-events-none"><Tag className="w-5" />{c}</AccordionTrigger>
                 <AccordionContent className="h-fit pl-4 pr-2">
                   {filteredRules.map((fr, index) => (
-                    <div key={fr.id} className="flex gap-1 items-center">
+                    <div key={fr.id} className={`flex gap-1 items-center ${activeRule?.id === fr.id ? "text-red-700 dark:text-yellow-300 font-bold" : ""}`}>
                       {index + 1 === filteredRules.length ? <>&#9492;</> : <>&#9500;</>}
-                      <RiArticleFill />
+                      <BookOpenText className="w-4" />
                       <span onClick={() => onDetailOpen(fr)} className="flex-1 truncate cursor-pointer hover:underline">{fr.title}</span>
                     </div>
                   ))}
@@ -60,7 +60,7 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
             )
           } else {
             return (
-              <div key={c} className="flex gap-1 items-center text-sm py-1.5 opacity-50"><FaTag />{c}</div>
+              <div key={c} className="flex gap-1 items-center text-sm py-1.5 opacity-50"><Tag className="w-5" />{c}</div>
             )
           }
         })}
