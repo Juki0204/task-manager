@@ -144,51 +144,58 @@ export default function RequesterSetting() {
   }, []);
 
   return (
-    <div className="grid grid-cols-6 gap-2 w-366">
-      <h2 className="col-span-6 font-bold p-1 pt-0 text-center border-b border-neutral-700 dark:border-white">依頼者一覧</h2>
-      {[...clients]
-        .sort((a, b) => a.id - b.id)
-        .map((client: Client) => {
-          const companyRequesters = [...requesters]
-            .filter((r) => r.company === client.name)
-            .sort((a, b) => a.order - b.order);
+    <div className="w-full">
+      <h2 className="font-bold p-2 mb-2 text-center text-xl rounded-md border border-neutral-300 dark:border-neutral-700 bg-neutral-200 dark:bg-neutral-700">
+        依頼者一覧
+      </h2>
 
-          return (
-            <div
-              key={client.id}
-              className="bg-slate-300 dark:bg-neutral-400 text-neutral-700 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content]"
-            >
-              <h3 className="text-center pb-1 font-bold">{client.name}</h3>
+      <div className="h-0.25 bg-neutral-300 dark:bg-neutral-700 mb-2"></div>
 
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={(e) => handleDragEnd(e, client.name)}
+      <div className="requester-autoFill">
+        {[...clients]
+          .sort((a, b) => a.id - b.id)
+          .map((client: Client) => {
+            const companyRequesters = [...requesters]
+              .filter((r) => r.company === client.name)
+              .sort((a, b) => a.order - b.order);
+
+            return (
+              <div
+                key={client.id}
+                className="bg-neutral-200 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-700 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content]"
               >
-                <SortableContext
-                  items={companyRequesters.map((r) => r.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <ul className="flex flex-col gap-1 py-2">
-                    {companyRequesters.map((r) => (
-                      <SortableRequesterItem
-                        key={r.id}
-                        item={r}
-                        deleteRequester={deleteRequester}
-                      />
-                    ))}
-                  </ul>
-                </SortableContext>
-              </DndContext>
+                <h3 className="text-center pb-1 font-bold">{client.name}</h3>
 
-              <div className="mb-0 flex justify-between gap-1 border-t border-neutral-500 pt-2">
-                <Input value={newName[client.name] || ""} onChange={(e) => setNewName((prev) => ({ ...prev, [client.name]: e.target.value }))} type="text" placeholder="名前を入力" className="bg-white rounded-sm w-36 px-2"></Input>
-                <CorrectBtn onClick={() => addRequester(client.name)} className="!mt-0 text-sm !p-1">追加</CorrectBtn>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(e) => handleDragEnd(e, client.name)}
+                >
+                  <SortableContext
+                    items={companyRequesters.map((r) => r.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <ul className="flex flex-col gap-1 py-2">
+                      {companyRequesters.map((r) => (
+                        <SortableRequesterItem
+                          key={r.id}
+                          item={r}
+                          deleteRequester={deleteRequester}
+                        />
+                      ))}
+                    </ul>
+                  </SortableContext>
+                </DndContext>
+
+                <div className="mb-0 flex justify-between gap-1 border-t border-neutral-500 pt-2">
+                  <Input value={newName[client.name] || ""} onChange={(e) => setNewName((prev) => ({ ...prev, [client.name]: e.target.value }))} type="text" placeholder="名前を入力" className="bg-white dark:bg-neutral-800 rounded-sm w-36 px-2"></Input>
+                  <CorrectBtn onClick={() => addRequester(client.name)} className="!mt-0 text-sm !p-1">追加</CorrectBtn>
+                </div>
               </div>
-            </div>
-          )
-        })
-      }
+            )
+          })
+        }
+      </div>
     </div>
   )
 }
@@ -213,7 +220,7 @@ function SortableRequesterItem({ item, deleteRequester }: SrotableRequesterItemP
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="flex justify-between bg-neutral-100 dark:bg-neutral-300 rounded-sm p-1 pl-6 relative"
+      className="flex justify-between bg-neutral-100 dark:bg-neutral-800 rounded-sm p-1 pl-6 relative"
     >
       <MdDragIndicator
         {...listeners}

@@ -219,10 +219,12 @@ export default function PriceSetting() {
 
 
   return (
-    <div className="grid gap-2 w-366">
-      <h2 className="font-bold p-1 pt-0 text-center border-b border-neutral-700 dark:border-white">
+    <div className="grid gap-2 w-full">
+      <h2 className="font-bold p-2 text-center text-xl rounded-md border border-neutral-300 dark:border-neutral-700 bg-neutral-200 dark:bg-neutral-700">
         請求単価一覧
       </h2>
+
+      <div className="h-0.25 bg-neutral-300 dark:bg-neutral-700"></div>
 
       <div className="grid grid-cols-2 grid-rows-[min-content_1fr_min-content] gap-2">
         {CATEGORIES.map((cat) => {
@@ -234,7 +236,7 @@ export default function PriceSetting() {
           return (
             <div
               key={cat}
-              className="bg-slate-300 dark:bg-neutral-400 text-neutral-700 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content] first-of-type:row-span-3"
+              className="bg-neutral-200 dark:bg-neutral-700 rounded-md p-2 grid grid-rows-[min-content_1fr_min-content] first-of-type:row-span-3"
             >
               <h3 className="text-center pb-1 font-bold">{cat}</h3>
 
@@ -264,9 +266,9 @@ export default function PriceSetting() {
                             items={subList.map((p) => p.id)}
                             strategy={verticalListSortingStrategy}
                           >
-                            <ul className="flex flex-col gap-1 pb-1">
+                            <ul className="flex flex-col gap-1 pb-1 text-neutral-700">
 
-                              <li className="grid grid-cols-8 gap-0.5 pl-5.5 bg-neutral-200 rounded-sm p-1 pr-0.5">
+                              <li className="grid grid-cols-8 gap-0.5 pl-5.5 bg-neutral-100 rounded-sm p-1 pr-0.5">
                                 <span className="col-span-5 text-center border-r border-neutral-400">
                                   作業名
                                 </span>
@@ -402,7 +404,7 @@ export default function PriceSetting() {
                             strategy={verticalListSortingStrategy}
                           >
                             <ul className="flex flex-col gap-1 pb-1">
-                              <li className="grid grid-cols-8 gap-0.5 pl-5.5 bg-neutral-200 rounded-sm p-1 pr-0.5">
+                              <li className="grid grid-cols-8 gap-0.5 pl-5.5 bg-neutral-100 rounded-sm p-1 pr-0.5">
                                 <span className="col-span-5 text-center border-r border-neutral-400">
                                   作業名
                                 </span>
