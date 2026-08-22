@@ -14,7 +14,8 @@ interface AllGroupRuleListProps {
 
 export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChange, onFilterReset, activeRule }: AllGroupRuleListProps) {
   const [clients, setClients] = useState<string[] | null>(null);
-
+  const [openItem, setOpenItem] = useState<string>("all");
+  
   const getClient = async () => {
     const { data: clients } = await supabase
       .from("clients")
@@ -30,6 +31,12 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
     getClient();
   }, []);
 
+  useEffect(() => {
+    if(!activeRule) return;
+
+    setOpenItem(activeRule.target)
+  }, [activeRule]);
+
   console.log(rules);
 
   return (
@@ -40,12 +47,12 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
           <AccordionTrigger onClick={() => onFilterReset()} className="flex gap-1 items-center data-[state=open]:text-red-700 data-[state=open]:dark:text-yellow-300 py-1.5 border-none [&_.lucide-chevron-down]:invisible [&_.lucide-chevron-up]:invisible focus:border-none data-[state=open]:pointer-events-none"><BookText className="w-5" />すべてのルール</AccordionTrigger>
         </AccordionItem>
 
-        {clients && clients.map((c, index) => {
+        {clients && clients.map((c) => {
           const filteredRules = rules.filter(r => r.target === c);
           console.log(filteredRules.length);
           if (filteredRules.length > 0) {
             return (
-              <AccordionItem key={c} value={`item-${index}`} className="border-none">
+              <AccordionItem key={c} value={c} className="border-none">
                 <AccordionTrigger onClick={() => onAccordionChange(c)} className="flex gap-1 items-center data-[state=open]:text-red-700 data-[state=open]:dark:text-yellow-300 py-1.5 border-none focus:border-none data-[state=open]:pointer-events-none"><Tag className="w-5" />{c}</AccordionTrigger>
                 <AccordionContent className="h-fit pl-4 pr-2">
                   {filteredRules.map((fr, index) => (
