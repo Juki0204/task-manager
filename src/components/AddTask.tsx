@@ -12,7 +12,6 @@ import AddTaskRemarks from "./ui/AddTaskRemarks";
 import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
-import { useTask } from "./providers/TaskProvider";
 import { Task } from "@/utils/types/task";
 
 //Form
@@ -101,7 +100,6 @@ const initialClientMeta: ClientTaskMeta = {
 export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
   const { user } = useAuth();
   const { syncInvoiceWithTask } = useInvoiceSync();
-  const { closePanel } = useTask();
 
   const [form, setForm] = useState<AddTaskFormState>(createInitialForm(task));
   const [options, setOptions] = useState<AddTaskOptions>(initialOptions);
@@ -229,11 +227,14 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
   };
 
   //Drawer Close
-  const closeForm = () => {
+  const completeForm = () => {
     onComplete();
     resetForm();
-    onClose();
   };
+
+  const cancelForm = () => {
+    onClose();
+  }
 
   //新規タスク追加
   const addTask = async () => {
@@ -344,7 +345,7 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
         console.error(addNoteError);
       }
 
-      window.setTimeout(closeForm, 300);
+      window.setTimeout(completeForm, 300);
     } catch (error) {
       console.error(error);
 
@@ -403,7 +404,7 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
         </h3>
 
         <X
-          onClick={closePanel}
+          onClick={cancelForm}
           className="absolute right-1 top-1 cursor-pointer"
         />
       </div>
@@ -623,7 +624,7 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
 
       <div className="fixed bottom-0 left-0 flex w-full flex-wrap justify-between gap-x-2 bg-white px-4 pb-3 pt-4 dark:bg-neutral-800">
         <Button
-          onClick={closePanel}
+          onClick={cancelForm}
           className="cursor-pointer rounded px-8 py-2 text-sm outline-1 -outline-offset-1 data-hover:bg-neutral-200 data-hover:dark:text-neutral-700"
         >
           キャンセル
