@@ -41,7 +41,12 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
 
   return (
     <div className="text-neutral-700 dark:text-neutral-100">
-      <Accordion type="single" collapsible defaultValue="all">
+      <Accordion
+        type="single"
+        collapsible
+        value={openItem}
+        defaultValue={setOpenItem}
+      >
 
         <AccordionItem value="all" className="border-none">
           <AccordionTrigger onClick={() => onFilterReset()} className="flex gap-1 items-center data-[state=open]:text-red-700 data-[state=open]:dark:text-yellow-300 py-1.5 border-none [&_.lucide-chevron-down]:invisible [&_.lucide-chevron-up]:invisible focus:border-none data-[state=open]:pointer-events-none"><BookText className="w-5" />すべてのルール</AccordionTrigger>
