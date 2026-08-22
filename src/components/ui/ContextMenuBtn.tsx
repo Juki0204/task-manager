@@ -28,10 +28,11 @@ const taskStatusAddChangeNotes = async (taskId: string, taskSerial: string, user
     .single();
 
   if (!data) return;
+  console.log(data.title);
 
   const { error } = await supabase.from("task_notes").insert({
     task_serial: taskSerial,
-    message: `【${taskSerial}】${userName ? userName : "unknown"}さんがタスク「${data}」のステータスを【${status}】に変更しました。`,
+    message: `【${taskSerial}】タスク「${data.title}」のステータスを【${status}】に変更しました。`,
     diff: {},
     old_record: {},
     new_record: {},
@@ -55,7 +56,7 @@ const taskManagerRemoveChangeNotes = async (taskId: string, taskSerial: string, 
 
   const { error } = await supabase.from("task_notes").insert({
     task_serial: taskSerial,
-    message: `【${taskSerial}】${userName ? userName : "unknown"}さんがタスク「${data}」の担当者を未担当に変更しました。`,
+    message: `【${taskSerial}】タスク「${data}」の担当者を担当から外しました。`,
     diff: {},
     old_record: {},
     new_record: {},
@@ -267,7 +268,7 @@ export function ChangeComplete({ taskId, taskSerial, onClick, updateTaskStatus }
   const handleComplete = async () => {
     await updateTaskStatus(taskId, "完了", "", { updated_manager: user?.name });
     await syncInvoiceWithTask(taskId, "完了");
-    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "未着手");
+    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "完了");
   }
 
   return (
@@ -407,15 +408,17 @@ export function DeleteTaskBtn({ taskId, taskSerial, onClick, updateTaskStatus }:
   const handleDelete = async () => {
     await updateTaskStatus(taskId, "削除済", "", { updated_manager: user?.name });
 
-    const { data: deleteTask } = await supabase
+    const { data } = await supabase
       .from("tasks")
-      .select("*")
+      .select("title")
       .eq("id", taskId)
       .single();
 
+    if (!data) return;
+
     const { error } = await supabase.from("task_notes").insert({
       task_serial: taskSerial,
-      message: `【${taskSerial}】タスク「${deleteTask.title}」を削除しました。`,
+      message: `【${taskSerial}】タスク「${data.title}」を削除しました。`,
       diff: {},
       old_record: {},
       new_record: {},
