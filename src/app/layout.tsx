@@ -6,10 +6,10 @@ import AuthProvider from "@/app/AuthProvider"
 import { Toaster } from "sonner";
 import { TaskListPreferencesProvider } from "@/utils/hooks/TaskListPreferencesContext";
 import FilterResetWatcher from "@/components/FilterResetWatcher";
-import VersionCheckProvider from "./VersionCheckProvider";
+import AppRefreshProvider from "@/components/providers/AppRefreshProvider";
 import { RuleProvider } from "@/components/rule/RuleProvider";
 import { TaskUnreadProvider } from "@/components/TaskUnreadProvider";
-import ThemeProvider from "@/app/ThemeProvider"
+import ThemeProvider from "@/components/providers/ThemeProvider"
 import AppShell from "@/components/layout/AppShell";
 
 const geistSans = Geist({
@@ -36,15 +36,14 @@ export default function RootLayout({
     <html lang="ja" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex antialiased m-0 w-full bg-neutral-100 text-neutral-700 dark:bg-[#222222] dark:text-neutral-100`}
-      // className={`${geistSans.variable} ${geistMono.variable} antialiased m-0 w-full text-neutral-700 bg-[#222222]`}
       >
         <ThemeProvider>
-          <VersionCheckProvider>{/* バージョンチェック */}
-            <AuthProvider>{/* ユーザーデータ */}
-              <TaskListPreferencesProvider>{/* タスクリスト全般 */}
-                <RuleProvider>{/* 掲示板 */}
-                  <TaskUnreadProvider>
-                    <FilterResetWatcher />
+          <AppRefreshProvider> {/* アプリ非アクティブ時間チェック */}
+            <AuthProvider> {/* ユーザーデータ */}
+              <TaskListPreferencesProvider> {/* タスクリスト全般 */}
+                <RuleProvider> {/* 掲示板更新管理 */}
+                  <TaskUnreadProvider> {/* 未読フラグ管理 */}
+                    <FilterResetWatcher /> {/* フィルタリセット */}
                     <AppShell>
                       {children}
                     </AppShell>
@@ -53,7 +52,7 @@ export default function RootLayout({
                 </RuleProvider>
               </TaskListPreferencesProvider>
             </AuthProvider>
-          </VersionCheckProvider>
+          </AppRefreshProvider>
           <Toaster position="top-center" richColors closeButton />
         </ThemeProvider>
       </body>
