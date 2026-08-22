@@ -45,7 +45,7 @@ export default function AllGroupRuleList({ rules, onDetailOpen, onAccordionChang
         type="single"
         collapsible
         value={openItem}
-        defaultValue={setOpenItem}
+        onValueChange={setOpenItem}
       >
 
         <AccordionItem value="all" className="border-none">
