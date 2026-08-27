@@ -32,7 +32,6 @@ export default function AddRule({ users, onCancel, onComplete }: RuleDetailProps
   // });
 
   const [isSend, setIsSend] = useState<boolean>(false);
-  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
   const getClient = async () => {
     const { data: clients } = await supabase
@@ -75,6 +74,9 @@ export default function AddRule({ users, onCancel, onComplete }: RuleDetailProps
         });
 
       if (historyErr) console.error("ルール追加履歴の記録に失敗しました。");
+
+      handleConfirm(ruleData.id);
+
     } catch (error) {
       console.error(error);
       toast.error("新規ルールの追加に失敗しました。");
@@ -84,6 +86,21 @@ export default function AddRule({ users, onCancel, onComplete }: RuleDetailProps
         setIsSend(false);
       }, 500);
     }
+  }
+
+  const handleConfirm = async (ruleId: string) => {
+    const { error } = await supabase
+      .from("rules_acknowledgements")
+      .upsert({
+        rule_id: ruleId,
+        user_id: user?.id,
+        acknowledged_at: new Date(),
+      },
+        {
+          onConflict: "rule_id,user_id",
+        });
+
+    if (error) console.error("確認フラグの登録に失敗しました。", error);
   }
 
   useEffect(() => {

@@ -51,7 +51,7 @@ export default function MailConverter({ domain, prefixNo }: MailConverterProps) 
   return (
     <div className="relative min-h-100 flex flex-col w-full h-full pr-2 overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400">
       {!isLoaded &&
-        <div className="absolute flex justify-center items-center w-full h-full bg-white/70 dark:bg-neutral-600/50" aria-label="読み込み中">
+        <div className="absolute flex justify-center items-center w-full h-full" aria-label="読み込み中">
           <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
         </div>
       }
@@ -67,10 +67,10 @@ export default function MailConverter({ domain, prefixNo }: MailConverterProps) 
           </div>
 
 
-          <div className="flex-1 text-sm tracking-wide p-2 rounded-lg bg-neutral-200 dark:bg-neutral-700">
+          <div className="flex-1 text-sm tracking-wide">
             <div
               dangerouslySetInnerHTML={{ __html: currentMail.body }}
-              className="mail-base w-full p-2"
+              className="mail-base w-full p-4 bg-neutral-200/50 dark:bg-neutral-700/50"
             ></div>
           </div>
         </>

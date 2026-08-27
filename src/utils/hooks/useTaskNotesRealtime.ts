@@ -26,7 +26,7 @@ export function useTaskNotesRealtime() {
       .from("task_notes")
       .select("*")
       .order("changed_at", { ascending: false })
-      .limit(50);
+      .limit(100);
 
     if (error) {
       console.error(error);
@@ -50,7 +50,7 @@ export function useTaskNotesRealtime() {
 
           setNotes((prev) => {
             const update = [...prev, newNote];
-            return update.slice(-50);
+            return update.slice(-100);
           });
 
           // setReverseNotes((prev) => {

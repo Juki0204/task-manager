@@ -94,6 +94,9 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
         .upsert(updateHistoryPayload);
 
       if (historyErr) console.error("ルール追加履歴の記録に失敗しました。");
+
+      handleConfirm(ruleData.id);
+
     } catch (error) {
       toast.error("ルールの更新に失敗しました。");
       console.error(error);
@@ -103,6 +106,21 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
         setIsSend(false);
       }, 500);
     }
+  }
+
+  const handleConfirm = async (ruleId: string) => {
+    const { error } = await supabase
+      .from("rules_acknowledgements")
+      .upsert({
+        rule_id: ruleId,
+        user_id: user?.id,
+        acknowledged_at: new Date(),
+      },
+        {
+          onConflict: "rule_id,user_id",
+        });
+
+    if (error) console.error("確認フラグの登録に失敗しました。", error);
   }
 
   useEffect(() => {

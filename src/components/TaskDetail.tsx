@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { Button } from "@headlessui/react";
 
@@ -204,30 +204,23 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
   //備考欄のメールチェック
   const [mailOpen, setMailOpen] = useState<boolean>(false);
-  const mailRefs = extractMailRefs(task.remarks);
+  const mailRefs = useMemo(() =>
+    extractMailRefs(task.remarks),
+    [task.remarks]
+  );
   const [activeMail, setActiveMail] = useState<{ domain: string, prefixNo: number } | null>(null);
 
-  function initActiveMail() {
-    if (mailRefs.length === 0) return;
-    if (activeMail) return;
-    setActiveMail(mailRefs[0]);
-  }
   useEffect(() => {
-    // console.log(mailRefs);
-    initActiveMail();
+    setMailOpen(false);
+
+    if (mailRefs.length === 0) {
+      setActiveMail(null);
+      return;
+    }
+
+    setActiveMail(mailRefs[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mailRefs]);
-
-  // useEffect(() => {
-  //   const judgeTimer = setTimeout(() => {
-  //     console.log("読みました。");
-  //   }, 3000);
-
-  //   return () => {
-  //     clearTimeout(judgeTimer);
-  //   }
-  // }, []);
-
+  }, [task.id, task.remarks]);
 
   //備考欄既読判定
   const remarksAcknowredged = async (task: Task) => {
@@ -261,7 +254,6 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log("備考欄を表示しました。");
       remarksAcknowredged(task);
     }, 3000);
 
@@ -269,7 +261,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
       clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [task.id]);
 
   return (
     <>
@@ -375,25 +367,6 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
         </div>
 
-        {/* {mailRefs.length > 0 && (
-          <>
-            <div className="col-span-2 flex gap-1 items-center mt-1">
-              <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">ACCESSORIES</span>
-              <span className="block h-0.5 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
-            </div>
-
-            <div className="col-span-2 flex gap-2 pb-4">
-              <div
-                onClick={() => { setMailOpen(!mailOpen) }}
-                className="w-fit flex gap-1 items-center px-4 py-0.25 font-normal rounded-full text-xs tracking-wider text-white bg-slate-600 dark:bg-blue-600/50 cursor-pointer transition-all hover:bg-slate-500"
-              >
-                <Mail className="w-4" />依頼に関連するメール {mailRefs.length}件
-              </div>
-            </div>
-          </>
-
-        )} */}
-
         <div className="col-span-2 flex gap-1 items-center mt-1">
           <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">REMARKS</span>
           <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
@@ -483,7 +456,7 @@ export default function TaskDetail({ task, user, onClose, onEdit, deadlineList }
 
       {/* メールドロワー */}
       {mailRefs && mailRefs.length > 0 && (
-        <div className={`max-h-160 w-180 right-134  h-full flex flex-col rounded-2xl bg-neutral-100 dark:bg-neutral-800 shadow-2xl shadow-black/30 p-4 absolute -z-10 bottom-4 pb-3 transition-all duration-300 ${mailOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <div className={`h-full max-w-180 w-[calc(100vw-580px)] flex flex-col bg-neutral-100 dark:bg-neutral-800 p-4 fixed -z-10 bottom-0 pb-3 transition-[position,_opacity] ${mailOpen ? "opacity-100 right-130 delay-[0ms,_100ms] duration-[300ms,_200ms]" : "opacity-0 right-0 pointer-events-none delay-[0ms,_0ms] duration-[300ms,_0ms]"}`}>
           <X onClick={() => setMailOpen(false)} className="absolute top-4 right-4 cursor-pointer" />
           <div className="grid grid-cols-3 gap-2 mb-4 pr-8">
             {mailRefs.map(m => (

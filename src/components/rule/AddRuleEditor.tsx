@@ -243,7 +243,7 @@ export default function AddRuleEditor({ value, onChange }: { value: string, onCh
         className={`tiptap-base tiptap-editor text-sm [&>div]:!max-h-[calc(100svh-196px)] [&>div]:overscroll-contain`}
       />
 
-      <div className={`${hintOpen ? "opacity-100" : "opacity-0"} w-[calc(25%-14px)] absolute z-110 right-0 top-7 shadow-md bg-neutral-100 dark:bg-neutral-700 rounded-md p-4 whitespace-nowrap transition-all duration-300`}>
+      <div className={`${hintOpen ? "opacity-100" : "opacity-0"} w-[calc(25%-14px)] absolute z-110 right-0 top-7 shadow-md bg-neutral-100 dark:bg-neutral-700 rounded-md p-4 whitespace-nowrap transition-all duration-300 pointer-events-none`}>
         <h3 className="pb-1 mb-1 text-center text-sm font-bold">使用可能な記法一覧</h3>
         <div className="grid grid-cols-2 text-sm font-bold text-center mb-1">
           <p>記法</p>

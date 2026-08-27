@@ -7,7 +7,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/re
 import { CorrectBtn } from "@/components/ui/Btn";
 import { Repeat } from "lucide-react";
 
-const REFRESH_THRESHOLD = 30 * 60 * 1000; //30分
+const REFRESH_THRESHOLD = 60 * 60 * 1000; //30分
 
 const DEBUG_SHOW_MODAL = false; //デバッグ用
 
