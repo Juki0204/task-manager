@@ -906,3 +906,33 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 8px;
 }
+
+
+/* AddTask時のヘッダーメッセージ用アニメーション */
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  51% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.dot1 {
+  animation: flash 2s linear 0s infinite;
+}
+
+.dot2 {
+  animation: flash 2s linear 0.2s infinite;
+}
+
+.dot3 {
+  animation: flash 2s linear 0.4s infinite;
+}

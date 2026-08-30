@@ -10,6 +10,7 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { AddTaskBtn, SideMenuBtn, UserMenu, WithBadgeSideMenuBtn } from "@/components/ui/SideMenuBtn";
 import { CalendarCheck, CirclePlus, ClipboardList, LayoutDashboard, MessageSquareWarning, Plus, ScrollText, Settings, Star, Trash2, User, Users } from "lucide-react";
 import { useTask } from "./providers/TaskProvider";
+import { useAddTaskPresence } from "./providers/AddTaskPresenceProvider";
 
 // interface SideMenuProps {
 //   onClick: () => void;
@@ -19,6 +20,7 @@ export default function SideMenu() {
   const { user } = useAuth();
   const router = useRouter();
   const { openAdd, isPanelOpen, panelType } = useTask();
+  const { startAddingTask } = useAddTaskPresence();
 
   function handleReport() {
     const report = confirm("報告用のスプレッドシートに移行します。");
@@ -55,7 +57,10 @@ export default function SideMenu() {
           <div className={`w-full h-full grid grid-rows-[auto_1fr] justify-between gap-2 pb-2 transition-all ease-out duration-200`}>
             <div className="flex flex-col">
               <AddTaskBtn
-                onClick={openAdd}
+                onClick={async () => {
+                  await startAddingTask();
+                  openAdd();
+                }}
                 isPanelOpen={isPanelOpen}
                 panelType={panelType}
               />

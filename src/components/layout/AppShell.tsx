@@ -4,18 +4,24 @@ import { usePathname } from "next/navigation";
 
 import SideMenu from "@/components/SideMenu";
 import { TaskProvider, useTask } from "@/components/providers/TaskProvider";
+import { AddTaskPresenceProvider } from "../providers/AddTaskPresenceProvider";
+import { useAuth } from "@/app/AuthProvider";
 
 type AppShellProps = {
   children: React.ReactNode;
 };
 
 export default function AppShell({ children }: AppShellProps) {
+  const { user } = useAuth();
+
   return (
-    <TaskProvider>
-      <AppShellInner>
-        {children}
-      </AppShellInner>
-    </TaskProvider>
+    <AddTaskPresenceProvider userId={user?.id ?? "unknown"} userName={user?.name ?? "unknown"}>
+      <TaskProvider>
+        <AppShellInner>
+          {children}
+        </AppShellInner>
+      </TaskProvider>
+    </AddTaskPresenceProvider>
   );
 }
 

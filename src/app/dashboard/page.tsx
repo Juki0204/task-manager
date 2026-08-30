@@ -307,7 +307,7 @@ export default function DashboardPage() {
 
           {/* 変更履歴ログ */}
           <div className="w-[calc(100%-700px)] p-4 relative">
-            <h3 className="font-bold text-left pl-2 -mb-4">変更履歴ログ（直近50件）</h3>
+            <h3 className="font-bold text-left pl-2 -mb-4">変更履歴ログ（直近100件）</h3>
 
             <DashboardNotesViewer />
           </div>

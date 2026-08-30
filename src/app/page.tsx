@@ -17,6 +17,8 @@ import { useTask } from "@/components/providers/TaskProvider";
 
 import { PageLayout } from "@/components/layout/PageLayout";
 import { SubscriptionStatus } from "@/components/common/SubscriptionStatus";
+import { useAddTaskPresence } from "@/components/providers/AddTaskPresenceProvider";
+import { Pen, Pencil, PenLine } from "lucide-react";
 
 type ContextMenuState = {
   visible: boolean;
@@ -29,6 +31,7 @@ type ContextMenuState = {
 export default function AllTaskPage() {
   const { user } = useAuth();
   const [now, setNow] = useState(() => Date.now());
+  const { addingUsers } = useAddTaskPresence();
 
   const {
     taskList,
@@ -205,6 +208,9 @@ export default function AllTaskPage() {
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [filteredTaskList, now]);
 
+  useEffect(() => {
+    console.log("[Presence] addingUsers changed:", addingUsers);
+  }, [addingUsers]);
 
 
   return (
@@ -219,8 +225,27 @@ export default function AllTaskPage() {
           onResubscribe={resubscribeAll}
         />
       }
-    // actions={<AddTask />}
+      actions={
+        <>
+          {addingUsers.length > 0 && (
+            <div className="bg-white rounded-md px-4">
+              {addingUsers.map((user) => (
+                <p key={user.userId} className="flex items-center gap-0.25 font-bold tracking-wider text-red-600">
+                  {user.taskTitle
+                    ? `${user.userName}さんが タスク「${user.taskTitle}」 を新規追加中`
+                    : `${user.userName}さんがタスクを新規追加中`}
+                  <span className="dot1">.</span>
+                  <span className="dot2">.</span>
+                  <span className="dot3">.</span>
+                  <Pencil className="w-4.5" />
+                </p>
+              ))}
+            </div>
+          )}
+        </>
+      }
     >
+
       {user && recentryTaskList.length > 0 && (
         <div className="px-4 pt-3 pb-2 mb-4 bg-neutral-200/50 dark:bg-neutral-700/50">
           <h3 className="mb-2 tracking-wider text-sm font-bold">■ 最近追加されたタスク（直近1時間）</h3>

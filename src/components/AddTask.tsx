@@ -13,6 +13,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useAuth } from "@/app/AuthProvider";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 import { Task } from "@/utils/types/task";
+import { useAddTaskPresence } from "./providers/AddTaskPresenceProvider";
 
 //Form
 type AddTaskFormState = {
@@ -52,7 +53,7 @@ interface AddTaskProps {
 const getToday = () =>
   new Date().toLocaleDateString("sv-SE");
 
-const createInitialForm = (task?: Task, defaultClient = ""): AddTaskFormState => {
+const createInitialForm = (task?: Task, defaultClient = "難波秘密倶楽部"): AddTaskFormState => {
   if (task) {
     return {
       client: task.client ?? "",
@@ -100,6 +101,7 @@ const initialClientMeta: ClientTaskMeta = {
 export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
   const { user } = useAuth();
   const { syncInvoiceWithTask } = useInvoiceSync();
+  const { updateAddingTaskTitle, stopAddingTask } = useAddTaskPresence();
 
   const [form, setForm] = useState<AddTaskFormState>(createInitialForm(task));
   const [options, setOptions] = useState<AddTaskOptions>(initialOptions);
@@ -221,18 +223,20 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
 
   //Form初期化
   const resetForm = () => {
-    setForm(createInitialForm(task, options.clients[0] ?? ""));
+    setForm(createInitialForm(task, options.clients[0] ?? "難波秘密倶楽部"));
     setClientMeta(initialClientMeta);
     setIsSubmitting(false);
   };
 
   //Drawer Close
-  const completeForm = () => {
+  const completeForm = async () => {
+    await stopAddingTask();
     onComplete();
     resetForm();
   };
 
-  const cancelForm = () => {
+  const cancelForm = async () => {
+    await stopAddingTask();
     onClose();
   }
 
@@ -420,6 +424,7 @@ export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
             icon={<PencilLine className="w-4.5 text-neutral-500" />}
             value={form.title}
             onChange={(e) => updateForm("title", e.target.value)}
+            onBlur={() => updateAddingTaskTitle(form.title)}
           />
 
           <AddTaskInput
