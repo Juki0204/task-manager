@@ -1,7 +1,11 @@
+"use client";
+
 import { supabase } from "@/utils/supabase/supabase";
 import { Invoice } from "@/utils/types/invoice";
+import { User } from "@/utils/types/user";
+import { useInvoiceEditing } from "@/components/invoice/InvoiceEditingProvider";
 import { Input, Select, Textarea } from "@headlessui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { MdCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 
@@ -12,6 +16,7 @@ import { Building, Calculator, ChartBarStacked, ChevronLeft, ChevronRight, Circl
 
 interface AllEditableFormProps {
   index: number;
+  user: User;
   recordId: string | null;
   prevId: string | null;
   nextId: string | null;
@@ -32,11 +37,164 @@ interface LPDataType {
   total_amount: number, //請求金額
 }
 
-export default function AllEditableForm({ index, recordId, prevId, nextId, priceList, onClose, onChangeRecord, onCheckTask, onToggle }: AllEditableFormProps) {
+export default function AllEditableForm({ index, user, recordId, prevId, nextId, priceList, onClose, onChangeRecord, onCheckTask, onToggle }: AllEditableFormProps) {
   const [invoiceData, setInvoiceData] = useState<Invoice | null>(null);
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [tempInvoiceValue, setTempInvoiceValue] = useState<Invoice>();
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const editing = useInvoiceEditing();
+  const userId = user.id;
+
+  const lockerId = recordId ? editing.getLockerId(recordId) : null;
+  const lockedByOther = !!recordId && lockerId !== null && lockerId !== userId;
+  const lockedByMe = !!recordId && lockerId === userId;
+  const lockedUser = recordId ? (editing.getLockerName(recordId) ?? "") : "";
+
+  const [isStale, setIsStale] = useState(false);
+  const wasLockedByOtherRef = useRef(false);
+  const localLockRef = useRef(false);
+  const acquiringLockRef = useRef(false);
+
+  const showLockedToast = useCallback(() => {
+    toast.warning(
+      lockedUser ? `${lockedUser}さんが編集中です` : "他のユーザーが編集中です",
+      { id: recordId ? `invoice-lock-${recordId}` : "invoice-lock" }
+    );
+  }, [lockedUser, recordId]);
+
+  const acquireRowLock = useCallback(async (): Promise<boolean> => {
+    if (!recordId) return false;
+    if (isStale) return false;
+
+    if (localLockRef.current || lockedByMe) {
+      localLockRef.current = true;
+      return true;
+    }
+
+    if (lockedByOther) {
+      showLockedToast();
+      return false;
+    }
+
+    if (acquiringLockRef.current) return false;
+    acquiringLockRef.current = true;
+
+    try {
+      const result = await editing.lock(recordId, userId);
+
+      if (!result.success) {
+        showLockedToast();
+        return false;
+      }
+
+      localLockRef.current = true;
+      return true;
+    } catch (error) {
+      console.error("[AllEditableForm] 行ロック取得に失敗しました:", error);
+      toast.error("編集ロックの取得に失敗しました。");
+      return false;
+    } finally {
+      acquiringLockRef.current = false;
+    }
+  }, [editing, isStale, lockedByMe, lockedByOther, recordId, showLockedToast, userId]);
+
+  const releaseRowLock = useCallback(async () => {
+    if (!recordId || (!localLockRef.current && !lockedByMe)) return;
+
+    try {
+      await editing.unlock(recordId, userId);
+    } catch (error) {
+      console.error("[AllEditableForm] 行ロック解除に失敗しました:", error);
+    } finally {
+      localLockRef.current = false;
+    }
+  }, [editing, lockedByMe, recordId, userId]);
+
+  const isInvoiceEditableElement = useCallback((target: EventTarget | null) => {
+    if (!(target instanceof HTMLElement)) return false;
+
+    if (target.closest('[data-invoice-editable="true"]')) return true;
+
+    if (target instanceof HTMLInputElement) {
+      return !target.readOnly && !target.disabled;
+    }
+
+    if (target instanceof HTMLTextAreaElement) {
+      return !target.readOnly && !target.disabled;
+    }
+
+    if (target instanceof HTMLSelectElement) {
+      return !target.disabled;
+    }
+
+    return false;
+  }, []);
+
+  const handleEditPointerDownCapture = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!isInvoiceEditableElement(event.target)) return;
+      if (isStale) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
+      if (localLockRef.current || lockedByMe) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (lockedByOther) {
+        showLockedToast();
+        return;
+      }
+
+      const target = event.target as HTMLElement;
+
+      void acquireRowLock().then((success) => {
+        if (!success) return;
+
+        if (
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement ||
+          target instanceof HTMLSelectElement
+        ) {
+          target.focus();
+          return;
+        }
+
+        target.closest<HTMLElement>('[data-invoice-editable="true"]')?.click();
+      });
+    },
+    [acquireRowLock, isInvoiceEditableElement, isStale, lockedByMe, lockedByOther, showLockedToast]
+  );
+
+  const handleEditFocusCapture = useCallback(
+    (event: React.FocusEvent<HTMLDivElement>) => {
+      if (!isInvoiceEditableElement(event.target)) return;
+      if (isStale) {
+        (event.target as HTMLElement).blur();
+        return;
+      }
+
+      if (localLockRef.current || lockedByMe) return;
+
+      if (lockedByOther) {
+        (event.target as HTMLElement).blur();
+        showLockedToast();
+        return;
+      }
+
+      const target = event.target as HTMLElement;
+      target.blur();
+
+      void acquireRowLock().then((success) => {
+        if (success) target.focus();
+      });
+    },
+    [acquireRowLock, isInvoiceEditableElement, isStale, lockedByMe, lockedByOther, showLockedToast]
+  );
 
   const [unitPrice, setUnitPrice] = useState<number | null>(null); //計算用単価
 
@@ -338,6 +496,8 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
       toast.success("請求データの保存が完了しました。");
       setCurrentInvoice(data);
       setTempInvoiceValue(data);
+
+      await releaseRowLock();
     } finally {
       setIsSaving(false);
     }
@@ -367,19 +527,40 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
   }
 
   //当該請求の取得
-  const getCurrentInvoice = async (recordId: string) => {
-    const { data: currentInvoice, error } = await supabase
+  const getCurrentInvoice = async (targetRecordId: string) => {
+    const { data: fetchedInvoice, error } = await supabase
       .from("invoice")
       .select("*")
-      .eq("id", recordId)
+      .eq("id", targetRecordId)
       .single();
 
-    if (!currentInvoice) return;
-    setCurrentInvoice(currentInvoice);
-    setTempInvoiceValue(currentInvoice);
+    if (error) {
+      console.error("請求データの取得に失敗しました:", error);
+      return null;
+    }
 
-    if (error) console.error("請求データの取得に失敗しました:", error);
+    if (!fetchedInvoice) return null;
+
+    setInvoiceData(fetchedInvoice);
+    setCurrentInvoice(fetchedInvoice);
+    setTempInvoiceValue(fetchedInvoice);
+
+    return fetchedInvoice as Invoice;
   }
+
+  const refreshCurrentInvoice = async () => {
+    if (!recordId) return;
+
+    const latest = await getCurrentInvoice(recordId);
+    if (!latest) {
+      toast.error("最新の請求内容を取得できませんでした。");
+      return;
+    }
+
+    wasLockedByOtherRef.current = false;
+    setIsStale(false);
+    toast.success("最新の請求内容を取得しました。");
+  };
 
   const scrollToTop = () => {
     const el = scrollRef.current;
@@ -389,9 +570,44 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
   useEffect(() => {
     if (!recordId) return;
-    getCurrentInvoice(recordId);
+
+    localLockRef.current = false;
+    acquiringLockRef.current = false;
+    wasLockedByOtherRef.current = false;
+    setIsStale(false);
+
+    void getCurrentInvoice(recordId);
     scrollToTop();
   }, [recordId]);
+
+  useEffect(() => {
+    if (lockedByOther) {
+      wasLockedByOtherRef.current = true;
+      return;
+    }
+
+    if (wasLockedByOtherRef.current) {
+      setIsStale(true);
+    }
+  }, [lockedByOther]);
+
+  useEffect(() => {
+    return () => {
+      if (recordId && localLockRef.current) {
+        void editing.unlock(recordId, userId);
+      }
+    };
+  }, [editing.unlock, recordId, userId]);
+
+  const handleClose = async () => {
+    await releaseRowLock();
+    onClose();
+  };
+
+  const handleRecordChange = async (targetRecordId: string) => {
+    await releaseRowLock();
+    onChangeRecord(targetRecordId);
+  };
 
   //-------------------マウント時に小カテゴリの項目をフォーカス＆X軸のスクロール位置合わせ---------------
 
@@ -514,12 +730,15 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
   ]);
 
   useEffect(() => {
-    if (tempInvoiceValue?.work_name) {
-      setUnitPrice(
-        priceList?.find(p => p.work_name === tempInvoiceValue.work_name)?.price ?? 0
-      );
+    if (!tempInvoiceValue?.work_name) {
+      setUnitPrice(null);
+      return;
     }
-  }, [tempInvoiceValue?.work_name]);
+
+    setUnitPrice(
+      priceList?.find(p => p.work_name === tempInvoiceValue.work_name)?.price ?? 0
+    );
+  }, [priceList, tempInvoiceValue?.work_name]);
 
   const [LPCalcOpen, setLPCalcOpen] = useState<boolean>(false);
   const [LPData, setLPData] = useState<LPDataType>({
@@ -558,20 +777,25 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
   return (
 
-    <div className="w-full h-full relative bg-neutral-100 dark:bg-[#2d2d2d] px-2 pt-10 pb-16">
+    <div
+      className="w-full h-full relative bg-neutral-100 dark:bg-[#2d2d2d] px-2 pt-10 pb-16"
+      onPointerDownCapture={handleEditPointerDownCapture}
+      onFocusCapture={handleEditFocusCapture}
+    >
       <h2 className="absolute top-0 left-0 w-full h-10 mb-0 flex items-center justify-start gap-2 pl-3 font-bold pr-10 z-10">
         請求データ一括入力
         <span className="text-xs text-neutral-400">TABキー, TAB + SHIFTキー押下で項目移動可能</span>
         <div onClick={() => setLPCalcOpen(true)} className="flex gap-1 items-center absolute top-1.5 right-10 cursor-pointer text-xs py-0.5 px-1.5 rounded-sm bg-neutral-300 text-neutral-800 hover:opacity-60">
           <Calculator className="w-4.5 text-neutral-500" />LP計算機
         </div>
-        <X onClick={onClose} className="absolute top-2 right-2 cursor-pointer" />
+        <X onClick={() => { void handleClose(); }} className="absolute top-2 right-2 cursor-pointer" />
       </h2>
 
       <div className="flex gap-2 mb-2">
         <div className="flex flex-wrap flex-2 gap-2 items-center p-3 rounded-lg bg-slate-300/70 dark:bg-[#444444]">
           {/* チェックボックス */}
           <div
+            data-invoice-editable="true"
             className={`w-fit h-fit flex items-center gap-2 px-1 rounded-md cursor-pointer ${tempInvoiceValue.checked ? "bg-[#ffff00]" : "bg-neutral-100 dark:bg-[#313131]"}`}
             onClick={(e) => {
               e.stopPropagation();
@@ -739,6 +963,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
 
             {mediaOptions.map((opt, index) => (
               <div
+                data-invoice-editable="true"
                 key={opt.id}
                 tabIndex={0}
                 ref={(el) => { radioRefs.current[index] = el; }}
@@ -780,6 +1005,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
             <Image className="w-4.5 text-neutral-500" />
             作業カテゴリ選択
             <span
+              data-invoice-editable="true"
               className={`pb-1 pt-0.5 px-2 text-black text-xs rounded-md cursor-pointer ${!tempInvoiceValue.work_name ? "bg-blue-300/70" : "bg-neutral-300"}`}
               onClick={() => {
                 setTempInvoiceValue({
@@ -811,6 +1037,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                     favoriteList.sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
                       .map((p, index) => (
                         <li
+                          data-invoice-editable="true"
                           ref={index === 0 ? firstSmallCategoryRef : null}
                           key={p.id}
                           data-id={p.id}
@@ -838,6 +1065,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                       .sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
                       .map((p) => (
                         <li
+                          data-invoice-editable="true"
                           key={p.id}
                           data-id={p.id}
                           data-category={p.category}
@@ -864,6 +1092,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                       .sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
                       .map((p) => (
                         <li
+                          data-invoice-editable="true"
                           key={p.id}
                           data-id={p.id}
                           data-category={p.category}
@@ -891,6 +1120,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                       .sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
                       .map((p) => (
                         <li
+                          data-invoice-editable="true"
                           key={p.id}
                           data-id={p.id}
                           data-category={p.category}
@@ -918,6 +1148,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                       .sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
                       .map((p) => (
                         <li
+                          data-invoice-editable="true"
                           key={p.id}
                           data-id={p.id}
                           data-category={p.category}
@@ -945,6 +1176,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
                       .sort((a, b) => a.work_name.localeCompare(b.work_name, "ja"))
                       .map((p) => (
                         <li
+                          data-invoice-editable="true"
                           key={p.id}
                           data-id={p.id}
                           data-category={p.category}
@@ -1118,7 +1350,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           disabled={prevId ? false : true}
           onClick={() => {
             if (!prevId) return;
-            onChangeRecord(prevId);
+            void handleRecordChange(prevId);
           }}
           className="flex gap-1 pl-2 pr-4 py-1 items-center leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -1127,7 +1359,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
         </button>
 
         <button
-          disabled={!isDirty || isSaving}
+          disabled={!isDirty || isSaving || isStale || lockedByOther}
           onClick={() => {
             // console.log(tempInvoiceValue);
             saveAllValue();
@@ -1145,7 +1377,7 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           disabled={nextId ? false : true}
           onClick={() => {
             if (!nextId) return;
-            onChangeRecord(nextId);
+            void handleRecordChange(nextId);
           }}
           className="flex gap-1 pl-4 pr-2 py-1 items-center leading-none bg-sky-600 text-white tracking-wider rounded-md cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900 disabled:grayscale-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -1153,6 +1385,25 @@ export default function AllEditableForm({ index, recordId, prevId, nextId, price
           <ChevronRight className="w-4.5" />
         </button>
       </div>
+
+      {isStale && (
+        <div className="absolute inset-0 z-50 grid place-items-center bg-black/30 backdrop-blur-[1px] rounded-2xl">
+          <div className="w-[min(420px,calc(100%-2rem))] rounded-xl bg-white dark:bg-[#313131] p-6 text-center shadow-2xl">
+            <h3 className="text-lg font-bold mb-2">請求内容が更新されました</h3>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300">
+              他のユーザーによる編集が完了しました。<br />
+              最新情報を取得してから編集を続けてください。
+            </p>
+            <button
+              type="button"
+              onClick={() => { void refreshCurrentInvoice(); }}
+              className="mt-5 px-5 py-2 rounded-md bg-sky-600 text-white font-bold cursor-pointer hover:opacity-90 focus:outline-2 focus:outline-sky-900"
+            >
+              最新情報を取得
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className={`
         absolute top-0 p-4 rounded-xl bg-neutral-50 dark:bg-[#2d2d2d] w-80 transition-all duration-300 -z-10

@@ -1,31 +1,99 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/utils/supabase/supabase";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import { Invoice } from "@/utils/types/invoice";
+
+import { supabase } from "@/utils/supabase/supabase";
 
 type EditingRow = {
   record_id: string;
-  field_name: string;
+  field_name?: string | null;
   user_id: string;
 };
 
-type LockKey = `${string}::${string}`;
+type SubscribeStatus =
+  | "idle"
+  | "subscribing"
+  | "subscribed"
+  | "closed"
+  | "timed_out"
+  | "error";
 
-type SubscribeStatus = "idle" | "subscribing" | "subscribed" | "closed" | "timed_out" | "error";
+type LockResult =
+  | {
+    success: true;
+    lockerId: string;
+  }
+  | {
+    success: false;
+    lockerId: string | null;
+  };
 
-type Ctx = {
+type InvoiceEditingContextValue = {
   status: SubscribeStatus;
-  getLockerId: (recordId: string, field: string) => string | null;
-  getLockerName: (recordId: string, field: string) => string | null;
-  isLockedByOther: (recordId: string, field: string, myUserId: string) => boolean;
-  lock: (recordId: string, field: string, myUserId: string) => Promise<void>;
-  unlock: (recordId: string, field: string, myUserId: string) => Promise<void>;
+
+  /**
+   * 指定Invoiceを現在ロックしているユーザーID
+   */
+  getLockerId: (recordId: string) => string | null;
+
+  /**
+   * 指定Invoiceを現在ロックしているユーザー名
+   */
+  getLockerName: (recordId: string) => string | null;
+
+  /**
+   * 自分以外のユーザーによってロックされているか
+   */
+  isLockedByOther: (recordId: string, myUserId: string) => boolean;
+
+  /**
+   * 自分自身がロックしているか
+   */
+  isLockedByMe: (recordId: string, myUserId: string) => boolean;
+
+  /**
+   * 行ロック取得
+   *
+   * Realtimeの状態ではなく、
+   * DB INSERTの成功をもってロック取得成功とする。
+   */
+  lock: (recordId: string, myUserId: string) => Promise<LockResult>;
+
+  /**
+   * 自分が保持している行ロックを解除
+   */
+  unlock: (recordId: string, myUserId: string) => Promise<void>;
+
+  /**
+   * Realtime購読を張り直す
+   */
   resubscribe: () => void;
+
+  /**
+   * DBから現在のロック一覧を再取得
+   */
+  refreshLocks: () => Promise<void>;
 };
 
-const InvoiceEditingContext = createContext<Ctx | null>(null);
+const InvoiceEditingContext =
+  createContext<InvoiceEditingContextValue | null>(null);
+
+/**
+ * 既存DBの field_name カラムを残したまま
+ * 行ロックへ移行するための固定値。
+ *
+ * 将来的にfield_nameカラムを削除したら不要。
+ */
+const ROW_LOCK_FIELD_NAME = "__ROW__";
 
 export function InvoiceEditingProvider({
   children,
@@ -34,252 +102,496 @@ export function InvoiceEditingProvider({
   children: React.ReactNode;
   enabled?: boolean;
 }) {
-
   const [status, setStatus] = useState<SubscribeStatus>("idle");
-  const [lockMap, setLockMap] = useState<Map<LockKey, string>>(new Map());
 
-  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  /**
+   * recordId -> userId
+   *
+   * セル単位ではなくInvoice行単位で保持する。
+   */
+  const [lockMap, setLockMap] = useState<Map<string, string>>(
+    () => new Map()
+  );
+
+  /**
+   * userId -> userName
+   */
+  const [userMap, setUserMap] = useState<Map<string, string>>(
+    () => new Map()
+  );
+
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(
+    null
+  );
+
   const enabledRef = useRef(enabled);
   enabledRef.current = enabled;
 
-  const [userMap, setUserMap] = useState<Map<string, string>>(new Map());
-
+  /**
+   * ユーザー一覧取得
+   */
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase.from("users").select("id, name");
-      if (!data) return;
+    let cancelled = false;
 
-      const map = new Map<string, string>();
-      data.forEach((u) => {
-        map.set(u.id, u.name);
+    const loadUsers = async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("id, name");
+
+      if (error) {
+        console.error(
+          "[InvoiceEditingProvider] usersの取得に失敗しました:",
+          error
+        );
+        return;
+      }
+
+      if (cancelled || !data) return;
+
+      const nextMap = new Map<string, string>();
+
+      data.forEach((user) => {
+        nextMap.set(user.id, user.name);
       });
 
-      setUserMap(map);
-    })();
+      setUserMap(nextMap);
+    };
+
+    void loadUsers();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const cleanup = () => {
-    if (channelRef.current) {
-      supabase.removeChannel(channelRef.current);
-      channelRef.current = null;
+  /**
+   * DBから現在存在している行ロックを全取得。
+   *
+   * Realtimeは「購読開始後の変更」しか拾わないため、
+   * Provider起動時点ですでに存在しているロックを
+   * 必ずここで同期する。
+   */
+  const refreshLocks = useCallback(async () => {
+    if (!enabledRef.current) {
+      setLockMap(new Map());
+      return;
     }
-  };
 
-  //リアルタイム購読
-  // const subscribe = () => {
-  //   cleanup();
-  //   if (!enabledRef.current) return;
+    const { data, error } = await supabase
+      .from("invoice_editing_state")
+      .select("record_id, field_name, user_id")
+      .eq("field_name", ROW_LOCK_FIELD_NAME);
 
-  //   setStatus("subscribing");
+    if (error) {
+      console.error(
+        "[InvoiceEditingProvider] ロック一覧の取得に失敗しました:",
+        error
+      );
+      return;
+    }
 
-  //   const ch = supabase
-  //     .channel("invoice_editing_state:global")
-  //     .on(
-  //       "postgres_changes",
-  //       { event: "*", schema: "public", table: "invoice_editing_state" },
-  //       (payload: RealtimePostgresChangesPayload<EditingRow>) => {
-  //         // console.log("[realtime]", payload.eventType, { old: payload.old, new: payload.new });
-          
-  //         const row = (payload.new ?? payload.old) as EditingRow | null;
-  //         if (!row) return;
+    const nextMap = new Map<string, string>();
 
-  //         const key = `${row.record_id}::${row.field_name}` as LockKey;
+    data?.forEach((row) => {
+      if (!row.record_id || !row.user_id) return;
 
-  //         setLockMap((prev) => {
-  //           const next = new Map(prev);
+      nextMap.set(row.record_id, row.user_id);
+    });
 
-  //           // upsertがINSERT/UPDATEどっちもあり得るので両方ロック扱い
-  //           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-  //             next.set(key, row.user_id);
-  //             return next;
-  //           }
+    setLockMap(nextMap);
+  }, []);
 
-  //           if (payload.eventType === "DELETE") {
-  //             next.delete(key);
-  //             return next;
-  //           }
+  /**
+   * Realtime Channel削除
+   */
+  const cleanup = useCallback(() => {
+    const channel = channelRef.current;
 
-  //           return next;
-  //         });
-  //       }
-  //     )
-  //     .subscribe((s) => {
-  //       if (s === "SUBSCRIBED") setStatus("subscribed");
-  //       else if (s === "CLOSED") setStatus("closed");
-  //       else if (s === "TIMED_OUT") setStatus("timed_out");
-  //       else setStatus("error");
-  //     });
+    if (!channel) return;
 
-  //   channelRef.current = ch;
-  // };
+    void supabase.removeChannel(channel);
 
+    channelRef.current = null;
+  }, []);
 
-  const subscribe = () => {
+  /**
+   * Realtime購読
+   */
+  const subscribe = useCallback(() => {
     cleanup();
-    if (!enabledRef.current) return;
-  
+
+    if (!enabledRef.current) {
+      setStatus("idle");
+      setLockMap(new Map());
+      return;
+    }
+
     setStatus("subscribing");
-  
-    const ch = supabase
-      .channel("invoice_editing_state:global")
+
+    const channel = supabase
+      .channel("invoice_editing_state:row-lock")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "invoice_editing_state" },
-        (payload: RealtimePostgresChangesPayload<EditingRow>) => {
-          // ★イベント別に row を確実に取る
+        {
+          event: "*",
+          schema: "public",
+          table: "invoice_editing_state",
+        },
+        (
+          payload: RealtimePostgresChangesPayload<EditingRow>
+        ) => {
           const row =
             payload.eventType === "DELETE"
               ? (payload.old as EditingRow | null)
               : (payload.new as EditingRow | null);
-  
-          if (!row) {
-            console.warn("[realtime] missing row", payload.eventType, payload);
+
+          /**
+           * DELETE時にReplica Identity等の関係で
+           * record_idが取得できなかった場合は、
+           * ロック一覧をDBから再同期する。
+           */
+          if (!row?.record_id) {
+            console.warn(
+              "[InvoiceEditingProvider] Realtimeイベントからrecord_idを取得できませんでした。",
+              payload
+            );
+
+            void refreshLocks();
             return;
           }
-  
-          if (!row.record_id || !row.field_name) {
-            console.warn("[realtime] missing key parts", payload.eventType, row);
+
+          /**
+           * 旧セルロックがDBに残っている場合は無視。
+           */
+          if (
+            row.field_name &&
+            row.field_name !== ROW_LOCK_FIELD_NAME
+          ) {
             return;
           }
-  
-          const key = `${row.record_id}::${row.field_name}` as LockKey;
-  
-          // ★ここでイベント＆キーを確認（特に DELETE）
-          console.log("[realtime]", payload.eventType, {
-            key,
-            record_id: row.record_id,
-            field_name: row.field_name,
-            user_id: row.user_id, // DELETE だと undefined の可能性あり
-          });
-  
+
+          const recordId = row.record_id;
+
           setLockMap((prev) => {
-            const had = prev.has(key);
-            const prevVal = prev.get(key);
-            const prevSize = prev.size;
-  
             const next = new Map(prev);
-  
-            // upsertがINSERT/UPDATEどっちもあり得るので両方ロック扱い
-            if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
-              next.set(key, row.user_id);
-            } else if (payload.eventType === "DELETE") {
-              next.delete(key);
+
+            if (
+              payload.eventType === "INSERT" ||
+              payload.eventType === "UPDATE"
+            ) {
+              if (!row.user_id) {
+                void refreshLocks();
+                return prev;
+              }
+
+              next.set(recordId, row.user_id);
             }
-  
-            const hasNow = next.has(key);
-            const nextVal = next.get(key);
-            const nextSize = next.size;
-  
-            // ★DELETEで “had が false” ならキー不一致が濃厚
-            // ★DELETEで “had true -> hasNow false” なのにUIが変わらないなら、UI側の参照/依存関係が濃厚
-            console.log("[lockMap delta]", payload.eventType, {
-              key,
-              had,
-              prevVal,
-              prevSize,
-              hasNow,
-              nextVal,
-              nextSize,
-            });
-  
+
+            if (payload.eventType === "DELETE") {
+              next.delete(recordId);
+            }
+
             return next;
           });
         }
       )
-      .subscribe((s) => {
-        if (s === "SUBSCRIBED") setStatus("subscribed");
-        else if (s === "CLOSED") setStatus("closed");
-        else if (s === "TIMED_OUT") setStatus("timed_out");
-        else setStatus("error");
-      });
-  
-    channelRef.current = ch;
-  };
-  
+      .subscribe((subscriptionStatus) => {
+        switch (subscriptionStatus) {
+          case "SUBSCRIBED":
+            setStatus("subscribed");
 
+            /**
+             * 購読開始以前から存在するロックを同期。
+             */
+            void refreshLocks();
+            break;
+
+          case "CLOSED":
+            setStatus("closed");
+            break;
+
+          case "TIMED_OUT":
+            setStatus("timed_out");
+            break;
+
+          case "CHANNEL_ERROR":
+            setStatus("error");
+            break;
+
+          default:
+            break;
+        }
+      });
+
+    channelRef.current = channel;
+  }, [cleanup, refreshLocks]);
+
+  /**
+   * enabled変更時に購読開始/解除
+   */
   useEffect(() => {
     subscribe();
+
     return cleanup;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled]);
+  }, [enabled, subscribe, cleanup]);
 
+  /**
+   * 行ロック取得
+   *
+   * 重要：
+   * lockMapの状態ではなくINSERT結果を正とする。
+   *
+   * これにより、
+   *
+   * AとBが同時にクリック
+   * ↓
+   * A INSERT成功
+   * B unique violation
+   *
+   * とDBレベルで競合を防げる。
+   */
+  const lock = useCallback(
+    async (
+      recordId: string,
+      myUserId: string
+    ): Promise<LockResult> => {
+      /**
+       * 自分がすでにロック済みなら再INSERT不要。
+       */
+      const currentLockerId = lockMap.get(recordId);
 
-  //ロック状態を管理するcontext作成
-  const ctx = useMemo<Ctx>(() => {
-    const makeKey = (recordId: string, field: string) =>
-      `${recordId}::${field}` as LockKey;
+      if (currentLockerId === myUserId) {
+        return {
+          success: true,
+          lockerId: myUserId,
+        };
+      }
 
-    return {
-      status,
+      /**
+       * Realtime上ですでに他人のロックが分かっている場合。
+       *
+       * DB問い合わせを減らすため早期returnする。
+       */
+      if (
+        currentLockerId &&
+        currentLockerId !== myUserId
+      ) {
+        return {
+          success: false,
+          lockerId: currentLockerId,
+        };
+      }
 
-      getLockerId(recordId: string, field: string) {
-        const key = makeKey(recordId, field);
-        return lockMap.get(key) ?? null;
-      },
-
-      getLockerName(recordId: string, field: string) {
-        const userId = this.getLockerId(recordId, field);
-        if (!userId) return null;
-        return userMap.get(userId) ?? userId;
-      },
-
-      isLockedByOther(recordId, field, myUserId) {
-        const lockerId = this.getLockerId(recordId, field);
-        return lockerId !== null && lockerId !== myUserId;
-      },
-
-      async lock(recordId, field, myUserId) {
-        const { error } = await supabase.from("invoice_editing_state").upsert({
+      const { error } = await supabase
+        .from("invoice_editing_state")
+        .insert({
           record_id: recordId,
-          field_name: field,
+          field_name: ROW_LOCK_FIELD_NAME,
           user_id: myUserId,
         });
-        if (error) throw error;
-      },
 
-      // async unlock(recordId, field, myUserId) {
-      //   const { error } = await supabase
-      //     .from("invoice_editing_state")
-      //     .delete()
-      //     .eq("record_id", recordId)
-      //     .eq("field_name", field)
-      //     .eq("user_id", myUserId);
+      if (!error) {
+        /**
+         * Realtime反映を待たず、自分の画面では即座にロック状態へ。
+         */
+        setLockMap((prev) => {
+          const next = new Map(prev);
+          next.set(recordId, myUserId);
+          return next;
+        });
 
-      //   if (error) throw error;
-      // },
+        return {
+          success: true,
+          lockerId: myUserId,
+        };
+      }
 
-      async unlock(recordId, field, myUserId) {
-        const { data, error, count } = await supabase
+      /**
+       * 23505:
+       * PostgreSQL unique_violation
+       *
+       * 他ユーザーがほぼ同時に先にロックした可能性が高い。
+       */
+      if (error.code === "23505") {
+        const { data, error: fetchError } = await supabase
           .from("invoice_editing_state")
-          .delete({ count: "exact" })
+          .select("record_id, user_id")
           .eq("record_id", recordId)
-          .eq("field_name", field)
-          .eq("user_id", myUserId)
-          .select("record_id, field_name, user_id");
-      
-        console.log("[unlock query]", { recordId, field, myUserId, count, data, error });
-      
-        if (error) throw error;
+          .maybeSingle();
+
+        if (fetchError) {
+          console.error(
+            "[InvoiceEditingProvider] 競合ロック取得後の確認に失敗しました:",
+            fetchError
+          );
+
+          await refreshLocks();
+
+          return {
+            success: false,
+            lockerId: null,
+          };
+        }
+
+        const lockerId = data?.user_id ?? null;
+
+        if (lockerId) {
+          setLockMap((prev) => {
+            const next = new Map(prev);
+            next.set(recordId, lockerId);
+            return next;
+          });
+        }
+
+        /**
+         * 自分自身の既存ロックだった場合は成功扱い。
+         */
+        if (lockerId === myUserId) {
+          return {
+            success: true,
+            lockerId,
+          };
+        }
+
+        return {
+          success: false,
+          lockerId,
+        };
+      }
+
+      console.error(
+        "[InvoiceEditingProvider] 行ロック取得に失敗しました:",
+        {
+          recordId,
+          myUserId,
+          error,
+        }
+      );
+
+      throw error;
+    },
+    [lockMap, refreshLocks]
+  );
+
+  /**
+   * 行ロック解除
+   *
+   * lockerIdをフロントで確認しない。
+   *
+   * DELETE条件にuser_idを含めることで、
+   * 他ユーザーのロックを誤って解除することはない。
+   */
+  const unlock = useCallback(
+    async (
+      recordId: string,
+      myUserId: string
+    ): Promise<void> => {
+      const { error } = await supabase
+        .from("invoice_editing_state")
+        .delete()
+        .eq("record_id", recordId)
+        .eq("user_id", myUserId);
+
+      if (error) {
+        console.error(
+          "[InvoiceEditingProvider] 行ロック解除に失敗しました:",
+          {
+            recordId,
+            myUserId,
+            error,
+          }
+        );
+
+        throw error;
+      }
+
+      /**
+       * Realtimeを待たず自画面は即解除。
+       *
+       * ただし、自分のロックである場合のみ削除。
+       */
+      setLockMap((prev) => {
+        if (prev.get(recordId) !== myUserId) {
+          return prev;
+        }
+
+        const next = new Map(prev);
+        next.delete(recordId);
+
+        return next;
+      });
+    },
+    []
+  );
+
+  /**
+   * Context API
+   */
+  const contextValue = useMemo<InvoiceEditingContextValue>(
+    () => ({
+      status,
+
+      getLockerId(recordId) {
+        return lockMap.get(recordId) ?? null;
       },
+
+      getLockerName(recordId) {
+        const lockerId = lockMap.get(recordId);
+
+        if (!lockerId) return null;
+
+        return userMap.get(lockerId) ?? lockerId;
+      },
+
+      isLockedByOther(recordId, myUserId) {
+        const lockerId = lockMap.get(recordId);
+
+        return (
+          lockerId !== undefined &&
+          lockerId !== myUserId
+        );
+      },
+
+      isLockedByMe(recordId, myUserId) {
+        return lockMap.get(recordId) === myUserId;
+      },
+
+      lock,
+
+      unlock,
+
+      refreshLocks,
 
       resubscribe() {
         subscribe();
       },
-    };
-  }, [lockMap, status, userMap]);
+    }),
+    [
+      status,
+      lockMap,
+      userMap,
+      lock,
+      unlock,
+      refreshLocks,
+      subscribe,
+    ]
+  );
 
-
-  return <InvoiceEditingContext.Provider value={ctx}>{children}</InvoiceEditingContext.Provider>;
+  return (
+    <InvoiceEditingContext.Provider value={contextValue}>
+      {children}
+    </InvoiceEditingContext.Provider>
+  );
 }
 
 export function useInvoiceEditing() {
-  const ctx = useContext(InvoiceEditingContext);
-  if (!ctx) throw new Error("useInvoiceEditing must be used within InvoiceEditingProvider");
-  return ctx;
+  const context = useContext(InvoiceEditingContext);
 
+  if (!context) {
+    throw new Error(
+      "useInvoiceEditing must be used within InvoiceEditingProvider"
+    );
+  }
+
+  return context;
 }
-
-
-
-
-

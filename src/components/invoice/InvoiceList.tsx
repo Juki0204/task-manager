@@ -9,15 +9,15 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
-import InvoiceTaskDetail from "./InvoiceTaskDetail";
 import EditableCombobox from "./EditableCombobox";
 import EditableTextarea from "./EditableTextarea";
 
-import AllEditableForm from "./AllEditableForm";
-import ToggleRowNumber from "./ToggleRowNumber";
-import { InvoiceEditingProvider } from "./InvoiceEditingProvider";
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, FileCheck, SquarePen } from "lucide-react";
 import { useTask } from "../providers/TaskProvider";
+
+import AllEditableForm from "./AllEditableForm";
+import ToggleRowNumber from "./ToggleRowNumber";
+import { InvoiceEditingProvider, useInvoiceEditing } from "./InvoiceEditingProvider";
 
 
 interface InvoiceListProps {
@@ -35,9 +35,20 @@ const FIELDS = [
 
 type FieldName = (typeof FIELDS)[number];
 
-export default function InvoiceList({ invoices, user, setInvoices, sortState }: InvoiceListProps) {
-  // const [isTaskLoaded, setIsTaskLoaded] = useState<boolean>(false);
+export default function InvoiceList(props: InvoiceListProps) {
+  return (
+    <InvoiceEditingProvider>
+      <InvoiceListContent {...props} />
+    </InvoiceEditingProvider>
+  );
+}
+
+function InvoiceListContent({ invoices, user, setInvoices, sortState }: InvoiceListProps) {
+  const invoiceEditing = useInvoiceEditing();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isTaskLoaded, setIsTaskLoaded] = useState<boolean>(false);
   const [isAllEditableFromOpen, setIsAllEditableFromOpen] = useState(false);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [priceList, setPriceList] = useState<string[] | null>(null);
   const [allPriceList, setAllPriceList] = useState<{ id: number, category: string, sub_category: string, work_name: string, price: number }[] | null>(null);
   const [activeCell, setActiveCell] = useState<{ recordId: string, field: string } | null>(null);
@@ -93,13 +104,6 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
     }
   }, [activeCell]);
 
-  // タスク詳細モーダル開く
-  // const handleActiveTask = async (id: string) => {
-  //   const { data: task } = await supabase.from("tasks").select("*").eq("id", id).single();
-  //   if (task) setActiveTask(task);
-
-  //   setIsTaskLoaded(true);
-  // };
 
   // 価格一覧を取得
   useEffect(() => {
@@ -146,6 +150,8 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
     setActiveCell({ recordId: invoices[nextRow].id, field: FIELDS[nextCol] });
   };
 
+
+
   const handleTaskCheck = async (id: string) => {
     const { data } = await supabase
       .from("tasks")
@@ -160,6 +166,7 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
 
     openDetail(data);
   }
+
 
   useEffect(() => {
     if (!activeCell) return;
@@ -240,292 +247,267 @@ export default function InvoiceList({ invoices, user, setInvoices, sortState }: 
   }, [activeRecord]);
 
   return (
-    <InvoiceEditingProvider>
-      <div onClick={() => setActiveCell(null)} className="relative whitespace-nowrap w-[2520px] box-border">
-        <div className="grid grid-cols-[40px_40px_40px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-[13px] text-center text-neutral-950 font-bold">
-          <div className="border border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-0 z-20">行番</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-10 z-20">一括</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-20 z-20">確認</div>
-          <div className={`border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 sticky left-30 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
-            クライアント
-            {sortState === "byClient" && <ArrowDownNarrowWide className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
-            {sortState === "byClientRev" && <ArrowDownWideNarrow className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
-          </div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-80 z-20">作業タイトル</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-140 z-20" id="standardPosition">作業内容</div>
-          <div className={`border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 ${sortState === "byDate" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
-            完了日 {sortState === "byDate" && <ArrowDownNarrowWide className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
-          </div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">担当者</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">大カテゴリ</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">中カテゴリ</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">小カテゴリ</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">点数</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">修正度</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">仮請求額</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">修正金額</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">本請求額</div>
-          <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">備考欄</div>
+    <div onClick={() => setActiveCell(null)} className="relative whitespace-nowrap w-[2520px] box-border">
+      <div className="grid grid-cols-[40px_40px_40px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center text-[13px] text-center text-neutral-950 font-bold">
+        <div className="border border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-0 z-20">行番</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-10 z-20">一括</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-20 z-20">確認</div>
+        <div className={`border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 sticky left-30 z-20 ${sortState === "byClient" || sortState === "byClientRev" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
+          クライアント
+          {sortState === "byClient" && <ArrowDownNarrowWide className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
+          {sortState === "byClientRev" && <ArrowDownWideNarrow className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
         </div>
-        {invoices &&
-          invoices.map((i, index) => (
-            <div ref={(el) => setRecordRef(i.id, el)} key={i.id} className="grid grid-cols-[40px_40px_40px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-400 dark:border-neutral-600 text-[13px]">
-              <div
-                className={`
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-80 z-20">作業タイトル</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100 sticky left-140 z-20" id="standardPosition">作業内容</div>
+        <div className={`border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 ${sortState === "byDate" ? "bg-amber-100 relative" : "bg-neutral-100"}`}>
+          完了日 {sortState === "byDate" && <ArrowDownNarrowWide className="w-4 absolute top-1/2 -translate-y-1/2 right-2" />}
+        </div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">担当者</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">大カテゴリ</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">中カテゴリ</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">小カテゴリ</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">点数</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">修正度</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">仮請求額</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">修正金額</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">本請求額</div>
+        <div className="border border-l-0 border-neutral-400 dark:border-neutral-600 p-1 bg-neutral-100">備考欄</div>
+      </div>
+      {invoices &&
+        invoices.map((i, index) => (
+          <div
+            ref={(el) => setRecordRef(i.id, el)}
+            key={i.id}
+            className="relative grid grid-cols-[40px_40px_40px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-400 dark:border-neutral-600 text-[13px]"
+          >
+            {invoiceEditing.isLockedByOther(i.id, user.id) && (
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-40 flex items-start">
+                <div className="sticky left-2 top-1 ml-2 mt-1 rounded-md bg-amber-200/95 px-2 py-1 text-[11px] font-bold text-amber-950 shadow-sm dark:bg-amber-500/90 dark:text-neutral-950">
+                  {invoiceEditing.getLockerName(i.id) ?? "他のユーザー"}さんが編集中
+                </div>
+              </div>
+            )}
+            <div
+              className={`
                 flex items-center justify-center border border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full sticky left-0 z-20
                 ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}
               `}
-              >
-                <ToggleRowNumber item={i} index={index} onToggle={toggleChecked} />
-              </div>
-              <div
-                onClick={() => {
-                  const prevId = index > 0 ? invoices[index - 1].id : null;
-                  const nextId = index < invoices.length - 1 ? invoices[index + 1].id : null;
+            >
+              <ToggleRowNumber item={i} index={index} onToggle={toggleChecked} />
+            </div>
+            <div
+              onClick={() => {
+                const prevId = index > 0 ? invoices[index - 1].id : null;
+                const nextId = index < invoices.length - 1 ? invoices[index + 1].id : null;
 
-                  handleActiveRecord(i.id);
-                  setIsAllEditableFromOpen(true);
-                }}
-                className={`
+                handleActiveRecord(i.id);
+                setIsAllEditableFromOpen(true);
+              }}
+              className={`
                 grid place-content-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-10 z-20 hover:brightness-90 hover:dark:bg-neutral-600
                 ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}
                 ${activeRecord?.currentId === i.id ? "!bg-yellow-300 text-black" : ""}
               `}
-              >
-                <SquarePen className="w-4.5" />
-              </div>
-              <div
-                className={`
+            >
+              <SquarePen className="w-4.5" />
+            </div>
+            <div
+              className={`
                 flex items-center justify-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-20 z-20 cursor-pointer
                 ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}
               `}
-                onClick={() => {
-                  // handleActiveTask(i.id);
-                  // setIsOpen(true);
-                  handleTaskCheck(i.id);
-                }}
-              >
-                <FileCheck className="w-4.5" />
-                {/* {i.serial} */}
-              </div>
-              <div className={`flex items-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-30 z-20 ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.client} 【{i.requester}】</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full sticky left-80 z-20 ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableCell
-                  recordId={i.id}
-                  field="title"
-                  value={i.title}
-                  user={user}
-                  className="whitespace-pre-wrap"
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full sticky left-140 z-20 ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableCell
-                  recordId={i.id}
-                  field="description"
-                  value={i.description}
-                  user={user}
-                  className="whitespace-pre-wrap"
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableCell
-                  recordId={i.id}
-                  field="finish_date"
-                  value={i.finish_date}
-                  user={user}
-                  type="date"
-                  className="justify-center"
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.manager}</div>
-              <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.category ?? "-"}</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableSelect
-                  recordId={i.id}
-                  field="media"
-                  value={i.media ?? ""}
-                  user={user}
-                  options={["営業", "求人", "受付", "会員", "その他"]}
-                  className="justify-center"
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableCombobox
-                  recordId={i.id}
-                  field="work_name"
-                  value={i.work_name ?? ""}
-                  user={user}
-                  options={priceList ?? []}
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableCell
-                  className="justify-center"
-                  recordId={i.id}
-                  field="pieces"
-                  type="tel"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={i.pieces ?? ""}
-                  user={user}
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableSelect
-                  recordId={i.id}
-                  field="degree"
-                  value={i.degree ?? ""}
-                  user={user}
-                  options={["50", "80", "100", "120"]}
-                  className="justify-end"
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.amount ?? "0"}</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableCell
-                  className="justify-end"
-                  recordId={i.id}
-                  field="adjustment"
-                  type="tel"
-                  inputMode="numeric"
-                  pattern="-?[0-9]*"
-                  value={i.adjustment ?? 0}
-                  user={user}
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
-              <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.total_amount ?? "0"}</div>
-              <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
-                <EditableTextarea
-                  recordId={i.id}
-                  field="remarks"
-                  value={i.remarks ?? ""}
-                  user={user}
-                  setInvoices={setInvoices}
-                  activeCell={activeCell}
-                  setActiveCell={setActiveCell}
-                  handleKeyNavigation={handleKeyNavigation}
-                  registerCellRef={registerCellRef}
-                />
-              </div>
+              onClick={() => { handleTaskCheck(i.id) }}
+            >
+              <FileCheck className="w-4.5" />
+              {/* {i.serial} */}
             </div>
-          )
-          )}
-
-        {/* <Dialog
-          open={isOpen}
-          onClose={() => {
-            setIsOpen(false);
-            setTimeout(() => {
-              setActiveTask(null);
-              setIsTaskLoaded(false);
-            }, 10);
-          }}
-          // transition
-          className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
-        >
-          <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
-
-          <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-            <DialogPanel className="relative w-120 space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2d2d2d] p-4 pt-4.5 shadow-2xl shadow-black/30">
-              {!isTaskLoaded && (
-                <div className="flex justify-center my-4" aria-label="読み込み中">
-                  <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
-                </div>
-              )}
-              {activeTask && user && (
-                <InvoiceTaskDetail
-                  task={activeTask}
-                  onClose={() => { setIsOpen(false); setActiveTask(null); setIsTaskLoaded(false); }}
-                />
-              )}
-            </DialogPanel>
+            <div className={`flex items-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 sticky left-30 z-20 ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.client} 【{i.requester}】</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full sticky left-80 z-20 ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableCell
+                recordId={i.id}
+                field="title"
+                value={i.title}
+                user={user}
+                className="whitespace-pre-wrap"
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full sticky left-140 z-20 ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableCell
+                recordId={i.id}
+                field="description"
+                value={i.description}
+                user={user}
+                className="whitespace-pre-wrap"
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableCell
+                recordId={i.id}
+                field="finish_date"
+                value={i.finish_date}
+                user={user}
+                type="date"
+                className="justify-center"
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.manager}</div>
+            <div className={`flex items-center justify-center border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-center ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.category ?? "-"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full text-center ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableSelect
+                recordId={i.id}
+                field="media"
+                value={i.media ?? ""}
+                user={user}
+                options={["営業", "求人", "受付", "会員", "その他"]}
+                className="justify-center"
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableCombobox
+                recordId={i.id}
+                field="work_name"
+                value={i.work_name ?? ""}
+                user={user}
+                options={priceList ?? []}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableCell
+                className="justify-center"
+                recordId={i.id}
+                field="pieces"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={i.pieces ?? ""}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableSelect
+                recordId={i.id}
+                field="degree"
+                value={i.degree ?? ""}
+                user={user}
+                options={["50", "80", "100", "120"]}
+                className="justify-end"
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.amount ?? "0"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableCell
+                className="justify-end"
+                recordId={i.id}
+                field="adjustment"
+                type="tel"
+                inputMode="numeric"
+                pattern="-?[0-9]*"
+                value={i.adjustment ?? 0}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
+            <div className={`flex items-center justify-end border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full py-1.5 px-2 text-right ${index % 2 === 1 ? "bg-[#d4e4f8] dark:bg-[#2b3748]" : "bg-[#cacfe0] dark:bg-[#3c4a5f]"}`}>{i.total_amount ?? "0"}</div>
+            <div className={`border border-l-0 border-t-0 border-neutral-400 dark:border-neutral-600 min-h-8 h-full ${index % 2 === 1 ? "bg-[#ececec] dark:bg-[#333333]" : "bg-[#d2d2d2] dark:bg-[#444444]"}`}>
+              <EditableTextarea
+                recordId={i.id}
+                field="remarks"
+                value={i.remarks ?? ""}
+                user={user}
+                setInvoices={setInvoices}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+                handleKeyNavigation={handleKeyNavigation}
+                registerCellRef={registerCellRef}
+              />
+            </div>
           </div>
-        </Dialog> */}
+        )
+        )}
 
-        {/* 一括入力フォーム */}
-        <Dialog
-          open={isAllEditableFromOpen}
-          onClose={() => {
-            setIsAllEditableFromOpen(false);
-            setActiveRecord(null);
-          }}
-          // transition
-          className="relative z-100 transition duration-300 ease-out data-closed:opacity-0"
-        >
-          <DialogBackdrop
-            onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }}
-            className="fixed inset-0 bg-black/20 dark:bg-white/20"
-          />
+      {/* 一括入力フォーム */}
+      <Dialog
+        open={isAllEditableFromOpen}
+        onClose={() => {
+          setIsAllEditableFromOpen(false);
+          setActiveRecord(null);
+        }}
+        // transition
+        className="relative z-100 transition duration-300 ease-out data-closed:opacity-0"
+      >
+        <DialogBackdrop
+          onClick={() => { setIsAllEditableFromOpen(false); setActiveRecord(null); }}
+          className="fixed inset-0 bg-black/20 dark:bg-white/20"
+        />
 
-          <div className={`fixed inset-0 w-screen flex items-center justify-center transition-transform duration-300 ${isPanelOpen ? "-translate-x-[250px]" : ""}`}>
-            <DialogPanel className="relative h-[85svh] w-320 space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2d2d2d] p-5 pt-6">
-              {activeRecord && (
-                <AllEditableForm
-                  index={!invoices ? 0 : invoices.findIndex(i => i.id === activeRecord.currentId) + 1}
-                  onToggle={toggleChecked}
-                  key={activeRecord.currentId}
-                  recordId={activeRecord.currentId}
-                  prevId={activeRecord.prevId}
-                  nextId={activeRecord.nextId}
-                  priceList={allPriceList}
-                  onClose={() => {
-                    setIsAllEditableFromOpen(false);
-                    setActiveRecord(null);
-                  }}
-                  onChangeRecord={(r: string) => {
-                    const siblingIsd = getSiblingInvoices(r);
-                    setActiveRecord({ currentId: r, prevId: siblingIsd.prev, nextId: siblingIsd.next });
-                  }}
-                  onCheckTask={() => {
-                    if (!activeRecord.currentId) return;
-                    handleTaskCheck(activeRecord.currentId);
-                  }}
-                />
-              )}
-            </DialogPanel>
-          </div>
-        </Dialog>
-      </div>
-    </InvoiceEditingProvider>
-  )
+        <div className={`fixed inset-0 w-screen flex items-center justify-center transition-transform duration-300 ${isPanelOpen ? "-translate-x-[250px]" : ""}`}>
+          <DialogPanel className="relative h-[85svh] w-320 space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2d2d2d] p-5 pt-6">
+            {activeRecord && (
+              <AllEditableForm
+                user={user}
+                index={!invoices ? 0 : invoices.findIndex(i => i.id === activeRecord.currentId) + 1}
+                onToggle={toggleChecked}
+                key={activeRecord.currentId}
+                recordId={activeRecord.currentId}
+                prevId={activeRecord.prevId}
+                nextId={activeRecord.nextId}
+                priceList={allPriceList}
+                onClose={() => {
+                  setIsAllEditableFromOpen(false);
+                  setActiveRecord(null);
+                }}
+                onChangeRecord={(r: string) => {
+                  const siblingIsd = getSiblingInvoices(r);
+                  setActiveRecord({ currentId: r, prevId: siblingIsd.prev, nextId: siblingIsd.next });
+                }}
+                onCheckTask={() => {
+                  if (!activeRecord.currentId) return;
+                  handleTaskCheck(activeRecord.currentId);
+                }}
+              />
+            )}
+          </DialogPanel>
+        </div>
+      </Dialog>
+    </div>
+  );
 }

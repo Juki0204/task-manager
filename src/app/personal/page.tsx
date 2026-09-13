@@ -394,7 +394,7 @@ export default function PersonalTaskPage() {
           {addingUsers.length > 0 && (
             <div className="bg-white rounded-md px-4">
               {addingUsers.map((user) => (
-                <p key={user.userId} className="flex items-center gap-0.25 font-bold tracking-wider text-red-600">
+                <p key={user.userId} className="addingMessage flex items-center gap-0.25 font-bold tracking-wider text-red-600">
                   {user.taskTitle
                     ? `${user.userName}さんが タスク「${user.taskTitle}」 を新規追加中`
                     : `${user.userName}さんがタスクを新規追加中`}

@@ -925,6 +925,18 @@ body {
   }
 }
 
+@keyframes blinking {
+  0% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .dot1 {
   animation: flash 2s linear 0s infinite;
 }
@@ -935,4 +947,8 @@ body {
 
 .dot3 {
   animation: flash 2s linear 0.4s infinite;
+}
+
+.addingMessage {
+  animation: blinking 1.5s ease-in-out 0s alternate infinite;
 }
