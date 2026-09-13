@@ -105,7 +105,7 @@ export function useTaskRealtime(user: UserData) {
 
         const dateA = new Date(a.request_date).getTime();
         const dateB = new Date(b.request_date).getTime();
-        return dateA - dateB;
+        return dateB - dateA;
       });
       return copied;
     },
@@ -124,7 +124,13 @@ export function useTaskRealtime(user: UserData) {
       });
 
       setTimeout(() => {
-        toast.success(`${inserted.created_manager}さんがタスク【${inserted.serial}】を追加しました。`);
+        toast.success(
+          `${inserted.created_manager}さんが新規タスク【${inserted.serial}】${inserted.title} を追加しました。`,
+          {
+            duration: 8000,
+            position: "top-center"
+          }
+        );
       }, 500);
 
       return;
@@ -132,16 +138,21 @@ export function useTaskRealtime(user: UserData) {
 
     if (payload.eventType === "UPDATE") {
       const updated = payload.new;
-
+    
+      const patch = Object.fromEntries(
+        Object.entries(updated).filter(
+          ([, value]) => value !== undefined
+        )
+      ) as Partial<Task>;
+    
       setTaskList((prev) => {
         const exists = prev.some((t) => t.id === updated.id);
-
-        //取りこぼし対策：存在しないなら追加
-        if (!exists) return [...prev, updated];
-
-        return prev.map((t) => (t.id === updated.id ? updated : t));
+    
+        if (!exists) return [...prev, updated as Task];
+    
+        return prev.map((t) => t.id === updated.id ? { ...t, ...patch } : t);
       });
-
+    
       return;
     }
 

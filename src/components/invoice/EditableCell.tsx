@@ -1,28 +1,51 @@
 "use client";
 
-import { useCellEdit } from "@/utils/hooks/useCellEdit";
-import { supabase } from "@/utils/supabase/supabase";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+import { Input } from "@headlessui/react";
+import { toast } from "sonner";
+
+import { useInvoiceEdit } from "@/utils/hooks/useInvoiceEdit";
 import { Invoice } from "@/utils/types/invoice";
 import { User } from "@/utils/types/user";
-import { Input } from "@headlessui/react";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 
 interface EditableCellProps {
   recordId: string;
   field: string;
-  value: string | number;
+  value: string | number | null;
   user: User;
   className?: string;
   type?: string;
   pattern?: string;
-  inputMode?: "search" | "text" | "none" | "email" | "tel" | "url" | "numeric" | "decimal" | undefined;
+  inputMode?:
+  | "search"
+  | "text"
+  | "none"
+  | "email"
+  | "tel"
+  | "url"
+  | "numeric"
+  | "decimal"
+  | undefined;
   setInvoices: Dispatch<SetStateAction<Invoice[] | null>>;
   activeCell: { recordId: string; field: string } | null;
-  setActiveCell: Dispatch<SetStateAction<{ recordId: string; field: string } | null>>;
+  setActiveCell: Dispatch<
+    SetStateAction<{ recordId: string; field: string } | null>
+  >;
   handleKeyNavigation: (key: "up" | "down" | "left" | "right") => void;
-  registerCellRef: (id: string, field: string, el: HTMLDivElement | null) => void;
+  registerCellRef: (
+    id: string,
+    field: string,
+    el: HTMLDivElement | null
+  ) => void;
 }
+
+type FinishMode = "save" | "cancel";
 
 export default function EditableCell({
   recordId,
@@ -40,129 +63,242 @@ export default function EditableCell({
   registerCellRef,
 }: EditableCellProps) {
   const userId = user.id;
+
   const [editing, setEditing] = useState(false);
-  const [tempValue, setTempValue] = useState<string | number>(value);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const { lockedByOther, lockedUser, handleEditStart, handleSave, handleCancel } = useCellEdit({
+  const [tempValue, setTempValue] = useState<string | number>(value ?? "");
+
+  const editingRef = useRef(false);
+  const finishingRef = useRef(false);
+
+  const {
+    lockedByOther,
+    lockedUser,
+    saving,
+    handleEditStart,
+    handleSave,
+    handleUnlock,
+  } = useInvoiceEdit({
     recordId,
     field,
     userId,
   });
 
-  const isActive = activeCell?.recordId === recordId && activeCell?.field === field;
+  const isActive =
+    activeCell?.recordId === recordId && activeCell?.field === field;
 
-  // 親にref登録（マウント・アンマウント時）
-  useEffect(() => {
-    registerCellRef(recordId, field, containerRef.current);
-    return () => registerCellRef(recordId, field, null);
-  }, [recordId, field, registerCellRef]);
+  const setContainerRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      registerCellRef(recordId, field, element);
+    },
+    [field, recordId, registerCellRef]
+  );
 
-  async function startEditing() {
-    const ok = await handleEditStart();
-    if (ok) setEditing(true);
-  }
+  const updateInvoiceState = useCallback(
+    (updatedInvoice: Invoice) => {
+      setInvoices((prev) => {
+        if (!prev) return prev;
 
-  async function saveValue() {
-    setInvoices((prev) =>
-      prev
-        ? prev.map((inv) =>
-          inv.id === recordId ? { ...inv, [field]: tempValue } : inv
-        )
-        : prev
-    );
+        return prev.map((invoice) =>
+          invoice.id === recordId ? updatedInvoice : invoice
+        );
+      });
+    },
+    [recordId, setInvoices]
+  );
 
-    setEditing(false);
-    await handleSave(tempValue, value);
-
-    const { data: task, error } = await supabase
-      .from("invoice")
-      .select("*")
-      .eq("id", recordId)
-      .single();
-
-    if (error) {
-      console.error(error);
-      setInvoices((prev) =>
-        prev
-          ? prev.map((inv) =>
-            inv.id === recordId ? { ...inv, [field]: value } : inv
-          )
-          : prev
-      );
+  const startEditing = useCallback(async () => {
+    if (editingRef.current || finishingRef.current || saving) {
+      return;
     }
 
-    if (field === "title" && tempValue !== value) {
-      toast.success(`${task.serial}の作業タイトルを変更しました`);
-    } else if (field === "description" && tempValue !== value) {
-      toast.success(`${task.serial}の作業内容を変更しました`);
+    if (lockedByOther) {
+      toast.warning(`${lockedUser}さんが編集中です`, {
+        id: `invoice-lock-${recordId}`,
+      });
+      return;
     }
-  }
 
-  // キー操作
-  const handleKeyDown = async (e: React.KeyboardEvent) => {
-    if (e.nativeEvent.isComposing) return; //変換中は処理しない
+    const success = await handleEditStart();
 
-    if (editing) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        setEditing(false);
-        await saveValue();
-        await handleCancel();
-        handleKeyNavigation(e.shiftKey ? "up" : "down");
-      } else if (e.key === "Tab") {
-        e.preventDefault();
-        setEditing(false);
-        await saveValue();
-        await handleCancel();
-        handleKeyNavigation(e.shiftKey ? "left" : "right");
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        setEditing(false);
-        handleCancel();
+    if (!success) {
+      toast.warning("他のユーザーが編集中です", {
+        id: `invoice-lock-${recordId}`,
+      });
+      return;
+    }
+
+    setTempValue(value ?? "");
+    editingRef.current = true;
+    setEditing(true);
+  }, [
+    handleEditStart,
+    lockedByOther,
+    lockedUser,
+    recordId,
+    saving,
+    value,
+  ]);
+
+  const saveValue = useCallback(async (): Promise<boolean> => {
+    const result = await handleSave(tempValue, value ?? "");
+
+    if (!result.success || !result.invoice) {
+      toast.error("保存に失敗しました");
+      return false;
+    }
+
+    updateInvoiceState(result.invoice);
+
+    if (result.changed && field === "title") {
+      toast.success(`${result.invoice.serial}の作業タイトルを変更しました`);
+    } else if (result.changed && field === "description") {
+      toast.success(`${result.invoice.serial}の作業内容を変更しました`);
+    }
+
+    return true;
+  }, [field, handleSave, tempValue, updateInvoiceState, value]);
+
+  const finishEditing = useCallback(
+    async (mode: FinishMode): Promise<boolean> => {
+      if (finishingRef.current || !editingRef.current) {
+        return false;
       }
-    } else {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        startEditing();
-      } else if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
-        e.preventDefault();
-        const map = {
-          ArrowUp: "up",
-          ArrowDown: "down",
-          ArrowLeft: "left",
-          ArrowRight: "right",
-          Tab: e.shiftKey ? "left" : "right",
-        } as const;
-        handleKeyNavigation(map[e.key as keyof typeof map]);
+
+      finishingRef.current = true;
+
+      try {
+        if (mode === "cancel") {
+          editingRef.current = false;
+          setEditing(false);
+          setTempValue(value ?? "");
+          return true;
+        }
+
+        const success = await saveValue();
+
+        if (!success) {
+          return false;
+        }
+
+        editingRef.current = false;
+        setEditing(false);
+        return true;
+      } finally {
+        if (!editingRef.current) {
+          await handleUnlock();
+        }
+
+        finishingRef.current = false;
       }
+    },
+    [handleUnlock, saveValue, value]
+  );
+
+  const handleKeyDown = async (event: React.KeyboardEvent) => {
+    if (event.nativeEvent.isComposing) {
+      return;
     }
+
+    if (editingRef.current) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        const success = await finishEditing("save");
+
+        if (success) {
+          handleKeyNavigation(event.shiftKey ? "up" : "down");
+        }
+
+        return;
+      }
+
+      if (event.key === "Tab") {
+        event.preventDefault();
+
+        const success = await finishEditing("save");
+
+        if (success) {
+          handleKeyNavigation(event.shiftKey ? "left" : "right");
+        }
+
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        await finishEditing("cancel");
+      }
+
+      return;
+    }
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      await startEditing();
+      return;
+    }
+
+    if (
+      ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(
+        event.key
+      )
+    ) {
+      event.preventDefault();
+
+      const map = {
+        ArrowUp: "up",
+        ArrowDown: "down",
+        ArrowLeft: "left",
+        ArrowRight: "right",
+        Tab: event.shiftKey ? "left" : "right",
+      } as const;
+
+      handleKeyNavigation(map[event.key as keyof typeof map]);
+    }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nextValue = event.target.value;
+
+    if (type === "tel" || type === "number") {
+      if (nextValue === "" || /^-?\d*$/.test(nextValue)) {
+        setTempValue(nextValue);
+      }
+      return;
+    }
+
+    setTempValue(nextValue);
   };
 
   return (
     <div
       data-record-id={recordId}
       data-field={field}
-      ref={containerRef}
-      tabIndex={isActive ? 0 : -1} // ロービング tabindex
-      onDoubleClick={() => startEditing()}
-      onClick={(e) => {
-        e.stopPropagation();
+      ref={setContainerRef}
+      tabIndex={isActive ? 0 : -1}
+      onDoubleClick={() => {
+        void startEditing();
+      }}
+      onClick={(event) => {
+        event.stopPropagation();
         setActiveCell({ recordId, field });
       }}
       onKeyDown={handleKeyDown}
-      className={`relative border-neutral-700 py-1.5 px-2 min-h-8 ${className ?? ""}
-        ${isActive ? "bg-blue-300/50 dark:bg-blue-900/50 outline -outline-offset-1 outline-blue-500 dark:outline-blue-700" : ""}
-        ${editing ? "bg-blue-300/30 dark:!bg-blue-800/40 !outline-blue-300 dark:!outline-blue-400" : ""}
-        ${typeof value === "number" && value < 0 ? "text-red-400" : ""}
-        h-full flex items-center
+      className={`
+        relative border-neutral-700 py-1.5 px-2 min-h-8 h-full flex items-center
+        ${className ?? ""}
+        ${isActive
+          ? "bg-blue-300/50 dark:bg-blue-900/50 outline -outline-offset-1 outline-blue-500 dark:outline-blue-700"
+          : ""
+        }
+        ${editing
+          ? "bg-blue-300/30 dark:!bg-blue-800/40 !outline-blue-300 dark:!outline-blue-400"
+          : ""
+        }
+        ${typeof value === "number" && value < 0 ? "text-red-400" : ""
+        }
       `}
     >
-      {lockedByOther && (
-        <div className="editing-cell">
-          <span className="editing-cell-text">{lockedUser}さんが編集中...</span>
-        </div>
-      )}
-
       {editing ? (
         <Input
           autoFocus
@@ -172,25 +308,16 @@ export default function EditableCell({
             }`}
           type={type ?? "text"}
           value={tempValue}
-          onChange={(e) => {
-            if (type === "tel" || type === "number") {
-              const v = e.target.value;
-              if (v === "" || /^-?\d*$/.test(v)) {
-                setTempValue(e.target.value);
-              }
-            } else {
-              setTempValue(e.target.value);
-            }
+          onChange={handleChange}
+          onBlur={() => {
+            void finishEditing("save");
           }}
-          onBlur={async () => {
-            await saveValue();
-            await handleCancel();
-          }}
-          onFocus={(e) => e.target.select()}
-          onClick={(e) => e.stopPropagation()}
+          onFocus={(event) => event.target.select()}
+          onClick={(event) => event.stopPropagation()}
           max={type === "date" ? "9999-12-31" : undefined}
           pattern={pattern}
           inputMode={inputMode}
+          disabled={saving}
         />
       ) : (
         <>{value ?? ""}</>
@@ -198,4 +325,3 @@ export default function EditableCell({
     </div>
   );
 }
-

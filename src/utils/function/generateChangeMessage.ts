@@ -12,6 +12,7 @@ export function generateChangeMessage(diff: DiffResult, task: Task): string | nu
     description: (o, n) => `作業内容を「${o}」から「${n}」に変更`,
     request_date: (o, n) => `依頼日を「${o}」から「${n}」に変更`,
     manager: (o, n) => `作業担当者を「${o || "未設定"}」から「${n || "未設定"}」に変更`,
+    status: (o, n) => `ステータスを「${o}」から「${n}」に変更`,
     priority: (o, n) => `優先度を「${o === "急" ? "至急" : o || "未設定"}」から「${n === "急" ? "至急" : n || "未設定"}」に変更`,
     remarks: () => `備考欄を更新`,
   };

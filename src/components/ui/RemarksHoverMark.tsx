@@ -96,12 +96,12 @@ export function RemarksHoverMark({
       )
       .select("task_id, acknowledged_by, acknowledged_at")
       .single();
-    
+
     if (error) {
       console.error("確認フラグの登録に失敗しました。", error);
       return;
     }
-    
+
     upsertTaskAcknowledgement(data);
   }
 
@@ -167,13 +167,10 @@ export function RemarksHoverMark({
             closeIfNotHovering();
           }
         }}
-        className="rounded-xl bg-neutral-200 shadow-lg p-2 pt-1 text-sm text-neutral-900"
-        maxWidth={520}
-        maxHeight={1000}
+        className="bg-neutral-100/95 dark:bg-neutral-800/95 shadow-lg p-2 pt-1 text-sm overflow-hidden"
+        maxWidth={480}
+        maxHeight={800}
       >
-        <h3 className="w-28 whitespace-nowrap py-1 flex gap-1 items-center font-bold text-sm text-neutral-600">
-          <LuNotebookPen /> 備考
-        </h3>
         {children}
       </CursorHoverPopup>
     </>

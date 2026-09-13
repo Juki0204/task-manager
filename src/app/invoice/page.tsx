@@ -10,10 +10,10 @@ import InvoiceList from "@/components/invoice/InvoiceList";
 import { Button, Input, Select } from "@headlessui/react";
 import MultiSelectPopover from "@/components/ui/MultiSelectPopover";
 
-import { FaSearch } from "react-icons/fa";
-import { LuDownload } from "react-icons/lu";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 import NextCheckMessage from "@/components/ui/NextCheckMessage";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { LucideDownload } from "lucide-react";
 
 
 export default function InvoicePage() {
@@ -321,38 +321,39 @@ export default function InvoicePage() {
   }, [invoiceSortState, filters, invoices]);
 
   return (
-    <div className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 relative overflow-x-hidden min-h-[80svh] text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 text-xl font-bold text-center">
-            <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-            </Select>
-            年
-            <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
-              <option value="01">1</option>
-              <option value="02">2</option>
-              <option value="03">3</option>
-              <option value="04">4</option>
-              <option value="05">5</option>
-              <option value="06">6</option>
-              <option value="07">7</option>
-              <option value="08">8</option>
-              <option value="09">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-            </Select>
-            月度 請求一覧
-          </h2>
-          <div className="pb-0.75">
-            <NextCheckMessage />
-          </div>
+    <PageLayout
+      title={
+        <>
+          <Select value={currentYear} onChange={(e) => setCurrentYear(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </Select>
+          年
+          <Select value={currentMonth} onChange={(e) => setCurrentMonth(e.target.value)} className="bg-neutral-200 dark:bg-neutral-700 rounded-md px-2 pt-0.5 pb-0.75">
+            <option value="01">1</option>
+            <option value="02">2</option>
+            <option value="03">3</option>
+            <option value="04">4</option>
+            <option value="05">5</option>
+            <option value="06">6</option>
+            <option value="07">7</option>
+            <option value="08">8</option>
+            <option value="09">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </Select>
+          <span className="whitespace-nowrap">月度 請求一覧</span>
+        </>
+      }
+      titleAddon={
+        <div className="order-last">
+          <NextCheckMessage />
         </div>
-
-        <div className="flex gap-2">
+      }
+      actions={
+        <>
           <Button
             disabled={invoiceDL}
             onClick={() => {
@@ -360,7 +361,7 @@ export default function InvoicePage() {
             }}
             className={`py-2 flex items-center gap-1 rounded pl-3.5 pr-4.5 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${invoiceDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
-            <LuDownload />
+            <LucideDownload />
             {invoiceDL ? (
               <span>処理中...</span>
             ) : (
@@ -374,17 +375,18 @@ export default function InvoicePage() {
             }}
             className={`py-2 flex items-center gap-1 rounded pl-3.5 pr-4.5 text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer ${processingDL ? "bg-neutral-500 pointer-events-none" : "bg-purple-500/50"}`}
           >
-            <LuDownload />
+            <LucideDownload />
             {processingDL ? (
               <span>処理中...</span>
             ) : (
               <span>請求書加工用データ</span>
             )}
           </Button>
-        </div>
-      </div>
+        </>
+      }
+    >
 
-      <div className="scroll-container p-1 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+      <div className="scroll-container pt-1 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
 
         {user &&
           (filteredInvoices && filteredInvoices.length > 0 ? (
@@ -397,7 +399,7 @@ export default function InvoicePage() {
           ))}
       </div>
 
-      <div className="w-fit mr-auto ml-auto mt-3 mb-5">
+      <div className="w-fit max-w-full mr-auto ml-auto mt-3 mb-5 pb-2 overflow-x-scroll [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
         <div className="w-430 grid grid-cols-27 items-center text-sm text-center bg-neutral-200 dark:bg-neutral-100 text-neutral-950 font-bold">
           <div className="border col-span-1 border-neutral-400 dark:border-neutral-700 p-1">難波</div>
           <div className="border col-span-1 border-l-0 border-neutral-400 dark:border-neutral-700 p-1 ">新大阪</div>
@@ -447,6 +449,6 @@ export default function InvoicePage() {
           <div className="border col-span-3 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold">{totalInvoices.totalAmount.toLocaleString()}円</div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

@@ -65,7 +65,7 @@ export default function SignUpPage() {
 
   if (isSend) {
     return (
-      <main className="w-full max-w-xl m-auto text-center text-white min-h-screen p-4 pt-20">
+      <main className="w-full max-w-xl m-auto text-center text-neutral-700 dark:text-neutral-100 min-h-screen p-4 pt-20">
         <h1 className="text-center pb-4 text-4xl font-bold">新規登録</h1>
         <div>
           <p className="text-justify mb-4">入力したメールアドレス宛にメールを送信しました。<br />
@@ -77,7 +77,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className="w-full max-w-xl m-auto text-center text-white min-h-screen p-4 pt-20">
+    <main className="w-full max-w-xl m-auto text-center text-neutral-700 dark:text-neutral-100 min-h-screen p-4 pt-20">
       <h1 className="text-center pb-4 text-4xl font-bold">新規登録</h1>
       <form onSubmit={handleSubmit(onSignUp)} className="flex gap-2 flex-wrap p-4">
         <div className="w-full text-left relative">
@@ -92,7 +92,7 @@ export default function SignUpPage() {
             </svg>
             <Input
               type="text"
-              className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
+              className="grow pl-10 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="お名前"
               {...register('name', { required: true })}
             />
@@ -116,7 +116,7 @@ export default function SignUpPage() {
             </svg>
             <Input
               type="text"
-              className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
+              className="grow pl-10 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="メールアドレス"
               {...register('email', { required: true, pattern: /^[a-zA-Z]{1}[0-9a-zA-Z]+[\w\.-]/ })}
             />
@@ -141,7 +141,7 @@ export default function SignUpPage() {
             </svg>
             <Input
               type="password"
-              className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
+              className="grow pl-10 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="パスワード"
               {...register('password', { required: true, pattern: /\w{6,}/ })}
             />
@@ -165,7 +165,7 @@ export default function SignUpPage() {
             </svg>
             <Input
               type="password"
-              className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
+              className="grow pl-10 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="パスワード（確認）"
               {...register('passwordComfirmation', { required: true, validate: (value) => value === getValues('password') })}
             />
@@ -191,7 +191,7 @@ export default function SignUpPage() {
             </svg>
             <Input
               type="text"
-              className="grow pl-10 p-2 bg-neutral-700 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
+              className="grow pl-10 p-2 bg-neutral-200 dark:bg-neutral-600 rounded-md focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-black/25"
               placeholder="所属先"
               {...register('employee', { required: true })}
             />
@@ -203,7 +203,7 @@ export default function SignUpPage() {
 
         <CorrectBtn type="submit" disabled={!isValid || isSubmitting}>新規登録</CorrectBtn>
       </form>
-      <OutlineBtn className="outline-white text-white" onClick={() => { router.push('/login') }}>ログイン画面へ</OutlineBtn>
+      <OutlineBtn className="outline-neutral-700 dark:outline-neutral-100 text-neutral-700 dark:text-neutral-100" onClick={() => { router.push('/login') }}>ログイン画面へ</OutlineBtn>
     </main>
   )
 }

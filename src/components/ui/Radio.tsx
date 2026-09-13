@@ -29,7 +29,17 @@ export function MailRadio({ name, id, onClick, ...props }: mailRadioProps) {
     <>
       <Field data-tooltip-id="mailRadio" data-tooltip-content="メールでの依頼" className="relative aspect-square w-7.25 h-fit bg-neutral-200 dark:bg-neutral-700 rounded-md overflow-hidden [font-size:0]">
         <Input type="radio" name={name} id={id} value="mail" {...props} onClick={onClick} className="w-full h-full hidden peer" />
-        <Label tabIndex={0} htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 peer-checked:dark:bg-blue-500/70 transition-[background-color] duration-300 rounded-md focus:outline-2 focus:-outline-offset-2 focus:outline-black/25">
+        <Label
+          tabIndex={0}
+          htmlFor={id}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              document.getElementById(id)?.click();
+            }
+          }}
+          className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 peer-checked:dark:bg-blue-500/70 transition-[background-color] duration-300 rounded-md focus:outline-2 focus:-outline-offset-2 focus:outline-black/25 dark:focus:outline-neutral-300"
+        >
           <MdMailOutline className="w-full h-full" />
         </Label>
       </Field>
@@ -43,7 +53,17 @@ export function TelRadio({ name, id, onClick, ...props }: telRadioProps) {
     <>
       <Field data-tooltip-id="telRadio" data-tooltip-content="電話での依頼" className="relative aspect-square w-7.25 h-fit bg-neutral-200 dark:bg-neutral-700 rounded-md overflow-hidden [font-size:0]">
         <Input type="radio" name={name} id={id} value="tel" {...props} onClick={onClick} className="w-full h-full hidden peer" />
-        <Label tabIndex={0} htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 peer-checked:dark:bg-blue-500/70 transition-[background-color] duration-300 rounded-md focus:outline-2 focus:-outline-offset-2 focus:outline-black/25">
+        <Label
+          tabIndex={0}
+          htmlFor={id}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              document.getElementById(id)?.click();
+            }
+          }}
+          className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 peer-checked:dark:bg-blue-500/70 transition-[background-color] duration-300 rounded-md focus:outline-2 focus:-outline-offset-2 focus:outline-black/25 dark:focus:outline-neutral-300"
+        >
           <FiPhone className="w-full h-full" />
         </Label>
       </Field>
@@ -57,7 +77,17 @@ export function OtherRadio({ name, id, onClick, ...props }: otherRadioProps) {
     <>
       <Field data-tooltip-id="otherRadio" data-tooltip-content="打ち合わせ等での依頼" className="relative aspect-square w-7.25 h-fit bg-neutral-200 dark:bg-neutral-700 rounded-md overflow-hidden [font-size:0]">
         <Input type="radio" name={name} id={id} value="other" {...props} onClick={onClick} className="w-full h-full hidden peer" />
-        <Label tabIndex={0} htmlFor={id} className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 peer-checked:dark:bg-blue-500/70 transition-[background-color] duration-300 rounded-md focus:outline-2 focus:-outline-offset-2 focus:outline-black/25">
+        <Label
+          tabIndex={0}
+          htmlFor={id}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              document.getElementById(id)?.click();
+            }
+          }}
+          className="absolute top-0 left-0 w-full aspect-square p-1 peer-checked:bg-blue-300 peer-checked:dark:bg-blue-500/70 transition-[background-color] duration-300 rounded-md focus:outline-2 focus:-outline-offset-2 focus:outline-black/25 dark:focus:outline-neutral-300"
+        >
           <FaRegQuestionCircle className="w-full h-full" />
         </Label>
       </Field>

@@ -1,449 +1,648 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 
-import { DialogTitle, Button, Field, Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { GrClose } from "react-icons/gr";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { Button, Field } from "@headlessui/react";
+import { AlarmClock, Building, CalendarClock, CircleCheck, ClockAlert, Mail, NotebookPen, NotepadText, PencilLine, Pickaxe, UserPen, UserPlus, X } from "lucide-react";
 import { AddTaskInput, AddTaskSelect } from "./ui/AddTaskForm";
-import { supabase } from "@/utils/supabase/supabase";
 import { MailRadio, OtherRadio, TelRadio } from "./ui/Radio";
 
-import { FaRegBuilding, FaRegCheckCircle } from "react-icons/fa";
-import { RiCalendarScheduleLine } from "react-icons/ri";
-import { MdMailOutline, MdLaptopChromebook, MdOutlineStickyNote2, MdDriveFileRenameOutline, MdAlarm } from "react-icons/md";
-import { IoPersonAddOutline } from "react-icons/io5";
-import { BsPersonCheck } from "react-icons/bs";
-import { TbClockExclamation } from "react-icons/tb";
-import { LuNotebookPen } from "react-icons/lu";
-
-import { useAuth } from "@/app/AuthProvider";
-import { toast } from "sonner";
 import AddTaskRemarks from "./ui/AddTaskRemarks";
+
+import { supabase } from "@/utils/supabase/supabase";
+import { useAuth } from "@/app/AuthProvider";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
-import { FaPlus } from "react-icons/fa6";
-import CancelAlertModal from "./CancelAlertModal";
+import { Task } from "@/utils/types/task";
+import { useAddTaskPresence } from "./providers/AddTaskPresenceProvider";
 
+//Form
+type AddTaskFormState = {
+  client: string;
+  requester: string;
+  title: string;
+  description: string;
+  requestDate: string;
+  finishDate: string;
+  manager: string;
+  status: string;
+  priority: string;
+  remarks: string;
+  method: string;
+  deadline: string;
+};
 
-export default function AddTask() {
+//Select
+type AddTaskOptions = {
+  clients: string[];
+  requesters: string[];
+  users: string[];
+};
+
+//Clientのタスク番号情報
+type ClientTaskMeta = {
+  initial: string;
+  taskNum: string;
+};
+
+interface AddTaskProps {
+  task?: Task;
+  onClose: () => void;
+  onComplete: () => void;
+}
+
+const getToday = () =>
+  new Date().toLocaleDateString("sv-SE");
+
+const createInitialForm = (task?: Task, defaultClient = "難波秘密倶楽部"): AddTaskFormState => {
+  if (task) {
+    return {
+      client: task.client ?? "",
+      requester: task.requester ?? "",
+      title: task.title ?? "",
+      description: task.description ?? "",
+      requestDate: task.request_date ?? getToday(),
+      finishDate: task.finish_date ?? "",
+      manager: task.manager ?? "",
+      status: task.status ?? "未着手",
+      priority: task.priority ?? "",
+      remarks: task.remarks ?? "",
+      method: task.method ?? "",
+      deadline: "",
+    };
+  }
+
+  return {
+    client: defaultClient,
+    requester: "",
+    title: "",
+    description: "",
+    requestDate: getToday(),
+    finishDate: "",
+    manager: "",
+    status: "未着手",
+    priority: "",
+    remarks: "",
+    method: "",
+    deadline: "",
+  };
+};
+
+const initialOptions: AddTaskOptions = {
+  clients: [],
+  requesters: [],
+  users: [],
+};
+
+const initialClientMeta: ClientTaskMeta = {
+  initial: "",
+  taskNum: "",
+};
+
+export default function AddTask({ task, onClose, onComplete }: AddTaskProps) {
   const { user } = useAuth();
-
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
-
-  const [clientList, setClientList] = useState<string[]>([]); //クライアント一覧
-  const [requesterList, setRequesterList] = useState<string[]>([]); //依頼担当者一覧
-  const [userNameList, setUserNameList] = useState<string[]>([]); //作業担当者名一覧
-
-  const [client, setClient] = useState<string>(''); //クライアント
-  const [requester, setRequester] = useState<string>(''); //依頼担当者
-  const [taskTitle, setTaskTitle] = useState<string>(''); //作業タイトル
-  const [taskDescription, setTaskDescription] = useState<string>(''); //作業内容
-  const [requestDate, setRequestDate] = useState<string>(new Date().toLocaleDateString('sv-SE')); //依頼日
-  const [finishDate, setFinishDate] = useState<string>(''); //完了日
-  const [manager, setManager] = useState<string>(''); //作業担当者
-  const [status, setStatus] = useState<string>('未着手'); //作業状況
-  const [priority, setPriority] = useState<string>(''); //優先度
-  const [remarks, setRemarks] = useState<string>(''); //備考欄
-  const [method, setMethod] = useState<string>(''); //依頼手段
-
-  const [deadline, setDeadline] = useState<string>(''); //期日
-
-  const [currentTaskInit, setCurrentTaskInit] = useState<string>('');
-  const [currentTaskNum, setCurrentTaskNum] = useState<string>('');
-
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isValid, setIsValid] = useState<boolean>(true);
-
   const { syncInvoiceWithTask } = useInvoiceSync();
+  const { updateAddingTaskTitle, stopAddingTask } = useAddTaskPresence();
 
-  // console.log(user);
+  const [form, setForm] = useState<AddTaskFormState>(createInitialForm(task));
+  const [options, setOptions] = useState<AddTaskOptions>(initialOptions);
+  const [clientMeta, setClientMeta] = useState<ClientTaskMeta>(initialClientMeta);
 
-  const getData = async () => {
-    //クライアント一覧取得
-    const { data: clients } = await supabase
-      .from('clients')
-      .select('*')
+  const isCopyMode = Boolean(task);
 
-    if (clients) {
-      const clientNameList: string[] = [];
-      // console.log(clients);
-      clients.sort((a, b) => a.id - b.id).forEach(client => {
-        clientNameList.push(client.name);
-      });
-      setClientList(clientNameList);
-      setClient(clientNameList[0]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  //フォーム更新共通関数
+  const updateForm = <K extends keyof AddTaskFormState>(key: K, value: AddTaskFormState[K]) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  //必須項目判定
+  const isValid = useMemo(() => {
+    return Boolean(
+      form.requester &&
+      form.title &&
+      form.description
+    );
+  }, [form.requester, form.title, form.description]);
+
+  //初期データ取得
+  const getInitialData = async () => {
+    const [
+      { data: clients },
+      { data: users },
+    ] = await Promise.all([
+      supabase
+        .from("clients")
+        .select("*"),
+
+      supabase
+        .from("users")
+        .select("*"),
+    ]);
+
+    const clientList = clients?.sort((a, b) => a.id - b.id).map((client) => client.name) ?? [];
+
+    const userList = users?.filter((user) => user.name !== "Administrator").map((user) => user.name) ?? [];
+
+    setOptions((prev) => ({
+      ...prev,
+      clients: clientList,
+      users: userList,
+    }));
+
+    //初期Client
+    if (clientList.length > 0) {
+      setForm((prev) => ({
+        ...prev,
+        client: prev.client || clientList[0],
+      }));
     }
+  };
 
-    //作業担当者一覧取得
-    const { data: users } = await supabase
-      .from('users')
-      .select('*')
-
-    if (users) {
-      const nameList: string[] = [];
-      users.forEach(user => {
-        if (user.name === "Administrator") return;
-        nameList.push(user.name);
-      });
-      setUserNameList(nameList);
-    }
-  }
-
+  //Clientに紐づく依頼担当者取得
   const getRequesters = async (client: string) => {
-    //依頼担当者一覧取得
-    const { data: requesters } = await supabase
-      .from('requesters')
-      .select('*')
-      .eq('company', client);
+    if (!client) {
+      setOptions((prev) => ({
+        ...prev,
+        requesters: [],
+      }));
 
-    //依頼担当者一覧取得
-    if (requesters) {
-      // console.log(requesters);
-      const requesterNameList: string[] = [];
-      requesters.forEach(requester => {
-        requesterNameList.push(requester.name);
-      });
-      setRequesterList(requesterNameList);
-    }
-  }
-
-  //タスクのシリアルナンバー生成用管理番号取得
-  const getClientTaskNum = async (client: string) => {
-    const { data: cl } = await supabase
-      .from('clients')
-      .select('*')
-      .eq('name', client);
-
-    if (cl && cl.length > 0) {
-      setCurrentTaskNum(cl[0].task_num);
-      setCurrentTaskInit(cl[0].initial);
-    }
-  }
-
-  const generateSerial = (num: string): string => {
-    const serial = Number(num).toString(16).padStart(4, '0').toUpperCase();
-    return `${currentTaskInit}-${serial}`;
-  };
-
-  //ステートのリセット
-  const resetForm = () => {
-    setClient(clientList[0]);
-    setRequester("");
-    setTaskTitle("");
-    setTaskDescription("");
-    setRequestDate(new Date().toLocaleDateString("sv-SE"));
-    setFinishDate("");
-    setManager("");
-    setStatus("未着手");
-    setPriority("");
-    setRemarks("");
-    setMethod("");
-    setDeadline("");
-    setIsValid(true);
-    setIsSubmitting(false);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-    resetForm();
-  };
-
-  const addTask = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-
-    //タスク追加
-    const { data: taskData, error: addTaskError } = await supabase
-      .from('tasks')
-      .insert({
-        client: client,
-        requester: requester,
-        title: taskTitle,
-        description: taskDescription,
-        request_date: requestDate ? requestDate : new Date().toLocaleDateString("sv-SE"),
-        finish_date: finishDate,
-        manager: manager,
-        status: status,
-        priority: priority,
-        remarks: remarks,
-        method: method ? method : "other",
-        created_manager: user?.name,
-        updated_manager: user?.name,
-        serial: generateSerial(currentTaskNum),
-      })
-      .select()
-      .single();
-
-    if (addTaskError || !taskData) {
-      alert('タスクの追加に失敗しました');
-      setIsSubmitting(false);
       return;
     }
 
+    const { data, error } = await supabase
+      .from("requesters")
+      .select("*")
+      .eq("company", client);
 
-    //期限日の追加
-    if (deadline) {
-      const { error } = await supabase
-        .from("deadline")
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setOptions((prev) => ({
+      ...prev,
+      requesters: data?.map((requester) => requester.name) ?? [],
+    }));
+  };
+
+  //serial生成用Client情報取得
+  const getClientTaskMeta = async (client: string) => {
+    if (!client) {
+      setClientMeta(initialClientMeta);
+
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("clients")
+      .select("initial, task_num")
+      .eq("name", client)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setClientMeta({
+      initial: data.initial ?? "",
+      taskNum: String(data.task_num ?? ""),
+    });
+  };
+
+  //serial生成
+  const generateSerial = () => {
+    const serial = Number(clientMeta.taskNum).toString(16).padStart(4, "0").toUpperCase();
+
+    return `${clientMeta.initial}-${serial}`;
+  };
+
+  //Form初期化
+  const resetForm = () => {
+    setForm(createInitialForm(task, options.clients[0] ?? "難波秘密倶楽部"));
+    setClientMeta(initialClientMeta);
+    setIsSubmitting(false);
+  };
+
+  //Drawer Close
+  const completeForm = async () => {
+    await stopAddingTask();
+    onComplete();
+    resetForm();
+  };
+
+  const cancelForm = async () => {
+    await stopAddingTask();
+    onClose();
+  }
+
+  //新規タスク追加
+  const addTask = async () => {
+    if (isSubmitting || !isValid || !user) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      //タスク登録
+      const { data: taskData, error: addTaskError } = await supabase
+        .from("tasks")
         .insert({
-          task_id: taskData.id,
-          date: deadline,
+          client: form.client,
+          requester: form.requester,
+          title: form.title,
+          description: form.description,
+          request_date: form.requestDate || getToday(),
+          finish_date: form.finishDate,
+          manager: form.manager,
+          status: form.status,
+          priority: form.priority,
+          remarks: form.remarks,
+          method: form.method || "other",
+          created_manager: user.name,
+          updated_manager: user.name,
+          serial: generateSerial(),
+        })
+        .select()
+        .single();
+
+      if (addTaskError || !taskData) {
+        throw (
+          addTaskError ??
+          new Error(
+            "task insert failed"
+          )
+        );
+      }
+
+      //期限設定
+      if (form.deadline) {
+        const { error: deadlineError } = await supabase
+          .from("deadline")
+          .insert({
+            task_id: taskData.id,
+            date: form.deadline,
+          });
+
+        if (deadlineError) {
+          console.error("期日の設定に失敗しました:", deadlineError);
+        } else {
+          //期限設定ログ
+          const { error: deadlineNoteError } = await supabase
+            .from("task_notes")
+            .insert({
+              task_serial: taskData.serial,
+              message: `【${taskData.serial}】タスク「${taskData.title}」の期限日を${form.deadline}に設定しました。`,
+              diff: {},
+              old_record: {},
+              new_record: {},
+
+              changed_by: user.name,
+              changed_at: new Date().toISOString(),
+
+              type: "deadline",
+            });
+
+          if (deadlineNoteError) {
+            console.error(deadlineNoteError);
+          }
+        }
+      }
+
+      //請求データ同期
+      await syncInvoiceWithTask(taskData.id, taskData.status);
+
+      //Clientのtask_num更新
+      const { error: taskNumError } = await supabase
+        .from("clients")
+        .update({
+          task_num: Number(clientMeta.taskNum) + 1,
+        })
+        .eq("name", form.client);
+
+      if (taskNumError) {
+        console.error("タスクナンバーの更新に失敗しました:", taskNumError);
+      }
+
+      //新規追加ログ
+      const { error: addNoteError } = await supabase
+        .from("task_notes")
+        .insert({
+          task_serial: taskData.serial,
+          message: `【${taskData.serial}】タスク「${taskData.title}」を新規追加しました。`,
+          diff: {},
+          old_record: {},
+          new_record: {},
+
+          changed_by: user.name,
+          changed_at: new Date().toISOString(),
+
+          type: "added",
         });
 
-      if (error) console.error("期日の設定に失敗しました:", error);
+      if (addNoteError) {
+        console.error(addNoteError);
+      }
 
-      //期限設定ログ生成
-      const { error: deadlineError } = await supabase.from("task_notes").insert({
-        task_serial: taskData.serial,
-        message: `【${taskData.serial}】タスク「${taskData.title}」の期限日を${deadline}に設定しました。`,
-        diff: {},
-        old_record: {},
-        new_record: {},
-        changed_by: user?.name,
-        changed_at: new Date().toISOString(),
-        type: "deadline",
-      });
+      window.setTimeout(completeForm, 300);
+    } catch (error) {
+      console.error(error);
 
-      if (deadlineError) console.error(deadlineError);
+      alert("タスクの追加に失敗しました");
+
+      setIsSubmitting(false);
     }
+  };
 
-    //請求タスク判定
-    await syncInvoiceWithTask(taskData.id, taskData.status);
-
-    //シリアルナンバー更新
-    const { error: addTaskNumError } = await supabase
-      .from('clients')
-      .update({
-        task_num: Number(currentTaskNum) + 1,
-      })
-      .eq('name', client);
-
-    if (addTaskNumError) {
-      alert('タスクナンバーの更新に失敗しました')
-    }
-
-    //追加ログ生成
-    const { error } = await supabase.from("task_notes").insert({
-      task_serial: taskData.serial,
-      message: `【${taskData.serial}】タスク「${taskData.title}」を新規追加しました。`,
-      diff: {},
-      old_record: {},
-      new_record: {},
-      changed_by: user?.name,
-      changed_at: new Date().toISOString(),
-      type: "added",
-    });
-
-    if (error) console.error(error);
-
-    setTimeout(() => {
-      // setIsOpen(false);
-      closeModal();
-      // toast.success(`${user?.name}さんが新しいタスクを追加しました。`);
-    }, 500);
-    setTimeout(() => setIsSubmitting(false), 1000);
-  }
-
-
-  const handleContentCheck = (requester: string, taskTitle: string, taskDescription: string) => {
-    if (requester && taskTitle && taskDescription) {
-      setIsValid(false);
-    } else {
-      setIsValid(true);
-    }
-  }
-
+  //初期データ取得
   useEffect(() => {
-    getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getInitialData();
   }, []);
 
+  //Client変更
   useEffect(() => {
-    getRequesters(client);
-    getClientTaskNum(client);
-  }, [client]);
+    if (!form.client) {
+      return;
+    }
 
-  // useEffect(() => {
-  //   console.log(client, requester);
-  // }, [requester]);
+    void Promise.all([
+      getRequesters(form.client),
+      getClientTaskMeta(form.client),
+    ]);
+  }, [form.client]);
 
-
-  //スクロールバーの有無を検知（padding調整用）
+  //スクロールバー検知
   const contentRef = useRef<HTMLDivElement>(null);
   const [hasScrollbar, setHasScrollbar] = useState(false);
 
   useEffect(() => {
     const el = contentRef.current;
+
     if (!el) return;
 
     const check = () => {
-      const sc = el.scrollHeight > el.clientHeight;
-      setHasScrollbar(sc);
-      // console.log(sc);
+      setHasScrollbar(el.scrollHeight > el.clientHeight);
     };
 
     check();
 
-    // 中身が変化した時にも反応させる
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
+    const observer = new ResizeObserver(check);
 
-    el.addEventListener("resize", check);
+    observer.observe(el);
 
     return () => {
-      ro.disconnect();
-      el.removeEventListener("resize", check);
+      observer.disconnect();
     };
   }, []);
 
   return (
     <>
-      <Button
-        tabIndex={-1}
-        onClick={() => setIsOpen(true)}
-        className={`py-1.25 pl-3.5 pr-4.5 flex items-center gap-1 rounded text-sm text-white font-bold data-hover:opacity-80 data-hover:cursor-pointer whitespace-nowrap w-fit bg-sky-600 text-md data-active:bg-sky-700 data-hover:bg-sky-500 cursor-pointer`}
+      <div className="relative flex w-full gap-2 pb-3 pl-1">
+        <h3 className="text-left text-xl font-bold">
+          {isCopyMode ? `複製して新規追加（複製元:${task?.serial}）` : "新規タスク追加"}
+        </h3>
+
+        <X
+          onClick={cancelForm}
+          className="absolute right-1 top-1 cursor-pointer"
+        />
+      </div>
+
+      <div className="relative mb-4 flex w-full flex-wrap items-center justify-between gap-2 rounded-md border border-neutral-300 bg-slate-300/50 p-3 dark:border-neutral-600 dark:bg-[#444444]">
+        <div className="flex w-full gap-2">
+          <AddTaskInput
+            className="flex-1 text-sm [&_input]:bg-white [&_input]:dark:bg-neutral-800"
+            name="TASK_TITLE"
+            type="text"
+            label="作業タイトル"
+            placeholder="例：年末年始営業時間のご案内"
+            icon={<PencilLine className="w-4.5 text-neutral-500" />}
+            value={form.title}
+            onChange={(e) => updateForm("title", e.target.value)}
+            onBlur={() => updateAddingTaskTitle(form.title)}
+          />
+
+          <AddTaskInput
+            className="w-36 text-sm [&_input]:bg-white [&_input]:dark:bg-neutral-800"
+            name="REQUEST_DATE"
+            type="date"
+            max="9999-12-31"
+            label="依頼日"
+            icon={<CalendarClock className="w-4.5 text-neutral-500" />}
+            value={form.requestDate}
+            onChange={(e) => updateForm("requestDate", e.target.value)}
+          />
+        </div>
+
+        <AddTaskInput
+          className="w-full text-sm [&_input]:bg-white [&_input]:dark:bg-neutral-800"
+          name="TASK_DESCRIPTION"
+          type="text"
+          label="作業内容"
+          placeholder="例：バナー画像制作"
+          icon={<NotepadText className="w-4.5 text-neutral-500" />}
+          value={form.description}
+          onChange={(e) => updateForm("description", e.target.value)}
+        />
+      </div>
+
+      <div
+        ref={contentRef}
+        className={`${hasScrollbar ? "pr-2" : ""} pb-2 grid max-h-[calc(100svh-300px)] grid-cols-2 gap-y-2 overflow-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
       >
-        <FaPlus /><span className="text-sm duration-300">新規タスク追加</span>
-      </Button>
 
-      <Dialog
-        open={isOpen}
-        // onClose={closeModal}
-        onClose={() => setIsAlertOpen(true)}
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
-      >
-        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
+        <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">META</span>
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+          </div>
 
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-          <DialogPanel className="w-130 relative rounded-2xl bg-neutral-100 dark:text-neutral-200 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pt-4.5">
+          <Field className="flex flex-col">
+            <h3 className="flex w-full items-center gap-x-1 whitespace-nowrap py-1 pl-0.5 text-sm font-bold">
+              <Mail className="w-4.5 text-neutral-500" />依頼手段
+            </h3>
 
-            <div className="relative w-full flex flex-wrap justify-between items-center gap-2 rounded-xl bg-slate-300/70 dark:bg-[#444444] p-3 mb-1">
-              <DialogTitle className="font-bold text-left col-span-2 sticky">新規タスク追加</DialogTitle>
-              <GrClose
-                // onClick={closeModal} 
-                onClick={() => setIsAlertOpen(true)}
-                className="absolute top-3 right-3 cursor-pointer"
+            <div className="flex gap-x-1">
+              <MailRadio
+                name="METHOD"
+                id="mailRadio"
+                checked={form.method === "mail"}
+                onChange={() =>
+                  updateForm("method", "mail")
+                }
               />
 
-              <div className="w-full flex gap-2">
-                <AddTaskInput className="flex-1 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_TITLE" type="text" label="作業タイトル" placeholder="例：年末年始営業時間のご案内" icon={<MdDriveFileRenameOutline />} value={taskTitle} onChange={(e) => { setTaskTitle(e.target.value); handleContentCheck(requester, e.target.value, taskDescription); }} />
-                <AddTaskInput className="w-36 [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="REQUEST_DATE" type="date" max="9999-12-31" label="依頼日" icon={<RiCalendarScheduleLine />} value={requestDate} onChange={(e) => setRequestDate(e.target.value)} />
-              </div>
+              <TelRadio
+                name="METHOD"
+                id="telRadio"
+                checked={form.method === "tel"}
+                onChange={() => updateForm("method", "tel")}
+              />
 
-              <AddTaskInput className="w-full [&_input]:bg-neutral-100 [&_input]:dark:bg-neutral-600 text-sm" name="TASK_DESCRIPTION" type="text" label="作業内容" placeholder="例：バナー画像制作" icon={<MdOutlineStickyNote2 />} value={taskDescription} onChange={(e) => { setTaskDescription(e.target.value); handleContentCheck(requester, taskTitle, e.target.value); }} />
+              <OtherRadio
+                name="METHOD"
+                id="otherRadio"
+                checked={form.method === "other"}
+                onChange={() => updateForm("method", "other")}
+              />
             </div>
+          </Field>
 
-            <div
-              ref={contentRef}
-              className={`${hasScrollbar ? "pr-2" : ""}
-                max-h-[60svh] grid grid-cols-2 gap-y-2 overflow-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
-              `}
-            >
-              <div className="col-span-2 flex flex-wrap gap-x-2">
-                <div className="w-full flex gap-1 mt-3 mb-1 items-center col-span-2">
-                  <span className="text-neutral-400/60 text-xs leading-none tracking-widest">META</span>
-                  <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
-                </div>
+          <AddTaskSelect
+            className="flex-2 text-sm"
+            name="CLIENT"
+            label="クライアント"
+            icon={<Building className="w-4.5 text-neutral-500" />}
+            value={form.client}
+            onChange={(e) => {
+              //Client変更時はrequesterをリセット
+              setForm((prev) => ({
+                ...prev,
+                client: e.target.value,
+                requester: "",
+              }));
+            }}
+          >
+            {options.clients.map((client) => (
+              <option key={client} value={client}>{client}</option>
+            ))}
+          </AddTaskSelect>
 
-                <Field className="flex flex-col">
-                  <h3 className="w-full whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><MdMailOutline /> 依頼手段</h3>
-                  <div className="flex gap-x-1">
-                    <MailRadio name="METHOD" id="mailRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-                    <TelRadio name="METHOD" id="telRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-                    <OtherRadio name="METHOD" id="otherRadio" onClick={(e) => setMethod(e.currentTarget.value)} />
-                  </div>
-                </Field>
+          <AddTaskSelect
+            className="flex-1 text-sm"
+            name="REQUESTER"
+            label="依頼者"
+            icon={<UserPlus className="w-4.5 text-neutral-500" />}
+            value={form.requester}
+            onChange={(e) => updateForm("requester", e.target.value)}
+          >
+            <option disabled value="">-</option>
 
-                <AddTaskSelect className="flex-2 text-sm" name="CLIENT" label="クライアント" icon={<FaRegBuilding />} value={client} onChange={(e) => setClient(e.target.value)}>
-                  {clientList.map(client => (
-                    <option key={client} value={client}>{client}</option>
-                  ))}
-                </AddTaskSelect>
+            {options.requesters.map((requester) => (
+              <option key={requester} value={requester}>{requester}</option>
+            ))}
 
-                <AddTaskSelect className="flex-1 text-sm" name="REQUESTER" label="依頼者" icon={<IoPersonAddOutline />} value={requester} onChange={(e) => { setRequester(e.target.value); handleContentCheck(e.target.value, taskTitle, taskDescription); }}>
-                  <option disabled value="">-</option>
-                  {requesterList.map(requester => (
-                    <option key={requester} value={requester}>{requester}</option>
-                  ))}
-                  <option value="不明">不明</option>
-                </AddTaskSelect>
-              </div>
-
-              <div className="col-span-2 flex flex-wrap gap-x-2">
-                <div className="w-full flex gap-1 items-center mt-2 mb-1">
-                  <span className="text-neutral-400/60 text-xs leading-none tracking-widest">STATUS</span>
-                  <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
-                </div>
-
-                <div className="flex flex-wrap gap-2 flex-1">
-                  <AddTaskSelect className="flex-1 text-sm" name="MANAGER" label="担当者" icon={<BsPersonCheck />} value={manager} onChange={(e) => setManager(e.target.value)}>
-                    {userNameList.map(name => (
-                      <option key={name} value={name}>{name}</option>
-                    ))}
-                    <option value=''>未決定</option>
-                  </AddTaskSelect>
-
-                  <AddTaskSelect className="w-28 text-sm" name="PRIORITY" label="優先度" icon={<TbClockExclamation />} value={priority} onChange={(e) => setPriority(e.target.value)}>
-                    <option value=""></option>
-                    <option value="急">至急</option>
-                    <option value="高">高</option>
-                    <option value="低">低</option>
-                  </AddTaskSelect>
-
-                  <AddTaskSelect className="w-full text-sm" name="STATUS" label="作業状況" icon={<MdLaptopChromebook />} value={status} onChange={(e) => setStatus(e.target.value)}>
-                    <option value="未着手">未着手</option>
-                    <option value="作業中">作業中</option>
-                    <option value="作業途中">作業途中</option>
-                    <option value="確認中">確認中</option>
-                    <option value="完了">完了</option>
-                    <option value="保留">保留</option>
-                    {/* <option value="中止">中止</option> */}
-                    <option value="詳細待ち">詳細待ち</option>
-                  </AddTaskSelect>
-                </div>
-
-                <div className="w-36 flex flex-wrap gap-2">
-                  <AddTaskInput className={`w-full text-sm ${deadline ? "[&_input]:text-red-600" : ""}`} name="DEADLINE" type="date" max="9999-12-31" label="期限日" icon={<MdAlarm />} value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-                  <AddTaskInput className="w-full text-sm" name="FINISH_DATE" type="date" max="9999-12-31" label="完了日" icon={<FaRegCheckCircle />} value={finishDate} onChange={(e) => setFinishDate(e.target.value)} />
-                </div>
-              </div>
-
-              <div className="flex flex-col col-span-2">
-                <div className="col-span-2 flex gap-1 items-center mt-2 mb-1">
-                  <span className="text-neutral-400/60 text-xs leading-none tracking-widest">REMARKS</span>
-                  <span className="block h-[1px] bg-neutral-300 dark:bg-neutral-300/30 w-full" />
-                </div>
-
-                <h3 className="w-28 whitespace-nowrap pl-0.5 py-1 flex gap-x-1 items-center text-sm font-bold"><LuNotebookPen /> 備考欄</h3>
-                <AddTaskRemarks value={remarks} onChange={(markdown) => setRemarks(markdown)} />
-              </div>
-
-            </div>
-
-            <div className="flex gap-4 justify-end col-span-2 pt-2">
-              <Button
-                // onClick={closeModal}
-                onClick={() => setIsAlertOpen(true)}
-                className="outline-1 -outline-offset-1 rounded px-4 py-2 text-sm data-hover:bg-neutral-200 data-hover:dark:text-neutral-700 cursor-pointer"
-              >
-                キャンセル
-              </Button>
-              <Button
-                onClick={() => addTask()}
-                disabled={isValid || isSubmitting}
-                className="bg-sky-600 rounded px-4 py-2 text-sm text-white font-bold data-hover:opacity-80 cursor-pointer data-disabled:bg-neutral-400 data-disabled:dark:opacity-50 data-disabled:cursor-auto"
-              >
-                {isSubmitting ? "処理中..." : "新規追加"}
-              </Button>
-            </div>
-
-          </DialogPanel>
+            <option value="不明">不明</option>
+          </AddTaskSelect>
         </div>
-      </Dialog>
 
-      <CancelAlertModal alertOpen={isAlertOpen} onModalClose={closeModal} onCalcel={() => setIsAlertOpen(false)} />
+        <div className="col-span-2 flex flex-wrap gap-x-2 pb-4">
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">DETAILS</span>
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+          </div>
+
+          <div className="flex flex-1 flex-wrap gap-2">
+            <AddTaskSelect
+              className="flex-1 text-sm"
+              name="MANAGER"
+              label="担当者"
+              icon={<UserPen className="w-4.5 text-neutral-500" />}
+              value={form.manager}
+              onChange={(e) => updateForm("manager", e.target.value)}
+            >
+              {options.users.map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+
+              <option value="">未決定</option>
+            </AddTaskSelect>
+
+            <AddTaskSelect
+              className="w-28 text-sm"
+              name="PRIORITY"
+              label="優先度"
+              icon={<ClockAlert className="w-4.5 text-neutral-500" />}
+              value={form.priority}
+              onChange={(e) => updateForm("priority", e.target.value)}
+            >
+              <option value="" />
+              <option value="急">至急</option>
+              <option value="高">高</option>
+              <option value="低">低</option>
+            </AddTaskSelect>
+
+            <AddTaskSelect
+              className="w-full text-sm"
+              name="STATUS"
+              label="作業状況"
+              icon={<Pickaxe className="w-4.5 text-neutral-500" />}
+              value={form.status}
+              onChange={(e) => updateForm("status", e.target.value)}
+            >
+              <option value="未着手">未着手</option>
+              <option value="作業中">作業中</option>
+              <option value="作業途中">作業途中</option>
+              <option value="確認中">確認中</option>
+              <option value="完了">完了</option>
+              <option value="保留">保留</option>
+              <option value="詳細待ち">詳細待ち</option>
+            </AddTaskSelect>
+          </div>
+
+          <div className="flex w-36 flex-wrap gap-2">
+            <AddTaskInput
+              className={`w-full text-sm ${form.deadline ? "[&_input]:text-red-600" : ""}`}
+              name="DEADLINE"
+              type="date"
+              max="9999-12-31"
+              label="期限日"
+              icon={<AlarmClock className="w-4.5 text-neutral-500" />}
+              value={form.deadline}
+              onChange={(e) => updateForm("deadline", e.target.value)}
+            />
+
+            <AddTaskInput
+              className="w-full text-sm"
+              name="FINISH_DATE"
+              type="date"
+              max="9999-12-31"
+              label="完了日"
+              icon={<CircleCheck className="w-4.5 text-neutral-500" />}
+              value={form.finishDate}
+              onChange={(e) => updateForm("finishDate", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="col-span-2 flex flex-col">
+          <div className="w-full flex gap-1 items-center mt-1">
+            <span className="text-neutral-500 font-bold text-xs leading-none tracking-widest">REMARKS</span>
+            <span className="block h-0.25 bg-neutral-400 dark:bg-neutral-300/30 w-full" />
+          </div>
+
+          <h3 className="flex w-28 items-center gap-x-1 whitespace-nowrap py-1 pl-0.5 text-sm font-bold">
+            <NotebookPen className="w-4.5 text-neutral-500" />備考欄
+          </h3>
+
+          <AddTaskRemarks
+            value={form.remarks}
+            onChange={(markdown) => updateForm("remarks", markdown)}
+          />
+        </div>
+      </div>
+
+      <div className="fixed bottom-0 left-0 flex w-full flex-wrap justify-between gap-x-2 bg-white px-4 pb-3 pt-4 dark:bg-neutral-800">
+        <Button
+          onClick={cancelForm}
+          className="cursor-pointer rounded px-8 py-2 text-sm outline-1 -outline-offset-1 data-hover:bg-neutral-200 data-hover:dark:text-neutral-700"
+        >
+          キャンセル
+        </Button>
+
+        <Button
+          onClick={addTask}
+          disabled={!isValid || isSubmitting}
+          className="flex-1 cursor-pointer rounded bg-blue-700 dark:bg-blue-900 px-4 py-2 text-sm font-bold text-white data-hover:opacity-80 data-disabled:cursor-auto data-disabled:bg-neutral-400 data-disabled:dark:opacity-50"
+        >
+          {isSubmitting ? "処理中..." : isCopyMode ? "複製して追加" : "新規追加"}
+        </Button>
+      </div>
     </>
   );
 }
-
-
-

@@ -2,9 +2,9 @@
 
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
-import { MdDragIndicator } from "react-icons/md";
 import { Button, Input } from "@headlessui/react";
 import type { PriceItem } from "./PriceSetting";
+import { GripVertical } from "lucide-react";
 
 interface NewPriceItem {
   work_name: string;
@@ -54,12 +54,12 @@ export default function SortablePriceItem({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="grid grid-cols-8 gap-1 bg-neutral-300 rounded-sm p-1 pl-5.5 relative"
+      className="grid grid-cols-8 gap-1 bg-neutral-200 dark:bg-neutral-300 rounded-sm p-1 pl-5.5 relative"
     >
       {/* ----- DnD ハンドル ----- */}
-      <MdDragIndicator
+      <GripVertical
         {...listeners}
-        className="absolute top-1/2 left-1 -translate-y-1/2 text-neutral-500 cursor-grab active:cursor-grabbing"
+        className="w-4 absolute top-1/2 left-1 -translate-y-1/2 text-neutral-500 cursor-grab active:cursor-grabbing"
       />
 
       {/* ----- 作業名 ----- */}
@@ -73,7 +73,7 @@ export default function SortablePriceItem({
           }));
           setEditingId(item.id);
         }}
-        className="col-span-5 rounded-sm bg-neutral-200 px-1"
+        className="col-span-5 rounded-sm bg-white px-1"
       />
 
       {/* ----- 単価 ----- */}
@@ -87,7 +87,7 @@ export default function SortablePriceItem({
           }));
           setEditingId(item.id);
         }}
-        className="col-span-2 rounded-sm bg-neutral-200 px-1 text-right"
+        className="col-span-2 rounded-sm bg-white px-1 text-right"
       />
 
       {/* ----- 変更ボタン ----- */}
@@ -135,7 +135,7 @@ export default function SortablePriceItem({
           }));
           setEditingId(item.id);
         }}
-        className="col-span-7 rounded-sm bg-neutral-200 px-1 placeholder:text-neutral-400"
+        className="col-span-7 rounded-sm bg-white px-1 placeholder:text-neutral-400"
       />
 
       {/* ----- 削除ボタン ----- */}

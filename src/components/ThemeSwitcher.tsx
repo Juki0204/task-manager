@@ -2,57 +2,84 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 
 export default function ThemeSwitcher() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
+
   const [mounted, setMounted] = useState(false);
+  const [switchDark, setSwitchDark] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  useEffect(() => {
+    if (!mounted) return;
+
+    setSwitchDark(resolvedTheme === "dark");
+  }, [mounted, resolvedTheme]);
+
+  if (!mounted) {
+    return (
+      <div
+        aria-hidden="true"
+        className="h-7 w-13 rounded-full border border-neutral-300 bg-neutral-300/50"
+      />
+    );
+  }
+
+  const handleToggle = () => {
+    const nextDark = !switchDark;
+
+    // スイッチはクリック直後に動かす
+    setSwitchDark(nextDark);
+
+    // スイッチの移動後にテーマを切り替える
+    window.setTimeout(() => {
+      setTheme(nextDark ? "dark" : "light");
+    }, 200);
+  };
 
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setTheme("light")}
-          className={`
-            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
-            ${theme === "light" ? "bg-blue-200 border-blue-300" : "border-zinc-300"}
-          `}
-        >
-          Light
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setTheme("dark")}
-          className={`
-            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
-            ${theme === "dark" ? "bg-blue-500/80 border-blue-600" : "border-zinc-300"}
-          `}
-        >
-          Dark
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setTheme("system")}
-          className={`
-            rounded border px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 dark:border-zinc-700 cursor-pointer
-            ${theme === "system" && resolvedTheme === "dark" ? "bg-blue-500/80 border-blue-600" : theme === "system" && resolvedTheme === "light" ? "bg-blue-200 border-blue-300" : "border-zinc-300"}
-          `}
-        >
-          System
-        </button>
-      </div>
-
-      <span className="text-sm text-zinc-500 dark:text-zinc-400">
-        current: {theme} / applied: {resolvedTheme}
+    <button
+      type="button"
+      role="switch"
+      aria-checked={switchDark}
+      aria-label={`テーマを${switchDark ? "ライト" : "ダーク"}モードに変更`}
+      onClick={handleToggle}
+      className={`
+        relative h-5.5 w-8 shrink-0 rounded-full
+        border cursor-pointer
+        transition-colors duration-0 delay-200
+        focus-visible:outline-2
+        focus-visible:outline-offset-2
+        focus-visible:outline-blue-500
+        ${switchDark
+          ? "border-neutral-900 bg-neutral-800"
+          : "border-neutral-400/70 bg-neutral-400/50"
+        }
+      `}
+    >
+      <span
+        className={`
+          absolute top-1/2 left-0
+          grid size-5 place-content-center
+          -translate-y-1/2 rounded-full
+          shadow-sm
+          transition-transform duration-200 ease-out
+          ${switchDark
+            ? "translate-x-2.5 bg-black"
+            : "translate-x-0 bg-white"
+          }
+        `}
+      >
+        {switchDark ? (
+          <Moon className="w-4 text-neutral-100" />
+        ) : (
+          <Sun className="w-4 text-neutral-500" />
+        )}
       </span>
-    </div>
+    </button>
   );
 }

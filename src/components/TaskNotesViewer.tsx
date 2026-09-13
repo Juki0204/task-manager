@@ -4,11 +4,10 @@ import { useTaskNotesRealtime } from "@/utils/hooks/useTaskNotesRealtime";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
-import { BiSolidRightArrow } from "react-icons/bi";
-
 import { usePathname } from "next/navigation";
 import { highlightDiff } from "@/utils/function/highlightDiff";
 import { Task } from "@/utils/types/task";
+import { Play } from "lucide-react";
 
 export type TaskNote = {
   id: string;
@@ -38,7 +37,7 @@ export default function TaskNotesViewer() {
 
   useEffect(() => {
     scrollToBottom();
-    setFormatNotes(notes.reverse());
+    setFormatNotes(notes);
   }, [notes, notes.length]);
 
   useEffect(() => {
@@ -87,7 +86,7 @@ export default function TaskNotesViewer() {
               h-6
             `}>
               <AnimatePresence>
-                {formatNotes.map((log) => (
+                {formatNotes.toReversed().map((log) => (
                   <motion.div
                     key={log.id}
                     layout
@@ -148,7 +147,7 @@ function DiffItem({
     <div className="flex gap-2 items-center border-l-2 border-blue-400 pl-2">
       <h4 className="font-semibold text-gray-300 whitespace-nowrap">【{label}】</h4>
       <div className={`text-gray-500 leading-relaxed ${!oldValue || oldValue === "" ? "" : "line-through"}`}>{formatValue(oldValue)}</div>
-      <BiSolidRightArrow className="font-sm" />
+      <Play className="w-4 text-gray-300 fill-gray-300" />
 
       {isLongField && hasDiff ? (
         <div

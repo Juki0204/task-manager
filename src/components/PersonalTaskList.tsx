@@ -32,8 +32,8 @@ export default function PersonalTaskList({
   deadlineList,
 }: PersonalTaskListProps) {
   return (
-    <div className="pb-4 overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
-      <div className="grid grid-cols-4 gap-2 min-w-[1868px]">
+    <div className="pb-2 overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+      <div className="grid grid-cols-4 min-w-380">
         <TaskColumn
           id="NotYetStarted"
           title="未担当タスク"
@@ -41,7 +41,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-neutral-300 dark:bg-[#898989] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          titleStyle="bg-gray-200 dark:bg-neutral-600/50"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -58,7 +58,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-blue-600/20 dark:bg-[#6d7a8f] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          titleStyle="bg-blue-600/10 dark:bg-blue-400/15"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -75,7 +75,7 @@ export default function PersonalTaskList({
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-green-800/20 dark:bg-[#658083] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          titleStyle="bg-pink-400/10 dark:bg-pink-400/15"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}
@@ -107,12 +107,12 @@ export default function PersonalTaskList({
             const finishB = b.finish_date ? new Date(`${b.finish_date}T00:00:00`).getTime() : -Infinity;
 
             //完了日順ソート
-            return finishA - finishB;
+            return finishB - finishA;
           })}
           user={user}
           onClick={onClick}
           onContextMenu={onContextMenu}
-          className="bg-amber-400/20 dark:bg-[#817f6a] p-2 rounded-md flex flex-col gap-1 min-h-[calc(100vh-9.5rem)] min-w-[calc((1868px-1.5rem)/4)]"
+          titleStyle="bg-green-600/10 dark:bg-green-300/15"
           currentClickTask={currentClickTask}
           onEdit={onEdit}
           draggingTaskId={draggingTaskId}

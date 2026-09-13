@@ -1,196 +1,183 @@
 "use client";
 
-// import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import { Task } from "@/utils/types/task";
-import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
 import TaskList from "@/components/TaskList";
-import TaskDetail from "@/components/TaskDetail";
-import UpdateTask from "@/components/UpdateTask";
 import ContextMenu from "@/components/ui/ContextMenu";
 
 import { supabase } from "@/utils/supabase/supabase";
-import { useAuth } from "@/app/AuthProvider";
-import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
-import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
 
+import { useAuth } from "@/app/AuthProvider";
+import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
+import { useTask } from "@/components/providers/TaskProvider";
+
+import { NonRealtimeNotice } from "@/components/common/NonRealtileNotice";
+import { PageLayout } from "@/components/layout/PageLayout";
+
+type ContextMenuState = {
+  visible: boolean;
+  x: number;
+  y: number;
+  taskId?: string;
+  taskSerial?: string;
+};
 
 export default function TrashTaskPage() {
-  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-
-  const [taskList, setTaskList] = useState<Task[]>([]);
   const { user } = useAuth();
-  const { updateTaskStatus, deadlineList } = useTaskRealtime(user ?? null);
+
+  const {
+    updateTaskStatus,
+    deadlineList,
+
+    isPanelOpen,
+    openDetail,
+    openEdit,
+    openCopy,
+  } = useTask();
+
   const { filters } = useTaskListPreferences();
 
-  //console.log(taskList.filter((t) => t.status === "削除済"));
-  const [menu, setMenu] = useState<{
-    visible: boolean,
-    x: number,
-    y: number,
-    taskId?: string,
-    taskSerial?: string,
-  }>({ visible: false, x: 0, y: 0 });
+  const [taskList, setTaskList] = useState<Task[]>([]);
+
+  //ContextMenu
+  const [menu, setMenu] = useState<ContextMenuState>({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
 
   const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
-    setMenu({ visible: true, x: e.pageX, y: e.pageY, taskId, taskSerial });
-  }
+    setMenu({
+      visible: true,
+      x: e.pageX,
+      y: e.pageY,
+      taskId,
+      taskSerial,
+    });
+  };
 
   const handleCloseContextMenu = () => {
-    if (menu.visible) {
-      setMenu({ ...menu, visible: false });
-    }
-  }
+    setMenu((prev) => {
+      if (!prev.visible) {
+        return prev;
+      }
 
-  const unlockTaskHandler = async () => {
-    if (!activeTask || !user) return;
-    const { error } = await supabase
-      .from('tasks')
-      .update({
-        locked_by_id: null,
-        locked_by_name: null,
-        locked_by_at: null,
-      })
-      .eq("id", activeTask.id)
-      .eq("locked_by_id", user.id);
+      return {
+        ...prev,
+        visible: false,
+      };
+    });
+  };
 
-    if (error) {
-      console.error("unlock failed");
-    }
-    // else {
-    //   console.log("unlocked task: taskId =", activeTask.id);
-    // }
-  }
-
-
+  //削除済タスク取得
   const getTasks = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("tasks")
       .select("*")
       .eq("status", "削除済");
 
-    if (!data) return false;
-    setTaskList(data);
-  }
+    if (error) {
+      console.error(error);
+      return;
+    }
 
+    setTaskList(data ?? []);
+  };
+
+  //一覧フィルター
   const filteredTaskList = useMemo(() => {
     return taskList.filter((task) => {
-      const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
-      const assigneeMatch = filters.assignees.length === 0 || filters.assignees.some((assignee) => {
-        if (assignee === "未担当") return task.manager === "";
-        return task.manager === assignee;
-      });
-      const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+      //クライアント
+      const clientMatch = filters.clients.length === 0 ||
+        filters.clients.includes(task.client);
 
-      const searchMatch =
-        !filters.searchKeywords ||
-        task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-        task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+      //担当者
+      const assigneeMatch = filters.assignees.length === 0 ||
+        filters.assignees.some((assignee) => {
+          if (assignee === "未担当") {
+            return (
+              task.manager === "" ||
+              task.manager === null
+            );
+          }
 
-      return clientMatch && assigneeMatch && statusMatch && searchMatch;
-    });
+          return (
+            task.manager === assignee
+          );
+        }
+        );
+
+      //ステータス
+      const statusMatch = filters.statuses.length === 0 ||
+        filters.statuses.includes(task.status);
+
+      //キーワード
+      const keyword = filters.searchKeywords?.toLowerCase() ?? "";
+
+      const searchMatch = !filters.searchKeywords ||
+        task.serial?.toLowerCase().includes(keyword) ||
+        task.title?.toLowerCase().includes(keyword) ||
+        task.description?.toLowerCase().includes(keyword) ||
+        task.requester?.toLowerCase().includes(keyword);
+
+      return (
+        clientMatch &&
+        assigneeMatch &&
+        statusMatch &&
+        searchMatch
+      );
+    }
+    );
   }, [taskList, filters]);
 
+  //初回取得
   useEffect(() => {
     getTasks();
   }, []);
 
-
-
   return (
-    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 m-auto max-w-[1920px] relative overflow-x-hidden text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-end gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
-            削除済タスク一覧
-          </h2>
-          <span className="text-xs tracking-wide pb-1">※このページではリアルタイム更新は行われません。最新の状態を確認するには、ページを再読み込みしてください。</span>
-        </div>
-
-      </div>
-      {user &&
+    <PageLayout
+      title="削除済タスク一覧"
+      onClick={handleCloseContextMenu}
+      actions={
+        <NonRealtimeNotice />
+      }
+    >
+      {user && (
         <TaskList
           user={user}
           taskList={filteredTaskList}
-          onClick={(t: Task) => {
-            if (isOpen) return;
-            if (menu.visible) return;
+          onClick={(task: Task) => {
+            // if (isPanelOpen) {
+            //   return;
+            // }
 
-            setActiveTask(t);
-            setModalType("detail");
-            setIsOpen(true);
+            if (menu.visible) {
+              return;
+            }
+
+            openDetail(task);
           }}
           onContextMenu={handleContextMenu}
-          onEdit={(t: Task) => {
-            setActiveTask(t);
-            setModalType("edit");
-            setIsOpen(true);
-          }}
+          onEdit={openEdit}
           deadlineList={deadlineList}
-        />}
-
-      {/* 共通モーダル */}
-      <Dialog
-        open={isOpen}
-        onClose={() => {
-          if (modalType === "edit") unlockTaskHandler();
-          setIsOpen(false);
-          setTimeout(() => {
-            setActiveTask(null);
-            setModalType(null);
-          }, 10);
-        }}
-        // transition
-        className="relative z-50 transition duration-300 ease-out data-closed:opacity-0"
-      >
-        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
-
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pt-4.5 shadow-2xl shadow-black/30">
-            {modalType === "detail" && activeTask && user && (
-              <TaskDetail
-                user={user}
-                task={activeTask}
-                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
-                onEdit={(t: Task) => {
-                  const latest = taskList.find(x => x.id === t.id) ?? t;
-                  setActiveTask(latest);
-                  setModalType("edit");
-                }}
-                deadlineList={deadlineList}
-              />
-            )}
-
-            {modalType === "edit" && activeTask && user && (
-              <UpdateTask
-                user={user}
-                task={activeTask}
-                onComplete={() => setModalType("detail")}
-                onCancel={() => setModalType("detail")}
-                onUnlock={unlockTaskHandler}
-                deadlineList={deadlineList}
-              />
-            )}
-          </DialogPanel>
-        </div>
-      </Dialog>
-
-      {menu.visible && menu.taskId && (
-        <ContextMenu
-          x={menu.x}
-          y={menu.y}
-          taskId={menu.taskId ? menu.taskId : ""}
-          taskSerial={menu.taskSerial ? menu.taskSerial : ""}
-          onClose={handleCloseContextMenu}
-          updateTaskStatus={updateTaskStatus}
         />
       )}
-    </div>
+
+      {menu.visible &&
+        menu.taskId && (
+          <ContextMenu
+            x={menu.x}
+            y={menu.y}
+            taskId={menu.taskId}
+            taskSerial={menu.taskSerial ?? ""}
+            onClose={handleCloseContextMenu}
+            updateTaskStatus={updateTaskStatus}
+            onCopyTask={openCopy}
+          />
+        )}
+    </PageLayout>
   );
 }

@@ -33,7 +33,7 @@ export function CursorHoverPopup({
   offset = { x: 16, y: 16 },
   maxWidth = 520,
   maxHeight = 360,
-  zIndex = 80,
+  zIndex = 150,
   onHoverChange
 }: CursorHoverPopupProps) {
   const ref = useRef<HTMLDivElement | null>(null);

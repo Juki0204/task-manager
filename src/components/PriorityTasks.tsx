@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/utils/supabase/supabase";
 import { Task } from "@/utils/types/task";
 import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 import { useAuth } from "@/app/AuthProvider";
-import { MdAlarm, MdMailOutline } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
-import { FiPhone } from "react-icons/fi";
-import { FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
-import { FaRegBuilding } from "react-icons/fa6";
-import { RiCalendarScheduleLine } from "react-icons/ri";
+import { AlarmClock, Building, CalendarClock, CircleQuestionMark, Mail, Phone } from "lucide-react";
 
 export default function PriorityTasks({ onClick }: { onClick: (t: Task) => void; }) {
   const { user } = useAuth();
@@ -200,7 +195,7 @@ function PriorityTaskCard({ task, deadline, annotation, onClick }: { task: Task,
           {task.serial}
           {deadline && (
             <>
-              <MdAlarm className="text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${deadline.split("-")[1]}月${deadline.split("-")[2]}日に設定されています。`} />
+              <AlarmClock className="w-4 text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${deadline.split("-")[1]}月${deadline.split("-")[2]}日に設定されています。`} />
               <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px", zIndex: 50 }} />
             </>
           )}
@@ -208,11 +203,11 @@ function PriorityTaskCard({ task, deadline, annotation, onClick }: { task: Task,
         <h3 className="font-bold truncate flex items-center gap-1">
           {
             task.method === 'mail' ?
-              <MdMailOutline />
+              <Mail className="w-4" />
               : task.method === 'tel' ?
-                <FiPhone />
+                <Phone className="w-4" />
                 :
-                <FaRegQuestionCircle />
+                <CircleQuestionMark className="w-4" />
           }
           {task.title}
         </h3>
@@ -233,8 +228,8 @@ function PriorityTaskCard({ task, deadline, annotation, onClick }: { task: Task,
 
         <div className="p-2 rounded-md overflow-hidden relative before:bg-white/60 before:dark:bg-white/20 before:mix-blend-overlay before:w-full before:h-full before:absolute before:top-0 before:left-0">
           <div className="grid gap-2 text-sm grid-cols-6">
-            <div className="col-span-3 flex gap-1 items-center"><FaRegBuilding />{clientList[task.client]} 【{task.requester}】</div>
-            <div className="col-span-3 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>
+            <div className="col-span-3 flex gap-1 items-center"><Building className="w-4" />{clientList[task.client]} 【{task.requester}】</div>
+            <div className="col-span-3 flex gap-1 items-center"><CalendarClock className="w-4" />{task.request_date}</div>
           </div>
         </div>
 

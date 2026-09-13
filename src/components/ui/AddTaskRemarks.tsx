@@ -75,7 +75,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
       if (showLinkInput) setShowLinkInput(false);
       setSelectedIcon(null);
     }}
-      className="bg-neutral-200 dark:bg-neutral-700 rounded-md p-2 pt-1.5"
+      className="border border-neutral-300 dark:border-neutral-600 bg-neutral-100 dark:bg-[#333333] rounded-md p-2 pt-1.5"
     >
       <div className="flex justify-between mb-1 border-b border-neutral-300">
         <div className="flex flex-wrap gap-0.5 pb-1 items-center">
@@ -248,7 +248,7 @@ export default function AddTaskRemarks({ value, onChange }: { value: string, onC
         className={`tiptap-base tiptap-editor text-sm`}
       />
 
-      <div className={`${hintOpen ? " left-[calc(100%+20px)] opacity-100" : "left-0 opacity-0"} w-70 absolute left-0 -z-10 bottom-0 shadow-md bg-neutral-100 dark:bg-neutral-600 rounded-2xl p-4 whitespace-nowrap transition-all duration-300`}>
+      <div className={`${hintOpen ? "opacity-100" : "opacity-0 pointer-events-none"} right-[calc(100%+8px)] w-70 absolute -z-10 bottom-2 shadow-md bg-neutral-100 dark:bg-neutral-800 rounded-2xl p-4 whitespace-nowrap transition-opacity duration-300`}>
         <h3 className="pb-1 mb-1 text-center text-sm font-bold">使用可能な記法一覧</h3>
         <div className="grid grid-cols-2 text-sm font-bold text-center mb-1">
           <p>記法</p>

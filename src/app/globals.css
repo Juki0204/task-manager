@@ -135,7 +135,7 @@ body {
   --oka-bg-opacity: 0.25;
   --oka-bg-opacity--pg: .5;
 
-  --default-color: 110 110 110;
+  --default-color: 130 130 130;
   --default-bg-opacity: 0.25;
   --default-bg-opacity--pg: .45;
 
@@ -549,6 +549,14 @@ body {
   }
 }
 
+[data-theme=light] {
+  .release-note {
+    & p{
+      color: #666;
+    }
+  }
+}
+
 .animate-shake {
   animation: shake .5s linear .1s forwards;
 }
@@ -680,7 +688,7 @@ body {
   background: transparent;
 
   & > div {
-    min-height: 126px;
+    min-height: 200px;
     max-height: 440px;
     height: auto;
     overflow-y: auto;
@@ -706,7 +714,7 @@ body {
 /* 閲覧画面用 */
 .tiptap-viewer {
   white-space: pre-wrap;
-  min-height: 126px;
+  min-height: 200px;
   cursor: default;
 
   & li[data-checked] {
@@ -890,3 +898,57 @@ body {
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 } */
+
+
+
+.requester-autoFill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px;
+}
+
+
+/* AddTask時のヘッダーメッセージ用アニメーション */
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  51% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes blinking2 {
+  0% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.dot1 {
+  animation: flash 2s linear 0s infinite;
+}
+
+.dot2 {
+  animation: flash 2s linear 0.2s infinite;
+}
+
+.dot3 {
+  animation: flash 2s linear 0.4s infinite;
+}
+
+.addingMessage {
+  animation: blinking2 1.5s ease-in-out 0s alternate infinite;
+}

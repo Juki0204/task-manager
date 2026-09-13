@@ -1,9 +1,3 @@
-import { FaRegBuilding, FaRegCheckCircle, FaRegQuestionCircle } from "react-icons/fa";
-import { RiCalendarScheduleLine, RiFlag2Fill } from "react-icons/ri";
-import { MdAlarm, MdMailOutline } from "react-icons/md";
-import { FiPhone } from "react-icons/fi";
-import { BsPersonCheck } from "react-icons/bs";
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { useTaskPresence } from "@/utils/hooks/useTaskPresence";
@@ -15,7 +9,7 @@ import { toast } from "sonner";
 import { Tooltip } from "react-tooltip";
 import { RemarksHoverMark } from "./ui/RemarksHoverMark";
 import { tiptapMarkdownToHtml } from "@/utils/function/tiptapMarkdownToHtml";
-import { FaStar } from "react-icons/fa6";
+import { AlarmClock, Building, CalendarClock, CircleCheck, CircleQuestionMark, Mail, Phone, Star, UserPen } from "lucide-react";
 
 interface CardPropd {
   task: Task;
@@ -140,57 +134,62 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
 
 
   //編集ロック
-  const lockedTaskHandler = async () => {
-    const { data } = await supabase
-      .from('tasks')
-      .update({
-        locked_by_id: user.id,
-        locked_by_name: user.name,
-        locked_by_at: new Date().toISOString(),
-      })
-      .eq("id", task.id)
-      .is("locked_by_id", null)
-      .select();
+  // const lockedTaskHandler = async () => {
+  //   const { data } = await supabase
+  //     .from('tasks')
+  //     .update({
+  //       locked_by_id: user.id,
+  //       locked_by_name: user.name,
+  //       locked_by_at: new Date().toISOString(),
+  //     })
+  //     .eq("id", task.id)
+  //     .is("locked_by_id", null)
+  //     .select();
 
-    if (!data?.length) {
-      toast.error('他のユーザーが編集中です', { position: "top-center" });
-      return false;
-    }
+  //   if (!data?.length) {
+  //     toast.error('他のユーザーが編集中です', { position: "top-center" });
+  //     return false;
+  //   }
 
-    // console.log("locked task: taskId =", task.id);
-    return true;
-  }
+  //   // console.log("locked task: taskId =", task.id);
+  //   return true;
+  // }
 
   // クリック判定(シングル・ダブル)
-  const DOUBLE_CLICK_GRACE = 200;
-  const timerRef = useRef<NodeJS.Timeout>(null);
-  const handleDoubleClick = async () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
+  // const DOUBLE_CLICK_GRACE = 200;
+  // const timerRef = useRef<NodeJS.Timeout>(null);
+  // const handleDoubleClick = async () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //     timerRef.current = null;
+  //   }
 
-    //console.log("ダブルクリックです");
-    const ok = await lockedTaskHandler();
-    if (!ok) return;
+  //   //console.log("ダブルクリックです");
+  //   const ok = await lockedTaskHandler();
+  //   if (!ok) return;
 
-    if (!task.locked_by_id) {
-      onEdit(task);
-    }
-  }
+  //   if (!task.locked_by_id) {
+  //     onEdit(task);
+  //   }
+  // }
 
-  const handleSingleClick = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-      return;
-    }
+  // const handleSingleClick = () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //     timerRef.current = null;
+  //     return;
+  //   }
 
-    timerRef.current = setTimeout(() => {
-      //console.log("シングルクリックです");
-      onClick(task);
-      timerRef.current = null;
-    }, DOUBLE_CLICK_GRACE);
+  //   timerRef.current = setTimeout(() => {
+  //     //console.log("シングルクリックです");
+  //     onClick(task);
+  //     timerRef.current = null;
+  //   }, DOUBLE_CLICK_GRACE);
+  // }
+
+  const convertDate = (date: string) => {
+    const splitDate = date.split("-");
+    return `${splitDate[1]}月${splitDate[2]}日`;
   }
 
   const hoverColor = `hover:[--${personalUnique}-bg-opacity:0.2]`;
@@ -198,41 +197,37 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
   return (
     <div
       onContextMenu={(e) => onContextMenu(e, task.id, task.serial)}
-      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} ${task.status === "中止" ? "brightness-75" : ""} min-w-[1860px] shadow-xs shadow-black/30 text-neutral-700 dark:text-neutral-100 ${hoverColor} dark:hover:brightness-125`}>
+      className={`${task.locked_by_id ? "rolling-border" : `static-border ${personalBorder}`} ${task.status === "作業中" ? "inprogress" : ""} ${task.status === "中止" ? "brightness-75" : ""} min-w-[1200px] shadow-xs shadow-black/30 text-neutral-700 dark:text-neutral-100 ${hoverColor} dark:hover:brightness-125`}>
       {task.locked_by_id && <div className="editing-overlay"><span className="editing-overlay-text">{task.locked_by_name}さんが編集中...</span></div>}
       {/* カード（概要） */}
       <div
-        onClick={handleSingleClick}
-        onDoubleClick={handleDoubleClick}
+        onClick={() => onClick(task)}
+        // onDoubleClick={handleDoubleClick}
         id={task.id}
-        className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[120px_240px_300px_600px_120px_120px_auto] py-3`}
+        className={`${personalBg} w-full p-4 tracking-wide cursor-pointer relative grid [grid-template-areas:'id_cli_ttl_dis_mana_status_date'] items-center grid-cols-[110px_240px_minmax(160px,300px)_minmax(200px,700px)_70px_120px_260px] py-3`}
         {...props}
       >
         <div className="text-xs flex items-center gap-1.5">
           <div className="flex items-center gap-1">
+            {user.important_task_id && user.important_task_id.includes(task.id) ? (
+              <Star className="w-4.5 text-yellow-400 fill-yellow-300 text-lg mt-0.5 mr-0.5" />
+            ) : (
+              <Star className="w-4.5 text-neutral-400/50 fill-neutral-400/40 text-lg mt-0.5 mr-0.5" />
+            )}
             <HighlightText text={task.serial} keyword={filters.searchKeywords} />
-            {user.important_task_id && user.important_task_id.includes(task.id) && (
-              <FaStar className="text-yellow-300 text-lg ml-0.5 mt-0.5" />
-            )}
-            {currentDeadline && (
-              <>
-                <MdAlarm tabIndex={-1} className="text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
-                <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px" }} />
-              </>
-            )}
           </div>
         </div>
 
-        <div className="text-sm [grid-area:cli] flex gap-1 items-center"><FaRegBuilding />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
+        <div className="text-sm [grid-area:cli] flex gap-1 items-center palt"><Building className="w-4.5" />{task.client} 【<HighlightText text={task.requester} keyword={filters.searchKeywords} />】</div>
 
         <h3 className="font-bold flex items-center gap-1 [grid-area:ttl] text-sm">
           {
             task.method === 'mail' ?
-              <MdMailOutline className="w-4 h-4" />
+              <Mail className="w-4.5" />
               : task.method === 'tel' ?
-                <FiPhone className="w-4 h-4" />
+                <Phone className="w-4.5" />
                 :
-                <FaRegQuestionCircle className="w-4 h-4" />
+                <CircleQuestionMark className="w-4.5" />
           }
           <span className="truncate flex-1 pr-3">
             <HighlightText text={task.title} keyword={filters.searchKeywords} />
@@ -256,17 +251,23 @@ export default function Card({ task, user, onClick, onContextMenu, onEdit, deadl
           {hasRemarksInfo && task.remarks && (
             <RemarksHoverMark handleHover={setHover} task={task} className="absolute inset-y-0 right-4">
               {hover && remarksHtml && (
-                <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer bg-neutral-100 py-1 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
+                <div className={`whitespace-pre-wrap tiptap-base tiptap-viewer py-2 px-2 rounded-md text-sm`} dangerouslySetInnerHTML={{ __html: remarksHtml }} />
               )}
             </RemarksHoverMark>
           )}
         </div>
 
-        <div className="text-sm [grid-area:mana] flex gap-1 items-center"><BsPersonCheck />{task.manager ? task.manager : "-"}</div>
+        <div className="text-sm [grid-area:mana] flex gap-2 items-center"><UserPen className="w-4.5" />{task.manager ? task.manager : "-"}</div>
 
-        <div className="grid gap-2 text-sm grid-cols-6 [grid-area:date]">
-          <div className="col-span-3 flex gap-1 items-center"><RiCalendarScheduleLine />{task.request_date}</div>
-          <div className="col-span-3 flex gap-1 items-center"><FaRegCheckCircle />{task.finish_date ? task.finish_date : "-"}</div>
+        <div className="grid gap-2 text-sm grid-cols-11 [grid-area:date]">
+          <div className="col-span-5 flex gap-2 items-center"><CalendarClock className="w-4.5" />{convertDate(task.request_date)}</div>
+          <div className="col-span-5 flex gap-2 items-center"><CircleCheck className="w-4.5" />{task.finish_date ? convertDate(task.finish_date) : "-"}</div>
+          {currentDeadline && (
+            <>
+              <AlarmClock tabIndex={-1} className="w-5 text-red-500 dark:text-yellow-300 text-lg -ml-0.5 mt-0.5" data-tooltip-id="deadline" data-tooltip-content={`期日が${currentDeadline.date.split("-")[1]}月${currentDeadline.date.split("-")[2]}日に設定されています。`} />
+              <Tooltip id="deadline" place="top-start" variant="warning" style={{ color: "#333", fontWeight: "bold", fontSize: "14px" }} />
+            </>
+          )}
         </div>
       </div>
     </div>

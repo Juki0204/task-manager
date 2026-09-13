@@ -1,101 +1,120 @@
 "use client";
 
-// import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { Task } from "@/utils/types/task";
 
 import PersonalTaskList from "@/components/PersonalTaskList";
-import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { Task } from "@/utils/types/task";
-import TaskDetail from "@/components/TaskDetail";
-import UpdateTask from "@/components/UpdateTask";
-import CopyTask from "@/components/CopyTask";
-import { supabase } from "@/utils/supabase/supabase";
-import { useAuth } from "../AuthProvider";
 import ContextMenu from "@/components/ui/ContextMenu";
-import { useTaskRealtime } from "@/utils/hooks/useTaskRealtime";
 
 import {
   DndContext,
   DragEndEvent,
   DragStartEvent,
+  MouseSensor,
   useSensor,
   useSensors,
-  MouseSensor,
 } from "@dnd-kit/core";
+
+import { supabase } from "@/utils/supabase/supabase";
+
+import { useAuth } from "../AuthProvider";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
 import { useTaskListPreferences } from "@/utils/hooks/TaskListPreferencesContext";
-import { TbReload } from "react-icons/tb";
+import { useTask } from "@/components/providers/TaskProvider";
+
 import { compareHistory } from "@/utils/function/comparHistory";
 import { generateChangeMessage } from "@/utils/function/generateChangeMessage";
-import CancelAlertModal from "@/components/CancelAlertModal";
 
+import { PageLayout } from "@/components/layout/PageLayout";
+import { SubscriptionStatus } from "@/components/common/SubscriptionStatus";
+import { useAddTaskPresence } from "@/components/providers/AddTaskPresenceProvider";
+import { Pencil } from "lucide-react";
 
+type ContextMenuState = {
+  visible: boolean;
+  x: number;
+  y: number;
+  taskId?: string;
+  taskSerial?: string;
+};
 
 export default function PersonalTaskPage() {
-  const [modalType, setModalType] = useState<"add" | "detail" | "edit" | "copy" | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [activeContainerId, setActiveContainerId] = useState<string | null>(null);
-
-  const [currentClickTask, setCurrentClickTask] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const timerRef = useRef<NodeJS.Timeout>(null);
-
   const { user } = useAuth();
-  const { taskList, updateTaskStatus, sortTask, isReady, deadlineList, taskSubStatus, resubscribeAll } = useTaskRealtime(user ?? null);
-  const health =
-    taskSubStatus === "SUBSCRIBED" ? "green" :
-      taskSubStatus === "TIMED_OUT" ? "yellow" :
-        taskSubStatus === "UNKNOWN" ? "yellow" : "red";
+  const { addingUsers } = useAddTaskPresence();
+
+  const {
+    taskList,
+    updateTaskStatus,
+    sortTask,
+    isReady,
+    deadlineList,
+    taskSubStatus,
+    resubscribeAll,
+
+    isPanelOpen,
+    openDetail,
+    openEdit,
+    openCopy,
+  } = useTask();
 
   const { filters, setFilters } = useTaskListPreferences();
+
   const { syncInvoiceWithTask } = useInvoiceSync();
 
+  //DnD関連
+  const [activeContainerId, setActiveContainerId] = useState<string | null>(null);
+  const [currentClickTask, setCurrentClickTask] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
-  const lastDropRef = useRef<{ x: number, y: number } | null>(null);
-  const flyAnimationRef = useRef<null | ((taskId: string) => void)>(null);
+
   const [draggingTaskPrevIndex, setDraggingTaskPrevIndex] = useState<number | null>(null);
 
-  const [menu, setMenu] = useState<{
-    visible: boolean,
-    x: number,
-    y: number,
-    taskId?: string,
-    taskSerial?: string,
-  }>({ visible: false, x: 0, y: 0 });
+  const lastDropRef = useRef<{ x: number; y: number } | null>(null);
+
+  const flyAnimationRef = useRef<null | ((taskId: string) => void)>(null);
+
+  //クリック中タスクのハイライト解除用
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  //ContextMenu
+  const [menu, setMenu] = useState<ContextMenuState>({
+    visible: false,
+    x: 0,
+    y: 0,
+  });
 
   const handleContextMenu = (e: React.MouseEvent, taskId: string, taskSerial: string) => {
-    setMenu({ visible: true, x: e.pageX, y: e.pageY, taskId, taskSerial });
-    // console.log(e);
-  }
+    setMenu({
+      visible: true,
+      x: e.pageX,
+      y: e.pageY,
+      taskId,
+      taskSerial,
+    });
+  };
 
   const handleCloseContextMenu = () => {
-    if (menu.visible) {
-      setMenu({ ...menu, visible: false });
-    }
-  }
+    setMenu((prev) => {
+      if (!prev.visible) return prev;
 
-  const unlockTaskHandler = async () => {
-    if (!activeTask || !user) return;
-    const { error } = await supabase
-      .from('tasks')
-      .update({
-        locked_by_id: null,
-        locked_by_name: null,
-        locked_by_at: null,
-      })
-      .eq("id", activeTask.id)
-      .eq("locked_by_id", user.id);
+      return {
+        ...prev,
+        visible: false,
+      };
+    });
+  };
 
-    if (error) {
-      console.error("unlock failed");
-    }
-    // else {
-    //   console.log("unlocked task: taskId =", activeTask.id);
-    // }
-  }
+  /**
+   * Realtime接続状態
+   */
+  const health = taskSubStatus === "SUBSCRIBED"
+    ? "green"
+    : taskSubStatus === "TIMED_OUT" || taskSubStatus === "UNKNOWN"
+      ? "yellow"
+      : "red";
 
+  //DnD Sensor
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
       distance: 5,
@@ -104,77 +123,128 @@ export default function PersonalTaskPage() {
 
   const sensors = useSensors(mouseSensor);
 
+  //ドラッグ開始
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
 
-    const fromContainer = active.data.current?.data.containerId as string | undefined;
+    const fromContainer = active.data.current?.data.containerId as | string | undefined;
 
     setActiveContainerId(fromContainer ?? null);
     setCurrentClickTask(active.id as string);
-
     setDraggingTaskId(active.id as string);
     setIsDragging(true);
 
-    const idx = taskList.findIndex((t) => t.id === active.id);
-    setDraggingTaskPrevIndex(idx);
-  }
+    const index = taskList.findIndex((task) => task.id === active.id);
 
+    setDraggingTaskPrevIndex(index);
+  };
+
+  //ドラッグ終了
   const handleDragEnd = async (event: DragEndEvent) => {
     setIsDragging(false);
 
     const { over, active } = event;
+
     if (!user || !over) return;
 
-    if (active.id !== over.id) {
-      const taskId = active.id as string;
-      const newStatus = over.id as string;
-      const prevStatus = active.data.current?.initStatus;
-      // console.log(active, over);
+    if (active.id === over.id) {
+      return;
+    }
 
-      const startContainer = activeContainerId; //ドラッグ開始エリア検知
+    const taskId = active.id as string;
+    const newStatus = over.id as string;
+    const prevStatus = active.data.current?.initStatus;
+    const startContainer = activeContainerId;
 
-      if (newStatus === startContainer) return; //同一エリア内で 掴む→離す は無駄な状態更新せず
+    //同一エリア内で 掴む → 離すだけなら更新しない
+    if (newStatus === startContainer) {
+      return;
+    }
 
-      const formatNewStatus = newStatus === "NotYetStarted" ? "未着手"
-        : newStatus === "InProgress" && prevStatus === "確認中" ? "作業中"
-          : newStatus === "InProgress" && prevStatus === "作業中" ? "作業中"
-            : newStatus === "InProgress" && prevStatus !== "確認中" ? "未着手"
-              : newStatus === "Confirm" ? "確認中"
-                : newStatus === "Completed" ? "完了"
+    //DnDのcontainerIdから実際のstatusへ変換
+    const formatNewStatus =
+      newStatus === "NotYetStarted"
+        ? "未着手"
+        : newStatus === "InProgress" && prevStatus === "確認中"
+          ? "作業中"
+          : newStatus === "InProgress" && prevStatus === "作業中"
+            ? "作業中"
+            : newStatus === "InProgress" && prevStatus !== "確認中"
+              ? "未着手"
+              : newStatus === "Confirm"
+                ? "確認中"
+                : newStatus === "Completed"
+                  ? "完了"
                   : "";
 
-      const alt = newStatus === "NotYetStarted" ? { manager: null }
-        : { manager: user.name }
+    //未着手へ戻した場合は担当解除
+    const alt = newStatus === "NotYetStarted"
+      ? { manager: null }
+      : { manager: user.name };
 
-      //dnd-kit が計算した "現在地の絶対座標"
-      const rect = active.rect.current.translated;
-      lastDropRef.current = { x: rect?.left ?? 0, y: rect?.top ?? 0 };
+    //dnd-kitが計算したドロップ時の絶対座標
+    const rect = active.rect.current.translated;
+    lastDropRef.current = {
+      x: rect?.left ?? 0,
+      y: rect?.top ?? 0,
+    };
 
-      // ★ 1フレーム後にカードへ命令を送る
-      requestAnimationFrame(() => {
-        if (flyAnimationRef.current) {
-          flyAnimationRef.current(active.id as string);
-        }
-      });
+    //1フレーム後にカードの移動Animation開始
+    requestAnimationFrame(() => {
+      flyAnimationRef.current?.(
+        active.id as string
+      );
+    });
 
-      await updateTaskStatus(taskId, formatNewStatus, prevStatus, alt);
-      await syncInvoiceWithTask(taskId, formatNewStatus);
+    //タスク更新
+    await updateTaskStatus(
+      taskId,
+      formatNewStatus,
+      prevStatus,
+      alt
+    );
 
-      const oldTaskData = active.data.current?.task;
-      const newTaskData = {
-        ...oldTaskData,
-        manager: newStatus === "NotYetStarted" ? "" : user.name,
-        status: formatNewStatus,
-      };
+    //請求データ同期
+    await syncInvoiceWithTask(
+      taskId,
+      formatNewStatus
+    );
 
-      //差分比較～変更ログ生成
-      const diff = compareHistory(newTaskData, oldTaskData);
-      if (diff.changedKeys.length === 0) return;
+    //変更履歴用データ
+    const oldTaskData = active.data.current?.task;
 
-      const message = generateChangeMessage(diff, newTaskData);
-      if (!message) return;
+    if (!oldTaskData) return;
 
-      const { error } = await supabase.from("task_notes").insert({
+    const newTaskData = {
+      ...oldTaskData,
+      manager:
+        newStatus === "NotYetStarted"
+          ? ""
+          : user.name,
+      status: formatNewStatus,
+    };
+
+    //差分比較
+    const diff = compareHistory(
+      newTaskData,
+      oldTaskData
+    );
+
+    if (diff.changedKeys.length === 0) {
+      return;
+    }
+
+    const message = generateChangeMessage(
+      diff,
+      newTaskData
+    );
+
+    if (!message) return;
+
+    //変更ログ追加
+    const { error } = await supabase
+      .from("task_notes")
+      .insert({
         task_serial: oldTaskData.serial,
         message,
         diff,
@@ -185,43 +255,80 @@ export default function PersonalTaskPage() {
         type: "changed",
       });
 
-      if (error) console.error(error);
+    if (error) {
+      console.error(error);
     }
   };
 
-  const filteredTaskList = taskList.filter((task) => {
-    if (task.status === "削除済") return false;
+  //個人タスク一覧フィルタ
+  const filteredTaskList = useMemo(() => {
+    return taskList.filter(
+      (task) => {
+        //削除済み除外
+        if (task.status === "削除済") {
+          return false;
+        }
 
-    const clientMatch = filters.clients.length === 0 || filters.clients.includes(task.client);
-    const assigneeMatch = task.manager === null || task.manager === "" || filters.assignees.length === 0 || filters.assignees.some((assignee) => {
-      if (assignee === "未担当") return task.manager === "";
-      return task.manager === assignee;
-    });
-    const statusMatch = filters.statuses.length === 0 || filters.statuses.includes(task.status);
+        //クライアント
+        const clientMatch = filters.clients.length === 0 ||
+          filters.clients.includes(
+            task.client
+          );
 
-    const searchMatch =
-      !filters.searchKeywords ||
-      task.serial?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.title?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.description?.toLowerCase().includes(filters.searchKeywords.toLowerCase()) ||
-      task.requester?.toLowerCase().includes(filters.searchKeywords.toLowerCase());
+        //担当者 
+        //未担当タスクは個人一覧でも表示対象
+        const assigneeMatch =
+          task.manager === null ||
+          task.manager === "" ||
+          filters.assignees.length === 0 ||
+          filters.assignees.some(
+            (assignee) => {
+              if (assignee === "未担当") {
+                return (
+                  task.manager === "" || task.manager === null
+                );
+              }
 
-    return clientMatch && assigneeMatch && statusMatch && searchMatch;
-  });
+              return (
+                task.manager === assignee
+              );
+            }
+          );
 
+        //ステータス
+        const statusMatch = filters.statuses.length === 0 ||
+          filters.statuses.includes(
+            task.status
+          );
 
-  useEffect(() => {
-    if (activeTask) {
-      const updated = taskList.find((t) => t.id === activeTask.id);
-      if (updated) setActiveTask(updated);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taskList]);
+        //キーワード
+        const keyword = filters.searchKeywords?.toLowerCase() ?? "";
 
+        const searchMatch =
+          !filters.searchKeywords ||
+          task.serial?.toLowerCase().includes(keyword) ||
+          task.title?.toLowerCase().includes(keyword) ||
+          task.description?.toLowerCase().includes(keyword) ||
+          task.requester?.toLowerCase().includes(keyword);
+
+        return (
+          clientMatch &&
+          assigneeMatch &&
+          statusMatch &&
+          searchMatch
+        );
+      }
+    );
+  }, [taskList, filters]);
+
+  //個人ページ初回表示時、自分を担当者フィルタに設定
   const initializedRef = useRef(false);
+
   useEffect(() => {
     if (!user) return;
-    if (initializedRef.current) return;
+    if (initializedRef.current) {
+      return;
+    }
 
     setFilters({
       clients: [],
@@ -231,63 +338,78 @@ export default function PersonalTaskPage() {
     });
 
     initializedRef.current = true;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  //5秒後にタスクのハイライトを解除
+  //モーダルを閉じてから5秒後にタスクハイライト解除
   useEffect(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
+
       timerRef.current = null;
     }
 
-    if (currentClickTask && !isOpen && !isDragging) {
-      timerRef.current = setTimeout(() => {
-        setCurrentClickTask(null);
-        timerRef.current = null;
-      }, 5000);
+    if (currentClickTask && !isPanelOpen && !isDragging) {
+      timerRef.current =
+        setTimeout(() => {
+          setCurrentClickTask(null);
+
+          timerRef.current = null;
+        }, 5000);
     }
 
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
+
         timerRef.current = null;
       }
-    }
-  }, [currentClickTask, isOpen, isDragging]);
+    };
+  }, [currentClickTask, isPanelOpen, isDragging]);
 
-
-  if (!isReady) return <p>loading...</p>
+  //Realtime初期化待ち
+  if (!isReady) {
+    return <p>loading...</p>;
+  }
 
   return (
-    <div onClick={handleCloseContextMenu} className="p-1 py-4 sm:p-4 sm:pb-2 !pt-26 mx-auto max-w-[1920px] overflow-x-hidden text-neutral-700 dark:text-neutral-100">
-      <div className="flex justify-between gap-4 mb-2 border-b-2 p-1 pb-2 border-neutral-300 dark:border-neutral-700 min-w-375">
-        <div className="flex justify-start items-center gap-4">
-          <h2 className="flex justify-center items-center gap-1 py-1 text-xl font-bold text-center">
-            個人タスク一覧
-          </h2>
-
-          <div className="flex items-center gap-2 py-0.75 px-1.75 rounded-full bg-neutral-200 dark:bg-neutral-500">
-            <span
-              className={`h-2.5 w-2.5 rounded-full ${health === "green" ? "bg-emerald-400" : health === "yellow" ? "bg-amber-400" : "bg-rose-400"
-                }`}
-            />
-            <span className="text-xs mr-1">{taskSubStatus}</span>
-
-            {taskSubStatus !== "SUBSCRIBED" && (
-              <button
-                onClick={resubscribeAll}
-                className="flex items-center gap-1 text-xs px-2 pr-3 py-0.25 rounded-full text-white bg-neutral-400 dark:bg-neutral-600 hover:opacity-80"
-              >
-                <TbReload />
-                再購読
-              </button>
-            )}
-          </div>
-        </div>
-
-      </div>
-      {user &&
+    <PageLayout
+      title="個人タスク一覧"
+      onClick={
+        handleCloseContextMenu
+      }
+      titleAreaClassName="items-center"
+      titleAddon={
+        <SubscriptionStatus
+          health={health}
+          status={taskSubStatus}
+          onResubscribe={
+            resubscribeAll
+          }
+        />
+      }
+      actions={
+        <>
+          {addingUsers.length > 0 && (
+            <div className="bg-white rounded-md px-4">
+              {addingUsers.map((user) => (
+                <p key={user.userId} className="addingMessage flex items-center gap-0.25 font-bold tracking-wider text-red-600">
+                  {user.taskTitle
+                    ? `${user.userName}さんが タスク「${user.taskTitle}」 を新規追加中`
+                    : `${user.userName}さんがタスクを新規追加中`}
+                  <span className="dot1">.</span>
+                  <span className="dot2">.</span>
+                  <span className="dot3">.</span>
+                  <Pencil className="w-4.5" />
+                </p>
+              ))}
+            </div>
+          )}
+        </>
+      }
+    >
+      {user && (
         <DndContext
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
@@ -296,23 +418,24 @@ export default function PersonalTaskPage() {
           <PersonalTaskList
             user={user}
             taskList={sortTask(filteredTaskList)}
-            onClick={(t: Task) => {
-              if (isOpen) return;
-              if (menu.visible) return;
+            onClick={(task: Task) => {
+              // if (isPanelOpen) {
+              //   return;
+              // }
 
-              setActiveTask(t);
-              setCurrentClickTask(t.id);
-              setModalType("detail");
-              setIsOpen(true);
+              if (menu.visible) {
+                return;
+              }
+
+              setCurrentClickTask(task.id);
+              openDetail(task);
             }}
             currentClickTask={currentClickTask}
             onContextMenu={handleContextMenu}
             sortTask={sortTask}
-            onEdit={(t: Task) => {
-              setActiveTask(t);
-              setCurrentClickTask(t.id);
-              setModalType("edit");
-              setIsOpen(true);
+            onEdit={(task: Task) => {
+              setCurrentClickTask(task.id);
+              openEdit(task);
             }}
             draggingTaskId={draggingTaskId}
             draggingTaskPrevIndex={draggingTaskPrevIndex}
@@ -320,100 +443,27 @@ export default function PersonalTaskPage() {
             lastDropRef={lastDropRef}
             deadlineList={deadlineList}
           />
-        </DndContext>}
-
-      {/* 共通モーダル */}
-      <Dialog
-        open={isOpen}
-        // onClose={() => {
-        //   if (modalType === "edit") unlockTaskHandler();
-        //   setIsOpen(false);
-        //   setTimeout(() => {
-        //     setActiveTask(null);
-        //     setModalType(null);
-        //   }, 10);
-        // }}
-        onClose={() => {
-          if (modalType === "edit") {
-            setIsAlertOpen(true);
-          } else {
-            setIsOpen(false);
-            setTimeout(() => {
-              setActiveTask(null);
-              setModalType(null);
-              setIsAlertOpen(false);
-            }, 10);
-          }
-        }}
-        // transition
-        className="relative z-50 transition duration-100 ease-out data-closed:opacity-0"
-      >
-        <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
-
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4 transition-transform duration-300 has-[.mailOpen]:-translate-x-[360px]">
-          <DialogPanel className="w-130 relative space-y-4 rounded-2xl bg-neutral-100 dark:bg-[#2b2b2b] dark:border dark:border-zinc-700 p-4 pt-4.5 shadow-2xl shadow-black/30">
-            {modalType === "detail" && activeTask && user && (
-              <TaskDetail
-                user={user}
-                task={activeTask}
-                onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}
-                onEdit={(t: Task) => {
-                  const latest = taskList.find(x => x.id === t.id) ?? t;
-                  setActiveTask(latest);
-                  setModalType("edit");
-                }}
-                deadlineList={deadlineList}
-              />
-            )}
-
-            {modalType === "edit" && activeTask && user && (
-              <UpdateTask
-                user={user}
-                task={activeTask}
-                onComplete={() => setModalType("detail")}
-                onCancel={() => setModalType("detail")}
-                onUnlock={unlockTaskHandler}
-                deadlineList={deadlineList}
-              />
-            )}
-            {modalType === "copy" && activeTask && user && (
-              <CopyTask user={user} task={activeTask} onClose={() => { setIsOpen(false); setTimeout(() => setModalType(null), 500); }}></CopyTask>
-            )}
-          </DialogPanel>
-        </div>
-      </Dialog>
-
-      <CancelAlertModal
-        alertOpen={isAlertOpen}
-        onModalClose={() => {
-          unlockTaskHandler();
-          setIsOpen(false);
-          setTimeout(() => {
-            setActiveTask(null);
-            setModalType(null);
-            setIsAlertOpen(false);
-          }, 10);
-        }}
-        onCalcel={() => setIsAlertOpen(false)}
-      />
-
-      {menu.visible && menu.taskId && (
-        <ContextMenu
-          x={menu.x}
-          y={menu.y}
-          taskId={menu.taskId ? menu.taskId : ""}
-          taskSerial={menu.taskSerial ? menu.taskSerial : ""}
-          onClose={handleCloseContextMenu}
-          updateTaskStatus={updateTaskStatus}
-          onCopyTask={(t) => {
-            if (isOpen) return;
-
-            setActiveTask(t);
-            setModalType('copy');
-            setIsOpen(true);
-          }}
-        />
+        </DndContext>
       )}
-    </div>
+
+      {menu.visible &&
+        menu.taskId && (
+          <ContextMenu
+            x={menu.x}
+            y={menu.y}
+            taskId={menu.taskId}
+            taskSerial={menu.taskSerial ?? ""}
+            onClose={handleCloseContextMenu}
+            updateTaskStatus={updateTaskStatus}
+            onCopyTask={(task) => {
+              if (isPanelOpen) {
+                return;
+              }
+
+              openCopy(task);
+            }}
+          />
+        )}
+    </PageLayout>
   );
 }
