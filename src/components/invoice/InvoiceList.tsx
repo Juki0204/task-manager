@@ -281,11 +281,16 @@ function InvoiceListContent({ invoices, user, setInvoices, sortState }: InvoiceL
             className="relative grid grid-cols-[40px_40px_40px_200px_240px_auto_120px_80px_80px_100px_180px_50px_60px_100px_80px_100px_500px] items-center border-neutral-400 dark:border-neutral-600 text-[13px]"
           >
             {invoiceEditing.isLockedByOther(i.id, user.id) && (
-              <div className="pointer-events-none absolute inset-y-0 left-0 z-40 flex items-start">
-                <div className="sticky left-2 top-1 ml-2 mt-1 rounded-md bg-amber-200/95 px-2 py-1 text-[11px] font-bold text-amber-950 shadow-sm dark:bg-amber-500/90 dark:text-neutral-950">
-                  {invoiceEditing.getLockerName(i.id) ?? "他のユーザー"}さんが編集中
+              <div className="absolute w-full inset-y-0 left-0 z-40 flex items-start">
+                <div className="editing-overlay !w-full !h-full">
+                  <span className="editing-overlay-text">{invoiceEditing.getLockerName(i.id) ?? "他のユーザー"}さんが編集中...</span>
                 </div>
               </div>
+              // <div className="pointer-events-none absolute inset-y-0 left-0 z-40 flex items-start">
+              //   <div className="sticky left-2 top-1 ml-2 mt-1 rounded-md bg-amber-200/95 px-2 py-1 text-[11px] font-bold text-amber-950 shadow-sm dark:bg-amber-500/90 dark:text-neutral-950">
+              //     {invoiceEditing.getLockerName(i.id) ?? "他のユーザー"}さんが編集中
+              //   </div>
+              // </div>
             )}
             <div
               className={`
