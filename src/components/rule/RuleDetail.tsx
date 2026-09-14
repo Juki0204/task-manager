@@ -101,7 +101,7 @@ export default function RuleDetail({ rule, acknowledgements, users, onClose, onE
       <div className="col-span-18 flex flex-col gap-2">
         <div className="flex-1 border border-neutral-300 dark:border-neutral-700 bg-neutral-200 dark:bg-[#313131] p-2 rounded-md">
           <div
-            className="tiptap-base tiptap-viewer w-full !min-h-87 max-h-[calc(100svh-140px)] py-1.5 px-2 text-sm whitespace-pre-wrap tracking-wider text-justify overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
+            className="tiptap-base tiptap-viewer w-full h-[calc(100svh-140px)] max-h-[calc(100svh-140px)] py-1.5 px-2 text-sm whitespace-pre-wrap tracking-wider text-justify overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-400"
             dangerouslySetInnerHTML={{ __html: tiptapMarkdownToHtml(rule.content) }}
           />
         </div>

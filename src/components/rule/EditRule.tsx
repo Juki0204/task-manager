@@ -210,7 +210,7 @@ export default function EditRule({ rule, users, onClose, onCancel }: RuleDetailP
       </div>
 
 
-      <Dialog open={isConfirmModalOpen} onClose={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="relative z-50 transition duration-300 ease-out data-closed:opacity-0">
+      <Dialog open={isConfirmModalOpen} onClose={() => { setIsConfirmModalOpen(false); setIsSend(false); }} className="relative z-100 transition duration-300 ease-out data-closed:opacity-0">
         <DialogBackdrop className="fixed inset-0 bg-black/20 dark:bg-white/10 backdrop-blur-[2px]" />
 
         <div className="fixed inset-0 flex w-screen items-center justify-center p-4">

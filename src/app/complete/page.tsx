@@ -52,25 +52,27 @@ export default function CompletedTaskPage() {
 
   const [taskList, setTaskList] = useState<Task[]>([]);
   const [isLoaded, setIsLoaded] = useState(true);
-
-  //検索条件
-  const [searchTerms, setSearchTerms] = useState<SearchTerms>({
-    startYear: "2025",
-    startMonth: "11",
-    endYear: "",
-    endMonth: "",
-    clients: [],
-    assignees: [],
-    keyword: "",
-  });
+  const [isFinished, setIsFinished] = useState(false);
 
   //年度セレクト
-  const currentYear = new Date().getFullYear();
+  const now = new Date();
+  const currentYear = now.getFullYear();
 
   const yearOptions = Array.from(
     { length: currentYear - 2025 + 1 },
     (_, index) => 2025 + index
   );
+
+  //検索条件
+  const [searchTerms, setSearchTerms] = useState<SearchTerms>({
+    startYear: String(now.getFullYear()),
+    startMonth: String(now.getMonth() + 1),
+    endYear: String(now.getFullYear()),
+    endMonth: String(now.getMonth() + 1),
+    clients: [],
+    assignees: [],
+    keyword: "",
+  });
 
   //ContextMenu
   const [menu, setMenu] = useState<ContextMenuState>({
@@ -147,6 +149,7 @@ export default function CompletedTaskPage() {
 
     setTaskList(data ?? []);
     setIsLoaded(true);
+    setIsFinished(true);
   };
 
   //グローバルフィルター適用
@@ -438,7 +441,11 @@ export default function CompletedTaskPage() {
             />
           </div>
         ) : (
-          <p className="w-[calc(100%-280px)] text-center">検索条件に該当するタスクは見つかりませんでした。</p>
+          !isFinished ? (
+            <p className="w-[calc(100%-280px)] text-center">絞り込み検索から検索条件を指定してください。</p>
+          ) : (
+            <p className="w-[calc(100%-280px)] text-center">検索条件に該当するタスクは見つかりませんでした。</p>
+          )
         )}
       </div>
 
