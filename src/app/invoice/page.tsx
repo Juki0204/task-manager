@@ -445,7 +445,7 @@ export default function InvoicePage() {
           <div className="border col-span-2 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right mr-1">{totalInvoices.claimed}件</div>
 
           <div className="border col-span-3 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold">{totalInvoices.amount.toLocaleString()}円</div>
-          <div className={`border col-span-2 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold ${totalInvoices.adjustment < 0 ? "text-red-400" : "text-white"}`}>{totalInvoices.adjustment.toLocaleString()}円</div>
+          <div className={`border col-span-2 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold ${totalInvoices.adjustment < 0 ? "text-red-400" : ""}`}>{totalInvoices.adjustment.toLocaleString()}円</div>
           <div className="border col-span-3 border-l-0 border-t-0 border-neutral-400 dark:border-neutral-700 min-h-9 p-2 text-right font-bold">{totalInvoices.totalAmount.toLocaleString()}円</div>
         </div>
       </div>

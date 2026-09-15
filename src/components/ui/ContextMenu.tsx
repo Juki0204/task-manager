@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeRemove, ChangeConfirm, ChangeComplete, DeleteTaskBtn, CopyTaskBtn, UpdateTaskBtn } from "./ContextMenuBtn";
+import { ChangeInterrupt, ChangeInProgress, ChangeNotYetStarted, ChangeRemove, ChangeConfirm, ChangeComplete, DeleteTaskBtn, CopyTaskBtn, UpdateTaskBtn, SetCurrentManager } from "./ContextMenuBtn";
 import { Task } from "@/utils/types/task";
 import { useTask } from "../providers/TaskProvider";
 import { Tag } from "lucide-react";
@@ -72,6 +72,7 @@ export default function ContextMenu({ x, y, taskId, taskSerial, onClose, updateT
         </div>
 
         <div className="flex flex-col gap-0.5">
+          <SetCurrentManager taskId={taskId} taskSerial={taskSerial} onClick={onClose} updateTaskStatus={updateTaskStatus} />
           <ChangeRemove taskId={taskId} taskSerial={taskSerial} onClick={onClose} updateTaskStatus={updateTaskStatus} />
         </div>
 

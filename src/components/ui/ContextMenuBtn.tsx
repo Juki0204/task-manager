@@ -8,7 +8,7 @@ import { useAuth } from "@/app/AuthProvider";
 import { Task } from "@/utils/types/task";
 import { supabase } from "@/utils/supabase/supabase";
 import { useInvoiceSync } from "@/utils/hooks/useInvoiceSync";
-import { CalendarCheck, CirclePause, CirclePlay, CopyPlus, PackageCheck, Pause, PencilLine, Play, StickyNote, Trash, Trash2, UserMinus } from "lucide-react";
+import { CalendarCheck, CirclePause, CirclePlay, CopyPlus, PackageCheck, Pause, PencilLine, Play, StickyNote, Trash, Trash2, UserMinus, UserPlus } from "lucide-react";
 import { User } from "@/utils/types/user";
 
 
@@ -127,7 +127,7 @@ export function ChangeInProgress({ taskId, taskSerial, onClick, updateTaskStatus
         onClick();
       }}
     >
-      <Play className="w-4" /><span className="font-bold">作業中</span>に変更
+      <Play className="w-4" /><span className="font-bold">作業中</span>にする
     </ContextMenuBtn>
   );
 }
@@ -157,7 +157,7 @@ export function ChangeInterrupt({ taskId, taskSerial, onClick, updateTaskStatus 
         onClick();
       }}
     >
-      <Pause className="w-4" /><span className="font-bold">作業を中断</span>する
+      <Pause className="w-4" /><span className="font-bold">作業途中</span>にする
     </ContextMenuBtn>
   );
 }
@@ -186,7 +186,7 @@ export function ChangeConfirm({ taskId, taskSerial, onClick, updateTaskStatus }:
         onClick();
       }}
     >
-      <PackageCheck className="w-4" /><span className="font-bold">確認中</span>に変更
+      <PackageCheck className="w-4" /><span className="font-bold">確認中</span>にする
     </ContextMenuBtn>
   );
 }
@@ -216,7 +216,29 @@ export function ChangeNotYetStarted({ taskId, taskSerial, onClick, updateTaskSta
         onClick();
       }}
     >
-      <StickyNote className="w-4" /><span className="font-bold">未着手</span>に戻す
+      <StickyNote className="w-4" /><span className="font-bold">未着手</span>にする
+    </ContextMenuBtn>
+  );
+}
+
+//---------NotYetStarted Btn---------
+
+export function SetCurrentManager({ taskId, taskSerial, onClick, updateTaskStatus }: NotYetStartedProps) {
+  const { user } = useAuth();
+
+  const handleNotYetStarted = async () => {
+    await updateTaskStatus(taskId, "未着手", "", { manager: user?.name, updated_manager: user?.name });
+    await taskStatusAddChangeNotes(taskId, taskSerial, user?.name, "未着手");
+  }
+
+  return (
+    <ContextMenuBtn
+      onClick={async () => {
+        await handleNotYetStarted();
+        onClick();
+      }}
+    >
+      <UserPlus className="w-4" /><span className="font-bold">このタスクを担当する</span>
     </ContextMenuBtn>
   );
 }
